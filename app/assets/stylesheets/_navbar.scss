@@ -1,0 +1,19 @@
+.navbar {
+  height: 45px;
+}
+
+.nav-link {
+  color: navy;
+  text-align: right;
+  font-family: sans-serif;
+}
+
+.navbar-nav {
+  display: flex;
+  align-items: center;
+  flex-direction: row !important;
+  justify-content: space-evenly !important;
+  position: absolute;
+  left: 975px;
+  top: 1px;
+}
