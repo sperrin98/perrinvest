@@ -8,14 +8,21 @@ require 'csv'
 #   Character.create(name: 'Luke', movie: movies.first)
 
 gold = Stock.create(name: "Gold")
-puts "Stock: Gold created"
+silver = Stock.create(name: "Silver")
+platinum = Stock.create(name: "Platinum")
+nikkei = Stock.create(name: "Nikkei")
+spx = Stock.create(name: "SPX")
+ftse = Stock.create(name: "FTSE100")
+shcomp = Stock.create(name: "Shanghai Comp")
+dow = Stock.create(name: "Dow Jones")
+puts "Stocks created"
 
-filepath = '/Users/stanleyperrin/code/sperrin98/perrinvest/gold.csv'
+# filepath = '/Users/stanleyperrin/code/sperrin98/perrinvest/gold.csv'
 
-CSV.foreach(filepath, headers: true) do |row|
-  row = History.create({
-    :stock_id  => row[0],
-    :date => row[1],
-    :price => row[2]
-  })
-end
+# CSV.foreach(filepath, headers: true) do |row|
+#   row = History.create({
+#     :stock_id  => row[0],
+#     :date => row[1],
+#     :price => row[2]
+#   })
+# end
