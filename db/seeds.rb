@@ -17,8 +17,12 @@ shcomp = Stock.create(name: "Shanghai Comp")
 dow = Stock.create(name: "Dow Jones")
 puts "Stocks created"
 
-# filepath = '/Users/stanleyperrin/code/sperrin98/perrinvest/gold.csv'
+# file = '/Users/stanleyperrin/code/sperrin98/perrinvest/gold.csv'
 
+
+# CSV.foreach(file.path, headers: true) do |row|
+#   History.create! row.to_hash
+# end
 # CSV.foreach(filepath, headers: true) do |row|
 #   row = History.create({
 #     :stock_id  => row[0],

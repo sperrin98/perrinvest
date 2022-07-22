@@ -1,1 +1,6 @@
 <h2>Stocks</h2>
+<% @stocks.each do |stock| %>
+  <ul class="stocks">
+    <%= stock.name %>
+  </ul>
+<% end %>
