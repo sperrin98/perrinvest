@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_07_18_090310) do
+ActiveRecord::Schema.define(version: 2022_07_22_122319) do
 
   create_table "histories", force: :cascade do |t|
     t.date "date"
@@ -25,6 +25,7 @@ ActiveRecord::Schema.define(version: 2022_07_18_090310) do
     t.string "name"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.string "category"
   end
 
   add_foreign_key "histories", "stocks"
