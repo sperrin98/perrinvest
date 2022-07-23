@@ -17,6 +17,14 @@ shcomp = Stock.create(name: "Shanghai Comp")
 dow = Stock.create(name: "Dow Jones")
 puts "Stocks created"
 
+bond = Category.create(category_name: "Bond");
+share = Category.create(category_name: "Share");
+equity_index = Category.create(category_name: "Equity Index");
+commodity = Category.create(category_name: "Commodity");
+currency = Category.create(category_name: "Currency");
+crytocurrency = Category.create(category_name: "Crytocurrency");
+puts "Categories created";
+
 # file = '/Users/stanleyperrin/code/sperrin98/perrinvest/gold.csv'
 
 
