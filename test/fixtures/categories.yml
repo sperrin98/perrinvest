@@ -2,6 +2,8 @@
 
 one:
   category_name: MyString
+  stocks: one
 
 two:
   category_name: MyString
+  stocks: two
