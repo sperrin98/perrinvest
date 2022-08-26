@@ -7,34 +7,14 @@ require 'csv'
 #   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
 #   Character.create(name: 'Luke', movie: movies.first)
 
-gold = Stock.create(name: "Gold")
-silver = Stock.create(name: "Silver")
-platinum = Stock.create(name: "Platinum")
-nikkei = Stock.create(name: "Nikkei")
-spx = Stock.create(name: "SPX")
-ftse = Stock.create(name: "FTSE100")
-shcomp = Stock.create(name: "Shanghai Comp")
-dow = Stock.create(name: "Dow Jones")
-puts "Stocks created"
 
-bond = Category.create(category_name: "Bond");
-share = Category.create(category_name: "Share");
-equity_index = Category.create(category_name: "Equity Index");
-commodity = Category.create(category_name: "Commodity");
-currency = Category.create(category_name: "Currency");
-crytocurrency = Category.create(category_name: "Crytocurrency");
-puts "Categories created";
+stocks = []
+filepath = '/Users/stanleyperrin/code/sperrin98/perrinvest/stocks.csv'
 
-# file = '/Users/stanleyperrin/code/sperrin98/perrinvest/gold.csv'
-
-
-# CSV.foreach(file.path, headers: true) do |row|
-#   History.create! row.to_hash
-# end
-# CSV.foreach(filepath, headers: true) do |row|
-#   row = History.create({
-#     :stock_id  => row[0],
-#     :date => row[1],
-#     :price => row[2]
-#   })
-# end
+CSV.foreach(Rails.root.join(filepath), headers: true) do |row|
+  Stock.create( {
+    id: row["id"],
+    name: row["name"]
+  })
+  puts "#{row[0]}, #{row[1]}"
+end

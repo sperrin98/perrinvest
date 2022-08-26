@@ -1,11 +1,13 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
 one:
+  stock_id: 1
   date: 2022-07-23
   price: 1
   stocks: one
 
 two:
+  stock_id: 1
   date: 2022-07-23
   price: 1
   stocks: two

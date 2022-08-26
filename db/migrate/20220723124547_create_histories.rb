@@ -1,6 +1,7 @@
 class CreateHistories < ActiveRecord::Migration[6.1]
   def change
     create_table :histories do |t|
+      t.integer :stock_id
       t.date :date
       t.integer :price
       t.references :stocks, null: false, foreign_key: true
