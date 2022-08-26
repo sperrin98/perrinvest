@@ -2,12 +2,10 @@
 
 one:
   price: 1
-  stock_id: 1
   date: 2022-08-26
   stocks: one
 
 two:
   price: 1
-  stock_id: 1
   date: 2022-08-26
   stocks: two

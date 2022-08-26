@@ -22,7 +22,7 @@ gold_filepath = '/Users/stanleyperrin/code/sperrin98/perrinvest/gold.csv'
 CSV.foreach(Rails.root.join(gold_filepath), headers: true) do |x|
   History.create!( {
     id: x["id"],
-    stock_id: x["stock_id"],
+    stocks_id: x["stocks_id"],
     date: x["date"],
     price: x["price"]
   })
