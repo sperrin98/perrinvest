@@ -7,14 +7,25 @@ require 'csv'
 #   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
 #   Character.create(name: 'Luke', movie: movies.first)
 
-
-stocks = []
 filepath = '/Users/stanleyperrin/code/sperrin98/perrinvest/stocks.csv'
 
 CSV.foreach(Rails.root.join(filepath), headers: true) do |row|
-  Stock.create( {
+  Stock.create!( {
     id: row["id"],
     name: row["name"]
   })
   puts "#{row[0]}, #{row[1]}"
+end
+
+gold_filepath = '/Users/stanleyperrin/code/sperrin98/perrinvest/gold.csv'
+
+CSV.foreach(Rails.root.join(gold_filepath), headers: true) do |x|
+  History.create!( {
+    id: x["id"],
+    stock_id: x["stock_id"],
+    date: x["date"],
+    price: x["price"]
+  })
+
+  puts "#{x[0]}, #{x[1]}, #{x[2]}, #{x[3]}"
 end
