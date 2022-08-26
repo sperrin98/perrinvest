@@ -73,3 +73,17 @@ CSV.foreach(Rails.root.join(dow_filepath), headers: true) do |x|
   puts "#{x[0]}, #{x[1]}, #{x[2]}, #{x[3]}"
 end
 puts "DOW Jones histories created"
+
+shcomp_filepath = '/Users/stanleyperrin/code/sperrin98/perrinvest/shcomp.csv'
+
+CSV.foreach(Rails.root.join(shcomp_filepath), headers: true) do |x|
+  History.create!( {
+    id: x["id"],
+    stocks_id: x["stocks_id"],
+    date: x["date"],
+    price: x["price"]
+  })
+
+  puts "#{x[0]}, #{x[1]}, #{x[2]}, #{x[3]}"
+end
+puts "Shanghai Composite histories created"
