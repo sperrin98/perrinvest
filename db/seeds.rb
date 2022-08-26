@@ -15,6 +15,7 @@ CSV.foreach(Rails.root.join(filepath), headers: true) do |row|
     name: row["name"]
   })
   puts "#{row[0]}, #{row[1]}"
+  puts "Stocks created"
 end
 
 gold_filepath = '/Users/stanleyperrin/code/sperrin98/perrinvest/gold.csv'
@@ -29,3 +30,18 @@ CSV.foreach(Rails.root.join(gold_filepath), headers: true) do |x|
 
   puts "#{x[0]}, #{x[1]}, #{x[2]}, #{x[3]}"
 end
+puts "Gold histories created"
+
+silver_filepath = '/Users/stanleyperrin/code/sperrin98/perrinvest/silver.csv'
+
+CSV.foreach(Rails.root.join(silver_filepath), headers: true) do |x|
+  History.create!( {
+    id: x["id"],
+    stocks_id: x["stocks_id"],
+    date: x["date"],
+    price: x["price"]
+  })
+
+  puts "#{x[0]}, #{x[1]}, #{x[2]}, #{x[3]}"
+end
+puts "Silver histories created"
