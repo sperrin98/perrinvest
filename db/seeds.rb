@@ -101,3 +101,17 @@ CSV.foreach(Rails.root.join(nikkei_filepath), headers: true) do |x|
   puts "#{x[0]}, #{x[1]}, #{x[2]}, #{x[3]}"
 end
 puts "Japanese stock market histories created"
+
+ftse_filepath = '/Users/stanleyperrin/code/sperrin98/perrinvest/ftse.csv'
+
+CSV.foreach(Rails.root.join(ftse_filepath), headers: true) do |x|
+  History.create!( {
+    id: x["id"],
+    stocks_id: x["stocks_id"],
+    date: x["date"],
+    price: x["price"]
+  })
+
+  puts "#{x[0]}, #{x[1]}, #{x[2]}, #{x[3]}"
+end
+puts "FTSE100 histories created"
