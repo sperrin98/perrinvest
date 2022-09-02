@@ -1,0 +1,21 @@
+.cards {
+  justify-content: space-evenly;
+  width: 300px;
+  height: 150px;
+  padding: 0;
+  border: 1px solid;
+  border-radius: 10px;
+}
+
+.card-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-gap: 24px;
+  justify-content: space-evenly;
+  margin-left: 100px;
+}
+
+.card-text {
+  text-align: center;
+  border-bottom: 1px solid;
+}
