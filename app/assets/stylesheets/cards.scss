@@ -3,7 +3,7 @@
   width: 300px;
   height: 150px;
   padding: 0;
-  border: 1px solid;
+  border: 1px solid navy;
   border-radius: 10px;
 }
 
@@ -17,5 +17,9 @@
 
 .card-text {
   text-align: center;
-  border-bottom: 1px solid;
+  border-bottom: 1px solid navy;
+  font-family: 'Abel', sans-serif;
+  margin: 0;
+  padding: 10px;
+  color: navy;
 }
