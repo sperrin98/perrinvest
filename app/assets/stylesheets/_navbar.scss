@@ -9,11 +9,12 @@
 }
 
 .navbar-nav {
-  display: flex;
+  display: -webkit-inline-box;
   align-items: center;
   flex-direction: row !important;
   justify-content: space-evenly !important;
   position: absolute;
-  left: 975px;
+  left: 920px;
   top: 1px;
+  text-decoration: none;
 }

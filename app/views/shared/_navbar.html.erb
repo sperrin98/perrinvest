@@ -13,9 +13,13 @@
       <ul class="nav-item">
       <a class="nav-link">Messages</a>
       </ul>
-      <ul class="nav-item">
-      <%= link_to 'Sign out', destroy_user_session_path, :method => :delete %>
-      </a>
+      <% if user_signed_in? %>
+        <ul class="nav-item">
+        <%= link_to 'Sign out', destroy_user_session_path, :method => :delete, class: 'nav-link' %>
+      <% else %>
+        <ul class="nav-item">
+        <%= link_to 'Sign in', user_session_path, class: 'nav-link' %>
+      <% end %>
     </ul>
   </div>
 </nav>
