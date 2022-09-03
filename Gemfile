@@ -58,5 +58,8 @@ gem 'roo', '~> 2.8'
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 
+#Devise
+gem "devise"
+
 # Search bar
 gem "pg_search"
