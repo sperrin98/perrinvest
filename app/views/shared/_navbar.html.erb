@@ -10,9 +10,12 @@
       <ul class="nav-item">
         <a class="nav-link">Contact</a>
       </ul>
-      <ul class="nav-link">
+      <ul class="nav-item">
       <a class="nav-link">Messages</a>
       </ul>
+      <ul class="nav-item">
+      <%= link_to 'Sign out', destroy_user_session_path, :method => :delete %>
+      </a>
     </ul>
   </div>
 </nav>
