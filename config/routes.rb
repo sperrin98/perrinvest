@@ -10,4 +10,5 @@ end
   resources :stocks do
     resources :histories, only: [:index, :show ]
   end
+  resources :blogs
 end

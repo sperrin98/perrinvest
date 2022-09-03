@@ -2,16 +2,16 @@
   <div class="navbar navbar-collapse" id="navbarSupportedContent">
     <ul class="navbar-nav mr-auto">
       <ul class="nav-item active">
-        <a class="nav-link">Home</a>
+        <%= link_to "Home", root_path, class: 'nav-link' %>
       </ul>
       <ul class="nav-item">
-        <a class="nav-link">About us</a>
+        <%= link_to "Stocks", stocks_path, class: 'nav-link' %>
       </ul>
       <ul class="nav-item">
-        <a class="nav-link">Contact</a>
+        <a class="nav-link">Histories</a>
       </ul>
       <ul class="nav-item">
-      <a class="nav-link">Messages</a>
+        <%= link_to "Blogs", blogs_path, class: 'nav-link' %>
       </ul>
       <% if user_signed_in? %>
         <ul class="nav-item">
