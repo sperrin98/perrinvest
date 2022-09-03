@@ -12,6 +12,30 @@
 
 ActiveRecord::Schema.define(version: 2022_09_03_164220) do
 
+  create_table "categories", force: :cascade do |t|
+    t.string "category_name"
+    t.integer "stocks_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["stocks_id"], name: "index_categories_on_stocks_id"
+  end
+
+  create_table "histories", force: :cascade do |t|
+    t.integer "price"
+    t.date "date"
+    t.integer "stocks_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["stocks_id"], name: "index_histories_on_stocks_id"
+  end
+
+  create_table "stocks", force: :cascade do |t|
+    t.string "name"
+    t.integer "category_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
   create_table "users", force: :cascade do |t|
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
@@ -24,4 +48,6 @@ ActiveRecord::Schema.define(version: 2022_09_03_164220) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
+  add_foreign_key "categories", "stocks", column: "stocks_id"
+  add_foreign_key "histories", "stocks", column: "stocks_id"
 end
