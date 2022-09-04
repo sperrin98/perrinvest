@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  devise_for :authors
   get 'home/index'
   devise_for :users do
   get '/users/sign_out' => 'devise/sessions#destroy'
