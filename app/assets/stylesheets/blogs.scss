@@ -1,3 +1,69 @@
 // Place all the styles related to the blogs controller here.
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: https://sass-lang.com/
+
+.container {
+  background-color: #f8f8f8;
+  height: 100vh;
+  width: 100vw;
+  padding-left: 0;
+}
+
+.blog-container {
+  display: table-caption;
+  font-family: 'Abel', sans-serif;
+  width: 100vw;
+  color: #007f93;
+  font-size: 17px;
+}
+
+.form-container {
+  width: 606px;
+  display: inherit;
+  justify-content: right;
+  position: relative;
+  left: 400px;
+}
+
+#blog_title {
+  font-family: 'Abel', sans-serif;
+  margin-bottom: 4px;
+  width: 598px;
+  color: #17e2ff;
+}
+#blog_content {
+  font-family: 'Abel', sans-serif;
+  width: 600px;
+  height: 300px;
+  color: #17e2ff;
+}
+#blog_publisher {
+  font-family: 'Abel', sans-serif;
+  width: 598px;
+  color: #17e2ff;
+}
+
+.button-form {
+  color: white;
+  margin-top: 10px;
+  padding: 10px;
+  padding-left: 30px;
+  padding-right: 30px;
+  border-radius: 20px;
+  background: linear-gradient(to bottom right, #007f93, #17e2ff);
+  border: none;
+  position: absolute;
+  left: 232px;
+}
+
+.button-form:hover {
+  color: white;
+  background: linear-gradient(to bottom right, #17e2ff, #007f93);
+  transition: ease 1s;
+}
+
+.blog-title {
+  text-align: center;
+  color: #007f93;
+  font-family: 'Abel', sans-serif;
+}
