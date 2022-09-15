@@ -63,3 +63,6 @@ gem "devise"
 
 # Search bar
 gem "pg_search"
+
+# Simple form
+gem 'simple_form'
