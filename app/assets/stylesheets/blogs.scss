@@ -4,7 +4,7 @@
 
 .container {
   background-color: #f8f8f8;
-  height: 100%;
+  height: 100vh;
   width: 100%;
   padding-left: 0;
 }
@@ -29,6 +29,11 @@
   font-family: 'Abel', sans-serif;
   margin-bottom: 4px;
   width: 598px;
+}
+#blog_subtitle {
+  font-family: 'Abel', sans-serif;
+  width: 598px;
+  height: 40px;
 }
 #blog_content {
   font-family: 'Abel', sans-serif;

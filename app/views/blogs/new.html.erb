@@ -4,6 +4,7 @@
     <div class="form-container">
       <%= simple_form_for @blog, html: { class: "form-new"} do |f| %>
         <%= f.input :title, placeholder: 'Title...' %>
+        <%= f.input :subtitle, placeholder: 'A small introduction...' %>
         <%= f.input :content, placeholder: 'Your blog content...' %>
         <%= f.input :publisher, placeholder: 'Publisher...' %>
         <%= f.button :submit, class: "button-form" %>
