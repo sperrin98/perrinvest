@@ -1,1 +1,7 @@
 <h1>Blogs</h1>
+
+<% @blogs.each do |blog| %>
+  <h3><%= blog.title %></h4>
+  <p><%= blog.content %></p>
+  <p><%= blog.publisher %></p>
+<% end %>
