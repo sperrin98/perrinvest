@@ -1,9 +1,16 @@
-<h1>Blogs</h1>
+<div class="container">
+  <h1 class="blogs-title">Blogs</h1>
 
-<%= link_to 'New Post', new_blog_path, class: "button-form" %>
 
-<% @blogs.each do |blog| %>
-  <h3><%= blog.title %></h4>
-  <p><%= blog.content %></p>
-  <p><%= blog.publisher %></p>
-<% end %>
+  <div class="blogs">
+    <% @blogs.each do |blog| %>
+      <div class="blog">
+        <h3><%= blog.title %></h4>
+        <p><%= blog.content %></p>
+        <p><%= blog.publisher %></p>
+      </div>
+    <% end %>
+  </div>
+
+  <%= link_to 'New Post', new_blog_path, class: "button-form" %>
+</div>
