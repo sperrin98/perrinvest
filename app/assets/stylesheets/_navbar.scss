@@ -1,11 +1,14 @@
 .navbar {
-  height: 45px;
+  height: 60px;
+  background: linear-gradient(to bottom right, #13c4df, #007f93);
 }
 
 .nav-link {
-  color: navy;
+  color: white;
   text-align: right;
   font-family: 'Abel', sans-serif;
+  text-decoration: none;
+  padding: 30px;
 }
 
 .navbar-nav {
@@ -17,4 +20,5 @@
   left: 920px;
   top: 1px;
   text-decoration: none;
+  padding-top: 17px;
 }
