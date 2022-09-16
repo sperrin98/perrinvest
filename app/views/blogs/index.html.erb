@@ -1,5 +1,7 @@
 <h1>Blogs</h1>
 
+<%= link_to 'New Post', new_blog_path, class: "button-form" %>
+
 <% @blogs.each do |blog| %>
   <h3><%= blog.title %></h4>
   <p><%= blog.content %></p>
