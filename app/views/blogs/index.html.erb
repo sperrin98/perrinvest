@@ -7,7 +7,8 @@
       <div class="blog">
         <%= link_to blog_path(blog) do %>
         <h3 class="blog-card-title"><%= blog.title %></h3>
-        <p class="blog-card-subtitle"><%= blog.subtitle %>...</p>
+        <p class="blog-card-subtitle"><strong><%= blog.subtitle %></strong></p>
+        <p class="blog-card-content"><%= blog.content %>...</p>
         <p class="blog-card-publisher"><%= blog.publisher %></p>
         <% end %>
       </div>

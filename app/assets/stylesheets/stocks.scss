@@ -9,3 +9,13 @@
   padding-top: 20px;
   padding-bottom: 20px;
 }
+
+.stock-img-card {
+  width: max-content;
+  height: 21vw;
+  object-fit: cover;
+  text-decoration: none !important;
+  border-top-right-radius: 32px;
+  border-top-left-radius: 32px;
+  background-repeat: no-repeat;
+}

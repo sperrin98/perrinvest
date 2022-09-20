@@ -12,9 +12,10 @@ filepath = '/Users/stanleyperrin/code/sperrin98/perrinvest/stocks.csv'
 CSV.foreach(Rails.root.join(filepath), headers: true) do |row|
   Stock.create!( {
     id: row["id"],
-    name: row["name"]
+    name: row["name"],
+    image_url: row["image_url"]
   })
-  puts "#{row[0]}, #{row[1]}"
+  puts "#{row[0]}, #{row[1]}, #{row[2]}"
   puts "Stocks created"
 end
 

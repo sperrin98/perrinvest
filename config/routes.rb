@@ -9,7 +9,7 @@ end
   get "/about", to: "pages#home"
 
   resources :stocks do
-    resources :histories, only: [:index, :show ]
+    resources :histories, only: [ :show ]
   end
   resources :blogs
 end

@@ -96,7 +96,7 @@
   font-family: 'Abel', sans-serif;
   color: #007f93 !important;
   border-radius: 10px;
-  height: 150px;
+  height: 250px;
   overflow-y: hidden;
   background-color: white;
 }
@@ -112,7 +112,7 @@
 
 .blog-card-subtitle {
   padding: 5px;
-  height: 89px;
+  // height: 89px;
   color: rgb(42, 42, 42);
   overflow-y: hidden;
 }
@@ -124,4 +124,11 @@
   color: black;
   font-weight: bold;
   z-index: 1000;
+}
+
+.blog-card-content {
+  color: black;
+  margin-left: 5px;
+  margin-right: 10px;
+  font-size: 13px;
 }
