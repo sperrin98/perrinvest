@@ -1,6 +1,5 @@
 <h1>Gold</h1>
 
-<% History.all.each do |h| %>
-  <%= h.price %>
-  <%= h.date %>
-<% end %>
+<h1><%= @history.stocks_id %></h1>
+<p><%= @history.price %></p>
+<p><%= @history.date %></p>

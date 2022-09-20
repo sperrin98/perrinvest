@@ -4,6 +4,6 @@ class HistoriesController < ApplicationController
   end
 
   def show
-    @history = History.new
+    @history = History.find(params[:id])
   end
 end

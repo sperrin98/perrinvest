@@ -1,6 +1,4 @@
-<% @blogs.each do |blog| %>
-  <h1><%= blog.title %></h1>
-  <h3><%= blog.subtitle %></h3>
-  <p><%= blog.content %></p>
-  <p><%= blog.publisher %></p>
-<% end %>
+<h1><%= @blog.title %></h1>
+<h2><%= @blog.subtitle %></h2>
+<p><%= @blog.content %></p>
+<strong><p><%= @blog.publisher %></p></strong>
