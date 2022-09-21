@@ -1,4 +1,7 @@
-<h1><%= @blog.title %></h1>
-<h2><%= @blog.subtitle %></h2>
-<p><%= @blog.content %></p>
-<strong><p><%= @blog.publisher %></p></strong>
+<div class="blog-show-container">
+  <h1 class="show-blog-title"><%= @blog.title %></h1>
+  <h2 class="show-blog-subtitle"><%= @blog.subtitle %></h2>
+  <hr>
+  <p class="show-blog-content"><%= @blog.content %></p>
+  <strong><p class="show-blog-publisher"><%= @blog.publisher %></p></strong>
+</div>
