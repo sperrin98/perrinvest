@@ -3,7 +3,7 @@ class CreateHistories < ActiveRecord::Migration[6.1]
     create_table :histories do |t|
       t.integer :price
       t.date :date
-      t.references :stocks, null: false, foreign_key: true
+      t.references :stock, null: false, foreign_key: true
 
       t.timestamps
     end

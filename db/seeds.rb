@@ -13,9 +13,8 @@ CSV.foreach(Rails.root.join(filepath), headers: true) do |row|
   Stock.create!( {
     id: row["id"],
     name: row["name"],
-    image_url: row["image_url"]
   })
-  puts "#{row[0]}, #{row[1]}, #{row[2]}"
+  puts "#{row[0]}, #{row[1]}"
   puts "Stocks created"
 end
 
@@ -24,7 +23,7 @@ gold_filepath = '/Users/stanleyperrin/code/sperrin98/perrinvest/gold.csv'
 CSV.foreach(Rails.root.join(gold_filepath), headers: true) do |x|
   History.create!( {
     id: x["id"],
-    stocks_id: x["stocks_id"],
+    stock_id: x["stock_id"],
     date: x["date"],
     price: x["price"]
   })
@@ -38,7 +37,7 @@ silver_filepath = '/Users/stanleyperrin/code/sperrin98/perrinvest/silver.csv'
 CSV.foreach(Rails.root.join(silver_filepath), headers: true) do |x|
   History.create!( {
     id: x["id"],
-    stocks_id: x["stocks_id"],
+    stock_id: x["stock_id"],
     date: x["date"],
     price: x["price"]
   })
@@ -52,7 +51,7 @@ platinum_filepath = '/Users/stanleyperrin/code/sperrin98/perrinvest/platinum.csv
 CSV.foreach(Rails.root.join(platinum_filepath), headers: true) do |x|
   History.create!( {
     id: x["id"],
-    stocks_id: x["stocks_id"],
+    stock_id: x["stock_id"],
     date: x["date"],
     price: x["price"]
   })
@@ -66,7 +65,7 @@ dow_filepath = '/Users/stanleyperrin/code/sperrin98/perrinvest/dowjones.csv'
 CSV.foreach(Rails.root.join(dow_filepath), headers: true) do |x|
   History.create!( {
     id: x["id"],
-    stocks_id: x["stocks_id"],
+    stock_id: x["stock_id"],
     date: x["date"],
     price: x["price"]
   })
@@ -80,7 +79,7 @@ shcomp_filepath = '/Users/stanleyperrin/code/sperrin98/perrinvest/shcomp.csv'
 CSV.foreach(Rails.root.join(shcomp_filepath), headers: true) do |x|
   History.create!( {
     id: x["id"],
-    stocks_id: x["stocks_id"],
+    stock_id: x["stock_id"],
     date: x["date"],
     price: x["price"]
   })
@@ -94,7 +93,7 @@ nikkei_filepath = '/Users/stanleyperrin/code/sperrin98/perrinvest/nikkei.csv'
 CSV.foreach(Rails.root.join(nikkei_filepath), headers: true) do |x|
   History.create!( {
     id: x["id"],
-    stocks_id: x["stocks_id"],
+    stock_id: x["stock_id"],
     date: x["date"],
     price: x["price"]
   })
@@ -108,7 +107,7 @@ ftse_filepath = '/Users/stanleyperrin/code/sperrin98/perrinvest/ftse.csv'
 CSV.foreach(Rails.root.join(ftse_filepath), headers: true) do |x|
   History.create!( {
     id: x["id"],
-    stocks_id: x["stocks_id"],
+    stock_id: x["stock_id"],
     date: x["date"],
     price: x["price"]
   })

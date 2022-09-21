@@ -2,10 +2,10 @@
 
 one:
   price: 1
-  date: 2022-08-26
-  stocks: one
+  date: 2022-09-21
+  stock: one
 
 two:
   price: 1
-  date: 2022-08-26
-  stocks: two
+  date: 2022-09-21
+  stock: two

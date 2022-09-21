@@ -1,4 +1,4 @@
-﻿id,date,price,stocks_id
+﻿id,date,price,stock_id
 1,30/01/1987,532.5,3
 2,27/02/1987,520,3
 3,31/03/1987,562.5,3
