@@ -2,12 +2,10 @@
 
 <h1><%= @history.id %></h1>
 <h1><%= @history.stock_id %></h1>
-<p><%= @history.price %></p>
-<p><%= @history.date %></p>
+<h1><%= @stock.history_id %></h1>
 
-<% if @stock.id == @history.stock_id %>
-  <% History.all.each do |h| %>
-    <%= h.stock_id %>
-    <%= h.price %>
-  <% end %>
+
+<% @histories.each do |h| %>
+  <%= h.stock_id %>
+  <%= h.price %>
 <% end %>

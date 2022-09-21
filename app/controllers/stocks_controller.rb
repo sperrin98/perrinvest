@@ -5,7 +5,6 @@ class StocksController < ApplicationController
   end
 
   def show
-    @stock = Stock.find(params[:id])
-    @history - History.find(params[:stock_id])
+    @stock = Stock.find(params[:stock_id])
   end
 end

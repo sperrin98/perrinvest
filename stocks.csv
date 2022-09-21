@@ -1,11 +1,11 @@
-﻿id,name
-1,Gold
-2,Silver
-3,Platinum
-4,DOW Jones
-5,Shanghai Composite
-6,Nikkei
-7,FTSE100
-8,SPX
-9,ASX
-10,Currencies
+﻿id,name,history_id
+1,Gold,1
+2,Silver,2
+3,Platinum,3
+4,DOW Jones,4
+5,Shanghai Composite,5
+6,Nikkei,6
+7,FTSE100,7
+8,SPX,8
+9,ASX,9
+10,Currencies,10
