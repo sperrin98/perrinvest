@@ -1,4 +1,5 @@
 class HistoriesController < ApplicationController
+  skip_before_action :authenticate_user!, only: :index
   def index
     @history = History.find(params[:stock_id])
     @stock = Stock.find(params[:stock_id])
