@@ -1,8 +1,8 @@
-<h1>histories</h1>
+<h1><%= @stock.id %> histories</h1>
 
-<h1>this is the history id <%= @history.id %></h1>
-<h1>this is the history stock id <%= @history.stock_id %></h1>
-<h1>this is the stock id <%= @stock.id %></h1>
+<h1>this is the history id: <%= @history.id %></h1>
+<h1>this is the history stock id: <%= @history.stock_id %></h1>
+<h1>this is the stock id: <%= @stock.id %></h1>
 
 <% @histories.each do |h| %>
   <%=  h.stock_id %>
