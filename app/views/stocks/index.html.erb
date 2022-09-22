@@ -1,7 +1,12 @@
-<%= link_to "Gold Histories", stock_histories_path(1), class: "btn btn-primary" %>
-<%= link_to "Silver Histories", stock_histories_path(2), class: "btn btn-primary" %>
-<%= link_to "Platinum Histories", stock_histories_path(3), class: "btn btn-primary" %>
-<%= link_to "DOW Jones Histories", stock_histories_path(4), class: "btn btn-primary" %>
-<%= link_to "Shanghai Composite Histories", stock_histories_path(5), class: "btn btn-primary" %>
-<%= link_to "Nikkei Histories", stock_histories_path(6), class: "btn btn-primary" %>
-<%= link_to "FTSE100 Histories", stock_histories_path(7), class: "btn btn-primary" %>
+<div class="container">
+  <h2 class="stock-title">Stock histories</h2>
+  <div class="card-container">
+    <% @stocks.each do |stock| %>
+      <ul class="cards">
+        <%= link_to stock_histories_path("#{stock.id}") do %>
+        <h3 class="card-text"><%= stock.name %></h3>
+        <% end %>
+      </ul>
+    <% end %>
+  </div>
+</div>
