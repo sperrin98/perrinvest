@@ -2,8 +2,6 @@
 
 one:
   name: MyString
-  history_id: 1
 
 two:
   name: MyString
-  history_id: 1
