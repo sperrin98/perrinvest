@@ -1,10 +1,13 @@
-<h1><%= @stock.name %> histories</h1>
-
-<%= line_chart @histories.group(:date).sum('price') %>
-<% @histories.each do |h| %>
-  <div class="history">
-  <%= h.stock_id %>
-  <%= h.price %>
-  <%= h.date %>
+<div>
+  <h1><%= @stock.name %> histories</h1>
+  <div class="chartkick">
+    <%= line_chart @histories.group(:date).sum('price'), height: '600px' %>
   </div>
-<% end %>
+  <% @histories.each do |h| %>
+    <div class="history">
+    <%= h.stock_id %>
+    <%= h.price %>
+    <%= h.date %>
+    </div>
+  <% end %>
+</div>
