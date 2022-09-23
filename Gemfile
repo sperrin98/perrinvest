@@ -66,3 +66,15 @@ gem "pg_search"
 
 # Simple form
 gem 'simple_form'
+
+# Highstock Charts
+gem 'highstock-rails'
+
+# Charkick
+gem "chartkick"
+
+# Groupdate
+gem "groupdate"
+
+# Fusion charts
+gem 'fusioncharts-rails', '~> 0.0.2'
