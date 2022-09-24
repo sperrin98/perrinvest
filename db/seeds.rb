@@ -7,6 +7,66 @@ require 'csv'
 #   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
 #   Character.create(name: 'Luke', movie: movies.first)
 
+blog1 = Blog.create!({ title: 'Blog 1', subtitle: 'This is a test
+  subtitle for my blog show page, has to be over 50 characters', content: '
+  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
+    tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
+    veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
+    commodo consequat. Duis aute irure dolor in reprehenderit in voluptate
+    velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat
+    cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id
+    est laborum.',  publisher: 'sperrin98' },)
+
+blog2 = Blog.create!({ title: 'Blog 2', subtitle: 'This is another test
+      subtitle for my blog show page, has to be over 50 characters', content: '
+      Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
+        tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
+        veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
+        commodo consequat. Duis aute irure dolor in reprehenderit in voluptate
+        velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat
+        cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id
+        est laborum.',  publisher: 'lorajones1' },)
+
+blog3 = Blog.create!({ title: 'Blog 3', subtitle: 'SUBTITLE: READING FC
+  ARE THE GREATEST FOOTBALL TEAM IN THE WORLD', content: '
+  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
+    tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
+    veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
+    commodo consequat. Duis aute irure dolor in reprehenderit in voluptate
+    velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat
+    cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id
+    est laborum.',  publisher: 'alexperrin68' },)
+
+blog4 = Blog.create!({ title: 'Another blog', subtitle: 'A shorter subtitle', content: '
+      Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
+        tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
+        veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
+        commodo consequat. Duis aute irure dolor in reprehenderit in voluptate
+        velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat
+        cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id
+        est laborum.',  publisher: 'sperrin98' },)
+
+blog5 = Blog.create!({ title: 'England World Cup', subtitle: 'Its is coming home', content: '
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
+            tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
+            veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
+            commodo consequat. Duis aute irure dolor in reprehenderit in voluptate
+            velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat
+            cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id
+            est laborum.',  publisher: 'garethsouthgate66' },)
+
+blog6 = Blog.create!({ title: 'Latin code generator', subtitle: 'Lorem ipsum is very useful', content: '
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
+                tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
+                veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
+                commodo consequat. Duis aute irure dolor in reprehenderit in voluptate
+                velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat
+                cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id
+                est laborum.',  publisher: 'lorem1066' },)
+
+
+puts blog1, blog2, blog3, blog4, blog5, blog6
+
 filepath = '/Users/stanleyperrin/code/sperrin98/perrinvest/stocks.csv'
 
 CSV.foreach(Rails.root.join(filepath), headers: true) do |row|
