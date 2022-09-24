@@ -6,9 +6,6 @@
         <%= f.input :title, placeholder: 'Title...' %>
         <%= f.input :subtitle, placeholder: 'A small introduction...' %>
         <%= f.input :content, placeholder: 'Your blog content...' %>
-        <% if @blog.image.attached? %>
-          <%= image_tag blog.image, style:  "width: 200px; display: block" %>
-        <% end %>
         <%= f.label :image %>
         <%= f.file_field  :image %>
         <%= f.input :publisher, placeholder: 'Publisher...' %>
