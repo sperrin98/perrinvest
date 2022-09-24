@@ -171,7 +171,19 @@ hr {
   height: 100px;
 }
 
+img {
+  height: 400px;
+  text-align: center;
+  vertical-align: middle;
+}
+
 .blog-img {
-  width: 500px;
-  height: 250px;
+  height: 400px;
+  display: flex;
+  justify-content: center;
+}
+
+.user-subheading {
+  color:black;
+  font-family: 'Abel', sans-serif;
 }
