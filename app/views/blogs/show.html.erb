@@ -3,6 +3,11 @@
   <h2 class="show-blog-subtitle"><%= @blog.subtitle %></h2>
   <hr>
   <p class="show-blog-content"><%= @blog.content %></p>
-  <img class="blog-img" src="<%= @blog.image %>">
-  <strong><p class="show-blog-publisher"><%= @blog.publisher %></p></strong>
+  <div class="blog-img">
+    <% if @blog.image_url.present? %>
+        <%= image_tag(@blog.image_url) %>
+    <% end %>
+  </div>
+  <strong class="user-subheading">USER: <p class="show-blog-publisher"><%= @blog.publisher %></p></strong>
+  <%= link_to "Back", blogs_path, class: 'button-form' %>
 </div>
