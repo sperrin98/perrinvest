@@ -1,4 +1,4 @@
-<div>
+<div class="container">
   <h1><%= @stock.name %> histories</h1>
   <div class="chartkick">
     <%= line_chart @histories.group(:date).sum('price'), height: '600px' %>
