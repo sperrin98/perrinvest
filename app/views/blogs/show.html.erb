@@ -3,6 +3,8 @@
   <h2 class="show-blog-subtitle"><%= @blog.subtitle %></h2>
   <hr>
   <p class="show-blog-content"><%= @blog.content %></p>
-  <img class="blog-img" src="<%= @blog.image %>">
+  <% if @blog.image.present? %>
+    <img class="blog-img" src="<%= @blog.image_url %>">
+  <% end %>
   <strong><p class="show-blog-publisher"><%= @blog.publisher %></p></strong>
 </div>
