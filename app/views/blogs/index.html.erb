@@ -3,6 +3,15 @@
   <div class="blog-cards">
     <% @blogs.each do |blog| %>
       <div class="blog">
+        <div class="blog-thumbnail">
+          <% if blog.image_url.present? %>
+            <div class="blog-img-thumbnail">
+              <%= image_tag(blog.image_url) %>
+            </div>
+          <% else %>
+            <%= image_tag 'noimage.png', class: 'no-image' %>
+          <% end %>
+        </div>
         <%= link_to blog_path(blog) do %>
         <h3 class="blog-card-title"><%= blog.title %></h3>
         <p class="blog-card-subtitle"><strong><%= blog.subtitle %></strong></p>
