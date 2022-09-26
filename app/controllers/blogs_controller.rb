@@ -1,5 +1,5 @@
 class BlogsController < ApplicationController
-  skip_before_action :authenticate_user!, only: [ :index, :show ]
+  skip_before_action :authenticate_user!, only: [ :index, :show, :edit, :destroy ]
   def index
     @blogs = Blog.all
   end
@@ -19,6 +19,12 @@ class BlogsController < ApplicationController
     else
       render :new
     end
+  end
+
+  def destroy
+    @blog = Blog.find(params[:id])
+    @blog.destroy
+    redirect_to blogs_path
   end
 
   private

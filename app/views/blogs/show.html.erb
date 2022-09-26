@@ -9,5 +9,6 @@
     <% end %>
   </div>
   <strong class="user-subheading">USER: <p class="show-blog-publisher"><%= @blog.publisher %></p></strong>
+  <%= link_to "Delete Post", blog_path, method: :delete, data: { confirm: 'Are you sure?'} %>
   <%= link_to "Back", blogs_path, class: 'button-form' %>
 </div>
