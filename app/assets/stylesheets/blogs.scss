@@ -154,6 +154,7 @@
 
 .show-blog-publisher {
   font-family: 'Abel', sans-serif;
+  text-align: right;
 }
 
 .blog-show-container {
@@ -181,9 +182,23 @@ img {
   height: 400px;
   display: flex;
   justify-content: center;
+  margin-top: 10px;
+  margin-bottom: 10px;
 }
 
 .user-subheading {
   color:black;
   font-family: 'Abel', sans-serif;
+}
+
+.button-container {
+  position: relative;
+  height: 80px;
+  margin-top: 25px;
+  align-items: center;
+  margin-left: 250px;
+}
+.button {
+  display: inline-block;
+  margin-right: 100px;
 }

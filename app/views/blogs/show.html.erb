@@ -3,11 +3,22 @@
   <h2 class="show-blog-subtitle"><%= @blog.subtitle %></h2>
   <hr>
   <p class="show-blog-content"><%= @blog.content %></p>
-  <div class="blog-img">
     <% if @blog.image_url.present? %>
-        <%= image_tag(@blog.image_url) %>
+    <div class="blog-img">
+      <%= image_tag(@blog.image_url) %>
+    </div>
     <% end %>
+
+  <strong class="user-subheading"><p class="show-blog-publisher"><%= @blog.publisher %></p></strong>
+  <div class="button-container">
+    <div class="button">
+      <%= link_to "Delete Post", blog_path, method: :delete, data: { confirm: 'Are you sure?'}, class: 'button-blog' %>
+    </div>
+    <div class="button">
+      <%= link_to "Edit Post", edit_blog_path(@blog), class: 'button-blog' %>
+    </div>
+    <div class="button">
+      <%= link_to "Back", blogs_path, class: 'button-blog' %>
+    </div>
   </div>
-  <strong class="user-subheading">USER: <p class="show-blog-publisher"><%= @blog.publisher %></p></strong>
-  <%= link_to "Back", blogs_path, class: 'button-form' %>
 </div>

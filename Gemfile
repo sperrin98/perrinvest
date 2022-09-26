@@ -81,3 +81,6 @@ gem 'fusioncharts-rails', '~> 0.0.2'
 
 # Image processing
 gem 'image_processing', '~> 1.12', '>= 1.12.2'
+
+# API calling
+gem 'excon'
