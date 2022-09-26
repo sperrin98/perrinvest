@@ -11,3 +11,27 @@
   font-family: 'Abel', sans-serif;
   text-decoration: none;
 }
+
+.button-blog {
+  color: white;
+  margin-top: 10px;
+  padding: 10px;
+  padding-left: 30px;
+  padding-right: 30px;
+  border-radius: 20px;
+  background: linear-gradient(to bottom right, #007f93, #17e2ff);
+  border: none;
+  font-family: 'Abel', sans-serif;
+}
+
+.button-blog:hover {
+  color: white;
+  margin-top: 10px;
+  padding: 10px;
+  padding-left: 30px;
+  padding-right: 30px;
+  border-radius: 20px;
+  background: linear-gradient(to bottom right, #17e2ff, #007f93);
+  border: none;
+  font-family: 'Abel', sans-serif;
+}
