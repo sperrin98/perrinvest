@@ -1,3 +1,3 @@
 class Category < ApplicationRecord
-  belongs_to :stocks
+  has_many :stocks
 end

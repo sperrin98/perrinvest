@@ -2,6 +2,8 @@
 
 one:
   name: MyString
+  category: one
 
 two:
   name: MyString
+  category: two
