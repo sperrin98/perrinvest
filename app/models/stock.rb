@@ -1,4 +1,3 @@
 class Stock < ApplicationRecord
-  belongs_to :category
-  has_many :histories
+  belongs_to :category, optional: true
 end
