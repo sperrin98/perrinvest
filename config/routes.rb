@@ -16,5 +16,7 @@ end
     resources :histories, only: [ :index ]
   end
 
-  resources :blogs, only: [ :index, :show, :edit, :update, :destroy, :new, :create ]
+  resources :blogs, only: [ :index, :show, :edit, :update, :destroy, :new, :create ] do
+    resources :comments, only: [ :new, :create ]
+  end
 end

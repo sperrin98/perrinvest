@@ -89,7 +89,7 @@
 }
 
 .blog {
-  border: solid 1px #007f93;;
+  border: solid 1px #007f93;
   margin: 10px;
   padding: 0px;
   text-decoration: none;
@@ -98,7 +98,7 @@
   height: 500px;
   overflow-y: hidden;
   background-color: white;
-  box-shadow: 1px 2px #888888;;
+  box-shadow: 1px 2px #888888;
 }
 
 .blog-thumbnail {
@@ -218,4 +218,21 @@ hr {
   height: 250px;
   width: 320px;
   object-fit: fill;
+}
+
+.blog-box {
+  border: 1px solid #007f93;
+  padding: 10px;
+  box-shadow: 1px 2px #888888;
+}
+
+#comment_comment {
+  display: flex;
+  width: 1040px;
+  height: 200px;
+}
+
+label {
+  color: #007f93;
+  font-family: 'Abel', sans-serif;
 }
