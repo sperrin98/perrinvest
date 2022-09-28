@@ -286,3 +286,17 @@ CSV.foreach(Rails.root.join(gbpvusd_filepath), headers: true) do |x|
   puts "#{x[0]}, #{x[1]}, #{x[2]}, #{x[3]}"
 end
 puts "GBP v USD histories created"
+
+eurvusd_filepath = '/Users/stanleyperrin/code/sperrin98/perrinvest/eurvusd.csv'
+
+CSV.foreach(Rails.root.join(eurvusd_filepath), headers: true) do |x|
+  History.create!( {
+    id: x["id"],
+    stock_id: x["stock_id"],
+    date: x["date"],
+    price: x["price"]
+  })
+
+  puts "#{x[0]}, #{x[1]}, #{x[2]}, #{x[3]}"
+end
+puts "EUR v USD histories created"
