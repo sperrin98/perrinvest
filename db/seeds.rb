@@ -230,3 +230,45 @@ CSV.foreach(Rails.root.join(xrp_filepath), headers: true) do |x|
   puts "#{x[0]}, #{x[1]}, #{x[2]}, #{x[3]}"
 end
 puts "XRP histories created"
+
+apple_filepath = '/Users/stanleyperrin/code/sperrin98/perrinvest/apple.csv'
+
+CSV.foreach(Rails.root.join(apple_filepath), headers: true) do |x|
+  History.create!( {
+    id: x["id"],
+    stock_id: x["stock_id"],
+    date: x["date"],
+    price: x["price"]
+  })
+
+  puts "#{x[0]}, #{x[1]}, #{x[2]}, #{x[3]}"
+end
+puts "Apple histories created"
+
+netflix_filepath = '/Users/stanleyperrin/code/sperrin98/perrinvest/netflix.csv'
+
+CSV.foreach(Rails.root.join(netflix_filepath), headers: true) do |x|
+  History.create!( {
+    id: x["id"],
+    stock_id: x["stock_id"],
+    date: x["date"],
+    price: x["price"]
+  })
+
+  puts "#{x[0]}, #{x[1]}, #{x[2]}, #{x[3]}"
+end
+puts "Netflix histories created"
+
+amazon_filepath = '/Users/stanleyperrin/code/sperrin98/perrinvest/amazon.csv'
+
+CSV.foreach(Rails.root.join(amazon_filepath), headers: true) do |x|
+  History.create!( {
+    id: x["id"],
+    stock_id: x["stock_id"],
+    date: x["date"],
+    price: x["price"]
+  })
+
+  puts "#{x[0]}, #{x[1]}, #{x[2]}, #{x[3]}"
+end
+puts "Amazon histories created"
