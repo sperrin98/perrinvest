@@ -6,6 +6,9 @@
       <div class="category">
         <%=  link_to category_path(c.id) do %>
         <%= c.name %>
+        <div class="category-description">
+          <%= c.description %>
+        </div>
         <% end %>
       </div>
     <% end %>
