@@ -8,9 +8,13 @@ end
   root to: "home#index"
   get "/about", to: "pages#home"
 
-  resources :stocks, only: [:index, :show] do
+  resources :categories, only: [ :index, :show ] do
+    resources :stocks, only: [ :index, :show ]
+  end
+
+  resources :stocks, only: [ :index, :show ] do
     resources :histories, only: [ :index ]
   end
 
-  resources :blogs
+  resources :blogs, only: [ :index, :show, :edit, :update, :destroy, :new, :create ]
 end

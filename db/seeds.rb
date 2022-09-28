@@ -67,14 +67,27 @@ blog6 = Blog.create!({ title: 'Latin code generator', subtitle: 'Lorem ipsum is 
 
 puts blog1, blog2, blog3, blog4, blog5, blog6
 
+category_filepath = "/Users/stanleyperrin/code/sperrin98/perrinvest/category.csv"
+
+CSV.foreach(Rails.root.join(category_filepath), headers: true) do |row|
+  Category.create!( {
+    id: row["id"],
+    name: row["name"],
+    description: row["description"],
+  })
+  puts "#{row[0]}, #{row[1]}, #{row[2]}"
+  puts "Categories created"
+end
+
 filepath = '/Users/stanleyperrin/code/sperrin98/perrinvest/stocks.csv'
 
 CSV.foreach(Rails.root.join(filepath), headers: true) do |row|
   Stock.create!( {
     id: row["id"],
     name: row["name"],
+    category_id: row["category_id"]
   })
-  puts "#{row[0]}, #{row[1]}"
+  puts "#{row[0]}, #{row[1]}, #{row[2]}"
   puts "Stocks created"
 end
 

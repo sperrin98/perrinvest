@@ -1,15 +1,19 @@
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
   <div class="navbar navbar-collapse" id="navbarSupportedContent">
     <ul class="navbar-nav mr-auto">
+
       <ul class="nav-item active">
         <%= link_to "Home", root_path, class: 'nav-link' %>
       </ul>
-      <ul class="nav-item">
-        <%= link_to "Stock histories", stocks_path, class: 'nav-link' %>
-      </ul>
+
       <ul class="nav-item">
         <%= link_to "Blogs", blogs_path, class: 'nav-link' %>
       </ul>
+
+      <ul class="nav-item">
+        <%= link_to "Categories", categories_path, class: 'nav-link' %>
+      </ul>
+
       <% if user_signed_in? %>
         <ul class="nav-item">
         <%= link_to 'Sign out', destroy_user_session_path, :method => :delete, class: 'nav-link' %>

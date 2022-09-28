@@ -1,3 +1,4 @@
 class Category < ApplicationRecord
-  belongs_to :stocks
+  has_many :stocks
+  # has_many :histories, through: :categories
 end
