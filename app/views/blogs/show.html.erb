@@ -10,6 +10,14 @@
     <% end %>
 
   <strong class="user-subheading"><p class="show-blog-publisher"><%= @blog.publisher %></p></strong>
+
+  <div class="comment-container">
+    <h1>Comments</h1>
+    <%= simple_form_for [@blog, @comment] do |f| %>
+      <%= f.input :comment, html5: true %>
+      <%= f.button :submit, "Post" %>
+    <% end %>
+  </div>
   <div class="button-container">
     <div class="button">
       <%= link_to "Delete Post", blog_path, method: :delete, data: { confirm: 'Are you sure?'}, class: 'button-blog' %>
