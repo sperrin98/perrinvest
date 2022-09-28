@@ -3,12 +3,13 @@ class StocksController < ApplicationController
 
   def index
     @stocks = Stock.all
+    @categories = Category.all
+    # @category = Category.find(params[:category_id])
+    # @stock = @category.stocks.find(params[:id])
   end
 
   def show
-    @stock = Stock.find(params[:id])
-    @history = History.find(params[:stock_id])
-    @stocks = Stock.where(id: @stock_id)
-    @histories = History.where(stock_id: @stock.id)
+    @category = Category.find(params[:id])
+    @stock = Stock.where(params[:category_id])
   end
 end
