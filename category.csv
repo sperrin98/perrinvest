@@ -1,6 +1,6 @@
-id,name
-1,Commodities
-2,Stock Markets
-3,Cryptocurrencies
-4,Currencies
-5,ETFs
+id,name,description
+1,Commodities,Raw materials and primary agricultural products
+2,Stock Markets,The stock exchanges of different nations
+3,Cryptocurrencies,Digital currencies
+4,Currencies,Fiat currencies
+5,ETFs,An Exchange-traded fund (ETF) is type of pooled investment security.
