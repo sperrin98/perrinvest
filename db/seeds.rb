@@ -188,3 +188,17 @@ CSV.foreach(Rails.root.join(ftse_filepath), headers: true) do |x|
   puts "#{x[0]}, #{x[1]}, #{x[2]}, #{x[3]}"
 end
 puts "FTSE100 histories created"
+
+nasdaq_filepath = '/Users/stanleyperrin/code/sperrin98/perrinvest/nasdaq.csv'
+
+CSV.foreach(Rails.root.join(nasdaq_filepath), headers: true) do |x|
+  History.create!( {
+    id: x["id"],
+    stock_id: x["stock_id"],
+    date: x["date"],
+    price: x["price"]
+  })
+
+  puts "#{x[0]}, #{x[1]}, #{x[2]}, #{x[3]}"
+end
+puts "NASDAQ histories created"
