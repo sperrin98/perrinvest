@@ -1,3 +1,7 @@
+<h1><%= @category.name %></h1>
+
 <% @stocks.each do |s| %>
+  <%= link_to stock_histories_path("#{s.id}") do %>
   <%= s.name %>
+  <% end %>
 <% end %>

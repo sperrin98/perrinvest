@@ -1,0 +1,18 @@
+.categories {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-gap: 50px;
+  justify-content: space-evenly;
+  margin-top: 50px;
+  margin-left: 100px;
+  margin-right: 100px;
+  margin-bottom: 50px;
+}
+
+.category {
+  font-family: 'Abel', sans-serif;
+  color: #007f93 !important;
+  text-decoration: none;
+  padding-bottom: 200px;
+  font-size: 30px;
+}

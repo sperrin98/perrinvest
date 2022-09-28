@@ -1,7 +1,13 @@
-<h1>Categories</h1>
+<div class="category-container">
+  <h1>Categories</h1>
 
-<% @categories.each do |c| %>
-  <%=  link_to category_path(c.id) do %>
-  <%= c.name %>
-  <% end %>
-<% end %>
+  <div class="categories">
+    <% @categories.each do |c| %>
+      <div class="category">
+        <%=  link_to category_path(c.id) do %>
+        <%= c.name %>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+</div>
