@@ -6,13 +6,20 @@ class CommentsController < ApplicationController
 
   def create
     @blog = Blog.find(params[:blog_id])
-    @comment = @blog.comment.create(comment_params)
+    @comment = Comment.new(comment_params)
+    @comment.blog = @blog
+    @comment.user = current_user
+    @comment.save
     redirect_to blog_path(@blog)
+  end
+
+  def show
+    @comments = Comment.all
   end
 
   private
 
   def comment_params
-    params.require(:comment).permit(:comment)
+    params.require(:comment).permit(:body)
   end
 end
