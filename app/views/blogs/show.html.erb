@@ -9,23 +9,34 @@
         <%= image_tag(@blog.image_url) %>
       </div>
       <% end %>
+      <small><em><%= @blog.user.username %></small></em>
+      <small><em class="text-muted"><p><%= distance_of_time_in_words_to_now(@blog.created_at) %> ago</p></em></small>
   </div>
 
-  <strong class="user-subheading"><p class="show-blog-publisher"><%= @blog.publisher %></p></strong>
+  <%# <strong class="user-subheading"><p class="show-blog-publisher"><%= @blog.publisher %>
 
   <div class="comment-container">
     <h1>Comments</h1>
     <%= simple_form_for [@blog, @comment] do |f| %>
-      <%= f.input :comment, html5: true, class: 'comment-box' %>
+      <%= f.input :body, html5: true, class: 'comment-box' %>
       <%= f.button :submit, "Post" %>
     <% end %>
   </div>
 
   <div class="comment-show">
-    <% @comments.each do |c| %>
-      <%= c.comment %>
-    <% end %>
-  </div>
+    <% @blogs.each do |blog| %>
+      <div class="comment-box">
+        <% blog.comments.each do |c| %>
+          <ul><%= c.body %></ul>
+          <%# <hr> %>
+          <div class="comment-times">
+            <ul><small><em class="text-muted"><p><%= distance_of_time_in_words_to_now(c.created_at) %> ago</p></em></small></ul>
+            <ul><small><em><%= c.user.username %></small></em></ul>
+          </div>
+        <% end %>
+        </div>
+      <% end %>
+    </div>
 
   <div class="button-container">
     <div class="button">

@@ -8,6 +8,7 @@ class CommentsController < ApplicationController
     @blog = Blog.find(params[:blog_id])
     @comment = Comment.new(comment_params)
     @comment.blog = @blog
+    @comment.user = current_user
     @comment.save
     redirect_to blog_path(@blog)
   end
@@ -19,6 +20,6 @@ class CommentsController < ApplicationController
   private
 
   def comment_params
-    params.require(:comment).permit(:comment)
+    params.require(:comment).permit(:body)
   end
 end

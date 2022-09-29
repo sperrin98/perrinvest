@@ -7,6 +7,9 @@ require 'csv'
 #   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
 #   Character.create(name: 'Luke', movie: movies.first)
 
+user1 = User.create!( email: 'test@test.com', password: '123455',
+  username: 'testuser')
+
 blog1 = Blog.create!({ title: 'Blog 1', subtitle: 'This is a test
   subtitle for my blog show page, has to be over 50 characters', content: '
   Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
@@ -15,7 +18,7 @@ blog1 = Blog.create!({ title: 'Blog 1', subtitle: 'This is a test
     commodo consequat. Duis aute irure dolor in reprehenderit in voluptate
     velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat
     cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id
-    est laborum.',  publisher: 'sperrin98' },)
+    est laborum.', user_id: '1' })
 
 blog2 = Blog.create!({ title: 'Blog 2', subtitle: 'This is another test
       subtitle for my blog show page, has to be over 50 characters', content: '
@@ -25,7 +28,7 @@ blog2 = Blog.create!({ title: 'Blog 2', subtitle: 'This is another test
         commodo consequat. Duis aute irure dolor in reprehenderit in voluptate
         velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat
         cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id
-        est laborum.',  publisher: 'lorajones1' },)
+        est laborum.', user_id: '1' })
 
 blog3 = Blog.create!({ title: 'Blog 3', subtitle: 'SUBTITLE: READING FC
   ARE THE GREATEST FOOTBALL TEAM IN THE WORLD', content: '
@@ -35,7 +38,7 @@ blog3 = Blog.create!({ title: 'Blog 3', subtitle: 'SUBTITLE: READING FC
     commodo consequat. Duis aute irure dolor in reprehenderit in voluptate
     velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat
     cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id
-    est laborum.',  publisher: 'alexperrin68' },)
+    est laborum.', user_id: '1' })
 
 blog4 = Blog.create!({ title: 'Another blog', subtitle: 'A shorter subtitle', content: '
       Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
@@ -44,7 +47,7 @@ blog4 = Blog.create!({ title: 'Another blog', subtitle: 'A shorter subtitle', co
         commodo consequat. Duis aute irure dolor in reprehenderit in voluptate
         velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat
         cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id
-        est laborum.',  publisher: 'sperrin98' },)
+        est laborum.', user_id: '1' })
 
 blog5 = Blog.create!({ title: 'England World Cup', subtitle: 'Its is coming home', content: '
           Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
@@ -53,7 +56,7 @@ blog5 = Blog.create!({ title: 'England World Cup', subtitle: 'Its is coming home
             commodo consequat. Duis aute irure dolor in reprehenderit in voluptate
             velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat
             cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id
-            est laborum.',  publisher: 'garethsouthgate66' },)
+            est laborum.', user_id: '1' })
 
 blog6 = Blog.create!({ title: 'Latin code generator', subtitle: 'Lorem ipsum is very useful', content: '
               Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
@@ -62,7 +65,7 @@ blog6 = Blog.create!({ title: 'Latin code generator', subtitle: 'Lorem ipsum is 
                 commodo consequat. Duis aute irure dolor in reprehenderit in voluptate
                 velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat
                 cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id
-                est laborum.',  publisher: 'lorem1066' },)
+                est laborum.', user_id: '1' })
 
 
 puts blog1, blog2, blog3, blog4, blog5, blog6
@@ -315,9 +318,9 @@ CSV.foreach(Rails.root.join(jpyvusd_filepath), headers: true) do |x|
 end
 puts "JPY v USD histories created"
 
-cadvusd_filepath = '/Users/stanleyperrin/code/sperrin98/perrinvest/cadvusd.csv'
+canvusd_filepath = '/Users/stanleyperrin/code/sperrin98/perrinvest/canvusd.csv'
 
-CSV.foreach(Rails.root.join(cadvusd_filepath), headers: true) do |x|
+CSV.foreach(Rails.root.join(canvusd_filepath), headers: true) do |x|
   History.create!( {
     id: x["id"],
     stock_id: x["stock_id"],

@@ -3,11 +3,13 @@
 one:
   title: MyString
   content: MyText
-  publisher: MyString
-  published_at: 2022-09-03 18:51:05
+  image_url: MyString
+  subtitle: MyString
+  user: one
 
 two:
   title: MyString
   content: MyText
-  publisher: MyString
-  published_at: 2022-09-03 18:51:05
+  image_url: MyString
+  subtitle: MyString
+  user: two
