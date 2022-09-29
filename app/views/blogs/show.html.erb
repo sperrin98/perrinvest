@@ -16,23 +16,24 @@
   <%# <strong class="user-subheading"><p class="show-blog-publisher"><%= @blog.publisher %>
 
   <div class="comment-container">
-    <h1>Comments</h1>
+    <h1>Add a comment</h1>
     <%= simple_form_for [@blog, @comment] do |f| %>
       <%= f.input :body, html5: true, class: 'comment-box' %>
       <%= f.button :submit, "Post" %>
     <% end %>
   </div>
 
-  <div class="comment-show">
+  <div class="container-comments p-5 m-5 shadow bg-white rounded">
+    <h1>Comments for <%= @blog.title %></h1>
     <% @blogs.each do |blog| %>
       <div class="comment-box">
         <% blog.comments.each do |c| %>
-          <ul><%= c.body %></ul>
-          <%# <hr> %>
+          <p><%= c.body %></p>
           <div class="comment-times">
             <ul><small><em class="text-muted"><p><%= distance_of_time_in_words_to_now(c.created_at) %> ago</p></em></small></ul>
             <ul><small><em><%= c.user.username %></small></em></ul>
           </div>
+          <hr class="comment-hr">
         <% end %>
         </div>
       <% end %>

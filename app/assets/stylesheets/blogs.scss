@@ -237,22 +237,11 @@ label {
   font-family: 'Abel', sans-serif;
 }
 
-.comment-show {
-  display: block;
-}
-.comment-box {
-  display: flex;
-  border: solid 1px black;
-  padding: 5px;
-  margin: 5px;
-  height: 50px;
+.comment-hr {
+  width: 1000px;
+  margin: 10px;
 }
 
 .comment-times {
   text-align: right;
-  width: 990px;
-}
-
-.comment-hr {
-  width: 1000px;
 }
