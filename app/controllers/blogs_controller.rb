@@ -2,11 +2,13 @@ class BlogsController < ApplicationController
   skip_before_action :authenticate_user!, only: [ :index, :show, :edit, :destroy ]
   def index
     @blogs = Blog.all
+
   end
 
   def show
     @blog = Blog.find(params[:id])
     @comment = Comment.new
+    @comments = Comment.all
   end
 
   def new

@@ -21,6 +21,12 @@
     <% end %>
   </div>
 
+  <div class="comment-show">
+    <% @comments.each do |c| %>
+      <%= c.comment %>
+    <% end %>
+  </div>
+
   <div class="button-container">
     <div class="button">
       <%= link_to "Delete Post", blog_path, method: :delete, data: { confirm: 'Are you sure?'}, class: 'button-blog' %>
