@@ -1,13 +1,17 @@
 <div class="category-container">
-  <h1>Categories</h1>
+  <div class="category-frontpage">
+    <h1 class="cat-title">Categories</h1>
+    <em><p class="cat-subtitle">Discover histories of markets, currencies and more</p></em>
+    <%= image_tag 'bull.jpeg', class: 'bull-image' %>
 
+  </div>
   <div class="categories">
     <% @categories.each do |c| %>
       <div class="category">
         <%=  link_to category_path(c.id) do %>
         <%= c.name %>
         <div class="category-description">
-          <%= c.description %>
+          <em><%= c.description %></em>
         </div>
         <% end %>
       </div>

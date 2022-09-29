@@ -22,3 +22,30 @@
   font-size: 20px;
   font-style: italic;
 }
+
+.category-frontpage {
+  height: 91vh;
+}
+.cat-title {
+  font-family: 'Abel', sans-serif;
+  color: #007f93;
+  text-align: center;
+  margin-top: 10px;
+  position: absolute;
+  top: 350px;
+  left: 170px;
+}
+
+.cat-subtitle {
+  position: absolute;
+  left: 170px;
+  top: 400px;
+  font-family: 'Abel', sans-serif;
+  color: #007f93;
+}
+
+.bull-image {
+  height: 674px;
+  position: absolute;
+  right: 0;
+}
