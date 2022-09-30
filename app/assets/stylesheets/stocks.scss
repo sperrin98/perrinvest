@@ -10,6 +10,20 @@
   padding-bottom: 20px;
 }
 
+.stocks-title {
+  font-family: 'Abel', sans-serif;
+  color: #007f93;
+  flex-direction: row;
+  display: contents;
+  margin-right: 20px;
+}
+
+.title-container {
+  padding: 20px;
+  flex-direction: row;
+  display: contents;
+}
+
 .stock-img-card {
   width: max-content;
   height: 21vw;

@@ -70,6 +70,8 @@ blog6 = Blog.create!({ title: 'Latin code generator', subtitle: 'Lorem ipsum is 
 
 puts blog1, blog2, blog3, blog4, blog5, blog6
 
+
+
 category_filepath = "/Users/stanleyperrin/code/sperrin98/perrinvest/category.csv"
 
 CSV.foreach(Rails.root.join(category_filepath), headers: true) do |row|
@@ -359,3 +361,8 @@ CSV.foreach(Rails.root.join(sandp_filepath), headers: true) do |x|
   puts "#{x[0]}, #{x[1]}, #{x[2]}, #{x[3]}"
 end
 puts "S&P histories created"
+
+# create a variable with key
+
+# url = 'https://www.alphavantage.co'
+# ENV["API_KEY"]
