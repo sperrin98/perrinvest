@@ -8,10 +8,14 @@
 
   <div class="categories">
     <% @categories.each do |c| %>
-      <%=  link_to category_path(c.id) do %>
-      <%= c.name %>
-      <em><%= c.description %></em>
+      <div class="category">
+        <%=  link_to category_path(c.id) do %>
+        <%= c.name %>
+        <div class="category-description">
+          <em><%= c.description %></em>
+        </div>
+        <% end %>
+      </div>
       <% end %>
-    <% end %>
   </div>
 </div>
