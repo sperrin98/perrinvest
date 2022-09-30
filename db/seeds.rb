@@ -278,9 +278,9 @@ CSV.foreach(Rails.root.join(amazon_filepath), headers: true) do |x|
 end
 puts "Amazon histories created"
 
-gbpvusd_filepath = '/Users/stanleyperrin/code/sperrin98/perrinvest/gbpvusd.csv'
+naturalgas_filepath = '/Users/stanleyperrin/code/sperrin98/perrinvest/naturalgas.csv'
 
-CSV.foreach(Rails.root.join(gbpvusd_filepath), headers: true) do |x|
+CSV.foreach(Rails.root.join(naturalgas_filepath), headers: true) do |x|
   History.create!( {
     id: x["id"],
     stock_id: x["stock_id"],
@@ -290,11 +290,11 @@ CSV.foreach(Rails.root.join(gbpvusd_filepath), headers: true) do |x|
 
   puts "#{x[0]}, #{x[1]}, #{x[2]}, #{x[3]}"
 end
-puts "GBP v USD histories created"
+puts "Natural Gas histories created"
 
-eurvusd_filepath = '/Users/stanleyperrin/code/sperrin98/perrinvest/eurvusd.csv'
+oil_filepath = '/Users/stanleyperrin/code/sperrin98/perrinvest/crudeoil.csv'
 
-CSV.foreach(Rails.root.join(eurvusd_filepath), headers: true) do |x|
+CSV.foreach(Rails.root.join(oil_filepath), headers: true) do |x|
   History.create!( {
     id: x["id"],
     stock_id: x["stock_id"],
@@ -304,7 +304,7 @@ CSV.foreach(Rails.root.join(eurvusd_filepath), headers: true) do |x|
 
   puts "#{x[0]}, #{x[1]}, #{x[2]}, #{x[3]}"
 end
-puts "EUR v USD histories created"
+puts "Crude Oil histories created"
 
 jpyvusd_filepath = '/Users/stanleyperrin/code/sperrin98/perrinvest/jpyvusd.csv'
 
