@@ -84,3 +84,9 @@ gem 'image_processing', '~> 1.12', '>= 1.12.2'
 
 # API calling
 gem 'excon'
+
+# AlphavantageRB
+gem 'alphavantagerb'
+
+# API gem
+gem 'dotenv-rails'

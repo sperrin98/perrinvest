@@ -1,3 +1,3 @@
 class History < ApplicationRecord
-  belongs_to :stock
+  belongs_to :stock, optional: true
 end

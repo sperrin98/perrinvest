@@ -70,6 +70,8 @@ blog6 = Blog.create!({ title: 'Latin code generator', subtitle: 'Lorem ipsum is 
 
 puts blog1, blog2, blog3, blog4, blog5, blog6
 
+
+
 category_filepath = "/Users/stanleyperrin/code/sperrin98/perrinvest/category.csv"
 
 CSV.foreach(Rails.root.join(category_filepath), headers: true) do |row|
@@ -276,9 +278,9 @@ CSV.foreach(Rails.root.join(amazon_filepath), headers: true) do |x|
 end
 puts "Amazon histories created"
 
-gbpvusd_filepath = '/Users/stanleyperrin/code/sperrin98/perrinvest/gbpvusd.csv'
+naturalgas_filepath = '/Users/stanleyperrin/code/sperrin98/perrinvest/naturalgas.csv'
 
-CSV.foreach(Rails.root.join(gbpvusd_filepath), headers: true) do |x|
+CSV.foreach(Rails.root.join(naturalgas_filepath), headers: true) do |x|
   History.create!( {
     id: x["id"],
     stock_id: x["stock_id"],
@@ -288,11 +290,11 @@ CSV.foreach(Rails.root.join(gbpvusd_filepath), headers: true) do |x|
 
   puts "#{x[0]}, #{x[1]}, #{x[2]}, #{x[3]}"
 end
-puts "GBP v USD histories created"
+puts "Natural Gas histories created"
 
-eurvusd_filepath = '/Users/stanleyperrin/code/sperrin98/perrinvest/eurvusd.csv'
+oil_filepath = '/Users/stanleyperrin/code/sperrin98/perrinvest/crudeoil.csv'
 
-CSV.foreach(Rails.root.join(eurvusd_filepath), headers: true) do |x|
+CSV.foreach(Rails.root.join(oil_filepath), headers: true) do |x|
   History.create!( {
     id: x["id"],
     stock_id: x["stock_id"],
@@ -302,7 +304,7 @@ CSV.foreach(Rails.root.join(eurvusd_filepath), headers: true) do |x|
 
   puts "#{x[0]}, #{x[1]}, #{x[2]}, #{x[3]}"
 end
-puts "EUR v USD histories created"
+puts "Crude Oil histories created"
 
 jpyvusd_filepath = '/Users/stanleyperrin/code/sperrin98/perrinvest/jpyvusd.csv'
 
@@ -318,9 +320,9 @@ CSV.foreach(Rails.root.join(jpyvusd_filepath), headers: true) do |x|
 end
 puts "JPY v USD histories created"
 
-canvusd_filepath = '/Users/stanleyperrin/code/sperrin98/perrinvest/canvusd.csv'
+eth_filepath = '/Users/stanleyperrin/code/sperrin98/perrinvest/eth.csv'
 
-CSV.foreach(Rails.root.join(canvusd_filepath), headers: true) do |x|
+CSV.foreach(Rails.root.join(eth_filepath), headers: true) do |x|
   History.create!( {
     id: x["id"],
     stock_id: x["stock_id"],
@@ -330,11 +332,11 @@ CSV.foreach(Rails.root.join(canvusd_filepath), headers: true) do |x|
 
   puts "#{x[0]}, #{x[1]}, #{x[2]}, #{x[3]}"
 end
-puts "CAD v USD histories created"
+puts "ETH histories created"
 
-audvusd_filepath = '/Users/stanleyperrin/code/sperrin98/perrinvest/audvusd.csv'
+wheat_filepath = '/Users/stanleyperrin/code/sperrin98/perrinvest/wheat.csv'
 
-CSV.foreach(Rails.root.join(audvusd_filepath), headers: true) do |x|
+CSV.foreach(Rails.root.join(wheat_filepath), headers: true) do |x|
   History.create!( {
     id: x["id"],
     stock_id: x["stock_id"],
@@ -344,7 +346,7 @@ CSV.foreach(Rails.root.join(audvusd_filepath), headers: true) do |x|
 
   puts "#{x[0]}, #{x[1]}, #{x[2]}, #{x[3]}"
 end
-puts "AUD v USD histories created"
+puts "Wheat histories created"
 
 sandp_filepath = '/Users/stanleyperrin/code/sperrin98/perrinvest/sandp.csv'
 
@@ -359,3 +361,8 @@ CSV.foreach(Rails.root.join(sandp_filepath), headers: true) do |x|
   puts "#{x[0]}, #{x[1]}, #{x[2]}, #{x[3]}"
 end
 puts "S&P histories created"
+
+# create a variable with key
+
+# url = 'https://www.alphavantage.co'
+# ENV["API_KEY"]

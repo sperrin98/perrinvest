@@ -1,7 +1,12 @@
-<h1><%= @category.name %></h1>
-
-<% @stocks.each do |s| %>
-  <%= link_to stock_histories_path("#{s.id}") do %>
-  <%= s.name %>
-  <% end %>
-<% end %>
+<div class="cs-container">
+  <h1><%= @category.name %></h1>
+  <div class="stock-title-container">
+    <% @stocks.each do |s| %>
+      <div class="title-container">
+        <%= link_to stock_histories_path("#{s.id}") do %>
+        <h2 class="stocks-title"><%= s.name %></h2>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+</div>
