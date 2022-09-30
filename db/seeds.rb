@@ -320,9 +320,9 @@ CSV.foreach(Rails.root.join(jpyvusd_filepath), headers: true) do |x|
 end
 puts "JPY v USD histories created"
 
-canvusd_filepath = '/Users/stanleyperrin/code/sperrin98/perrinvest/canvusd.csv'
+eth_filepath = '/Users/stanleyperrin/code/sperrin98/perrinvest/eth.csv'
 
-CSV.foreach(Rails.root.join(canvusd_filepath), headers: true) do |x|
+CSV.foreach(Rails.root.join(eth_filepath), headers: true) do |x|
   History.create!( {
     id: x["id"],
     stock_id: x["stock_id"],
@@ -332,7 +332,7 @@ CSV.foreach(Rails.root.join(canvusd_filepath), headers: true) do |x|
 
   puts "#{x[0]}, #{x[1]}, #{x[2]}, #{x[3]}"
 end
-puts "CAD v USD histories created"
+puts "ETH histories created"
 
 audvusd_filepath = '/Users/stanleyperrin/code/sperrin98/perrinvest/audvusd.csv'
 
