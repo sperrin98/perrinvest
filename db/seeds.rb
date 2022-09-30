@@ -334,9 +334,9 @@ CSV.foreach(Rails.root.join(eth_filepath), headers: true) do |x|
 end
 puts "ETH histories created"
 
-tesla_filepath = '/Users/stanleyperrin/code/sperrin98/perrinvest/tesla.csv'
+wheat_filepath = '/Users/stanleyperrin/code/sperrin98/perrinvest/wheat.csv'
 
-CSV.foreach(Rails.root.join(tesla_filepath), headers: true) do |x|
+CSV.foreach(Rails.root.join(wheat_filepath), headers: true) do |x|
   History.create!( {
     id: x["id"],
     stock_id: x["stock_id"],
@@ -346,7 +346,7 @@ CSV.foreach(Rails.root.join(tesla_filepath), headers: true) do |x|
 
   puts "#{x[0]}, #{x[1]}, #{x[2]}, #{x[3]}"
 end
-puts "Tesla histories created"
+puts "Wheat histories created"
 
 sandp_filepath = '/Users/stanleyperrin/code/sperrin98/perrinvest/sandp.csv'
 
