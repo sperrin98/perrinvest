@@ -14,8 +14,10 @@
       <%= image_tag 'us.jpeg', class: "cshow-img" %>
     <% end %>
   </div>
-
-  <h1 class="cs-title"><%= @category.name %></h1>
+  <div class="cs-title-container">
+    <h1 class="cs-title"><%= @category.name %></h1>
+    <em><h3 class="cs-description"><%= @category.description %></h3></em>
+  </div>
   <div class="stock-title-container">
     <% @stocks.each do |s| %>
       <div class="title-container">

@@ -61,4 +61,24 @@
   font-family: 'Abel', sans-serif;
   color: #007f93;
   text-align: left;
+  position: absolute;
+  top: 350px;
+  left: 170px;
+}
+
+.stock-title-container {
+  grid-template-columns: 1fr 1fr;
+  grid-gap: 20px;
+}
+
+.cs-title-container {
+  height: 92vh;
+}
+
+.cs-description {
+  font-family: 'Abel', sans-serif;
+  color: #007f93;
+  position: absolute;
+  left: 170px;
+  top: 400px;
 }
