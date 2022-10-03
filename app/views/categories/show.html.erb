@@ -3,8 +3,10 @@
   <div class="stock-title-container">
     <% @stocks.each do |s| %>
       <div class="title-container">
-        <%= link_to stock_histories_path("#{s.id}") do %>
-        <h2 class="stocks-title"><%= s.name %></h2>
+        <div class="histories">
+          <%= link_to stock_histories_path("#{s.id}") do %>
+          <h2 class="stocks-title"><%= s.name %></h2>
+        </div>
         <% end %>
       </div>
     <% end %>
