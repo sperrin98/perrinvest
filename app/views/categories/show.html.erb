@@ -1,14 +1,33 @@
 <div class="cs-container">
-  <h1><%= @category.name %></h1>
+  <div class="cat-img">
+    <% if @category.id == 1 %>
+      <%= image_tag 'gold.jpeg', class: "cshow-img" %>
+    <% elsif @category.id == 2 %>
+      <%= image_tag 'stockmarket.jpeg', class: "cshow-img" %>
+    <% elsif @category.id == 3 %>
+      <%= image_tag 'crypto.jpeg', class: "cshow-img" %>
+    <% elsif @category.id == 4 %>
+      <%= image_tag 'fiat.jpeg', class: "cshow-img" %>
+    <% elsif @category.id == 5 %>
+      <%= image_tag 'etf.jpeg', class: "cshow-img" %>
+    <% elsif @category.id == 6 %>
+      <%= image_tag 'us.jpeg', class: "cshow-img" %>
+    <% end %>
+  </div>
+
+  <div class="cs-title-container">
+    <h1 class="cs-title"><%= @category.name %></h1>
+    <em><h3 class="cs-description"><%= @category.description %></h3></em>
+  </div>
+
   <div class="stock-title-container">
     <% @stocks.each do |s| %>
-      <div class="title-container">
+      <%# <div class="title-container"> %>
         <div class="histories">
           <%= link_to stock_histories_path("#{s.id}") do %>
           <h2 class="stocks-title"><%= s.name %></h2>
+          <% end %>
         </div>
-        <% end %>
-      </div>
     <% end %>
   </div>
 </div>

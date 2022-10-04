@@ -79,6 +79,7 @@ CSV.foreach(Rails.root.join(category_filepath), headers: true) do |row|
     id: row["id"],
     name: row["name"],
     description: row["description"],
+    image_url: row["image_url"],
   })
   puts "#{row[0]}, #{row[1]}, #{row[2]}"
   puts "Categories created"
