@@ -67,8 +67,20 @@
 }
 
 .stock-title-container {
-  grid-template-columns: 1fr 1fr;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
   grid-gap: 20px;
+  justify-content: space-evenly;
+  margin-top: 150px;
+  margin-left: 100px;
+  // margin-right: 100px;
+  // margin-bottom: 50px;
+}
+
+.histories {
+  font-family: 'Abel', sans-serif;
+  color: #007f93 !important;
+  padding-bottom: 100px;
 }
 
 .cs-title-container {
