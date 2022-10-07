@@ -1,0 +1,7 @@
+<div class="comment-container">
+    <h1>Comments</h1>
+    <%= simple_form_for [@blog, @comment] do |f| %>
+      <%= f.input :body, html5: true, class: 'comment-box' %>
+      <%= f.button :submit, "Post" %>
+    <% end %>
+  </div>

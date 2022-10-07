@@ -1,15 +1,15 @@
 class BlogsController < ApplicationController
   skip_before_action :authenticate_user!, only: [ :index, :show, :edit, :destroy ]
+  before_action :find_blog, only: [:show, :edit, :update, :destroy]
   def index
     @blogs = Blog.all
-
   end
 
   def show
+    @comment = Comment.where(blog_id: @blog.id)
     @blog = Blog.find(params[:id])
     @blogs = Blog.all
-    @comment = Comment.new
-    @comments = Comment.all
+    @comments = @blog.comments
   end
 
   def new
@@ -17,13 +17,9 @@ class BlogsController < ApplicationController
   end
 
   def create
-    @blog = Blog.new(blog_params)
-    @blog.user = current_user
-    if @blog.save
-      redirect_to blogs_path
-    else
-      render :new
-    end
+    @blog = Blog.find(params[:blog_id])
+    @blog.comments.create(comment_params)
+    redirect_to blog_path(@blog)
   end
 
   def edit
@@ -44,6 +40,10 @@ class BlogsController < ApplicationController
   end
 
   private
+
+  def find_blog
+    @blog = Blog.find(params[:id])
+  end
 
   def blog_params
     params.require(:blog).permit(:id, :title, :content, :publisher, :published_at, :subtitle, :image_url)
