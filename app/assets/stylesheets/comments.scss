@@ -1,3 +1,21 @@
 // Place all the styles related to the comments controller here.
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: https://sass-lang.com/
+.comment-hr {
+  width: 1000px;
+  margin: 10px;
+}
+
+.comment-body {
+  font-family: 'Abel', sans-serif;
+  color: rgb(91, 91, 91);
+}
+
+.comment-user {
+  font-family: 'Abel', sans-serif;
+}
+
+.comment-times {
+  font-family: 'Abel', sans-serif;
+  text-align: right;
+}

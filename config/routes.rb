@@ -17,6 +17,6 @@ end
   end
 
   resources :blogs, only: [ :index, :show, :edit, :update, :destroy, :new, :create ] do
-    resources :comments, only: [ :new, :create ]
+    resources :comments, only: [ :new, :create, :index ]
   end
 end
