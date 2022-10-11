@@ -10,9 +10,13 @@
     <div class="history-section">
       <h2 class="history-subtitle">Discover a world of price histories</h2>
       <p class="history-intro">Discover commodoties from Gold to Uranium and Cryptocurrencies, stock exchanges and much more</p>
-      <% History.where(stock_id: 1).last do |h| %>
-        <%= h.price %>
-      <% end %>
+      <div data-controller="carousel" class="swiper-container">
+        <div class="swiper-wrapper">
+          <div class="swiper-slide">Slide 1</div>
+          <div class="swiper-slide">Slide 2</div>
+          <div class="swiper-slide">Slide 3</div>
+        </div>
+      </div>
     </div>
   </div>
 </section>
