@@ -31,3 +31,6 @@ var FusionTheme = require("src/fusioncharts/themes/fusioncharts.theme.fusion");
 Charts(FusionCharts);
 FusionTheme(FusionCharts);
 ExcelExport(FusionCharts);
+
+// CAROUSEL
+import 'swiper/swiper-bundle.min.css'

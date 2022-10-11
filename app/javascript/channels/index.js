@@ -4,7 +4,6 @@
 const channels = require.context('.', true, /_channel\.js$/)
 channels.keys().forEach(channels)
 
-
 let section = document.querySelectorAll("section");
 let menu = document.querySelectorAll("nav-items a");
 window.onscroll = () => {

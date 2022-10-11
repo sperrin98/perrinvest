@@ -90,3 +90,6 @@ gem 'alphavantagerb'
 
 # API gem
 gem 'dotenv-rails'
+
+# Stimulus
+gem 'stimulus-rails'
