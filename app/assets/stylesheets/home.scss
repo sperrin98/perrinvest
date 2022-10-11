@@ -31,6 +31,10 @@ h1 {
 .history-subtitle {
   color: #f7f7f7;
   font-family: 'Abel', sans-serif;
+  position: absolute;
+  top: 200px;
+  left: 100px;
+  font-size: 40px;
 }
 
 .blog-section {
@@ -42,6 +46,26 @@ h1 {
 .blog-subtitle {
   color: #f7f7f7;
   font-family: 'Abel', sans-serif;
+  position: absolute;
+  top: 200px;
+  left: 100px;
+  font-size: 40px;
+}
+
+.blog-intro {
+  color: #f7f7f7;
+  font-family: 'Abel', sans-serif;
+  position: absolute;
+  top: 250px;
+  left: 100px;
+}
+
+.history-intro {
+  color: #f7f7f7;
+  font-family: 'Abel', sans-serif;
+  position: absolute;
+  top: 250px;
+  left: 100px;
 }
 
 section {
