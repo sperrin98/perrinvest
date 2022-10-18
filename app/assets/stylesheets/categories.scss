@@ -4,12 +4,15 @@
 .categories {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  grid-gap: 50px;
+  grid-gap: 5px;
   justify-content: space-evenly;
   margin-top: 50px;
   margin-left: 100px;
   margin-right: 100px;
   margin-bottom: 50px;
+  text-align: center;
+  color: #007f93 !important;
+  border: solid 0.5px;
 }
 
 .category {
@@ -17,6 +20,7 @@
   color: #007f93 !important;
   padding-bottom: 200px;
   font-size: 30px;
+  border: solid 0.5px;
 }
 
 .category-description {
