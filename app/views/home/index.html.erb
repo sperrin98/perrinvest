@@ -3,20 +3,8 @@
   <em><p class="slogan">Stock prices, history and the market</p></em>
 
   <%= image_tag 'market.png', class: 'banner' %>
+  <div class="homepage-btns">
+    <%= link_to "Blogs", blogs_path, class: 'btn btn-blog' %>
+    <%= link_to "Categories", categories_path, class: 'btn btn-category' %>
+  </div>
 </div>
-
-<section id="histories">
-   <div class="container reveal">
-     <div class="history-section">
-       <h2 class="history-subtitle">Price Histories</h2>
-     </div>
-   </div>
- </section>
-
- <section id="blogs">
-   <div class="container reveal">
-     <div class="blog-section">
-       <h2 class="blog-subtitle">Blogs</h2>
-     </div>
-   </div>
- </section>
