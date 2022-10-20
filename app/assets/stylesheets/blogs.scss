@@ -10,6 +10,7 @@
   margin-top: 60px;
   width: 951px;
   margin-left: 489px;
+
 }
 
 .blog-container {
@@ -72,11 +73,18 @@
 
 .blogs-title {
   text-align: center;
-  color: #267ABE;
+  color: #f7f7f7;
   font-family: 'Marcellus SC', serif;
   padding-top: 20px;
-  font-size: 30px;
+  font-size: 40px;
   margin: 0;
+  position: absolute;
+  top: 50%;
+  left: 17%;
+  transform: translate(-50%, -50%);
+  text-shadow: 2px 7px 5px rgba(0,0,0,0.3),
+    0px -4px 10px rgba(255,255,255,0.3);
+  position: fixed;
 }
 
 .blog-cards {
@@ -87,6 +95,7 @@
   text-decoration: none;
   margin-left: 40px;
   margin-right: 40px;
+  margin-top: 100px;
 }
 
 .blog {
@@ -242,4 +251,12 @@ label {
   filter: blur(8px);
   -webkit-filter: blur(2px);
   position: fixed;
+}
+
+.img-container {
+  height: 734px;
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 487px;
 }
