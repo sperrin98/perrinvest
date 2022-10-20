@@ -13,28 +13,36 @@
 }
 
 .button-blog {
-  color: white;
-  margin-top: 10px;
-  padding: 10px;
-  padding-left: 30px;
-  padding-right: 30px;
-  border-radius: 20px;
-  background: linear-gradient(to bottom right, #007f93, #17e2ff);
-  border: none;
-  font-family: 'Abel', sans-serif;
+  color: #f7f7f7;
+  border: solid #f7f7f7;
+  background-color: #267ABE;
+  padding: 15px;
+  padding-left: 15px;
+  padding-right: 15px;
+  font-family: 'Marcellus SC', serif;
+  border-radius: 5px;
+  margin-right: 10px;
+  width: 175x !important;
+  margin-top: 65px;
+  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
 }
 
 .button-blog:hover {
-  color: white;
-  margin-top: 10px;
-  padding: 10px;
-  padding-left: 30px;
-  padding-right: 30px;
-  border-radius: 20px;
-  background: linear-gradient(to bottom right, #17e2ff, #007f93);
-  border: none;
-  font-family: 'Abel', sans-serif;
+  color: #267ABE;
+  border: solid #267ABE;
+  background-color: #f7f7f7;
+  padding: 15px;
+  padding-left: 15px;
+  padding-right: 15px;
+  font-family: 'Marcellus SC', serif;
+  border-radius: 5px;
+  margin-right: 10px;
+  width: 175x !important;
+  margin-top: 65px;
+  transition: 0.5s ease;
+  box-shadow: rgb(204, 219, 232) 3px 3px 6px 0px inset, rgba(255, 255, 255, 0.5) -3px -3px 6px 1px inset;
 }
+
 
 .homepage-btns {
   width: 100vw;
@@ -72,7 +80,7 @@
   width: 1705x;
   margin-top: 65px;
   transition: 0.5s ease;
-  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+  box-shadow: rgb(204, 219, 232) 3px 3px 6px 0px inset, rgba(255, 255, 255, 0.5) -3px -3px 6px 1px inset;
 }
 
 .btn-category {
@@ -103,5 +111,36 @@
   width: 175px;
   margin-top: 65px;
   transition: 0.5s ease;
+  box-shadow: rgb(204, 219, 232) 3px 3px 6px 0px inset, rgba(255, 255, 255, 0.5) -3px -3px 6px 1px inset;
+}
+
+.post-btn {
+  color: #267ABE;
+  border: solid #267ABE;
+  background-color: white;
+  padding: 15px;
+  padding-left: 15px;
+  padding-right: 15px;
+  font-family: 'Marcellus SC', serif;
+  border-radius: 5px;
+  margin-left: 10px;
+  width: 175px;
+  margin-top: 65px;
   box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+}
+
+.post-btn:hover {
+  color: #f7f7f7;
+  border: solid #f7f7f7;
+  background-color: #267ABE;
+  padding: 15px;
+  padding-left: 15px;
+  padding-right: 15px;
+  font-family: 'Marcellus SC', serif;
+  border-radius: 5px;
+  margin-right: 10px;
+  width: 1705x;
+  margin-top: 65px;
+  transition: 0.5s ease;
+  box-shadow: rgb(204, 219, 232) 3px 3px 6px 0px inset, rgba(255, 255, 255, 0.5) -3px -3px 6px 1px inset;
 }
