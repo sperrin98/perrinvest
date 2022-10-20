@@ -2,8 +2,8 @@
   position: absolute;
   top: 195px;
   left: 45px;
-  color: #007f93;
-  border: solid 1px #007f93;
+  color: #267ABE;
+  border: solid 1px #267ABE;
   padding: 6px;
   border-radius: 15px;
   padding-right: 20px;
@@ -45,8 +45,9 @@
 }
 
 .btn-blog {
-  color: #174D7E;
-  border: solid #174D7E;
+  color: #267ABE;
+  border: solid #267ABE;
+  background-color: white;
   padding: 15px;
   padding-left: 15px;
   padding-right: 15px;
@@ -54,28 +55,30 @@
   border-radius: 5px;
   margin-right: 10px;
   width: 175px;
-  margin-top: 20px;
-  transition: 0.5s ease;
+  margin-top: 65px;
+  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
 }
 
 .btn-blog:hover {
   color: #f7f7f7;
   border: solid #f7f7f7;
-  background-color: #174D7E;
+  background-color: #267ABE;
   padding: 15px;
   padding-left: 15px;
   padding-right: 15px;
   font-family: 'Marcellus SC', serif;
   border-radius: 5px;
   margin-right: 10px;
-  width: 175px;
-  margin-top: 20px;
-  transition: 0.5 ease;
+  width: 1705x;
+  margin-top: 65px;
+  transition: 0.5s ease;
+  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
 }
 
 .btn-category {
-  color: #174D7E;
-  border: solid #174D7E;
+  color: #267ABE;
+  border: solid #267ABE;
+  background-color: white;
   padding: 15px;
   padding-left: 15px;
   padding-right: 15px;
@@ -83,13 +86,14 @@
   border-radius: 5px;
   margin-left: 10px;
   width: 175px;
-  margin-top: 20px;
+  margin-top: 65px;
+  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
 }
 
 .btn-category:hover {
   color: #f7f7f7;
   border: solid #f7f7f7;
-  background-color: #174D7E;
+  background-color: #267ABE;
   padding: 15px;
   padding-left: 15px;
   padding-right: 15px;
@@ -97,6 +101,7 @@
   border-radius: 5px;
   margin-left: 10px;
   width: 175px;
-  margin-top: 20px;
-  transition: 0.5 ease;
+  margin-top: 65px;
+  transition: 0.5s ease;
+  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
 }
