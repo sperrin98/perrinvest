@@ -6,11 +6,12 @@
   width: 100%;
   height: 500px;
   margin-top: 50px;
+  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
 }
 
 .title {
   position: absolute;
-  color: #007f93;
+  color: #267ABE;
   margin-left: 40px;
   font-size: 80px;
   font-family: 'Marcellus SC', serif;
@@ -21,8 +22,23 @@
 .slogan {
   position: absolute;
   top: 165px;
-  color: #007f93;
+  color: #267ABE;
   margin-left: 42px;
   font-family: 'Marcellus SC', serif;
   font-weight: unset;
+  background-color: #f7f7f7;
+}
+
+.top-container {
+  height: 100vh;
+  width: 100vw;
+  background: linear-gradient(to bottom right, #209ED8, #174D7E);
+}
+
+.login-container {
+  margin-top: 100px;
+}
+
+.signup-container {
+  margin-top: 100px;
 }

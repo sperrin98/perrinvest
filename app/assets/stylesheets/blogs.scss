@@ -14,7 +14,7 @@
   display: table-caption;
   font-family: 'Abel', sans-serif;
   width: 100vw;
-  color: #007f93;
+  color: #267ABE;
   font-size: 17px;
 }
 
@@ -67,14 +67,14 @@
 
 .new-blog-title {
   text-align: center;
-  color: #007f93;
+  color: #267ABE;
   font-family: 'Abel', sans-serif;
   padding-top: 20px;
 }
 
 .blogs-title {
   text-align: center;
-  color: #007f93;
+  color: #267ABE;
   font-family: 'Abel', sans-serif;
   padding-top: 20px;
   font-size: 30px;
@@ -91,16 +91,16 @@
 }
 
 .blog {
-  border: solid 1px #007f93;
+  border: solid 1px #267ABE;
   margin: 10px;
   padding: 0px;
   text-decoration: none;
   font-family: 'Abel', sans-serif;
-  color: #007f93 !important;
+  color: #267ABE !important;
   height: 500px;
   overflow-y: hidden;
   background-color: white;
-  box-shadow: 1px 2px #888888;
+  box-shadow: rgba(0, 0, 0, 0.09) 0px 2px 1px, rgba(0, 0, 0, 0.09) 0px 4px 2px, rgba(0, 0, 0, 0.09) 0px 8px 4px, rgba(0, 0, 0, 0.09) 0px 16px 8px, rgba(0, 0, 0, 0.09) 0px 32px 16px;
 }
 
 .blog-thumbnail {
@@ -110,10 +110,10 @@
 
 .blog-card-title {
   text-align: center;
-  border-bottom: 1px solid #007f93;
-  border-top: 1px solid #007f93;
+  border-bottom: 1px solid #267ABE;
+  border-top: 1px solid #267ABE;
   padding: 5px;
-  color: #007f93;
+  color: #267ABE;
   text-decoration: none;
 
 }
@@ -142,14 +142,14 @@
 }
 
 .show-blog-title {
-  color: #007f93;
+  color: #267ABE;
   font-family: 'Abel', sans-serif;
   font-size: 40px;
   text-align: center;
 }
 
 .show-blog-subtitle {
-  color: #007f93;
+  color: #267ABE;
   font-family: 'Abel', sans-serif;
   text-align: center;
 }
@@ -223,9 +223,9 @@ hr {
 }
 
 .blog-box {
-  border: 1px solid #007f93;
+  border: 1px solid #267ABE;
   padding: 10px;
-  box-shadow: 1px 2px #888888;
+  box-shadow: rgba(0, 0, 0, 0.09) 0px 2px 1px, rgba(0, 0, 0, 0.09) 0px 4px 2px, rgba(0, 0, 0, 0.09) 0px 8px 4px, rgba(0, 0, 0, 0.09) 0px 16px 8px, rgba(0, 0, 0, 0.09) 0px 32px 16px;
 }
 
 #comment_body {
@@ -235,7 +235,7 @@ hr {
 }
 
 label {
-  color: #007f93;
+  color: #267ABE;
   font-family: 'Abel', sans-serif;
 }
 
