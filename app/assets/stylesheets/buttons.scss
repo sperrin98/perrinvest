@@ -68,9 +68,9 @@
 }
 
 .btn-blog:hover {
-  color: #f7f7f7;
-  border: solid #f7f7f7;
-  background-color: #267ABE;
+  color: #267ABE;
+  border: solid #267ABE;
+  background-color: white;
   padding: 15px;
   padding-left: 15px;
   padding-right: 15px;
@@ -80,7 +80,7 @@
   width: 1705x;
   margin-top: 65px;
   transition: 0.5s ease;
-  box-shadow: rgb(204, 219, 232) 3px 3px 6px 0px inset, rgba(255, 255, 255, 0.5) -3px -3px 6px 1px inset;
+  box-shadow: rgba(50, 50, 93, 0.25) 0px 30px 60px -12px inset, rgba(0, 0, 0, 0.3) 0px 18px 36px -18px inset;
 }
 
 .btn-category {
@@ -99,9 +99,9 @@
 }
 
 .btn-category:hover {
-  color: #f7f7f7;
-  border: solid #f7f7f7;
-  background-color: #267ABE;
+  color: #267ABE;
+  border: solid #267ABE;
+  background-color: white;
   padding: 15px;
   padding-left: 15px;
   padding-right: 15px;
@@ -110,8 +110,8 @@
   margin-left: 10px;
   width: 175px;
   margin-top: 65px;
+  box-shadow: rgba(50, 50, 93, 0.25) 0px 30px 60px -12px inset, rgba(0, 0, 0, 0.3) 0px 18px 36px -18px inset;
   transition: 0.5s ease;
-  box-shadow: rgb(204, 219, 232) 3px 3px 6px 0px inset, rgba(255, 255, 255, 0.5) -3px -3px 6px 1px inset;
 }
 
 .post-btn {
