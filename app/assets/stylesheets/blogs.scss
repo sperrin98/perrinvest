@@ -3,7 +3,7 @@
 // You can use Sass (SCSS) here: https://sass-lang.com/
 
 .post-container {
-  background-color: #f7f7f7;
+  background-color: white;
   height: 100%;
   /* width: 100%; */
   padding-left: 0;
@@ -80,6 +80,22 @@
   margin: 0;
   position: absolute;
   top: 50%;
+  left: 17%;
+  transform: translate(-50%, -50%);
+  text-shadow: 2px 7px 5px rgba(0,0,0,0.3),
+    0px -4px 10px rgba(255,255,255,0.3);
+  position: fixed;
+}
+
+.blogs-subtitle {
+  text-align: center;
+  color: #ffffff;
+  font-family: 'Marcellus SC', serif;
+  padding-top: 20px;
+  font-size: 13px;
+  margin: 0;
+  position: absolute;
+  top: 55%;
   left: 17%;
   transform: translate(-50%, -50%);
   text-shadow: 2px 7px 5px rgba(0,0,0,0.3),
@@ -251,6 +267,7 @@ label {
   filter: blur(8px);
   -webkit-filter: blur(2px);
   position: fixed;
+  opacity: 0.75;
 }
 
 .img-container {

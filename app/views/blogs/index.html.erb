@@ -2,6 +2,7 @@
   <div class="img-container">
     <%= image_tag 'london.jpeg', class: 'london-img' %>
     <h1 class="blogs-title">Blogs</h1>
+    <em><p class="blogs-subtitle">Explore blogs on investment opportunities and today's markets with Perrinvest</p></em>
   </div>
   <div class="blog-cards">
     <% @blogs.each do |blog| %>
@@ -24,6 +25,6 @@
       </div>
     <% end %>
   </div>
-
+<%#
   <%= link_to 'New Post', new_blog_path, class: "button-form" %>
 </div>
