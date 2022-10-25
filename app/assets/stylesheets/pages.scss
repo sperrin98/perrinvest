@@ -43,9 +43,6 @@
   text-align: center;
 }
 
-.signup-container {
-  margin-top: 100px;
-}
 
 .trader-img {
   margin-top: 70px;
@@ -54,7 +51,7 @@
 }
 
 .login-title {
-  font-family: 'Marcellus SC', serif;
+  font-family: 'Montserrat', sans-serif;
   color: #267ABE;
 }
 
@@ -73,10 +70,11 @@
   background-color: white;
   border-radius: 30px;
   color: #267ABE;
-  font-family: 'Marcellus SC', serif;
+  font-family: 'Montserrat', sans-serif;
   font-size: 23px;
   padding-right: 30px;
   padding-left: 30px;
+  position: fixed;
 }
 
 .signup-msg {
@@ -85,6 +83,66 @@
   top: 300px;
   left: 110px;
   color: white;
-  font-family: 'Marcellus SC', serif;
+  font-family: 'Montserrat', sans-serif;
   font-size: 23px;
+  position: fixed;
+}
+
+.forgot-pass {
+  z-index: 1000;
+  position: absolute;
+  top: 460px;
+  left: 903px;
+  font-family: 'Montserrat', sans-serif;
+}
+
+.sign-img {
+  margin-top: 70px;
+  height: 91vh;
+  position: fixed;
+  width: 540px;
+}
+
+.login-msg {
+  z-index: 1000;
+  position: absolute;
+  top: 300px;
+  left: 110px;
+  color: white;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 23px;
+  position: fixed;
+}
+
+.signup-box {
+  margin-top: 335px;
+  position: absolute;
+  left: 535px;
+  width: 905px;
+  text-align: center;
+}
+
+.signup-title {
+  font-family: 'Montserrat', sans-serif;
+  color: #267ABE;
+  position: absolute;
+  left: 940px;
+  top: 300px;
+}
+
+.login-btn {
+  z-index: 1000;
+  position: absolute;
+  top: 500px;
+  left: 196px;
+  border: 1px #267ABE solid;
+  padding: 10px;
+  background-color: white;
+  border-radius: 30px;
+  color: #267ABE;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 23px;
+  padding-right: 30px;
+  padding-left: 30px;
+  position: fixed;
 }
