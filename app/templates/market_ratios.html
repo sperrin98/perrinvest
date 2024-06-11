@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Market Ratios</title>
+</head>
+<body>
+    <h1>Market Ratios</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Ratio ID</th>
+                <th>Ratio</th>
+                <th>Description</th>
+                <th>Security ID 1</th>
+                <th>Security ID 2</th>
+                <th>Details</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for market_ratio in market_ratios %}
+            <tr>
+                <td>{{ market_ratio[0] }}</td>
+                <td>{{ market_ratio[1] }}</td>
+                <td>{{ market_ratio[2] }}</td>
+                <td>{{ market_ratio[3] }}</td>
+                <td>{{ market_ratio[4] }}</td>
+                <td><a href="{{ url_for('main.market_ratio', market_ratio_id=market_ratio[0]) }}">View Details</a></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <form action="{{ url_for('main.home') }}" method="get">
+        <button type="submit">Go Back</button>
+</body>
+</html>
+
