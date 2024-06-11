@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+</head>
+<body>
+    <h1>Perrinvest</h1>
+    <form action="{{ url_for('main.securities') }}" method="get">
+        <button type="submit">Go to Securities</button>
+    </form>
+
+    <form action="{{ url_for('main.market_ratios') }}" method="get">
+        <button type="submit">Go to Market Ratios</button>
+    </form>
+</body>
+</html>

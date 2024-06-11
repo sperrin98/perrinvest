@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Market Ratio Details</title>
+</head>
+<body>
+    <h1>{{ ratio_name }}</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Price</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for market_ratio in market_ratio %}
+            <tr>
+                <td>{{ market_ratio[0] }}</td>
+                <td>{{ market_ratio[1] }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <form action="{{ url_for('main.market_ratios') }}" method="get">
+        <button type="submit">Go Back</button>
+    </form>
+</body>
+</html>

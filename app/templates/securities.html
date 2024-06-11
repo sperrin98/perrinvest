@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Securities Data</title>
+</head>
+<body>
+    <h1>Securities Data</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Security ID</th>
+                <th>Security Long Name</th>
+                <th>Security Short Name</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for security in securities %}
+            <tr>
+                <td>{{ security[0] }}</td>
+                <td>{{ security[1] }}</td> 
+                <td>{{ security[2] }}</td>
+                <td><a href="{{ url_for('main.security_detail', security_id=security[0]) }}">View Details</a></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <form action="{{ url_for('main.home') }}" method="get">
+        <button type="submit">Go Back</button>
+</body>
+</html>
