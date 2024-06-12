@@ -1,17 +1,18 @@
 from . import main
 from flask import jsonify, Flask
-from flask_cors import CORS
+# from flask_cors import CORS
 from app.db_utils import fetch_securities, fetch_market_ratios, fetch_market_ratio_data, fetch_security_data, fetch_price_history
 
-app = Flask(__name__)
-CORS(app)
+
+# app = Flask(__name__)
+# CORS(app)
 
 @main.route('/')
 def home():
     return jsonify({"message": "Welcome to Perrinvest"})
 
 @main.route('/securities')
-def get_securities():
+def securities():
     securities = fetch_securities()
     print(securities)  # Add this line to check the data
     return jsonify(securities)
@@ -29,6 +30,11 @@ def security(security_id):  # Updated function name
     # Return JSON response
     return jsonify(response)
 
+@main.route('/securities/<int:security_id>/price-histories', methods=['GET'])
+def get_price_histories(security_id):
+    price_histories = fetch_price_history(security_id)
+    return jsonify(price_histories)
+
 @main.route('/market-ratios')
 def market_ratios():
     # Fetch market ratios data
@@ -36,15 +42,14 @@ def market_ratios():
     # Return JSON response
     return jsonify(market_ratios_data)
 
-def market_ratio(market_ratio_id):
-    # Fetch market ratio data
-    market_ratio_data = fetch_market_ratio_data(market_ratio_id)
+@main.route('/market-ratios/<int:ratio_id>')
+def market_ratio(ratio_id):
+    market_ratio_data = fetch_market_ratio_data(ratio_id)
     ratio_name = market_ratio_data[0][0] if market_ratio_data else "Unknown Ratio"
     market_ratio_data = [(row[1], row[2]) for row in market_ratio_data]  # Remove the ratio name from each row
-    # Construct JSON response
     response = {
         "ratio_name": ratio_name,
         "market_ratio": market_ratio_data
     }
-    # Return JSON response
     return jsonify(response)
+
