@@ -59,7 +59,7 @@ def fetch_market_ratio_data(market_ratio_id):
 def fetch_price_history(security_id):
     conn = get_db_connection()
     cursor = conn.cursor()
-    query = "SELECT * FROM price_histories WHERE security_id = %s ORDER BY price_date DESC"
+    query = "SELECT * FROM price_histories WHERE security_id = %s ORDER BY price_date DESC LIMIT 10"
     cursor.execute(query, (security_id,))
     price_history = cursor.fetchall()
     cursor.close()

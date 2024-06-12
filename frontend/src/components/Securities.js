@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { Link } from 'react-router-dom'; // Import Link from react-router-dom
 
 function Securities() {
   const [securities, setSecurities] = useState([]);
@@ -15,9 +16,11 @@ function Securities() {
   }, []);
 
   return (
-
     <div>
       <h1>Securities Data</h1>
+      <Link to="/">Go Back to Homepage</Link>
+      <div>
+      </div>
       <table>
         <thead>
           <tr>
@@ -32,6 +35,9 @@ function Securities() {
               <td>{security[0]}</td>
               <td>{security[1]}</td>
               <td>{security[2]}</td>
+              <td>
+              <a href={`/securities/${security[0]}`}>View Details</a>
+              </td>
             </tr>
           ))}
         </tbody>
