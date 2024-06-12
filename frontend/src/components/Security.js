@@ -45,17 +45,16 @@ function Security() {
       });
   }, [id]);
 
+
   if (!security) {
     return <div>Loading...</div>;
   }
 
   return (
     <div>
-      <h1>{security.security_long_name}</h1>
-      <p>Security ID: {security.security_id}</p>
-      <p>Short Name: {security.security_short_name}</p>
+      <h1>Price history for {security[1]}</h1>
 
-      <h2>Price history for {security.security_long_name}</h2>
+      {/* <h2>Price history for {security.security_long_name}</h2> */}
 
       <table>
         <thead>
