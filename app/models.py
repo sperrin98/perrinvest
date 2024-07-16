@@ -34,4 +34,3 @@ class PriceHistory(db.Model):
      MA_5d = db.Column(db.Double, unique=False, nullable=False)
      MA_40d = db.Column(db.Double, unique=False, nullable=False)
      MA_200d = db.Column(db.Double, unique=False, nullable=False)
-
