@@ -52,4 +52,3 @@ def market_ratio(ratio_id):
         "market_ratio": market_ratio_data
     }
     return jsonify(response)
-
