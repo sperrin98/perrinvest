@@ -4,7 +4,7 @@ import './Home.css'; // Import the CSS file
 
 const Home = () => {
   const [displayedText, setDisplayedText] = useState('');
-  const text = "Welcome to Perrinvest";
+  const text = "Perrinvest";
 
   useEffect(() => {
     let index = 0;
