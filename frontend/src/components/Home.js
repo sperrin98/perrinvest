@@ -12,13 +12,13 @@ const Home = () => {
       if (index < text.length) {
         setDisplayedText((prev) => prev + text.charAt(index));
         index++;
-        setTimeout(type, 80); // Adjust typing speed here (100ms)
+        setTimeout(type, 100); // Adjust typing speed here (100ms)
       } else {
         setTimeout(() => {
           setDisplayedText('');
           index = 0;
           type();
-        }, 1000); // Adjust delay before restart here (2000ms)
+        }, 2000); // Adjust delay before restart here (2000ms)
       }
     };
 
