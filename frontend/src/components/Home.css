@@ -35,7 +35,7 @@ body {
     -webkit-background-clip: text; /* For Safari */
     background-clip: text;
     color: rgb(0, 255, 179); /* Make text transparent to show gradient */
-    border: solid 2px  rgb(0, 255, 179);
+    border: solid 1px  rgb(0, 255, 179);
     border-radius: 20px;
     cursor: pointer;
     font-family: "Montserrat", sans-serif;
