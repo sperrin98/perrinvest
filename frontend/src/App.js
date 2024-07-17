@@ -1,5 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Header from './components/Header';
 import Home from './components/Home';
 import Securities from './components/Securities';
 import Security from './components/Security';
@@ -9,6 +10,7 @@ import MarketRatio from './components/MarketRatio';
 function App() {
   return (
     <Router>
+      <Header /> {/* Ensure Header is rendered outside Routes */}
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/securities" element={<Securities />} />

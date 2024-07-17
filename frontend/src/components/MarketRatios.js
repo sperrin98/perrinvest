@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Link } from 'react-router-dom'; // Import Link from react-router-dom
+import { Link, useNavigate } from 'react-router-dom'; // Import Link from react-router-dom
+import './MarketRatios.css'; // Import the CSS file
 
 function MarketRatios() {
   const [marketRatios, setMarketRatios] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     axios.get('http://localhost:5000/market-ratios')
@@ -15,10 +17,13 @@ function MarketRatios() {
       });
   }, []);
 
+  const handleRowClick = (id) => {
+    navigate(`/market-ratios/${id}`);
+  };
+
   return (
-    <div>
-      <h1>Market Ratios Data</h1>
-      <Link to="/">Go Back to Homepage</Link>
+    <div className='market-ratios-container'>
+      <h1 className='market-ratios-header'>Market Ratios Data</h1>
       <table>
         <thead>
           <tr>
@@ -28,14 +33,16 @@ function MarketRatios() {
         </thead>
         <tbody>
           {marketRatios.map(ratio => (
-            <tr key={ratio.ratio_id}>
+            <tr key={ratio.ratio_id} onClick={() => handleRowClick(ratio[0])} className='clickable-row'>
               <td>{ratio[0]}</td>
               <td>{ratio[1]}</td>
-              <a href={`/market-ratios/${ratio[0]}`}>View Details</a>
             </tr>
           ))}
         </tbody>
       </table>
+      <div className="back-button">
+        <Link to="/">Go Back to Homepage</Link>
+      </div>
     </div>
   );
 }
