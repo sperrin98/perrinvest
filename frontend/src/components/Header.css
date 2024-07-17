@@ -29,11 +29,14 @@
   }
   
   .logo {
-    color: rgb(0, 255, 179);
+    background-image: linear-gradient(to right, rgb(0, 255, 179), rgb(0, 119, 83));
+    -webkit-background-clip: text; /* For Safari */
+    background-clip: text;
+    color: transparent; /* Make text transparent to show gradient */
     text-decoration: none;
     font-size: 1.5rem;
     font-weight: bold;
-    font-family: "Saira", sans-serif;
+    font-family: "Orbitron", sans-serif;
     margin-left: 15%;
     position: absolute;
   }
@@ -51,11 +54,14 @@
   }
   
   .nav-links li a {
-    color: rgb(0, 255, 179);
+    background-image: linear-gradient(to right, rgb(0, 255, 179), rgb(0, 119, 83));
+    -webkit-background-clip: text; /* For Safari */
+    background-clip: text;
+    color: transparent; /* Make text transparent to show gradient */
     text-decoration: none;
     font-size: 1rem;
     font-weight: bold;
-    font-family: "Saira", sans-serif;
+    font-family: "Orbitron", sans-serif;
   }
   
   .nav-links li a:hover {
