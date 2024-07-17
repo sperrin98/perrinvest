@@ -30,12 +30,28 @@ const Home = () => {
       <h1 className="home-header">{displayedText}</h1>
       <div className="home-buttons">
         <Link to="/securities">
-          <button>Go to Securities</button>
+        <div class="center">
+          <button class="btn">
+            <svg width="180px" height="60px" viewBox="0 0 180 60" class="border">
+              <polyline points="179,1 179,59 1,59 1,1 179,1" class="bg-line" />
+              <polyline points="179,1 179,59 1,59 1,1 179,1" class="hl-line" />
+            </svg>
+            <span>Securities</span>
+          </button>
+        </div>
         </Link>
       </div>
       <div className="home-buttons">
-        <Link to="/market-ratios">
-          <button>Go to Market Ratios</button>
+      <Link to="/market-ratios">
+        <div class="center">
+          <button class="btn">
+            <svg width="180px" height="60px" viewBox="0 0 180 60" class="border">
+              <polyline points="179,1 179,59 1,59 1,1 179,1" class="bg-line" />
+              <polyline points="179,1 179,59 1,59 1,1 179,1" class="hl-line" />
+            </svg>
+            <span>Market Ratios</span>
+          </button>
+        </div>
         </Link>
       </div>
     </div>
