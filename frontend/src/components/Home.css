@@ -1,7 +1,5 @@
 /* Home.css */
-@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap');
-
-
+@import url('https://fonts.googleapis.com/css2?family=Changa:wght@200..800&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Orbitron:wght@400..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Saira:ital,wght@0,100..900;1,100..900&display=swap');
 body {
   margin: 0;
 }
@@ -21,8 +19,8 @@ body {
     background-clip: text;
     color: transparent; /* Make text transparent to show gradient */
     padding-left: 100px;
-    padding-top: 100px;
-    font-family: "Orbitron", sans-serif;
+    padding-top: 75px;
+    font-family: "Montserrat", sans-serif;
   }
   
   .home-container div {
@@ -38,9 +36,9 @@ body {
     background-clip: text;
     color: rgb(0, 255, 179); /* Make text transparent to show gradient */
     border: solid 2px  rgb(0, 255, 179);
-    /* border-radius: 20px; */
+    border-radius: 20px;
     cursor: pointer;
-    font-family: "Orbitron", sans-serif;
+    font-family: "Montserrat", sans-serif;
   }
 
   .home-buttons {
@@ -97,5 +95,9 @@ body {
     color: rgb(0, 255, 179);
     font-size: 18px;
     font-weight: 100;
+  }
+
+  .border {
+    border-radius: 20px;
   }
 
