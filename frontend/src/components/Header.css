@@ -1,0 +1,69 @@
+.header {
+    background-color: rgb(0, 0, 0);
+    color: rgb(0, 255, 179);
+    padding: 15px 20px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    position: relative; /* Ensure position is relative for pseudo-element */
+  }
+  
+  .header::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 15%; /* Adjust the left position to control where the border starts */
+    width: 70%; /* Adjust the width of the border-bottom */
+    height: 1px; /* Thickness of the border-bottom */
+    background-color: rgb(0, 255, 179); /* Color of the border-bottom */
+  }
+  
+  .navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%; /* Ensure navbar takes full width of the page */
+  }
+  
+  .brand {
+    display: flex;
+    align-items: center;
+  }
+  
+  .logo {
+    background-image: linear-gradient(to right, rgb(0, 255, 179), rgb(0, 119, 83));
+    -webkit-background-clip: text; /* For Safari */
+    background-clip: text;
+    color: transparent; /* Make text transparent to show gradient */
+    text-decoration: none;
+    font-size: 1.5rem;
+    font-family: "Montserrat", sans-serif;
+    margin-left: 15%;
+    position: absolute;
+  }
+  
+  .nav-links {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    margin-right: 15%;
+  }
+  
+  .nav-links li {
+    margin-right: 20px;
+  }
+  
+  .nav-links li a {
+    background-image: linear-gradient(to right, rgb(0, 255, 179), rgb(0, 119, 83));
+    -webkit-background-clip: text; /* For Safari */
+    background-clip: text;
+    color: transparent; /* Make text transparent to show gradient */
+    text-decoration: none;
+    font-size: 1rem;
+    font-family: "Montserrat", sans-serif;
+  }
+  
+  .nav-links li a:hover {
+    color: rgb(30, 196, 146);
+    transition: 1s ease;
+  }
+  

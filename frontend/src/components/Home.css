@@ -1,0 +1,103 @@
+/* Home.css */
+@import url('https://fonts.googleapis.com/css2?family=Changa:wght@200..800&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Orbitron:wght@400..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Saira:ital,wght@0,100..900;1,100..900&display=swap');
+body {
+  margin: 0;
+}
+.home-container {
+    display: flex;
+    flex-direction: column;
+    /* align-items: center; */
+    /* justify-content: center; */
+    height: 100vh; /* Ensure the container takes full viewport height */
+    background-color: black; /* Set background color for the container */
+  }
+  
+  .home-header {
+    font-size: 32px;
+    background-image: linear-gradient(to right, rgb(0, 255, 179), rgb(0, 119, 83));
+    -webkit-background-clip: text; /* For Safari */
+    background-clip: text;
+    color: transparent; /* Make text transparent to show gradient */
+    padding-left: 100px;
+    padding-top: 75px;
+    font-family: "Montserrat", sans-serif;
+  }
+  
+  .home-container div {
+    margin-top: 20px;
+  }
+  
+  .home-container button {
+    padding: 10px 20px; 
+    font-size: 18px;
+    background-color: black;
+    background-image: linear-gradient(to right, rgb(0, 255, 179), rgb(0, 119, 83));
+    -webkit-background-clip: text; /* For Safari */
+    background-clip: text;
+    color: rgb(0, 255, 179); /* Make text transparent to show gradient */
+    border: solid 1px  rgb(0, 255, 179);
+    border-radius: 20px;
+    cursor: pointer;
+    font-family: "Montserrat", sans-serif;
+  }
+
+  .home-buttons {
+    padding-left: 40px;
+    margin-bottom: 60px;
+
+  }
+  
+  .home-container button:hover {
+    background-color: rgb(42, 114, 92);
+    transition: 0.5s ease;
+  }
+
+  .center {
+    width: 180px;
+    height: 60px;
+    position: absolute;
+  }
+  
+  .btn {
+    width: 180px;
+    height: 60px;
+    cursor: pointer;
+    background: transparent;
+    border: 1px solid rgb(0, 255, 179);
+    outline: none;
+    transition: 1s ease-in-out;
+    margin-left: 40%;
+    position: absolute;
+    padding: 200px;
+  }
+  
+  svg {
+    position: absolute;
+    left: 0;
+    top: 0;
+    fill: none;
+    stroke: #fff;
+    stroke-dasharray: 150 480;
+    stroke-dashoffset: 150;
+    transition: 1s ease-in-out;
+  }
+  
+  .btn:hover {
+    transition: 1s ease-in-out;
+    background: rgb(0, 255, 179);
+  }
+  
+  .btn:hover svg {
+    stroke-dashoffset: -480;
+  }
+  
+  .btn span {
+    color: rgb(0, 255, 179);
+    font-size: 18px;
+    font-weight: 100;
+  }
+
+  .border {
+    border-radius: 20px;
+  }
+
