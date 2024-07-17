@@ -1,4 +1,8 @@
 /* Home.css */
+
+body {
+  margin: 0;
+}
 .home-container {
     display: flex;
     flex-direction: column;
@@ -23,10 +27,10 @@
   .home-container button {
     padding: 10px 20px; 
     font-size: 18px;
-    background-color: rgb(0, 255, 179);
-    color: white;
-    border: none;
-    border-radius: 5px;
+    background-color: black;
+    color:  rgb(0, 255, 179);
+    border: solid 2px  rgb(0, 255, 179);
+    border-radius: 20px;
     cursor: pointer;
     font-family: 'Roboto', sans-serif;
   }
@@ -39,4 +43,5 @@
     background-color: rgb(42, 114, 92);
     transition: 0.5s ease;
   }
+  
   
