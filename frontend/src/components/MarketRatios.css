@@ -1,0 +1,12 @@
+.market-ratios-header {
+    font-family: "Montserrat", sans-serif;
+    text-align: center;
+    margin-top: 0;
+    padding: 10px;
+    font-size: 32px;
+}
+
+.market-ratios-container {
+    background-color: gray;
+    padding: 0 15%;
+}
