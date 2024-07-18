@@ -1,117 +1,55 @@
-@import url('https://fonts.googleapis.com/css2?family=Changa:wght@200..800&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Orbitron:wght@400..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Saira:ital,wght@0,100..900;1,100..900&display=swap');
+html, body {
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+}
 
 body {
-  margin: 0;
-  overflow-x: hidden; /* Prevent horizontal scrollbar */
+  width: 100%;
+  background: #222;
+  perspective: 1px;
+  transform-style: preserve-3d;
+  overflow-y: auto;
 }
 
-.home-container {
+.section1 {
+  width: 100%;
+  min-height: 100vh;
   position: relative;
-  height: 100vh;
-  overflow-y: auto; /* Enable vertical scrolling */
+  transform-style: preserve-3d;
+  overflow: hidden;
 }
 
-.parallax-background {
-  background-image: url('../assets/images/parallax-image.png'); /* Path to your image */
-  background-attachment: fixed; /* Ensures parallax effect */
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: cover;
+.section1::before {
+  content: "";
+  width: 100%;
+  height: 100%;
   position: absolute;
-  top: 49px; /* Adjust top positioning as needed */
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: -1; /* Send the image to the back */
+  background-image: url('../assets/images/candlestickchart.png');
+  background-attachment: fixed;
+  background-position: center;
+  background-size: cover;
+  filter: blur(1px); /* Apply blur here */
+  z-index: -1;
 }
 
-
-.content-container {
+.section2 {
+  width: 100%;
+  min-height: 100vh;
+  background-color: gray;
   position: relative;
-  z-index: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: flex-start;
-  padding: 75px 100px; /* Adjust padding as needed */
-  color: white; /* If your text color needs to be white */
+  transform-style: preserve-3d;
 }
 
 .home-header {
-  font-size: 32px;
-  background-image: linear-gradient(to right, rgb(0, 255, 179), rgb(0, 119, 83));
-  -webkit-background-clip: text; /* For Safari */
-  background-clip: text;
-  color: transparent; /* Make text transparent to show gradient */
-  font-family: "Montserrat", sans-serif;
-}
-
-.home-buttons {
-  margin-top: 20px;
-}
-
-.home-container button {
-  padding: 10px 20px; 
-  font-size: 18px;
-  background-color: black;
-  background-image: linear-gradient(to right, rgb(0, 255, 179), rgb(0, 119, 83));
-  -webkit-background-clip: text; /* For Safari */
-  background-clip: text;
-  color: rgb(0, 255, 179); /* Make text transparent to show gradient */
-  border: solid 1px rgb(0, 255, 179);
-  border-radius: 20px;
-  cursor: pointer;
-  font-family: "Montserrat", sans-serif;
-}
-
-.home-container button:hover {
-  background-color: rgb(42, 114, 92);
-  transition: 0.5s ease;
-}
-
-.center {
-  width: 180px;
-  height: 60px;
-  position: relative;
-}
-
-.btn {
-  width: 180px;
-  height: 60px;
-  cursor: pointer;
-  background: transparent;
-  border: 1px solid rgb(0, 255, 179);
-  outline: none;
-  transition: 1s ease-in-out;
-  position: relative;
-}
-
-svg {
+  top: 10%;
+  left: 20%;
   position: absolute;
-  left: 0;
-  top: 0;
-  fill: none;
-  stroke: #fff;
-  stroke-dasharray: 150 480;
-  stroke-dashoffset: 150;
-  transition: 1s ease-in-out;
-}
-
-.btn:hover {
-  transition: 1s ease-in-out;
-  background: rgb(0, 255, 179);
-}
-
-.btn:hover svg {
-  stroke-dashoffset: -480;
-}
-
-.btn span {
-  color: rgb(0, 255, 179);
-  font-size: 18px;
-  font-weight: 100;
-}
-
-.border {
-  border-radius: 20px;
+  font-family: "Montserrat", sans-serif;
+  font-size: 50px;
+  color: #00FFB3;
+  text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3),
+              5px 5px 70px rgba(255, 255, 255, 0.5);
+  transform: scale(1, 1.1) translate(-50%, 10%);
+  z-index: 1; /* Ensure text is above the background */
 }
