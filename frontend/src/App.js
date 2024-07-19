@@ -10,7 +10,7 @@ import MarketRatio from './components/MarketRatio';
 function App() {
   return (
     <Router>
-      <Header /> {/* Ensure Header is rendered outside Routes */}
+      <Header />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/securities" element={<Securities />} />
