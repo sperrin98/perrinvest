@@ -6,7 +6,7 @@ html, body {
 
 body {
   width: 100%;
-  background: #222;
+  /* background: #222; */
   perspective: 1px;
   transform-style: preserve-3d;
   overflow-y: auto;
