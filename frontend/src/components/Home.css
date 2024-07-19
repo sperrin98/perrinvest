@@ -28,8 +28,9 @@ body {
   background-image: url('../assets/images/candlestickchart.png');
   background-attachment: fixed;
   background-position: center;
+  background-repeat: no-repeat;
   background-size: cover;
-  filter: blur(1px); /* Apply blur here */
+  filter: blur(1.5px); /* Apply blur here */
   z-index: -1;
 }
 
@@ -37,6 +38,22 @@ body {
   width: 100%;
   min-height: 100vh;
   background-color: gray;
+  position: relative;
+  transform-style: preserve-3d;
+}
+
+.section3 {
+  width: 100%;
+  min-height: 100vh;
+  background-color: rgb(25, 0, 95);
+  position: relative;
+  transform-style: preserve-3d;
+}
+
+.section4 {
+  width: 100%;
+  min-height: 100vh;
+  background-color: rgb(78, 0, 0);
   position: relative;
   transform-style: preserve-3d;
 }
@@ -52,4 +69,5 @@ body {
               5px 5px 70px rgba(255, 255, 255, 0.5);
   transform: scale(1, 1.1) translate(-50%, 10%);
   z-index: 1; /* Ensure text is above the background */
+  font-weight: 500;
 }
