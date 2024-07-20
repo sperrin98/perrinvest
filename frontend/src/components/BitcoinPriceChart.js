@@ -1,21 +1,20 @@
 import React, { useEffect, useState } from 'react';
 import { Chart as ChartJS, CategoryScale, LinearScale, TimeScale, Title, Tooltip, Legend } from 'chart.js';
 import { CandlestickController, CandlestickElement } from 'chartjs-chart-financial';
-import axios from 'axios';
 import { Chart } from 'react-chartjs-2';
-import 'chartjs-adapter-date-fns'; // Import date adapter
+import 'chartjs-adapter-date-fns';
 
 // Register ChartJS components
 ChartJS.register(CategoryScale, LinearScale, TimeScale, Title, Tooltip, Legend, CandlestickController, CandlestickElement);
 
-const GoldPriceChart = () => {
+const BitcoinPriceChart = () => {
   const [chartData, setChartData] = useState({ datasets: [] });
 
   useEffect(() => {
-    axios.get('http://localhost:5000/api/gold-price-history')
-      .then(response => {
-        const data = response.data;
-
+    // Fetch data from local CSV file or endpoint
+    fetch('http://localhost:5000/api/bitcoin-price-history')  // Adjust the URL as needed
+      .then(response => response.json())
+      .then(data => {
         // Filter out entries with missing data
         const filteredData = data.filter(entry =>
           entry.Date && entry.Open != null && entry.High != null && entry.Low != null && entry.Close != null
@@ -33,25 +32,25 @@ const GoldPriceChart = () => {
         setChartData({
           datasets: [
             {
-              label: 'Gold Price',
+              label: 'Bitcoin Price',
               data: formattedData,
-              borderColor: 'rgba(255, 206, 86, 1)',
-              backgroundColor: 'rgba(255, 206, 86, 0.2)',
-              barThickness: 1, // Adjust this value to control candlestick width
-              categoryPercentage: 1.0, // Ensure spacing is uniform
-              barPercentage: 1.0, // Ensures bars fill available space
+              borderColor: 'rgba(75, 192, 192, 1)',
+              backgroundColor: 'rgba(75, 192, 192, 0.2)',
+              barThickness: 1,
+              categoryPercentage: 1.0,
+              barPercentage: 1.0,
             },
           ],
         });
       })
       .catch(error => {
-        console.error('Error fetching gold price history:', error);
+        console.error('Error fetching Bitcoin price history:', error);
       });
   }, []);
 
   return (
     <div>
-      <h2>Gold Price History</h2>
+      <h2>Bitcoin Price History</h2>
       <Chart
         type='candlestick'
         data={chartData}
@@ -73,9 +72,9 @@ const GoldPriceChart = () => {
             x: {
               type: 'time',
               time: {
-                unit: 'day', // Display one tick per day
+                unit: 'day',
                 displayFormats: {
-                  day: 'MMM D', // Customize the date format
+                  day: 'MMM D',
                 },
               },
               title: {
@@ -83,9 +82,9 @@ const GoldPriceChart = () => {
                 text: 'Date',
               },
               ticks: {
-                source: 'data', // Only show ticks for dates with data
+                source: 'data',
                 autoSkip: true,
-                maxTicksLimit: 10, // Adjust to your preference
+                maxTicksLimit: 10,
               },
               grid: {
                 display: false,
@@ -95,7 +94,7 @@ const GoldPriceChart = () => {
               beginAtZero: false,
               title: {
                 display: true,
-                text: 'Price',
+                text: 'Price (USD)',
               },
             },
           },
@@ -105,4 +104,4 @@ const GoldPriceChart = () => {
   );
 };
 
-export default GoldPriceChart;
+export default BitcoinPriceChart;

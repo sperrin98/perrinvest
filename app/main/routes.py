@@ -57,7 +57,16 @@ def market_ratio(ratio_id):
 @main.route('/api/gold-price-history', methods=['GET'])
 def get_gold_price_history():
     gold = yf.Ticker("GC=F")  # Gold futures
-    hist = gold.history(period="1y")  # Get 1 year of historical data
+    hist = gold.history(period="10y")  # Get 1 year of historical data
     data = hist.reset_index().to_dict(orient='records')
     return jsonify(data)
+
+@main.route('/api/bitcoin-price-history', methods=['GET'])
+def get_bitcoin_price_history():
+    btc = yf.Ticker("BTC-USD")
+    data = btc.history(period="10y", interval="1d")
+    data.reset_index(inplace=True)
+    result = data[['Date', 'Open', 'High', 'Low', 'Close']].to_dict(orient='records')
+    return jsonify(result)
+
 
