@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './Home.css'; // Import the CSS file
+import GoldPriceChart from './GoldPriceChart';
 
 const Home = () => {
   const [displayedText, setDisplayedText] = useState('');
@@ -37,6 +38,7 @@ const Home = () => {
       </div>
       <div className="section4">
         <h1 className="home-header">Real Time Data</h1>
+        <GoldPriceChart />
       </div>
     </div>
   );

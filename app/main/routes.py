@@ -2,6 +2,7 @@ from . import main
 from flask import jsonify, Flask
 # from flask_cors import CORS
 from app.db_utils import fetch_securities, fetch_market_ratios, fetch_market_ratio_data, fetch_security_data, fetch_price_history
+import yfinance as yf
 
 
 # app = Flask(__name__)
@@ -52,4 +53,11 @@ def market_ratio(ratio_id):
         "market_ratio": market_ratio_data
     }
     return jsonify(response)
+
+@main.route('/api/gold-price-history', methods=['GET'])
+def get_gold_price_history():
+    gold = yf.Ticker("GC=F")  # Gold futures
+    hist = gold.history(period="1y")  # Get 1 year of historical data
+    data = hist.reset_index().to_dict(orient='records')
+    return jsonify(data)
 
