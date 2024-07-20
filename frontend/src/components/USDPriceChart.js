@@ -42,8 +42,8 @@ const USDPriceChart = () => {
   }, []);
 
   return (
-    <div>
-      <h2>USD Price History</h2>
+    <div style={{ width: '50%', height: '50%'}}>
+    <h2 className='carousel-header'>US Dollar Price History</h2>
       <Chart
         type='candlestick'
         data={chartData}

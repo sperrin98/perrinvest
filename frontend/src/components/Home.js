@@ -1,10 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './Home.css'; // Import the CSS file
-import GoldPriceChart from './GoldPriceChart';
-import BitcoinPriceChart from './BitcoinPriceChart';
-import USDPriceChart from './USDPriceChart';
-import SP500PriceChart from './SP500PriceChart';
-import ApplePriceChart from './ApplePriceChart';
+import ChartCarousel from './ChartCarousel';
 
 const Home = () => {
   const [displayedText, setDisplayedText] = useState('');
@@ -34,19 +30,15 @@ const Home = () => {
       <div className="section1">
         <h1 className="home-header">{displayedText}</h1>
       </div>
+      <div className="section4">
+        <h2 className='section2-header'>Trending Markets</h2>
+        <ChartCarousel />
+      </div>
       <div className="section2">
         <h1 className="home-header">Securities</h1>
       </div>
       <div className="section3">
         <h1 className="home-header">Market Ratios</h1>
-      </div>
-      <div className="section4">
-        {/* <h1 className="home-header">Real Time Data</h1> */}
-        <GoldPriceChart />
-        <BitcoinPriceChart />
-        <USDPriceChart />
-        <SP500PriceChart />
-        <ApplePriceChart />
       </div>
     </div>
   );
