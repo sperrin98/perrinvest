@@ -47,8 +47,8 @@ const Security = () => {
     datasets: [{
       label: `Price History for ${security[1]}`,
       data: priceHistories.map(history => history.price),
-      borderColor: 'rgba(75, 192, 192, 1)',
-      backgroundColor: 'rgba(75, 192, 192, 0.2)',
+      borderColor: ' rgb(0, 255, 179)',
+      backgroundColor: ' rgb(0, 255, 179)',
       fill: false,
     }],
   };
