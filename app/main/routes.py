@@ -79,3 +79,13 @@ def get_usd_price_history():
     # Convert to JSON-friendly format
     result = data[['Date', 'Open', 'High', 'Low', 'Close']].to_dict(orient='records')
     return jsonify(result)
+
+@main.route('/api/sp500-price-history', methods=['GET'])
+def get_sp500_price_history():
+    sp500 = yf.Ticker("^GSPC")  # Ticker for S&P 500 index
+    data = sp500.history(period="10y", interval="1d")  # Fetch the past year of data
+    data.reset_index(inplace=True)
+    
+    # Convert to JSON-friendly format
+    result = data[['Date', 'Open', 'High', 'Low', 'Close']].to_dict(orient='records')
+    return jsonify(result)

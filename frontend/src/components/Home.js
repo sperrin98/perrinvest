@@ -3,6 +3,7 @@ import './Home.css'; // Import the CSS file
 import GoldPriceChart from './GoldPriceChart';
 import BitcoinPriceChart from './BitcoinPriceChart';
 import USDPriceChart from './USDPriceChart';
+import SP500PriceChart from './SP500PriceChart';
 
 const Home = () => {
   const [displayedText, setDisplayedText] = useState('');
@@ -43,6 +44,7 @@ const Home = () => {
         <GoldPriceChart />
         <BitcoinPriceChart />
         <USDPriceChart />
+        <SP500PriceChart />
       </div>
     </div>
   );
