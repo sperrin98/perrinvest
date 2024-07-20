@@ -42,8 +42,8 @@ const SP500PriceChart = () => {
   }, []);
 
   return (
-    <div>
-      <h2>S&P 500 Price History</h2>
+    <div style={{ width: '75%', height: '75%'}}>
+    <h2>S&P500 Price History</h2>
       <Chart
         type='candlestick'
         data={chartData}

@@ -42,8 +42,8 @@ const ApplePriceChart = () => {
   }, []);
 
   return (
-    <div>
-      <h2>Apple Stock Price History</h2>
+    <div style={{ width: '75%', height: '75%'}}>
+    <h2>Apple Price History</h2>
       <Chart
         type='candlestick'
         data={chartData}

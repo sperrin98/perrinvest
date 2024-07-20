@@ -71,3 +71,35 @@ body {
   z-index: 1; /* Ensure text is above the background */
   font-weight: 500;
 }
+
+.section1, .section2, .section3 {
+  text-align: center;
+  margin: 20px 0;
+}
+
+.section4 {
+  margin: 20px auto;
+  width: 100%; /* Adjust the width of the section as needed */
+}
+
+.chart-carousel {
+  width: 100%; /* Make carousel take the full width of its container */
+  height: 700px; /* Adjust the height of the carousel */
+}
+
+.carousel-item {
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.carousel-item .chart-container {
+  width: 100%;
+  height: 100%;
+}
+
+.chart-container canvas {
+  width: 100% !important;
+  height: 100% !important;
+}
