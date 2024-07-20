@@ -69,4 +69,13 @@ def get_bitcoin_price_history():
     result = data[['Date', 'Open', 'High', 'Low', 'Close']].to_dict(orient='records')
     return jsonify(result)
 
-
+@main.route('/api/usd-price-history', methods=['GET'])
+def get_usd_price_history():
+    # Fetch data from yfinance
+    usd = yf.Ticker("DX-Y.NYB")  # Example ticker for USD Index; replace with actual ticker if needed
+    data = usd.history(period="10y", interval="1d")  # Fetch the past year of data
+    data.reset_index(inplace=True)
+    
+    # Convert to JSON-friendly format
+    result = data[['Date', 'Open', 'High', 'Low', 'Close']].to_dict(orient='records')
+    return jsonify(result)
