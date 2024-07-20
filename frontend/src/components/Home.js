@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import './Home.css'; // Import the CSS file
 import GoldPriceChart from './GoldPriceChart';
 import BitcoinPriceChart from './BitcoinPriceChart';
+import USDPriceChart from './USDPriceChart';
 
 const Home = () => {
   const [displayedText, setDisplayedText] = useState('');
@@ -38,9 +39,10 @@ const Home = () => {
         <h1 className="home-header">Market Ratios</h1>
       </div>
       <div className="section4">
-        <h1 className="home-header">Real Time Data</h1>
+        {/* <h1 className="home-header">Real Time Data</h1> */}
         <GoldPriceChart />
         <BitcoinPriceChart />
+        <USDPriceChart />
       </div>
     </div>
   );
