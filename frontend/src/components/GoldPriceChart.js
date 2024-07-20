@@ -49,8 +49,8 @@ const GoldPriceChart = () => {
   }, []);
 
   return (
-    <div style={{ width: '75%', height: '75%'}}>
-      <h2>Gold Price History</h2>
+    <div style={{ width: '50%', height: '50%'}}>
+      <h2 className='carousel-header'>Gold Price History</h2>
       <Chart
         type='candlestick'
         data={chartData}

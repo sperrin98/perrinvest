@@ -30,14 +30,15 @@ const Home = () => {
       <div className="section1">
         <h1 className="home-header">{displayedText}</h1>
       </div>
+      <div className="section4">
+        <h2 className='section2-header'>Trending Markets</h2>
+        <ChartCarousel />
+      </div>
       <div className="section2">
         <h1 className="home-header">Securities</h1>
       </div>
       <div className="section3">
         <h1 className="home-header">Market Ratios</h1>
-      </div>
-      <div className="section4">
-        <ChartCarousel />
       </div>
     </div>
   );
