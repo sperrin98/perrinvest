@@ -71,12 +71,9 @@ def get_bitcoin_price_history():
 
 @main.route('/api/usd-price-history', methods=['GET'])
 def get_usd_price_history():
-    # Fetch data from yfinance
     usd = yf.Ticker("DX-Y.NYB")  # Example ticker for USD Index; replace with actual ticker if needed
     data = usd.history(period="10y", interval="1d")  # Fetch the past year of data
     data.reset_index(inplace=True)
-    
-    # Convert to JSON-friendly format
     result = data[['Date', 'Open', 'High', 'Low', 'Close']].to_dict(orient='records')
     return jsonify(result)
 
@@ -84,8 +81,14 @@ def get_usd_price_history():
 def get_sp500_price_history():
     sp500 = yf.Ticker("^GSPC")  # Ticker for S&P 500 index
     data = sp500.history(period="10y", interval="1d")  # Fetch the past year of data
+    data.reset_index(inplace=True) 
+    result = data[['Date', 'Open', 'High', 'Low', 'Close']].to_dict(orient='records')
+    return jsonify(result)
+
+@main.route('/api/apple-price-history', methods=['GET'])
+def get_apple_price_history():
+    apple = yf.Ticker("AAPL")
+    data = apple.history(period="10y", interval="1d")
     data.reset_index(inplace=True)
-    
-    # Convert to JSON-friendly format
     result = data[['Date', 'Open', 'High', 'Low', 'Close']].to_dict(orient='records')
     return jsonify(result)

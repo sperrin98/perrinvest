@@ -4,6 +4,7 @@ import GoldPriceChart from './GoldPriceChart';
 import BitcoinPriceChart from './BitcoinPriceChart';
 import USDPriceChart from './USDPriceChart';
 import SP500PriceChart from './SP500PriceChart';
+import ApplePriceChart from './ApplePriceChart';
 
 const Home = () => {
   const [displayedText, setDisplayedText] = useState('');
@@ -45,6 +46,7 @@ const Home = () => {
         <BitcoinPriceChart />
         <USDPriceChart />
         <SP500PriceChart />
+        <ApplePriceChart />
       </div>
     </div>
   );
