@@ -3,7 +3,6 @@ import { Chart as ChartJS, CategoryScale, LinearScale, TimeScale, Title, Tooltip
 import { CandlestickController, CandlestickElement } from 'chartjs-chart-financial';
 import axios from 'axios';
 import { Chart } from 'react-chartjs-2';
-import 'chartjs-adapter-date-fns'; // Import date adapter
 
 // Register ChartJS components
 ChartJS.register(CategoryScale, LinearScale, TimeScale, Title, Tooltip, Legend, CandlestickController, CandlestickElement);
@@ -37,9 +36,9 @@ const GoldPriceChart = () => {
               data: formattedData,
               borderColor: 'rgba(255, 206, 86, 1)',
               backgroundColor: 'rgba(255, 206, 86, 0.2)',
-              barThickness: 1, // Adjust this value to control candlestick width
-              categoryPercentage: 1.0, // Ensure spacing is uniform
-              barPercentage: 1.0, // Ensures bars fill available space
+              barThickness: 1,
+              barPercentage: 0.1, // Adjust this value to change candlestick width
+              categoryPercentage: 0.1, // Ensure spacing is uniform
             },
           ],
         });
@@ -50,7 +49,7 @@ const GoldPriceChart = () => {
   }, []);
 
   return (
-    <div>
+    <div style={{ width: '75%', height: '75%'}}>
       <h2>Gold Price History</h2>
       <Chart
         type='candlestick'
@@ -74,9 +73,7 @@ const GoldPriceChart = () => {
               type: 'time',
               time: {
                 unit: 'day', // Display one tick per day
-                displayFormats: {
-                  day: 'MMM D', // Customize the date format
-                },
+                tooltipFormat: 'MMM d, yyyy', // Example format: 'Jul 21, 2021'
               },
               title: {
                 display: true,
@@ -106,3 +103,4 @@ const GoldPriceChart = () => {
 };
 
 export default GoldPriceChart;
+

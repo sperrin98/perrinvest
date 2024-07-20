@@ -49,7 +49,7 @@ const BitcoinPriceChart = () => {
   }, []);
 
   return (
-    <div>
+    <div style={{ width: '75%', height: '75%'}}>
       <h2>Bitcoin Price History</h2>
       <Chart
         type='candlestick'
