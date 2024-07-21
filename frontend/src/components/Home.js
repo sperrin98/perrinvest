@@ -22,7 +22,7 @@ const Home = () => {
       }
     };
 
-    type();
+    type(); 
   }, [text]);
 
   return (
