@@ -68,7 +68,7 @@ function Securities() {
             ))
           ) : (
             <tr>
-              <td colSpan="3">No securities found</td>
+              <td colSpan="2">No securities found</td>
             </tr>
           )}
         </tbody>
