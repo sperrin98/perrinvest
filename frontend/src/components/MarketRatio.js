@@ -1,55 +1,99 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
+import { Line } from 'react-chartjs-2';
+import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend } from 'chart.js';
 
-function MarketRatio() {
-  const { id } = useParams(); // Get the market ratio ID from the URL
-  const [marketRatio, setMarketRatio] = useState(null);
+ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
+
+const MarketRatio = () => {
+  const { id } = useParams();
+  const [ratioData, setRatioData] = useState([]);
+  const [ratioName, setRatioName] = useState('');
 
   useEffect(() => {
-    axios.get(`http://localhost:5000/market-ratios/${id}`)
-      .then(response => {
-        // Format date in market ratio data
-        const formattedMarketRatio = response.data.market_ratio.map(item => {
-          const date = new Date(item[0]);
-          const formattedDate = date.toLocaleDateString('en-GB'); // Format to yyyy-mm-dd
-          return { date: formattedDate, value: item[1] };
-        });
-        setMarketRatio({
-          ratio_name: response.data.ratio_name,
-          market_ratio: formattedMarketRatio
-        });
-      })
-      .catch(error => {
-        console.error('Error fetching market ratio:', error);
-      });
+    const fetchMarketRatioData = async () => {
+      try {
+        const response = await axios.get(`http://localhost:5000/market-ratios/${id}`);
+        const data = response.data;
+
+        setRatioName(data.ratio_name);
+        const formattedRatioData = data.market_ratio.map(item => ({
+          date: new Date(item[0]).toISOString().split('T')[0],
+          value: item[1],
+        }));
+        setRatioData(formattedRatioData);
+      } catch (error) {
+        console.error('Error fetching market ratio data:', error);
+      }
+    };
+
+    fetchMarketRatioData();
   }, [id]);
 
-  if (!marketRatio) {
-    return <div>Loading...</div>;
-  }
+  const chartData = {
+    labels: ratioData.map(item => item.date),
+    datasets: [{
+      label: `Market Ratio History for ${ratioName}`,
+      data: ratioData.map(item => item.value),
+      borderColor: 'rgb(0, 255, 179)', // Line color
+      backgroundColor: 'rgb(0, 255, 179)', // Fill color under the line
+      fill: false,
+    }],
+  };
+
+  const chartOptions = {
+    responsive: true,
+    scales: {
+      x: {
+        ticks: {
+          color: 'rgb(0, 255, 179)', // X-axis tick color
+        },
+        grid: {
+          color: 'rgb(68, 68, 68)', // X-axis grid line color
+        },
+        title: {
+          display: true,
+          text: 'Date',
+          color: 'rgb(0, 255, 179)', // X-axis title color
+        }
+      },
+      y: {
+        ticks: {
+          color: 'rgb(0, 255, 179)', // Y-axis tick color
+        },
+        grid: {
+          color: 'rgb(68, 68, 68)', // Y-axis grid line color
+        },
+        title: {
+          display: true,
+          text: 'Value',
+          color: 'rgb(0, 255, 179)', // Y-axis title color
+        }
+      }
+    },
+    plugins: {
+      legend: {
+        labels: {
+          color: 'rgb(0, 255, 179)', // Legend label color
+        }
+      },
+
+      tooltip: {
+        callbacks: {
+          label: function(context) {
+            return `${context.dataset.label}: ${context.raw}`;
+          }
+        }
+      }
+    }
+  };
 
   return (
-    <div>
-      <h1>{marketRatio.ratio_name}</h1>
-      <table>
-        <thead>
-          <tr>
-            <th>Date</th>
-            <th>Price</th>
-          </tr>
-        </thead>
-        <tbody>
-          {marketRatio.market_ratio.map((item, index) => (
-            <tr key={index}>
-              <td>{item.date}</td>
-              <td>{item.value}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+    <div className='mr-container'>
+      <Line data={chartData} options={chartOptions} />
     </div>
   );
-}
+};
 
 export default MarketRatio;
