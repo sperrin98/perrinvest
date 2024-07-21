@@ -3,6 +3,8 @@ import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import { Line } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend } from 'chart.js';
+import './Security.css';
+
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
@@ -47,16 +49,61 @@ const Security = () => {
     datasets: [{
       label: `Price History for ${security[1]}`,
       data: priceHistories.map(history => history.price),
-      borderColor: ' rgb(0, 255, 179)',
-      backgroundColor: ' rgb(0, 255, 179)',
+      borderColor: 'rgb(0, 255, 179)',
+      backgroundColor: 'rgb(0, 255, 179)',
       fill: false,
     }],
   };
 
+  const chartOptions = {
+    responsive: true,
+    scales: {
+      x: {
+        ticks: {
+          color: 'rgb(0, 255, 179)',
+        },
+        grid: {
+          color: 'rgb(68, 68, 68)',
+        },
+        title: {
+          display: true,
+          text: 'Date',
+          color: 'rgb(0, 255, 179)',
+        }
+      },
+      y: {
+        ticks: {
+          color: 'rgb(0, 255, 179)',
+        },
+        grid: {
+          color: 'rgb(68, 68, 68)',
+        },
+        title: {
+          display: true,
+          text: 'Value',
+          color: 'rgb(0, 255, 179)'
+        }
+      }
+    },
+    plugins: {
+      legend: {
+        labels: {
+          color: 'rgb(0, 255, 179)'
+        }
+      },
+      tooltip: {
+        callbacks: {
+          label: function(context) {
+            return `${context.dataset.label}: ${context.raw}`;
+          }
+        }
+      }
+    }
+  };
+
   return (
-    <div>
-      <h1 className='security-header'>Price history for {security[1]}</h1>
-      <Line data={data} options={{ responsive: true }} />
+    <div className='security-container'>
+      <Line data={data} options={chartOptions} />
     </div>
   );
 };
