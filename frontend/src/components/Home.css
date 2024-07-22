@@ -1,90 +1,84 @@
-html, body {
+html {
   margin: 0;
   height: 100%;
   overflow: hidden;
 }
 
 body {
-  width: 100%;
-  /* background: #222; */
-  perspective: 1px;
-  transform-style: preserve-3d;
+  margin: 0;
+  height: 100%;
+  overflow-x: hidden;
   overflow-y: auto;
+  font-family: "Montserrat", sans-serif;
+}
+
+.section {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  overflow: hidden; /* Ensure content does not overflow the section */
 }
 
 .section1 {
-  width: 100%;
-  min-height: 100vh;
   position: relative;
-  transform-style: preserve-3d;
-  overflow: hidden;
 }
 
 .section1::before {
   content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
   width: 100%;
   height: 100%;
-  position: absolute;
   background-image: url('../assets/images/candlestickchart.png');
   background-attachment: fixed;
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
-  filter: blur(1.5px); /* Apply blur here */
-  z-index: -1;
+  filter: blur(1.5px); /* Apply blur effect */
+  z-index: -1; /* Ensure it is behind the text */
 }
 
 .section2 {
-  width: 100%;
-  min-height: 100vh;
-  background-color: gray;
-  position: relative;
-  transform-style: preserve-3d;
+  background-color: rgb(0, 0, 0);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .section3 {
-  width: 100%;
-  min-height: 100vh;
   background-color: rgb(25, 0, 95);
-  position: relative;
-  transform-style: preserve-3d;
 }
 
 .section4 {
-  width: 100%;
-  min-height: 100vh;
-  background-color: rgb(78, 0, 0);
-  position: relative;
-  transform-style: preserve-3d;
+  background-color: gray;
 }
 
 .home-header {
-  top: 10%;
-  left: 20%;
-  position: absolute;
-  font-family: "Montserrat", sans-serif;
   font-size: 50px;
   color: #00FFB3;
   text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3),
               5px 5px 70px rgba(255, 255, 255, 0.5);
-  transform: scale(1, 1.1) translate(-50%, 10%);
-  z-index: 1; /* Ensure text is above the background */
   font-weight: 500;
+  z-index: 1;
+  position: absolute;
+  top: 20%;
+  left: 20%;
 }
 
-.section2, .section3 {
+.section2-header {
   text-align: center;
-  /* margin: 20px 0; */
-}
-
-.section4 {
-  /* margin: 20px auto; */
-  width: 100%; /* Adjust the width of the section as needed */
+  color: #00FFB3;
+  padding: 20px;
 }
 
 .chart-carousel {
-  width: 100%; /* Make carousel take the full width of its container */
-  height: 700px; /* Adjust the height of the carousel */
+  width: 100%;
+  height: 700px;
 }
 
 .carousel-item {
@@ -107,12 +101,6 @@ body {
 
 .carousel-header {
   text-align: center;
-  color: white;
+  color: #00FFB3;
   font-size: 24px;
-}
-
-.section2-header {
-  text-align: center;
-  color: white;
-  padding: 20px;
 }
