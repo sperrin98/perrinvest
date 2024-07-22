@@ -12,6 +12,7 @@ const Header = () => {
         <ul className="nav-links">
           <li><Link to="/securities">Securities</Link></li>
           <li><Link to="/market-ratios">Market Ratios</Link></li>
+          <li><Link to="/eco-data-points">Economical Data</Link></li>
           {/* Add more navigation links as needed */}
         </ul>
       </nav>
