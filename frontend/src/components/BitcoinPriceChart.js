@@ -73,28 +73,32 @@ const BitcoinPriceChart = () => {
               type: 'time',
               time: {
                 unit: 'day',
-                displayFormats: {
-                  day: 'MMM D',
-                },
+                tooltipFormat: 'MMM d, yyyy',
               },
               title: {
                 display: true,
                 text: 'Date',
-              },
-              ticks: {
-                source: 'data',
-                autoSkip: true,
-                maxTicksLimit: 10,
+                color: 'rgb(0, 255, 179)',
               },
               grid: {
-                display: false,
+                color: 'rgb(68, 68, 68)', // Custom color for x-axis grid lines
+              },
+              ticks: {
+                color: 'rgb(0, 255, 179)', // Custom color for x-axis labels
               },
             },
             y: {
               beginAtZero: false,
               title: {
                 display: true,
-                text: 'Price (USD)',
+                text: 'Price',
+                color: 'rgb(0, 255, 179)',
+              },
+              grid: {
+                color: 'rgb(68, 68, 68)', // Custom color for y-axis grid lines
+              },
+              ticks: {
+                color: 'rgb(0, 255, 179)', // Custom color for y-axis labels
               },
             },
           },
