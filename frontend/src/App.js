@@ -6,6 +6,7 @@ import Securities from './components/Securities';
 import Security from './components/Security';
 import MarketRatios from './components/MarketRatios';
 import MarketRatio from './components/MarketRatio';
+import EcoDataPoints from './components/EcoDataPoints';
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
         <Route path="/securities/:id" element={<Security />} />
         <Route path="/market-ratios" element={<MarketRatios />} />
         <Route path="/market-ratios/:id" element={<MarketRatio />} />
+        <Route path="/eco-data-points" element={<EcoDataPoints />} />
       </Routes>
     </Router>
   );
