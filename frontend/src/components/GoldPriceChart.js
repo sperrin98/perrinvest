@@ -72,20 +72,19 @@ const GoldPriceChart = () => {
             x: {
               type: 'time',
               time: {
-                unit: 'day', // Display one tick per day
-                tooltipFormat: 'MMM d, yyyy', // Example format: 'Jul 21, 2021'
+                unit: 'day',
+                tooltipFormat: 'MMM d, yyyy',
               },
               title: {
                 display: true,
                 text: 'Date',
-              },
-              ticks: {
-                source: 'data', // Only show ticks for dates with data
-                autoSkip: true,
-                maxTicksLimit: 10, // Adjust to your preference
+                color: 'rgb(0, 255, 179)',
               },
               grid: {
-                display: false,
+                color: 'rgb(68, 68, 68)', // Custom color for x-axis grid lines
+              },
+              ticks: {
+                color: 'rgb(0, 255, 179)', // Custom color for x-axis labels
               },
             },
             y: {
@@ -93,6 +92,13 @@ const GoldPriceChart = () => {
               title: {
                 display: true,
                 text: 'Price',
+                color: 'rgb(0, 255, 179)',
+              },
+              grid: {
+                color: 'rgb(68, 68, 68)', // Custom color for y-axis grid lines
+              },
+              ticks: {
+                color: 'rgb(0, 255, 179)', // Custom color for y-axis labels
               },
             },
           },

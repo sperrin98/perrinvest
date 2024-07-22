@@ -42,8 +42,8 @@ const ApplePriceChart = () => {
   }, []);
 
   return (
-    <div style={{ width: '50%', height: '50%'}}>
-    <h2 className='carousel-header'>Apple Price History</h2>
+    <div style={{ width: '50%', height: '50%' }}>
+      <h2 className='carousel-header'>Apple Price History</h2>
       <Chart
         type='candlestick'
         data={chartData}
@@ -71,9 +71,13 @@ const ApplePriceChart = () => {
               title: {
                 display: true,
                 text: 'Date',
+                color: 'rgb(0, 255, 179)',
               },
               grid: {
-                display: false,
+                color: 'rgb(68, 68, 68)', // Custom color for x-axis grid lines
+              },
+              ticks: {
+                color: 'rgb(0, 255, 179)', // Custom color for x-axis labels
               },
             },
             y: {
@@ -81,6 +85,13 @@ const ApplePriceChart = () => {
               title: {
                 display: true,
                 text: 'Price',
+                color: 'rgb(0, 255, 179)',
+              },
+              grid: {
+                color: 'rgb(68, 68, 68)', // Custom color for y-axis grid lines
+              },
+              ticks: {
+                color: 'rgb(0, 255, 179)', // Custom color for y-axis labels
               },
             },
           },
