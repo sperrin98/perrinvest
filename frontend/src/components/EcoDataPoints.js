@@ -27,7 +27,7 @@ function EcoDataPoints() {
   if (error) return <div>Error: {error.message}</div>;
 
   return (
-    <div>
+    <div className='edp-container'>
       <h1>Eco Data Points</h1>
       <ul>
         {ecoDataPoints.map(point => (
