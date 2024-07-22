@@ -27,17 +27,17 @@ const Home = () => {
 
   return (
     <div>
-      <div className="section1">
-        <h1 className="home-header">{displayedText}</h1>
+      <div className="section section1">
+        <h1 className="home-header">Perrinvest</h1>
       </div>
-      <div className="section4">
+      <div className="section section2">
         <h2 className='section2-header'>Trending Markets</h2>
         <ChartCarousel />
       </div>
-      <div className="section2">
+      <div className="section section3">
         <h1 className="home-header">Securities</h1>
       </div>
-      <div className="section3">
+      <div className="section section4">
         <h1 className="home-header">Market Ratios</h1>
       </div>
     </div>
