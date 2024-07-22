@@ -68,3 +68,16 @@
     font-size: 1rem;
   }
   
+  .search-container {
+    margin-bottom: 20px;
+    padding-top: 30px;
+  }
+  
+  .search-input {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid rgb(0, 255, 179);
+    background-color: rgb(209, 209, 209);
+    border-radius: 4px;
+    font-size: 16px;
+  }

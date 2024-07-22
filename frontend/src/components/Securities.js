@@ -5,17 +5,30 @@ import './Securities.css'; // Import the CSS file
 
 function Securities() {
   const [securities, setSecurities] = useState([]);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filteredSecurities, setFilteredSecurities] = useState([]);
   const navigate = useNavigate();
 
   useEffect(() => {
     axios.get('http://localhost:5000/securities')
       .then(response => {
         setSecurities(response.data);
+        setFilteredSecurities(response.data); // Initialize filtered securities
       })
       .catch(error => {
         console.error('Error fetching securities:', error);
       });
   }, []);
+
+  // Update filtered securities whenever searchTerm changes
+  useEffect(() => {
+    setFilteredSecurities(
+      securities.filter(security =>
+        security[1].toLowerCase().includes(searchTerm.toLowerCase()) ||
+        security[2].toLowerCase().includes(searchTerm.toLowerCase())
+      )
+    );
+  }, [searchTerm, securities]);
 
   const handleRowClick = (id) => {
     navigate(`/securities/${id}`);
@@ -24,6 +37,18 @@ function Securities() {
   return (
     <div className="securities-container">
       <h1 className="security-header">Securities Data</h1>
+      
+      {/* Search Bar */}
+      <div className="search-container">
+        <input
+          type="text"
+          placeholder="Search securities..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="search-input"
+        />
+      </div>
+      
       <table>
         <thead>
           <tr>
@@ -33,13 +58,19 @@ function Securities() {
           </tr>
         </thead>
         <tbody>
-          {securities.map(security => (
-            <tr key={security.security_id} onClick={() => handleRowClick(security[0])} className="clickable-row">
-              <td>{security[0]}</td>
-              <td className="first-column">{security[1]}</td>
-              <td>{security[2]}</td>
+          {filteredSecurities.length > 0 ? (
+            filteredSecurities.map(security => (
+              <tr key={security[0]} onClick={() => handleRowClick(security[0])} className="clickable-row">
+                <td>{security[0]}</td>
+                <td className="first-column">{security[1]}</td>
+                <td>{security[2]}</td>
+              </tr>
+            ))
+          ) : (
+            <tr>
+              <td colSpan="2">No securities found</td>
             </tr>
-          ))}
+          )}
         </tbody>
       </table>
       <div className="back-button">
