@@ -1,0 +1,43 @@
+.edp-container {
+    height: 100vh;
+    width: 100vw;
+    padding-top: 100px;
+}
+
+.edph-container {
+    height: 100vh;
+    width: 100vw;
+    padding-top: 100px;
+}
+
+.edph-table {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  
+  .edph-header, .edph-row {
+    display: flex;
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+  }
+  
+  .edph-header {
+    background-color: #f4f4f4;
+    font-weight: bold;
+  }
+  
+  .edph-header span, .edph-row span {
+    flex: 1;
+    padding: 0 10px;
+  }
+  
+  .edph-row:nth-child(odd) {
+    background-color: #f9f9f9;
+  }
+  
+  .edph-row span {
+    text-align: center;
+  }
