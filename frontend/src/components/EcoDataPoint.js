@@ -1,7 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import { Line } from 'react-chartjs-2'; // Import the chart component from react-chartjs-2
+import Chart from 'chart.js/auto'; // Auto import to register all required components
 import './EcoDataPoints.css';
 
+// Function to format date as YYYY/MM/DD
 function formatDate(dateStr) {
   const date = new Date(dateStr);
   const year = date.getFullYear();
@@ -43,20 +46,26 @@ function EcoDataPoint() {
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error.message}</div>;
 
+  // Prepare data for Chart.js
+  const chartData = {
+    labels: data.map(point => formatDate(point[0])), // Dates on the x-axis
+    datasets: [
+      {
+        label: 'Price',
+        data: data.map(point => point[1]), // Prices on the y-axis
+        fill: false,
+        borderColor: 'rgba(75,192,192,1)',
+        tension: 0.1
+      }
+    ]
+  };
+
   return (
     <div className='edph-container'>
       <h1>Eco Data Point Histories</h1>
-      <ul>
-        {data.length > 0 ? (
-          data.map((point, index) => (
-            <li key={index}>
-              {formatDate(point[0])}: {point[1]}  {/* Ensure point[0] is a date string and point[1] is the price */}
-            </li>
-          ))
-        ) : (
-          <li>No data available</li>
-        )}
-      </ul>
+      <div className='chart-container'>
+        <Line data={chartData} />
+      </div>
     </div>
   );
 }
