@@ -1,47 +1,79 @@
 .edp-container {
-    height: 100vh;
-    width: 100vw;
-    padding-top: 100px;
+    background-color: gray;
+    padding: 0 15%; 
 }
 
-.edph-container {
-    height: 100vh;
-    width: 100vw;
-    padding-top: 100px;
-    background-color: black;
-}
-
-.edp-header {
-    color: rgb(0, 255, 179);
-}
-.edph-table {
-    display: flex;
-    flex-direction: column;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    overflow: hidden;
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 0 auto; /* Center the table */
   }
-  
-  .edph-header, .edph-row {
-    display: flex;
+
+  th, td {
     padding: 10px;
-    border-bottom: 1px solid #eee;
+    text-align: left;
+    font-family: "Montserrat", sans-serif;
+    border-bottom: 1px solid rgb(0, 255, 179);
+    padding-left: 40px;
+    max-width: 200px; /* Adjust max-width as needed */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
-  
-  .edph-header {
-    background-color: #f4f4f4;
-    font-weight: bold;
-  }
-  
-  .edph-header span, .edph-row span {
-    flex: 1;
-    padding: 0 10px;
-  }
-  
-  .edph-row:nth-child(odd) {
-    background-color: #f9f9f9;
-  }
-  
-  .edph-row span {
+
+  th {
+    padding-left: 60px; /* Adjust this value as needed */
     text-align: center;
   }
+  
+  
+  tbody tr {
+    transition: background-color 0.3s;
+  }
+  
+  tbody tr:hover {
+    background-color: #000000;
+    cursor: pointer;
+    color: rgb(0, 255, 179);
+    transition: ease 0.5s;
+  }
+  
+  tbody tr a {
+    display: block;
+    color: inherit; /* Inherit text color */
+    text-decoration: none; /* Remove underline */
+  }
+
+  .back-button {
+    text-align: center;
+    margin-top: 20px;
+  }
+  
+  .back-button a {
+    color: rgb(0, 255, 179);
+    text-decoration: none;
+    font-family: "Montserrat", sans-serif;
+    font-size: 1rem;
+  }
+  
+  .search-container {
+    margin-bottom: 20px;
+    padding-top: 100px;
+  }
+  
+  .search-input {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid rgb(0, 255, 179);
+    background-color: rgb(209, 209, 209);
+    border-radius: 4px;
+    font-size: 16px;
+  }
+
+  .edph-container {
+  height: 100vh;
+  width: 100vw;
+  padding-top: 100px;
+  background-color: black;
+  }
+
