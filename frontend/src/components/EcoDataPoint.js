@@ -72,20 +72,58 @@ function EcoDataPoint() {
     labels: data.map(point => formatDate(point.price_date)), // Dates on the x-axis
     datasets: [
       {
-        label: 'Price',
+        label: `${ecoDataPointName}`,
         data: data.map(point => point.price), // Prices on the y-axis
         fill: false,
-        borderColor: 'rgba(75,192,192,1)',
+        borderColor: 'rgb(0, 255, 179)',
+        backgroundColor: 'rgb(0, 255, 179)',
         tension: 0.1
       }
     ]
   };
 
+  const chartOptions = {
+    plugins: {
+      legend: {
+        display: true,
+        labels: {
+          color: 'rgb(0, 255, 179)' 
+        }
+      },
+      tooltip: {
+        backgroundColor: 'rgba(0, 255, 179, 0.8)'
+      },
+    },
+    scales: {
+      x: {
+        ticks: {
+          color: 'rgb(0, 255, 179)', 
+        },
+        grid: {
+          color: 'rgb(68, 68, 68)', 
+        }
+      },
+      y: {
+        ticks: {
+          color: 'rgb(0, 255, 179)', 
+        },
+        grid: {
+          color: 'rgb(68, 68, 68)',
+        },
+        title: {
+          display: true,
+          text: 'Value',
+          color: 'rgb(0, 255, 179)',
+        }
+      }
+    }
+  };
+
   return (
     <div className='edph-container'>
-      <h1>{ecoDataPointName}</h1>
+      {/* <h1 className='edp-header'>{ecoDataPointName}</h1> */}
       <div className='chart-container'>
-        <Line data={chartData} />
+        <Line data={chartData} options={chartOptions} />
       </div>
     </div>
   );
