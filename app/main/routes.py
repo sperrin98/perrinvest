@@ -1,7 +1,7 @@
 from . import main
 from flask import jsonify, Flask
 # from flask_cors import CORS
-from app.db_utils import fetch_securities, fetch_market_ratios, fetch_market_ratio_data, fetch_security_data, fetch_price_history
+from app.db_utils import fetch_securities, fetch_market_ratios, fetch_market_ratio_data, fetch_security_data, fetch_price_history,  fetch_eco_data_point_histories, fetch_eco_data_point, fetch_eco_data_points
 import yfinance as yf
 
 
@@ -53,6 +53,34 @@ def market_ratio(ratio_id):
         "market_ratio": market_ratio_data
     }
     return jsonify(response)
+
+
+@main.route('/eco-data-points')
+def eco_data_points():
+    try:
+        eco_data_points = fetch_eco_data_points()
+        return jsonify(eco_data_points)
+    except Exception as e:
+        print(f"Error fetching eco-data-points: {e}")
+        return jsonify({"error": "Error fetching eco-data-points"}), 500
+
+@main.route('/eco-data-points/<int:eco_data_point_id>/histories')
+def eco_data_point_histories(eco_data_point_id):
+    try:
+        histories = fetch_eco_data_point_histories(eco_data_point_id)
+        return jsonify(histories)
+    except Exception as e:
+        print(f"Error fetching eco-data-point histories: {e}")
+        return jsonify({"error": "Error fetching eco-data-point histories"}), 500
+
+@main.route('/eco-data-points/<int:eco_data_point_id>')
+def eco_data_point(eco_data_point_id):
+    try:
+        data_point = fetch_eco_data_point(eco_data_point_id)
+        return jsonify(data_point)
+    except Exception as e:
+        print(f"Error fetching eco-data-point: {e}")
+        return jsonify({"error": "Error fetching eco-data-point"}), 500
 
 @main.route('/api/gold-price-history', methods=['GET'])
 def get_gold_price_history():
