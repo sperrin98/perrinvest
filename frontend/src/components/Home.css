@@ -96,7 +96,7 @@ body {
 .chart-container canvas {
   width: 100% !important;
   height: 100% !important;
-  margin-top: 100px;
+  /* margin-top: 100px; */
 }
 
 .carousel-header {
