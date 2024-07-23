@@ -61,26 +61,28 @@ def eco_data_points():
         eco_data_points = fetch_eco_data_points()
         return jsonify(eco_data_points)
     except Exception as e:
-        print(f"Error fetching eco-data-points: {e}")
-        return jsonify({"error": "Error fetching eco-data-points"}), 500
+        return jsonify({"error": str(e)}), 500
 
+# Route to fetch details of a specific eco data point by ID
+@main.route('/eco-data-points/<int:eco_data_point_id>')
+def eco_data_point(eco_data_point_id):
+    try:
+        data_point = fetch_eco_data_point(eco_data_point_id)
+        if data_point:
+            return jsonify(data_point)
+        else:
+            return jsonify({"error": "Eco data point not found"}), 404
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+# Route to fetch histories of a specific eco data point by ID
 @main.route('/eco-data-points/<int:eco_data_point_id>/histories')
 def eco_data_point_histories(eco_data_point_id):
     try:
         histories = fetch_eco_data_point_histories(eco_data_point_id)
         return jsonify(histories)
     except Exception as e:
-        print(f"Error fetching eco-data-point histories: {e}")
-        return jsonify({"error": "Error fetching eco-data-point histories"}), 500
-
-@main.route('/eco-data-points/<int:eco_data_point_id>')
-def eco_data_point(eco_data_point_id):
-    try:
-        data_point = fetch_eco_data_point(eco_data_point_id)
-        return jsonify(data_point)
-    except Exception as e:
-        print(f"Error fetching eco-data-point: {e}")
-        return jsonify({"error": "Error fetching eco-data-point"}), 500
+        return jsonify({"error": str(e)}), 500
 
 @main.route('/api/gold-price-history', methods=['GET'])
 def get_gold_price_history():
