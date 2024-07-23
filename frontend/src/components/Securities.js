@@ -36,9 +36,6 @@ function Securities() {
 
   return (
     <div className="securities-container">
-      <h1 className="security-header">Securities Data</h1>
-      
-      {/* Search Bar */}
       <div className="search-container">
         <input
           type="text"
