@@ -17,12 +17,14 @@ function formatDate(dateStr) {
 function EcoDataPoint() {
   const { id } = useParams();
   const [data, setData] = useState([]);
+  const [ecoDataPointName, setEcoDataPointName] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
     console.log('Fetching data for ID:', id);
 
+    // Fetch histories
     fetch(`http://localhost:5000/eco-data-points/${id}/histories`)
       .then(response => {
         console.log('Response Status:', response.status);
@@ -31,16 +33,35 @@ function EcoDataPoint() {
         }
         return response.json();
       })
-      .then(data => {
-        console.log('Fetched Data:', data); // Verify data structure
-        setData(data);
+      .then(histories => {
+        console.log('Fetched Histories:', histories);
+        setData(histories);
         setLoading(false);
       })
       .catch(error => {
-        console.error('Error fetching data:', error);
+        console.error('Error fetching histories:', error);
         setError(error);
         setLoading(false);
       });
+
+    // Fetch eco data point name
+    fetch(`http://localhost:5000/eco-data-points/${id}`)
+      .then(response => {
+        console.log('Response Status:', response.status);
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        return response.json();
+      })
+      .then(dataPoint => {
+        console.log('Fetched Data Point:', dataPoint);
+        setEcoDataPointName(dataPoint.eco_data_point_name);
+      })
+      .catch(error => {
+        console.error('Error fetching data point name:', error);
+        setError(error);
+      });
+
   }, [id]);
 
   if (loading) return <div>Loading...</div>;
@@ -48,11 +69,11 @@ function EcoDataPoint() {
 
   // Prepare data for Chart.js
   const chartData = {
-    labels: data.map(point => formatDate(point[0])), // Dates on the x-axis
+    labels: data.map(point => formatDate(point.price_date)), // Dates on the x-axis
     datasets: [
       {
         label: 'Price',
-        data: data.map(point => point[1]), // Prices on the y-axis
+        data: data.map(point => point.price), // Prices on the y-axis
         fill: false,
         borderColor: 'rgba(75,192,192,1)',
         tension: 0.1
@@ -62,7 +83,7 @@ function EcoDataPoint() {
 
   return (
     <div className='edph-container'>
-      <h1>Eco Data Point Histories</h1>
+      <h1>{ecoDataPointName}</h1>
       <div className='chart-container'>
         <Line data={chartData} />
       </div>
