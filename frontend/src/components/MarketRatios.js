@@ -44,8 +44,6 @@ function MarketRatios() {
 
   return (
     <div className='market-ratios-container'>
-      <h1 className='market-ratios-header'>Market Ratios Data</h1>
-
       <div className='search-container'>
         <input
           type='text'
