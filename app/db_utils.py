@@ -68,49 +68,30 @@ def fetch_price_history(security_id):
 
 def fetch_eco_data_points():
     conn = get_db_connection()
-    cursor = conn.cursor()
+    cursor = conn.cursor(dictionary=True)
     query = "SELECT * FROM eco_data_points"
     cursor.execute(query)
     rows = cursor.fetchall()
     cursor.close()
     conn.close()
-    return [
-        {
-            'eco_data_point_id': row[0],
-            'eco_data_point_name': row[1],
-            'period': row[2]
-        }
-        for row in rows
-    ]
+    return rows
 
 def fetch_eco_data_point_histories(eco_data_point_id):
     conn = get_db_connection()
-    cursor = conn.cursor()
-    query = "SELECT * FROM eco_data_point_histories WHERE eco_data_point_id = %s"
+    cursor = conn.cursor(dictionary=True)
+    query = "SELECT * FROM eco_data_points_histories WHERE eco_data_point_id = %s ORDER BY price_date"
     cursor.execute(query, (eco_data_point_id,))
     rows = cursor.fetchall()
     cursor.close()
     conn.close()
-    return [
-        {
-            'history_id': row[0],
-            'eco_data_point_id': row[1],
-            'history_date': row[2],
-            'value': row[3]
-        }
-        for row in rows
-    ]
+    return rows
 
 def fetch_eco_data_point(eco_data_point_id):
     conn = get_db_connection()
-    cursor = conn.cursor()
+    cursor = conn.cursor(dictionary=True)
     query = "SELECT * FROM eco_data_points WHERE eco_data_point_id = %s"
     cursor.execute(query, (eco_data_point_id,))
     row = cursor.fetchone()
     cursor.close()
     conn.close()
-    return {
-        'eco_data_point_id': row[0],
-        'eco_data_point_name': row[1],
-        'period': row[2]
-    } if row else None
+    return row
