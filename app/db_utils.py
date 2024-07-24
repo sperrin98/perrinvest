@@ -95,3 +95,44 @@ def fetch_eco_data_point(eco_data_point_id):
     cursor.close()
     conn.close()
     return row
+
+def fetch_currencies():
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+    query = """
+    SELECT * FROM securities 
+    WHERE security_id IN (16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 43)
+    """
+    cursor.execute(query)
+    rows = cursor.fetchall()
+    cursor.close()
+    conn.close()
+    return rows
+
+def fetch_currency(currency_id):
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+    query = """
+    SELECT * FROM securities 
+    WHERE security_id = %s AND security_id IN (16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 43)
+    """
+    cursor.execute(query, (currency_id,))
+    row = cursor.fetchone()
+    cursor.close()
+    conn.close()
+    return row
+
+def fetch_currency_price_history(currency_id):
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+    query = """
+        SELECT price_date, price
+        FROM price_histories
+        WHERE security_id = %s
+        ORDER BY price_date
+    """
+    cursor.execute(query, (currency_id,))
+    rows = cursor.fetchall()
+    cursor.close()
+    conn.close()
+    return rows

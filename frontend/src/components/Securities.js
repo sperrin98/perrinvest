@@ -46,7 +46,7 @@ function Securities() {
         />
       </div>
       
-      <table>
+      <table className='securities-table'>
         <thead>
           <tr>
             <th className='id-header'></th>
