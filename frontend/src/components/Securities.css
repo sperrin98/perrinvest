@@ -81,3 +81,7 @@
     border-radius: 4px;
     font-size: 16px;
   }
+
+  .securities-table td:nth-child(1) {
+    width: 2%;
+  }

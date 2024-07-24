@@ -77,3 +77,6 @@ table {
   background-color: black;
   }
 
+.ecodatapoints-table td:nth-child(1) {
+    width: 2%;
+}
