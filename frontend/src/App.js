@@ -8,6 +8,8 @@ import MarketRatios from './components/MarketRatios';
 import MarketRatio from './components/MarketRatio';
 import EcoDataPoints from './components/EcoDataPoints';
 import EcoDataPoint from './components/EcoDataPoint';
+import Currencies from './components/Currencies';
+import Currency from './components/Currency';
 
 function App() {
   return (
@@ -21,6 +23,8 @@ function App() {
         <Route path="/market-ratios/:id" element={<MarketRatio />} />
         <Route path="/eco-data-points" element={<EcoDataPoints />} />
         <Route path="/eco-data-points/:id" element={<EcoDataPoint /> } />
+        <Route path="/currencies" element={<Currencies />} />
+        <Route path="/currencies/:id" element={<Currency />} />
       </Routes>
     </Router>
   );
