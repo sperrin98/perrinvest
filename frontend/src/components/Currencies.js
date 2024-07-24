@@ -43,8 +43,8 @@ function Currencies() {
       <table>
         <thead>
           <tr>
-            <th>ID</th>
-            <th>Name</th>
+            <th></th>
+            <th>Currency</th>
           </tr>
         </thead>
         <tbody>
