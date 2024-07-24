@@ -35,7 +35,7 @@ const Home = () => {
         <ChartCarousel />
       </div>
       <div className="section section3">
-        <h1 className="home-header">Securities</h1>
+        <h1 className="home-header">Currencies</h1>
       </div>
       <div className="section section4">
         <h1 className="home-header">Market Ratios</h1>
