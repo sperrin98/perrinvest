@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import './Home.css'; // Import the CSS file
 import ChartCarousel from './ChartCarousel';
 
@@ -35,7 +36,10 @@ const Home = () => {
         <ChartCarousel />
       </div>
       <div className="section section3">
-        <h1 className="home-header">Securities</h1>
+        <h1 className="home-header">Currencies</h1>
+        <div className='currency-btn'>
+          <Link to="/currencies">Currencies</Link>
+        </div>
       </div>
       <div className="section section4">
         <h1 className="home-header">Market Ratios</h1>

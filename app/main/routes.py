@@ -1,7 +1,7 @@
 from . import main
 from flask import jsonify, Flask
 # from flask_cors import CORS
-from app.db_utils import fetch_securities, fetch_market_ratios, fetch_market_ratio_data, fetch_security_data, fetch_price_history,  fetch_eco_data_point_histories, fetch_eco_data_point, fetch_eco_data_points
+from app.db_utils import fetch_securities, fetch_market_ratios, fetch_market_ratio_data, fetch_security_data, fetch_price_history,  fetch_eco_data_point_histories, fetch_eco_data_point, fetch_eco_data_points, fetch_currencies, fetch_currency, fetch_currency_price_history
 import yfinance as yf
 
 
@@ -81,6 +81,31 @@ def eco_data_point(eco_data_point_id):
     except Exception as e:
         print(f"Error fetching eco-data-point: {e}")
         return jsonify({"error": "Error fetching eco-data-point"}), 500
+    
+@main.route('/currencies')
+def currencies():
+    try:
+        currencies_data = fetch_currencies()
+        return jsonify(currencies_data)
+    except Exception as e:
+        print(f"Error fetching currencies: {e}")
+        return jsonify({"error": "Error fetching currencies"}), 500
+
+@main.route('/currencies/<int:currency_id>')
+def currency(currency_id):
+    try:
+        currency_data = fetch_currency(currency_id)
+        price_history = fetch_currency_price_history(currency_id)
+        response = {
+            "currency": currency_data,
+            "price_history": price_history
+        }
+        return jsonify(response)
+    except Exception as e:
+        print(f"Error fetching currency data: {e}")
+        return jsonify({"error": "Error fetching currency data"}), 500
+
+    #api routes
 
 @main.route('/api/gold-price-history', methods=['GET'])
 def get_gold_price_history():
