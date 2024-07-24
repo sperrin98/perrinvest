@@ -44,7 +44,7 @@ function EcoDataPoints() {
         />
       </div>
       
-      <table>
+      <table className='ecodatapoints-table'>
         <thead>
           <tr>
             <th className='id-header'></th>
