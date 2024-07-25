@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Line } from 'react-chartjs-2';
 import './Currencies.css';
+import './CurrencySelection.css';
 
 function CurrencySelection() {
   const [currencies, setCurrencies] = useState([]);
@@ -55,18 +56,55 @@ function CurrencySelection() {
           label: `${abbrev1} / ${abbrev2}`,
           data: data,
           fill: false,
-          backgroundColor: 'rgba(75,192,192,0.4)',
-          borderColor: 'rgba(75,192,192,1)',
+          borderColor: 'rgb(0, 255, 179)',
+          backgroundColor: 'rgb(0, 255, 179)',
         },
       ],
     };
   };
 
+  const chartOptions = {
+    plugins: {
+      legend: {
+        display: true,
+        labels: {
+          color: 'rgb(0, 255, 179)'
+        }
+      },
+      tooltip: {
+        backgroundColor: 'rgba(0, 255, 179, 0.8)'
+      },
+    },
+    scales: {
+      x: {
+        ticks: {
+          color: 'rgb(0, 255, 179)',
+        },
+        grid: {
+          color: 'rgb(68, 68, 68)',
+        }
+      },
+      y: {
+        ticks: {
+          color: 'rgb(0, 255, 179)',
+        },
+        grid: {
+          color: 'rgb(68, 68, 68)',
+        },
+        title: {
+          display: true,
+          text: 'Value',
+          color: 'rgb(0, 255, 179)',
+        }
+      }
+    }
+  };
+
   return (
     <div className='divided-currency-container'>
-      <h2>Divide Currencies</h2>
-      <div>
-        <label>Currency 1:</label>
+      <h2 className='divided-title'>Divide Currencies</h2>
+      <div className='currency1'>
+        <label className='currency-label1'>Currency 1:</label>
         <select value={currency1} onChange={e => setCurrency1(e.target.value)}>
           <option value="">Select Currency</option>
           {currencies.map(currency => (
@@ -76,8 +114,8 @@ function CurrencySelection() {
           ))}
         </select>
       </div>
-      <div>
-        <label>Currency 2:</label>
+      <div className='currency2'>
+        <label className='currency-label2'>Currency 2:</label>
         <select value={currency2} onChange={e => setCurrency2(e.target.value)}>
           <option value="">Select Currency</option>
           {currencies.map(currency => (
@@ -87,11 +125,11 @@ function CurrencySelection() {
           ))}
         </select>
       </div>
-      <button onClick={handleCurrencyDivision}>Divide</button>
+      <button className='divide-btn' onClick={handleCurrencyDivision}>Divide</button>
       {dividedCurrency && (
         <div>
-          <h3>Divided Currency Result ({abbrev1} / {abbrev2})</h3>
-          <Line data={getChartData()} />
+          <h3 className='divided-result-title'>Divided Currency Result ({abbrev1} / {abbrev2})</h3>
+          <Line data={getChartData()} options={chartOptions} />
         </div>
       )}
     </div>
