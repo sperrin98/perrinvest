@@ -122,6 +122,21 @@ def fetch_currency(currency_id):
     conn.close()
     return row
 
+def fetch_currency_price_history(currency_id):
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+    query = """
+        SELECT price_date, price
+        FROM price_histories
+        WHERE security_id = %s
+        ORDER BY price_date
+    """
+    cursor.execute(query, (currency_id,))
+    rows = cursor.fetchall()
+    cursor.close()
+    conn.close()
+    return rows
+
 def get_security_id(security_long_name):
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
