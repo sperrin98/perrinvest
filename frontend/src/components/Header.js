@@ -13,7 +13,13 @@ const Header = () => {
           <li><Link to="/securities">Securities</Link></li>
           <li><Link to="/market-ratios">Market Ratios</Link></li>
           <li><Link to="/eco-data-points">Economical Data</Link></li>
-          {/* Add more navigation links as needed */}
+          <li className="dropdown">
+            <Link to="/currencies" className="dropbtn">Currencies</Link>
+            <div className="dropdown-content">
+              <Link to="/currencies">All Currencies</Link>
+              <Link to="/currencies/divide">Compare Currencies</Link>
+            </div>
+          </li>
         </ul>
       </nav>
     </header>
