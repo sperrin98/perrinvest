@@ -37,8 +37,9 @@ const Home = () => {
       </div>
       <div className="section section3">
         <h1 className="home-header">Currencies</h1>
-        <div className='currency-btn'>
-          <Link to="/currencies">Currencies</Link>
+        <div>
+          <Link to="/currencies"  className='currency-btn'>Currencies</Link>
+          <Link to="/currencies/divide" className='compare-btn'>Compare Currencies</Link>
         </div>
       </div>
       <div className="section section4">

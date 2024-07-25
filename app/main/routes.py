@@ -1,34 +1,49 @@
+from flask import Flask, jsonify, request, make_response
 from . import main
-from flask import jsonify, Flask
-# from flask_cors import CORS
-from app.db_utils import fetch_securities, fetch_market_ratios, fetch_market_ratio_data, fetch_security_data, fetch_price_history,  fetch_eco_data_point_histories, fetch_eco_data_point, fetch_eco_data_points, fetch_currencies, fetch_currency, fetch_currency_price_history
+from app.db_utils import (
+    fetch_securities, fetch_market_ratios, fetch_market_ratio_data, 
+    fetch_security_data, fetch_price_history, fetch_eco_data_point_histories, 
+    fetch_eco_data_point, fetch_eco_data_points, fetch_currencies, 
+    fetch_currency, call_divided_price_procedure, get_security_id,
+    fetch_currency_price_history
+)
 import yfinance as yf
 
+app = Flask(__name__)
 
-# app = Flask(__name__)
-# CORS(app)
+@app.before_request
+def before_request_func():
+    if request.method == 'OPTIONS':
+        response = make_response()
+        response.headers.add("Access-Control-Allow-Origin", "*")
+        response.headers.add("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+        response.headers.add("Access-Control-Allow-Headers", "Content-Type")
+        return response
+
+@app.after_request
+def after_request_func(response):
+    response.headers.add("Access-Control-Allow-Origin", "*")
+    response.headers.add("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+    response.headers.add("Access-Control-Allow-Headers", "Content-Type")
+    return response
 
 @main.route('/')
 def home():
     return jsonify({"message": "Welcome to Perrinvest"})
 
 @main.route('/securities')
-def securities():
+def get_securities():
     securities = fetch_securities()
-    print(securities)  # Add this line to check the data
     return jsonify(securities)
 
 @main.route('/securities/<int:security_id>')
-def security(security_id):  # Updated function name
-    # Fetch security data
+def get_security(security_id):
     security = fetch_security_data(security_id)
     price_history = fetch_price_history(security_id)
-    # Construct JSON response
     response = {
         "security": security,
         "price_history": price_history
     }
-    # Return JSON response
     return jsonify(response)
 
 @main.route('/securities/<int:security_id>/price-histories', methods=['GET'])
@@ -37,26 +52,23 @@ def get_price_histories(security_id):
     return jsonify(price_histories)
 
 @main.route('/market-ratios')
-def market_ratios():
-    # Fetch market ratios data
+def get_market_ratios():
     market_ratios_data = fetch_market_ratios()
-    # Return JSON response
     return jsonify(market_ratios_data)
 
 @main.route('/market-ratios/<int:ratio_id>')
-def market_ratio(ratio_id):
+def get_market_ratio(ratio_id):
     market_ratio_data = fetch_market_ratio_data(ratio_id)
     ratio_name = market_ratio_data[0][0] if market_ratio_data else "Unknown Ratio"
-    market_ratio_data = [(row[1], row[2]) for row in market_ratio_data]  # Remove the ratio name from each row
+    market_ratio_data = [(row[1], row[2]) for row in market_ratio_data]
     response = {
         "ratio_name": ratio_name,
         "market_ratio": market_ratio_data
     }
     return jsonify(response)
 
-
 @main.route('/eco-data-points')
-def eco_data_points():
+def get_eco_data_points():
     try:
         eco_data_points = fetch_eco_data_points()
         return jsonify(eco_data_points)
@@ -65,7 +77,7 @@ def eco_data_points():
         return jsonify({"error": "Error fetching eco-data-points"}), 500
 
 @main.route('/eco-data-points/<int:eco_data_point_id>/histories')
-def eco_data_point_histories(eco_data_point_id):
+def get_eco_data_point_histories(eco_data_point_id):
     try:
         histories = fetch_eco_data_point_histories(eco_data_point_id)
         return jsonify(histories)
@@ -74,25 +86,38 @@ def eco_data_point_histories(eco_data_point_id):
         return jsonify({"error": "Error fetching eco-data-point histories"}), 500
 
 @main.route('/eco-data-points/<int:eco_data_point_id>')
-def eco_data_point(eco_data_point_id):
+def get_eco_data_point(eco_data_point_id):
     try:
         data_point = fetch_eco_data_point(eco_data_point_id)
         return jsonify(data_point)
     except Exception as e:
         print(f"Error fetching eco-data-point: {e}")
         return jsonify({"error": "Error fetching eco-data-point"}), 500
-    
+
 @main.route('/currencies')
-def currencies():
+def get_currencies():
     try:
         currencies_data = fetch_currencies()
+        security_id1 = request.args.get('security_id1')
+        security_id2 = request.args.get('security_id2')
+
+        if security_id1 and security_id2:
+            divided_currency_data = get_divided_currency_price(int(security_id1), int(security_id2))
+            if divided_currency_data:
+                new_currency = {
+                    'id': f'divided_{security_id1}_{security_id2}',
+                    'security_long_name': f'Divided {security_id1}/{security_id2}',
+                    'price_history': divided_currency_data
+                }
+                currencies_data.append(new_currency)
+        
         return jsonify(currencies_data)
     except Exception as e:
         print(f"Error fetching currencies: {e}")
         return jsonify({"error": "Error fetching currencies"}), 500
 
 @main.route('/currencies/<int:currency_id>')
-def currency(currency_id):
+def get_currency(currency_id):
     try:
         currency_data = fetch_currency(currency_id)
         price_history = fetch_currency_price_history(currency_id)
@@ -105,12 +130,55 @@ def currency(currency_id):
         print(f"Error fetching currency data: {e}")
         return jsonify({"error": "Error fetching currency data"}), 500
 
-    #api routes
+@main.route('/currencies/divide', methods=['GET'])
+def divide_currencies():
+    security_long_name1 = request.args.get('security_long_name1')
+    security_long_name2 = request.args.get('security_long_name2')
+
+    print(f"Received security_long_name1: {security_long_name1}")  # Debugging line
+    print(f"Received security_long_name2: {security_long_name2}")  # Debugging line
+
+    if not security_long_name1 or not security_long_name2:
+        return jsonify({'error': 'Security long names are required'}), 400
+
+    try:
+        # Get security IDs from long names
+        security_id1 = get_security_id(security_long_name1)
+        security_id2 = get_security_id(security_long_name2)
+        
+        if security_id1 is None or security_id2 is None:
+            return jsonify({'error': 'Invalid security long names'}), 400
+
+        # Call the stored procedure
+        data = call_divided_price_procedure(security_id1, security_id2)
+
+        if not data:
+            return jsonify({'error': 'No data found for the given security IDs'}), 404
+
+        # Extracting the last three letters of each security_long_name
+        abbrev1 = security_long_name1[-3:]
+        abbrev2 = security_long_name2[-3:]
+
+        # Formatting the price_date
+        for row in data:
+            row['price_date'] = row['price_date'].strftime('%Y/%m/%d')
+
+        return jsonify({
+            'abbrev1': abbrev1,
+            'abbrev2': abbrev2,
+            'divided_prices': data
+        })
+    except ValueError:
+        return jsonify({'error': 'Invalid parameters'}), 400
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
 
 @main.route('/api/gold-price-history', methods=['GET'])
 def get_gold_price_history():
-    gold = yf.Ticker("GC=F")  # Gold futures
-    hist = gold.history(period="10y")  # Get 1 year of historical data
+    gold = yf.Ticker("GC=F")
+    hist = gold.history(period="10y")
     data = hist.reset_index().to_dict(orient='records')
     return jsonify(data)
 
@@ -124,17 +192,17 @@ def get_bitcoin_price_history():
 
 @main.route('/api/usd-price-history', methods=['GET'])
 def get_usd_price_history():
-    usd = yf.Ticker("DX-Y.NYB")  # Example ticker for USD Index; replace with actual ticker if needed
-    data = usd.history(period="10y", interval="1d")  # Fetch the past year of data
+    usd = yf.Ticker("DX-Y.NYB")
+    data = usd.history(period="10y", interval="1d")
     data.reset_index(inplace=True)
     result = data[['Date', 'Open', 'High', 'Low', 'Close']].to_dict(orient='records')
     return jsonify(result)
 
 @main.route('/api/sp500-price-history', methods=['GET'])
 def get_sp500_price_history():
-    sp500 = yf.Ticker("^GSPC")  # Ticker for S&P 500 index
-    data = sp500.history(period="10y", interval="1d")  # Fetch the past year of data
-    data.reset_index(inplace=True) 
+    sp500 = yf.Ticker("^GSPC")
+    data = sp500.history(period="10y", interval="1d")
+    data.reset_index(inplace=True)
     result = data[['Date', 'Open', 'High', 'Low', 'Close']].to_dict(orient='records')
     return jsonify(result)
 
