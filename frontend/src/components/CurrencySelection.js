@@ -29,14 +29,18 @@ function CurrencySelection() {
         .then(response => response.json())
         .then(data => {
           console.log('Divided currency result:', data);
-          setDividedCurrency(data);
+          const formattedData = data.map(record => ({
+            ...record,
+            price_date: new Date(record.price_date).toLocaleDateString('en-CA') // Format date as YYYY/MM/DD
+          }));
+          setDividedCurrency(formattedData);
         })
         .catch(error => console.error('Error dividing currencies:', error));
     } else {
       console.error('Currency IDs are missing');
     }
   };
-  
+
   return (
     <div className='divided-currency-container'>
       <h2>Divide Currencies</h2>
@@ -45,7 +49,7 @@ function CurrencySelection() {
         <select value={currency1} onChange={e => setCurrency1(e.target.value)}>
           <option value="">Select Currency</option>
           {currencies.map(currency => (
-            <option key={currency.id} value={currency.id}>
+            <option key={currency.id} value={currency.security_long_name}>
               {currency.security_long_name}
             </option>
           ))}
@@ -56,7 +60,7 @@ function CurrencySelection() {
         <select value={currency2} onChange={e => setCurrency2(e.target.value)}>
           <option value="">Select Currency</option>
           {currencies.map(currency => (
-            <option key={currency.id} value={currency.id}>
+            <option key={currency.id} value={currency.security_long_name}>
               {currency.security_long_name}
             </option>
           ))}
@@ -66,7 +70,13 @@ function CurrencySelection() {
       {dividedCurrency && (
         <div>
           <h3>Divided Currency Result</h3>
-          <p>{JSON.stringify(dividedCurrency)}</p>
+          <ul>
+            {dividedCurrency.map((record, index) => (
+              <li key={index}>
+                {record.price_date}: {record.divided_price}
+              </li>
+            ))}
+          </ul>
         </div>
       )}
     </div>

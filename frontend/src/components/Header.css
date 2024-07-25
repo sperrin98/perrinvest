@@ -69,3 +69,46 @@
   color: rgb(30, 196, 146);
   transition: 1s ease;
 }
+
+.nav-links .dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.nav-links .dropbtn {
+  cursor: pointer;
+  background-image: linear-gradient(to right, rgb(0, 255, 179), rgb(0, 119, 83));
+  -webkit-background-clip: text; /* For Safari */
+  background-clip: text;
+  color: transparent; /* Make text transparent to show gradient */
+  font-size: 1rem;
+  font-family: "Montserrat", sans-serif;
+}
+
+.nav-links .dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: rgb(0, 0, 0);
+  box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+  z-index: 1;
+}
+
+.nav-links .dropdown-content a {
+  color: rgb(0, 255, 179);
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+}
+
+.nav-links .dropdown-content a:hover {
+  background-color: rgb(30, 30, 30);
+}
+
+.nav-links .dropdown:hover .dropdown-content {
+  display: block;
+}
+
+.nav-links .dropdown:hover .dropbtn {
+  color: rgb(30, 196, 146);
+  transition: 1s ease;
+}
