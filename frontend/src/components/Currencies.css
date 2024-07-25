@@ -28,3 +28,7 @@
  table td {
     width: 25%;
   }
+
+  .divided-currency-container {
+    padding: 100px;
+  }
