@@ -4,7 +4,8 @@ from app.db_utils import (
     fetch_securities, fetch_market_ratios, fetch_market_ratio_data, 
     fetch_security_data, fetch_price_history, fetch_eco_data_point_histories, 
     fetch_eco_data_point, fetch_eco_data_points, fetch_currencies, 
-    fetch_currency, call_divided_price_procedure, get_security_id
+    fetch_currency, call_divided_price_procedure, get_security_id,
+    fetch_currency_price_history
 )
 import yfinance as yf
 
