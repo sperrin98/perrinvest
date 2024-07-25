@@ -10,6 +10,7 @@ import EcoDataPoints from './components/EcoDataPoints';
 import EcoDataPoint from './components/EcoDataPoint';
 import Currencies from './components/Currencies';
 import Currency from './components/Currency';
+import CurrencySelection from './components/CurrencySelection';
 
 function App() {
   return (
@@ -22,9 +23,10 @@ function App() {
         <Route path="/market-ratios" element={<MarketRatios />} />
         <Route path="/market-ratios/:id" element={<MarketRatio />} />
         <Route path="/eco-data-points" element={<EcoDataPoints />} />
-        <Route path="/eco-data-points/:id" element={<EcoDataPoint /> } />
+        <Route path="/eco-data-points/:id" element={<EcoDataPoint />} />
         <Route path="/currencies" element={<Currencies />} />
         <Route path="/currencies/:id" element={<Currency />} />
+        <Route path="/currencies/divide" element={<CurrencySelection />} />
       </Routes>
     </Router>
   );
