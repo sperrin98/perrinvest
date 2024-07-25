@@ -122,17 +122,41 @@ def fetch_currency(currency_id):
     conn.close()
     return row
 
-def fetch_currency_price_history(currency_id):
+def get_security_id(security_long_name):
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
-    query = """
-        SELECT price_date, price
-        FROM price_histories
-        WHERE security_id = %s
-        ORDER BY price_date
-    """
-    cursor.execute(query, (currency_id,))
-    rows = cursor.fetchall()
-    cursor.close()
-    conn.close()
-    return rows
+    query = "SELECT security_id FROM securities WHERE security_long_name = %s"
+    try:
+        cursor.execute(query, (security_long_name,))
+        result = cursor.fetchone()
+        if result:
+            return result['security_id']
+        return None
+    except Exception as e:
+        print(f"Error fetching security ID for {security_long_name}: {e}")
+        return None
+    finally:
+        cursor.close()
+        conn.close()
+
+def call_divided_price_procedure(security_id1, security_id2):
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+    
+    try:
+        # Call the stored procedure
+        cursor.callproc('divided_price', [security_id1, security_id2])
+        
+        # Fetch the results
+        result = []
+        for result_set in cursor.stored_results():
+            result = result_set.fetchall()
+        
+        return result
+
+    except mysql.connector.Error as err:
+        print(f"Error: {err}")
+        return []
+    finally:
+        cursor.close()
+        conn.close()
