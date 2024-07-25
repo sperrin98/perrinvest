@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Line } from 'react-chartjs-2';
 import './Currencies.css';
 
 function CurrencySelection() {
@@ -6,6 +7,8 @@ function CurrencySelection() {
   const [currency1, setCurrency1] = useState('');
   const [currency2, setCurrency2] = useState('');
   const [dividedCurrency, setDividedCurrency] = useState(null);
+  const [abbrev1, setAbbrev1] = useState('');
+  const [abbrev2, setAbbrev2] = useState('');
 
   useEffect(() => {
     // Fetch currencies when the component mounts
@@ -29,16 +32,34 @@ function CurrencySelection() {
         .then(response => response.json())
         .then(data => {
           console.log('Divided currency result:', data);
-          const formattedData = data.map(record => ({
-            ...record,
-            price_date: new Date(record.price_date).toLocaleDateString('en-CA') // Format date as YYYY/MM/DD
-          }));
-          setDividedCurrency(formattedData);
+          setDividedCurrency(data.divided_prices);
+          setAbbrev1(data.abbrev1);
+          setAbbrev2(data.abbrev2);
         })
         .catch(error => console.error('Error dividing currencies:', error));
     } else {
       console.error('Currency IDs are missing');
     }
+  };
+
+  const getChartData = () => {
+    if (!dividedCurrency) return {};
+
+    const labels = dividedCurrency.map(item => item.price_date);
+    const data = dividedCurrency.map(item => item.divided_price);
+
+    return {
+      labels: labels,
+      datasets: [
+        {
+          label: `${abbrev1} / ${abbrev2}`,
+          data: data,
+          fill: false,
+          backgroundColor: 'rgba(75,192,192,0.4)',
+          borderColor: 'rgba(75,192,192,1)',
+        },
+      ],
+    };
   };
 
   return (
@@ -69,14 +90,8 @@ function CurrencySelection() {
       <button onClick={handleCurrencyDivision}>Divide</button>
       {dividedCurrency && (
         <div>
-          <h3>Divided Currency Result</h3>
-          <ul>
-            {dividedCurrency.map((record, index) => (
-              <li key={index}>
-                {record.price_date}: {record.divided_price}
-              </li>
-            ))}
-          </ul>
+          <h3>Divided Currency Result ({abbrev1} / {abbrev2})</h3>
+          <Line data={getChartData()} />
         </div>
       )}
     </div>

@@ -155,7 +155,19 @@ def divide_currencies():
         if not data:
             return jsonify({'error': 'No data found for the given security IDs'}), 404
 
-        return jsonify(data)
+        # Extracting the last three letters of each security_long_name
+        abbrev1 = security_long_name1[-3:]
+        abbrev2 = security_long_name2[-3:]
+
+        # Formatting the price_date
+        for row in data:
+            row['price_date'] = row['price_date'].strftime('%Y/%m/%d')
+
+        return jsonify({
+            'abbrev1': abbrev1,
+            'abbrev2': abbrev2,
+            'divided_prices': data
+        })
     except ValueError:
         return jsonify({'error': 'Invalid parameters'}), 400
     except Exception as e:
