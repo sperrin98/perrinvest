@@ -17,7 +17,7 @@ const Header = () => {
             <Link to="/currencies" className="dropbtn">Currencies</Link>
             <div className="dropdown-content">
               <Link to="/currencies">All Currencies</Link>
-              <Link to="/currencies/divide">Divide Currencies</Link>
+              <Link to="/currencies/divide">Compare Currencies</Link>
             </div>
           </li>
         </ul>
