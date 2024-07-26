@@ -1,0 +1,47 @@
+.divided-security-container {
+    width: 100vw;
+    height: 107vh;
+    background-color: black;
+  }
+  
+  
+.security1 {
+    margin-top: 75px;
+    padding: 10px;
+    width: 50%;
+  }
+
+.security2 {
+    padding: 10px;
+    width: 50%;
+}
+  
+.security-label1 {
+    padding-right: 10px;
+    color: #00FFB3
+}
+
+.security-label2 {
+    padding-right: 10px;
+    color: #00FFB3
+}
+  
+select {
+    color: #00FFB3;
+    background-color: black;
+    border: 1px solid #00FFB3;
+}
+  
+  .divide-btn {
+    margin: 10px;
+    color: #00FFB3;
+    background-color: black;
+    border: solid 1px #00FFB3;
+    padding-right: 10px;
+    padding-left: 10px;
+  }
+  
+  .divide-btn:hover {
+    background-color: #00c491;
+  }
+  

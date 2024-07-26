@@ -8,24 +8,28 @@ function Securities() {
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredSecurities, setFilteredSecurities] = useState([]);
   const navigate = useNavigate();
+  const [error, setError] = useState(null);  // Define the error state
 
   useEffect(() => {
-    axios.get('http://localhost:5000/securities')
-      .then(response => {
+    async function fetchSecurities() {
+      try {
+        const response = await axios.get('http://localhost:5000/securities');
+        console.log(response.data);  // Log the data to inspect its structure
         setSecurities(response.data);
-        setFilteredSecurities(response.data); // Initialize filtered securities
-      })
-      .catch(error => {
-        console.error('Error fetching securities:', error);
-      });
+      } catch (err) {
+        console.error('Error fetching securities:', err);
+        setError('Failed to load securities.');
+      }
+    }
+    fetchSecurities();
   }, []);
 
   // Update filtered securities whenever searchTerm changes
   useEffect(() => {
     setFilteredSecurities(
       securities.filter(security =>
-        security[1].toLowerCase().includes(searchTerm.toLowerCase()) ||
-        security[2].toLowerCase().includes(searchTerm.toLowerCase())
+        security.security_long_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        security.security_short_name.toLowerCase().includes(searchTerm.toLowerCase())
       )
     );
   }, [searchTerm, securities]);
@@ -55,17 +59,18 @@ function Securities() {
           </tr>
         </thead>
         <tbody>
+          {error && <tr><td colSpan="3">{error}</td></tr>}
           {filteredSecurities.length > 0 ? (
             filteredSecurities.map(security => (
-              <tr key={security[0]} onClick={() => handleRowClick(security[0])} className="clickable-row">
-                <td>{security[0]}</td>
-                <td className="first-column">{security[1]}</td>
-                <td>{security[2]}</td>
+              <tr key={security.security_id} onClick={() => handleRowClick(security.security_id)} className="clickable-row">
+                <td>{security.security_id}</td>
+                <td className="first-column">{security.security_long_name}</td>
+                <td>{security.security_short_name}</td>
               </tr>
             ))
           ) : (
             <tr>
-              <td colSpan="2">No securities found</td>
+              <td colSpan="3">No securities found</td>
             </tr>
           )}
         </tbody>
