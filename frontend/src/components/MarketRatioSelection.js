@@ -69,7 +69,7 @@ function MarketRatioSelection() {
       labels: labels,
       datasets: [
         {
-          label: `${abbrev1} / ${abbrev2}`,
+          label: `${selectedSecurity1} / ${selectedSecurity2}`,
           data: data,
           fill: false,
           borderColor: 'rgb(0, 255, 179)',
