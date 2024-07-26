@@ -11,6 +11,7 @@ import EcoDataPoint from './components/EcoDataPoint';
 import Currencies from './components/Currencies';
 import Currency from './components/Currency';
 import CurrencySelection from './components/CurrencySelection';
+import MarketRatioSelection from './components/MarketRatioSelection';
 
 function App() {
   return (
@@ -27,6 +28,7 @@ function App() {
         <Route path="/currencies" element={<Currencies />} />
         <Route path="/currencies/:id" element={<Currency />} />
         <Route path="/currencies/divide" element={<CurrencySelection />} />
+        <Route path="/market-ratios/divide" element={<MarketRatioSelection />} />
       </Routes>
     </Router>
   );
