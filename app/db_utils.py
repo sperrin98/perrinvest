@@ -16,9 +16,12 @@ def fetch_securities():
     query = "SELECT * FROM securities"
     cursor.execute(query)
     rows = cursor.fetchall()
+    columns = [desc[0] for desc in cursor.description]
+    result = [dict(zip(columns, row)) for row in rows]
     cursor.close()
     conn.close()
-    return rows
+    return result
+
 
 def fetch_security_data(security_id):
     conn = get_db_connection()

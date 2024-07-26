@@ -33,8 +33,12 @@ def home():
 
 @main.route('/securities')
 def get_securities():
-    securities = fetch_securities()
-    return jsonify(securities)
+    try:
+        securities = fetch_securities()  # Ensure this function returns a list of dictionaries or tuples
+        return jsonify(securities)
+    except Exception as e:
+        print(f"Error fetching securities: {e}")
+        return jsonify({'error': str(e)}), 500
 
 @main.route('/securities/<int:security_id>')
 def get_security(security_id):
@@ -173,6 +177,30 @@ def divide_currencies():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
+@main.route('/market-ratios/divide', methods=['GET'])
+def divide_market_ratios():
+    security_long_name1 = request.args.get('security_long_name1')
+    security_long_name2 = request.args.get('security_long_name2')
+
+    if not security_long_name1 or not security_long_name2:
+        return jsonify({'error': 'Security long names are required'}), 400
+
+    try:
+        security_id1 = get_security_id(security_long_name1)
+        security_id2 = get_security_id(security_long_name2)
+
+        if security_id1 is None or security_id2 is None:
+            return jsonify({'error': 'Invalid security long names'}), 400
+
+        data = call_divided_price_procedure(security_id1, security_id2)
+        if not data:
+            return jsonify({'error': 'No data found for the given security IDs'}), 404
+
+        return jsonify({
+            'divided_prices': data
+        })
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 
 @main.route('/api/gold-price-history', methods=['GET'])

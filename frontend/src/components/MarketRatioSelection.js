@@ -12,7 +12,6 @@ function MarketRatioSelection() {
     async function fetchSecurities() {
       try {
         const response = await axios.get('http://localhost:5000/securities');
-        console.log(response.data);  // Check the data structure
         setSecurities(response.data);
       } catch (err) {
         console.error('Error fetching securities:', err);
