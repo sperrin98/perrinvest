@@ -1,12 +1,12 @@
 .divided-security-container {
     width: 100vw;
-    height: 107vh;
+    height: 119vh;
     background-color: black;
+    padding-left: 100px;
   }
   
   
 .security1 {
-    margin-top: 75px;
     padding: 10px;
     width: 50%;
   }
@@ -47,4 +47,9 @@ select {
   
 .result-title {
   color: #00FFB3;
+}
+
+.market-ratio-title {
+  color: #00FFB3;
+  padding-top: 100px;
 }
