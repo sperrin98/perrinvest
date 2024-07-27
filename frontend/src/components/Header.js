@@ -24,6 +24,7 @@ const Header = () => {
             <div className="dropdown-content">
               <Link to="/currencies">All Currencies</Link>
               <Link to="/currencies/divide">Compare Currencies</Link>
+              <Link to="/currencies/crypto">Cryptocurrencies</Link>
             </div>
           </li>
         </ul>

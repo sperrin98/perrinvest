@@ -40,6 +40,7 @@ const Home = () => {
         <div>
           <Link to="/currencies"  className='currency-btn'>Currencies</Link>
           <Link to="/currencies/divide" className='compare-btn'>Compare Currencies</Link>
+          <Link to="/currencies/crypto" className='compare-btn'>Cryptocurrencies</Link>
         </div>
       </div>
       <div className="section section4">
