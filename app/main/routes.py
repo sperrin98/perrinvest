@@ -201,6 +201,23 @@ def divide_market_ratios():
         })
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+    
+@main.route('/api/crypto-prices', methods=['GET'])
+def get_crypto_prices():
+    try:
+        # List of cryptocurrencies to fetch data for
+        crypto_tickers = ['BTC-USD', 'ETH-USD', 'BNB-USD', 'XRP-USD', 'ADA-USD', 'DOGE-USD', 'SOL-USD', 'DOT-USD', 'UNI7083-USD', 'LTC-USD']
+        crypto_data = {}
+
+        for ticker in crypto_tickers:
+            crypto = yf.Ticker(ticker)
+            hist = crypto.history(period="10d")  # Fetch the last 10 days of data
+            crypto_data[ticker] = hist.reset_index().to_dict(orient='records')
+
+        return jsonify(crypto_data)
+    except Exception as e:
+        print(f"Error fetching cryptocurrency data: {e}")
+        return jsonify({"error": str(e)}), 500
 
 
 @main.route('/api/gold-price-history', methods=['GET'])
