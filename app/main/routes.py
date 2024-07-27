@@ -218,6 +218,59 @@ def get_crypto_prices():
     except Exception as e:
         print(f"Error fetching cryptocurrency data: {e}")
         return jsonify({"error": str(e)}), 500
+    
+@main.route('/api/crypto-price-history/<ticker>', methods=['GET'])
+def get_crypto_price_history(ticker):
+    try:
+        # Check if the ticker already ends with '-USD'
+        if not ticker.endswith('-USD'):
+            ticker = f"{ticker}-USD"  # Append '-USD' only if it's not already present
+        
+        print(f"Fetching data for ticker: {ticker}")  # Debugging line
+        
+        # Fetch historical data for the given ticker
+        crypto = yf.Ticker(ticker)
+        data = crypto.history(period="1y", interval="1d")
+        
+        if data.empty:
+            print(f"No data found for ticker: {ticker}")  # Debugging line
+            return jsonify({"error": "No data found for the specified ticker"}), 404
+        
+        data.reset_index(inplace=True)
+        result = data[['Date', 'Open', 'High', 'Low', 'Close']].to_dict(orient='records')
+        return jsonify(result)
+    except Exception as e:
+        print(f"Error fetching cryptocurrency price history for {ticker}: {e}")  # Debugging line
+        return jsonify({"error": str(e)}), 500
+
+
+
+@main.route('/api/crypto-prices', methods=['GET'], endpoint='crypto_prices')
+def get_crypto_prices():
+    try:
+        # List of valid cryptocurrency tickers
+        crypto_tickers = ['BTC-USD', 'ETH-USD', 'BNB-USD', 'XRP-USD', 'ADA-USD', 'DOGE-USD', 'SOL-USD', 'DOT-USD', 'UNI-USD', 'LTC-USD']
+        crypto_data = {}
+
+        for ticker in crypto_tickers:
+            print(f"Fetching data for ticker: {ticker}")  # Debugging line
+            crypto = yf.Ticker(ticker)
+            # Use '1mo' to get up to 1 month of data
+            hist = crypto.history(period="1mo")  
+            if hist.empty:
+                crypto_data[ticker] = {"error": "No data found"}
+            else:
+                # Filter to the last 10 days
+                hist = hist.tail(10)
+                crypto_data[ticker] = hist.reset_index().to_dict(orient='records')
+
+        return jsonify(crypto_data)
+    except Exception as e:
+        print(f"Error fetching cryptocurrency data: {e}")  # Debugging line
+        return jsonify({"error": str(e)}), 500
+
+
+
 
 
 @main.route('/api/gold-price-history', methods=['GET'])
