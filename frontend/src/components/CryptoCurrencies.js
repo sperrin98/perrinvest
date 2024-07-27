@@ -52,7 +52,7 @@ function CryptoCurrencies() {
       <table className='cryptocurrencies-table'>
         <thead>
           <tr>
-            <th className='ticker-header'>Cryptocurrency</th>
+            <th className='ticker-header'>Ticker</th>
             <th className="price-header">Last Close Price</th>
           </tr>
         </thead>
@@ -63,7 +63,7 @@ function CryptoCurrencies() {
               <tr key={ticker} onClick={() => handleRowClick(ticker)} className="clickable-row">
                 <td className="ticker-column">{ticker}</td>
                 <td>
-                  {data && data.length > 0 ? `$${data[data.length - 1].Close.toFixed(2)}` : 'N/A'}
+                  {data && data.length > 0 ? `$${data[data.length - 1]?.Close?.toFixed(2) || 'N/A'}` : 'N/A'}
                 </td>
               </tr>
             ))
