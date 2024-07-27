@@ -12,6 +12,8 @@ import Currencies from './components/Currencies';
 import Currency from './components/Currency';
 import CurrencySelection from './components/CurrencySelection';
 import MarketRatioSelection from './components/MarketRatioSelection';
+import CryptoCurrencies from './components/CryptoCurrencies';
+import CryptoCurrency from './components/CryptoCurrency';
 
 function App() {
   return (
@@ -29,6 +31,8 @@ function App() {
         <Route path="/currencies/:id" element={<Currency />} />
         <Route path="/currencies/divide" element={<CurrencySelection />} />
         <Route path="/market-ratios/divide" element={<MarketRatioSelection />} />
+        <Route path="/currencies/crypto" element={<CryptoCurrencies />} />
+        <Route path="/currencies/crypto/:ticker" element={<CryptoCurrency />} />
       </Routes>
     </Router>
   );
