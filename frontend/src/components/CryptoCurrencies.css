@@ -1,26 +1,84 @@
-.crypto-container {
-    padding: 20px;
-    background-color: black;
-    color: #00FFB3;
+.cryptocurrencies-container {
+    background-color: gray;
+    padding: 0 15%; /* Align container padding with border */
+    height: 100vh;
   }
   
-  .crypto-table {
-    display: flex;
-    flex-wrap: wrap;
-  }
-  
-  .crypto-item {
-    background-color: #333;
-    padding: 10px;
-    margin: 10px;
-    border: 1px solid #00FFB3;
-    border-radius: 5px;
-    width: 200px;
-    color: #00FFB3;
-  }
-  
-  h2 {
+  .cryptocurrency-header {
+    font-family: "Montserrat", sans-serif;
     text-align: center;
-    color: #00FFB3;
+    margin-top: 0;
+    padding: 10px;
+    font-size: 32px;
+  }
+  
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 0 auto; /* Center the table */
+  }
+  
+  th, td {
+    padding: 10px;
+    text-align: left;
+    font-family: "Montserrat", sans-serif;
+    border-bottom: 1px solid rgb(0, 255, 179);
+    padding-left: 40px;
+    max-width: 200px; /* Adjust max-width as needed */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  
+  .id-header {
+    width: 5px;
+  }
+  
+  th {
+    padding-left: 60px; /* Adjust this value as needed */
+    text-align: center;
+  }
+  
+  tbody tr {
+    transition: background-color 0.3s;
+  }
+  
+  tbody tr:hover {
+    background-color: #000000;
+    cursor: pointer;
+    color: rgb(0, 255, 179);
+    transition: ease 0.5s;
+  }
+  
+  tbody tr a {
+    display: block;
+    color: inherit; /* Inherit text color */
+    text-decoration: none; /* Remove underline */
+  }
+  
+  .back-button {
+    text-align: center;
+    margin-top: 20px;
+  }
+  
+  .back-button a {
+    color: rgb(0, 255, 179);
+    text-decoration: none;
+    font-family: "Montserrat", sans-serif;
+    font-size: 1rem;
+  }
+  
+  .search-container {
+    margin-bottom: 20px;
+    padding-top: 90px;
+  }
+  
+  .search-input {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid rgb(0, 255, 179);
+    background-color: rgb(209, 209, 209);
+    border-radius: 4px;
+    font-size: 16px;
   }
   
