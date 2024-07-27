@@ -11,7 +11,13 @@ const Header = () => {
         </div>
         <ul className="nav-links">
           <li><Link to="/securities">Securities</Link></li>
-          <li><Link to="/market-ratios">Market Ratios</Link></li>
+          <li className='dropdown'>
+              <Link to="/market-ratios" className="dropbtn">Market Ratios</Link>
+              <div className="dropdown-content">
+                <Link to="/market-ratios">All Market Ratios</Link>
+                <Link to="/market-ratios/divide">Compare Securities</Link>
+              </div>
+            </li>
           <li><Link to="/eco-data-points">Economical Data</Link></li>
           <li className="dropdown">
             <Link to="/currencies" className="dropbtn">Currencies</Link>
