@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import './Home.css'; // Import the CSS file
 import ChartCarousel from './ChartCarousel';
 import coinImage from '../assets/images/coin.jpg';
+import marketImage from '../assets/images/market-ratio.jpg'
 
 const Home = () => {
   const [displayedText, setDisplayedText] = useState('');
@@ -27,22 +28,6 @@ const Home = () => {
     type();
   }, [text]);
 
-  useEffect(() => {
-    const handleScroll = () => {
-      const scrolled = window.scrollY;
-      const section2 = document.querySelector('.section2');
-      if (section2) {
-        section2.style.backgroundPositionY = `${scrolled * 0.5}px`;
-      }
-    };
-
-    window.addEventListener('scroll', handleScroll);
-
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-    };
-  }, []);
-
   return (
     <div>
       <div className="section section1">
@@ -64,7 +49,14 @@ const Home = () => {
         </div>
       </div>
       <div className="section section4">
-        <h1 className="home-header">Market Ratios</h1>
+        <h1 className="market-ratio-home-header">Market Ratios</h1>
+        <div className='button2-container'>
+          <Link to="/market-ratios" className='market-ratio-button'>Market Ratios</Link>
+          <Link to="/market-ratios/divide" className='compare-btn'>Compare Securities</Link>
+        </div>
+        <div className="image-container2">
+          <img src={marketImage} alt="Market" />
+        </div>
       </div>
     </div>
   );
