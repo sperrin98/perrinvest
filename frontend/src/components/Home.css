@@ -49,17 +49,22 @@ body {
 
 .section3 {
   background-color: #151213;
-  padding: 20px;
-  text-align: left;
-  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   min-height: 100vh;
-  position: relative;
+  position: -webkit-sticky; /* For Safari */
+  position: sticky;
+  top: 0;
+  z-index: 2;
 }
 
 .section4 {
-  background-color: gray;
+  background-color: #151213;
   min-height: 100vh;
   z-index: 3;
+  position: relative;
 }
 
 .home-header {
@@ -133,7 +138,9 @@ body {
 
 .currency-btn:hover, .compare-btn:hover, .crypto-btn:hover {
   background-color: #00FFB3;
-  color: white;
+  color: #151213;
+  border: 1px solid #151213;
+  transition: 0.5s ease;
 }
 
 .image-container {
@@ -153,4 +160,65 @@ body {
   height: 100%;
   width: 100%;
   object-fit: cover;
+}
+
+.image-container2 {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 50%;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.image-container2 img {
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+}
+
+.button2-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin-top: 100px;
+  position: absolute;
+  right: 20%;
+  top: calc(20% + 70px);
+}
+
+.market-ratio-home-header {
+  font-size: 50px;
+  color: #00FFB3;
+  text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3),
+              5px 5px 70px rgba(255, 255, 255, 0.5);
+  font-weight: 500;
+  position: absolute;
+  top: 25%;
+  right: 17%;
+  margin-bottom: 20px;
+}
+
+.market-ratio-button {
+  display: block;
+  padding: 10px 25px;
+  border: 1px solid #00FFB3;
+  border-radius: 20px;
+  text-align: center;
+  width: 200px;
+  margin: 10px 0;
+  background-color: transparent;
+  color: #00FFB3;
+  text-decoration: none;
+}
+
+.market-ratio-button:hover {
+  background-color: #00FFB3;
+  color: #151213;
+  border: 1px solid #151213;
+  transition: 0.5s ease;
 }
