@@ -1,15 +1,12 @@
-html {
+html, body {
   margin: 0;
   height: 100%;
   overflow: hidden;
+  font-family: "Montserrat", sans-serif;
 }
 
 body {
-  margin: 0;
-  height: 100%;
-  overflow-x: hidden;
   overflow-y: auto;
-  font-family: "Montserrat", sans-serif;
 }
 
 .section {
@@ -17,14 +14,10 @@ body {
   width: 100%;
   min-height: 100vh;
   display: flex;
-  justify-content: center;
-  align-items: center;
+  justify-content: flex-start; /* Align items to the top of the section */
+  align-items: flex-start; /* Align items to the left of the section */
   color: white;
-  overflow: hidden; /* Ensure content does not overflow the section */
-}
-
-.section1 {
-  position: relative;
+  flex-direction: column; /* Stack content vertically */
 }
 
 .section1::before {
@@ -39,8 +32,8 @@ body {
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
-  filter: blur(1.5px); /* Apply blur effect */
-  z-index: -1; /* Ensure it is behind the text */
+  filter: blur(1.5px);
+  z-index: -1;
 }
 
 .section2 {
@@ -52,6 +45,8 @@ body {
 
 .section3 {
   background-color: rgb(25, 0, 95);
+  padding: 20px;
+  text-align: left; /* Ensure text is aligned to the left */
 }
 
 .section4 {
@@ -68,6 +63,7 @@ body {
   position: absolute;
   top: 20%;
   left: 20%;
+  margin-bottom: 20px;
 }
 
 .section2-header {
@@ -96,7 +92,6 @@ body {
 .chart-container canvas {
   width: 100% !important;
   height: 100% !important;
-  /* margin-top: 100px; */
 }
 
 .carousel-header {
@@ -105,23 +100,49 @@ body {
   font-size: 24px;
 }
 
-.currency-btn {
-  display: inline-block;
+.button-container {
+  display: flex;
+  flex-direction: column;  
+  align-items: flex-start; 
+  margin-top: 100px;        
+  position: absolute;      
+  left: 20%;               
+  top: calc(20% + 70px);   
+}
+
+.currency-btn, .compare-btn, .crypto-btn {
+  display: block;
   padding: 10px 25px;
   border: 1px solid #00FFB3;
   border-radius: 20px;
   text-align: center;
+  width: 200px;
+  margin: 10px 0;
+  background-color: transparent;
+  color: #00FFB3;
+  text-decoration: none;
+}
+
+.currency-btn:hover, .compare-btn:hover, .crypto-btn:hover {
+  background-color: #00FFB3;
+  color: white;
+}
+
+.image-container {
   position: absolute;
-  left: 20%;
-  top: 30%;
+  right: 0;
+  top: 0;
+  height: 100%;
+  width: 50%; /* Adjust the width to control the space it takes */
+  margin: 0; /* Remove margin */
+  padding: 0; /* Remove padding */
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-.currency-btn a {
-  color: #00FFB3; 
-  text-decoration: none; 
-  display: inline-block; 
-}
-
-.compare-btn {
-  
+.image-container img {
+  height: 100%;
+  width: 100%; /* Ensure the image fills the width of the container */
+  object-fit: cover;
 }
