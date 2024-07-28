@@ -1,15 +1,12 @@
-html {
+html, body {
   margin: 0;
   height: 100%;
   overflow: hidden;
+  font-family: "Montserrat", sans-serif;
 }
 
 body {
-  margin: 0;
-  height: 100%;
-  overflow-x: hidden;
   overflow-y: auto;
-  font-family: "Montserrat", sans-serif;
 }
 
 .section {
@@ -17,14 +14,8 @@ body {
   width: 100%;
   min-height: 100vh;
   display: flex;
-  justify-content: center;
-  align-items: center;
+  flex-direction: column;
   color: white;
-  overflow: hidden; /* Ensure content does not overflow the section */
-}
-
-.section1 {
-  position: relative;
 }
 
 .section1::before {
@@ -39,23 +30,36 @@ body {
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
-  filter: blur(1.5px); /* Apply blur effect */
-  z-index: -1; /* Ensure it is behind the text */
+  filter: blur(1.5px);
+  z-index: -1;
 }
 
 .section2 {
-  background-color: rgb(0, 0, 0);
+  background-color: #151213;
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  position: -webkit-sticky; /* For Safari */
+  position: sticky;
+  top: 0;
+  z-index: 1;
 }
 
 .section3 {
-  background-color: rgb(25, 0, 95);
+  background-color: #151213;
+  padding: 20px;
+  text-align: left;
+  z-index: 2;
+  min-height: 100vh;
+  position: relative;
 }
 
 .section4 {
   background-color: gray;
+  min-height: 100vh;
+  z-index: 3;
 }
 
 .home-header {
@@ -64,10 +68,10 @@ body {
   text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3),
               5px 5px 70px rgba(255, 255, 255, 0.5);
   font-weight: 500;
-  z-index: 1;
   position: absolute;
   top: 20%;
   left: 20%;
+  margin-bottom: 20px;
 }
 
 .section2-header {
@@ -96,7 +100,6 @@ body {
 .chart-container canvas {
   width: 100% !important;
   height: 100% !important;
-  /* margin-top: 100px; */
 }
 
 .carousel-header {
@@ -105,23 +108,49 @@ body {
   font-size: 24px;
 }
 
-.currency-btn {
-  display: inline-block;
+.button-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin-top: 100px;
+  position: absolute;
+  left: 20%;
+  top: calc(20% + 70px);
+}
+
+.currency-btn, .compare-btn, .crypto-btn {
+  display: block;
   padding: 10px 25px;
   border: 1px solid #00FFB3;
   border-radius: 20px;
   text-align: center;
+  width: 200px;
+  margin: 10px 0;
+  background-color: transparent;
+  color: #00FFB3;
+  text-decoration: none;
+}
+
+.currency-btn:hover, .compare-btn:hover, .crypto-btn:hover {
+  background-color: #00FFB3;
+  color: white;
+}
+
+.image-container {
   position: absolute;
-  left: 20%;
-  top: 30%;
+  right: 0;
+  top: 0;
+  height: 100%;
+  width: 50%;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-.currency-btn a {
-  color: #00FFB3; 
-  text-decoration: none; 
-  display: inline-block; 
-}
-
-.compare-btn {
-  
+.image-container img {
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
 }

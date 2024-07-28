@@ -44,7 +44,7 @@
   }
   
   tbody tr:hover {
-    background-color: #000000;
+    background-color: #151213;
     cursor: pointer;
     color: rgb(0, 255, 179);
     transition: ease 0.5s;
