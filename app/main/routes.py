@@ -222,15 +222,17 @@ def get_crypto_prices():
 @main.route('/api/crypto-price-history/<ticker>', methods=['GET'])
 def get_crypto_price_history(ticker):
     try:
+        timeframe = request.args.get('timeframe', '1y')  # Default to 1 year if no timeframe is provided
+
         # Check if the ticker already ends with '-USD'
         if not ticker.endswith('-USD'):
             ticker = f"{ticker}-USD"  # Append '-USD' only if it's not already present
         
-        print(f"Fetching data for ticker: {ticker}")  # Debugging line
+        print(f"Fetching data for ticker: {ticker} with timeframe: {timeframe}")  # Debugging line
         
-        # Fetch historical data for the given ticker
+        # Fetch historical data for the given ticker and timeframe
         crypto = yf.Ticker(ticker)
-        data = crypto.history(period="1y", interval="1d")
+        data = crypto.history(period=timeframe, interval="1d")
         
         if data.empty:
             print(f"No data found for ticker: {ticker}")  # Debugging line
