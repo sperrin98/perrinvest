@@ -28,22 +28,6 @@ const Home = () => {
     type();
   }, [text]);
 
-  useEffect(() => {
-    const handleScroll = () => {
-      const scrolled = window.scrollY;
-      const section2 = document.querySelector('.section2');
-      if (section2) {
-        section2.style.backgroundPositionY = `${scrolled * 0.5}px`;
-      }
-    };
-
-    window.addEventListener('scroll', handleScroll);
-
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-    };
-  }, []);
-
   return (
     <div>
       <div className="section section1">
