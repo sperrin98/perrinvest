@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Link, useNavigate } from 'react-router-dom'; // Import Link from react-router-dom
-import './MarketRatios.css'; // Import the CSS file
+import { Link, useNavigate } from 'react-router-dom';
+import './MarketRatios.css';
 
 function MarketRatios() {
   const [marketRatios, setMarketRatios] = useState([]);
@@ -9,11 +9,9 @@ function MarketRatios() {
   const [filteredMarketRatios, setFilteredMarketRatios] = useState([]);
   const navigate = useNavigate();
 
-  // Fetch market ratios data from the API
   useEffect(() => {
     axios.get('http://localhost:5000/market-ratios')
       .then(response => {
-        // Ensure the response data is an array
         if (Array.isArray(response.data)) {
           setMarketRatios(response.data);
         } else {
@@ -25,7 +23,6 @@ function MarketRatios() {
       });
   }, []);
 
-  // Filter market ratios based on the search term
   useEffect(() => {
     if (Array.isArray(marketRatios)) {
       setFilteredMarketRatios(
@@ -37,7 +34,6 @@ function MarketRatios() {
     }
   }, [searchTerm, marketRatios]);
 
-  // Handle row click to navigate to detailed view
   const handleRowClick = (id) => {
     navigate(`/market-ratios/${id}`);
   };
@@ -77,8 +73,8 @@ function MarketRatios() {
         </tbody>
       </table>
 
-      <div className="back-button">
-        <Link to="/">Go Back to Homepage</Link>
+      <div className="back-button-container">
+        <Link to="/" className="back-button">Go Back to Homepage</Link>
       </div>
     </div>
   );

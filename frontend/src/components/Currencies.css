@@ -1,34 +1,85 @@
-.currency-container {
-    height: 100vh;
-    width: 100vw;
-    background-color: #151213;
-    padding-top: 120px;
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  background-color: gray; /* Ensure the entire page background color matches */
 }
 
 .currencies-container {
-    background-color: gray;
-    padding: 0 15%;
+  background-color: gray; /* Background color for the container */
+  padding: 0 15%; /* Padding to match container width */
+  min-height: 100vh; /* Ensure the container covers the full viewport height */
+  box-sizing: border-box; /* Include padding in element's total width and height */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between; /* Space out content and footer */
+}
+
+.search-container {
+  margin-bottom: 20px;
+  padding-top: 20px; /* Adjust as needed */
 }
 
 .search-input {
-    width: 100%;
-    padding: 8px;
-    border: 1px solid rgb(0, 255, 179);
-    background-color: rgb(209, 209, 209);
-    border-radius: 4px;
-    font-size: 16px;
-  }
+  width: 100%;
+  padding: 8px;
+  border: 1px solid rgb(0, 255, 179);
+  background-color: rgb(209, 209, 209);
+  border-radius: 4px;
+  font-size: 16px;
+}
 
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    margin: 0 auto; /* Center the table */
-  }
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 0 auto; /* Center the table */
+}
 
- table td {
-    width: 25%;
-  }
+th, td {
+  padding: 10px;
+  text-align: left;
+  font-family: "Montserrat", sans-serif;
+  border-bottom: 1px solid rgb(0, 255, 179);
+}
 
-  .divided-currency-container {
-    padding: 100px;
-  }
+th {
+  padding-left: 60px; /* Adjust padding for table headers */
+  text-align: center;
+}
+
+td {
+  width: 25%; /* Ensure cells in the table have consistent width */
+}
+
+tbody tr {
+  transition: background-color 0.3s;
+}
+
+tbody tr:hover {
+  background-color: #151213;
+  cursor: pointer;
+  color: rgb(0, 255, 179);
+}
+
+tbody tr a {
+  color: inherit; /* Inherit color from table row */
+  text-decoration: none; /* Remove underline */
+}
+
+.back-button-container {
+  display: flex;
+  justify-content: center; /* Center the button horizontally */
+  margin-top: 20px; /* Add space above the button */
+  width: 100%; /* Full width of the container */
+}
+
+.back-button {
+  background-color: rgb(0, 255, 179);
+  color: #151213 !important;
+  padding: 10px 20px;
+  border-radius: 4px;
+  text-decoration: none;
+  display: block;
+  width: 100%; /* Make button span the full width of the container */
+  text-align: center; /* Center text inside the button */
+}
