@@ -60,6 +60,9 @@ function Currencies() {
           ))}
         </tbody>
       </table>
+      <div className="back-button-container">
+        <Link to="/" className="back-button">Go Back to Homepage</Link>
+      </div>
     </div>
   );
 }
