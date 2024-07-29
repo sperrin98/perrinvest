@@ -75,8 +75,8 @@ function Securities() {
           )}
         </tbody>
       </table>
-      <div className="back-button">
-        <Link to="/">Go Back to Homepage</Link>
+      <div className="back-button-container">
+        <Link to="/" className="back-button">Go Back to Homepage</Link>
       </div>
     </div>
   );
