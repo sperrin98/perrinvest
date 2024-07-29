@@ -1,4 +1,3 @@
-// components/EcoDataPoints.js
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import './EcoDataPoints.css';
@@ -7,18 +6,18 @@ function EcoDataPoints() {
   const [ecoDataPoints, setEcoDataPoints] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [searchTerm, setSearchTerm] = useState(''); // Add this line
+  const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
     fetch('http://localhost:5000/eco-data-points')
       .then(response => response.json())
       .then(data => {
-        console.log(data);  // Debugging: log data to console
+        console.log(data);
         setEcoDataPoints(data);
         setLoading(false);
       })
       .catch(error => {
-        console.error(error);  // Debugging: log error to console
+        console.error(error);
         setError(error);
         setLoading(false);
       });
@@ -27,7 +26,6 @@ function EcoDataPoints() {
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error.message}</div>;
 
-  // Filter ecoDataPoints based on searchTerm
   const filteredDataPoints = ecoDataPoints.filter(point =>
     point.eco_data_point_name.toLowerCase().includes(searchTerm.toLowerCase())
   );
@@ -43,7 +41,7 @@ function EcoDataPoints() {
           className='search-input'
         />
       </div>
-      
+
       <table className='ecodatapoints-table'>
         <thead>
           <tr>
@@ -66,6 +64,9 @@ function EcoDataPoints() {
           ))}
         </tbody>
       </table>
+      <div className="back-button-container">
+        <Link to="/" className="back-button">Go Back to Homepage</Link>
+      </div>
     </div>
   );
 }
