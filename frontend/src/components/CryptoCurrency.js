@@ -30,12 +30,13 @@ ChartJS.register(
 function CryptoCurrency() {
   const { ticker } = useParams();
   const [priceHistory, setPriceHistory] = useState([]);
+  const [timeframe, setTimeframe] = useState('1y');
   const [error, setError] = useState(null);
 
   useEffect(() => {
     async function fetchPriceHistory() {
       try {
-        const response = await axios.get(`http://localhost:5000/api/crypto-price-history/${ticker}`);
+        const response = await axios.get(`http://localhost:5000/api/crypto-price-history/${ticker}?timeframe=${timeframe}`);
         setPriceHistory(response.data);
       } catch (err) {
         console.error('Error fetching price history:', err);
@@ -43,7 +44,11 @@ function CryptoCurrency() {
       }
     }
     fetchPriceHistory();
-  }, [ticker]);
+  }, [ticker, timeframe]);
+
+  const handleTimeframeChange = (event) => {
+    setTimeframe(event.target.value);
+  };
 
   const formatChartData = () => {
     return {
@@ -58,11 +63,17 @@ function CryptoCurrency() {
         })),
         borderColor: 'rgb(75, 192, 192)',
         backgroundColor: 'rgba(75, 192, 192, 0.2)',
-        barThickness: 2,
-        barPercentage: 0.5, // Adjust this value to change candlestick width
-        categoryPercentage: 0.1, // Ensure spacing is uniform
+        barThickness: calculateBarThickness(priceHistory.length),
+        categoryPercentage: 1.0,
+        barPercentage: 1.0,
       }]
     };
+  };
+
+  const calculateBarThickness = (dataLength) => {
+    const maxBars = 50; // Maximum number of bars to display
+    const maxThickness = 20; // Maximum thickness of bars
+    return Math.min(maxThickness, Math.ceil(maxThickness / (dataLength / maxBars)));
   };
 
   const options = {
@@ -118,6 +129,17 @@ function CryptoCurrency() {
 
   return (
     <div className="crypto-detail-container">
+      <div className="timeframe-selector">
+        <label htmlFor="timeframe">Timeframe:</label>
+        <select id="timeframe" value={timeframe} onChange={handleTimeframeChange}>
+          <option value="1d">1 Day</option>
+          <option value="1mo">1 Month</option>
+          <option value="3mo">3 Months</option>
+          <option value="6mo">6 Months</option>
+          <option value="1y">1 Year</option>
+          <option value="5y">5 Years</option>
+        </select>
+      </div>
       {error ? (
         <div>{error}</div>
       ) : (
