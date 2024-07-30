@@ -1,23 +1,14 @@
-html, body {
-  margin: 0;
-  padding: 0;
-  height: 100%;
-  background-color: gray; /* Ensure the entire page background color matches */
+.currency-container {
+  height: 100vh;
+  width: 100vw;
+  background-color: #151213;
+  padding-top: 120px;
 }
 
 .currencies-container {
-  background-color: gray; /* Background color for the container */
-  padding: 0 15%; /* Padding to match container width */
-  min-height: 100vh; /* Ensure the container covers the full viewport height */
-  box-sizing: border-box; /* Include padding in element's total width and height */
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between; /* Space out content and footer */
-}
-
-.search-container {
-  margin-bottom: 20px;
-  padding-top: 20px; /* Adjust as needed */
+  background-color: gray;
+  padding: 0 15%;
+  padding-bottom: 10px
 }
 
 .search-input {
@@ -35,42 +26,19 @@ table {
   margin: 0 auto; /* Center the table */
 }
 
-th, td {
-  padding: 10px;
-  text-align: left;
-  font-family: "Montserrat", sans-serif;
-  border-bottom: 1px solid rgb(0, 255, 179);
+table td {
+  width: 25%;
 }
 
-th {
-  padding-left: 60px; /* Adjust padding for table headers */
-  text-align: center;
-}
-
-td {
-  width: 25%; /* Ensure cells in the table have consistent width */
-}
-
-tbody tr {
-  transition: background-color 0.3s;
-}
-
-tbody tr:hover {
-  background-color: #151213;
-  cursor: pointer;
-  color: rgb(0, 255, 179);
-}
-
-tbody tr a {
-  color: inherit; /* Inherit color from table row */
-  text-decoration: none; /* Remove underline */
+.divided-currency-container {
+  padding: 100px;
 }
 
 .back-button-container {
   display: flex;
   justify-content: center; /* Center the button horizontally */
-  margin-top: 20px; /* Add space above the button */
-  width: 100%; /* Full width of the container */
+  margin-top: 20px; /* Add some space above the button */
+  width: 100%;
 }
 
 .back-button {
@@ -80,6 +48,13 @@ tbody tr a {
   border-radius: 4px;
   text-decoration: none;
   display: block;
-  width: 100%; /* Make button span the full width of the container */
-  text-align: center; /* Center text inside the button */
+  width: 100%; /* Make it the same width as the container */
+  text-align: center; /* Center the text inside the button */
+}
+
+.back-button a {
+  color: #151213 !important;
+  text-decoration: none;
+  font-family: "Montserrat", sans-serif;
+  font-size: 1rem;
 }
