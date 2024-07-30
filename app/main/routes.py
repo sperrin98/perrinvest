@@ -206,7 +206,7 @@ def divide_market_ratios():
 def get_crypto_prices():
     try:
         # List of cryptocurrencies to fetch data for
-        crypto_tickers = ['BTC-USD', 'ETH-USD', 'BNB-USD', 'XRP-USD', 'ADA-USD', 'DOGE-USD', 'SOL-USD', 'DOT-USD', 'UNI7083-USD', 'LTC-USD']
+        crypto_tickers = ['BTC-USD', 'ETH-USD', 'BNB-USD', 'XRP-USD', 'ADA-USD', 'DOGE-USD', 'SOL-USD', 'DOT-USD', 'UNI7083-USD', 'LTC-USD', 'TRX-USD', 'AVAX-USD', 'USDT-USD', 'SHIB-USD', 'BCH-USD', 'LINK-USD', 'DAI-USD']
         crypto_data = {}
 
         for ticker in crypto_tickers:
