@@ -1,35 +1,18 @@
-html, body {
-  margin: 0;
-  padding: 0;
-  background-color: gray; /* Set the desired background color for the entire page */
-  height: 100%;
-}
-
 .securities-container {
-  background-color: gray; /* Ensure the container's background matches the page */
+  background-color: gray;
   padding: 0 15%; /* Align container padding with border */
-  min-height: 100vh; /* Ensure the container covers the full height of the viewport */
-  box-sizing: border-box; /* Include padding in the element's total width and height */
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between; /* Ensure space between content and footer */
+  padding-bottom: 10px;
 }
 
-.search-container {
-  margin-bottom: 20px;
-  padding-top: 30px;
+.security-header {
+  font-family: "Montserrat", sans-serif;
+  text-align: center;
+  margin-top: 0;
+  padding: 10px;
+  font-size: 32px;
 }
 
-.search-input {
-  width: 100%;
-  padding: 8px;
-  border: 1px solid rgb(0, 255, 179);
-  background-color: rgb(209, 209, 209);
-  border-radius: 4px;
-  font-size: 16px;
-}
-
-.securities-table {
+table {
   width: 100%;
   border-collapse: collapse;
   margin: 0 auto; /* Center the table */
@@ -56,6 +39,7 @@ th {
   text-align: center;
 }
 
+
 tbody tr {
   transition: background-color 0.3s;
 }
@@ -72,6 +56,37 @@ tbody tr a {
   color: inherit; /* Inherit text color */
   text-decoration: none; /* Remove underline */
 }
+
+.back-button {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.back-button a {
+  color: rgb(0, 255, 179);
+  text-decoration: none;
+  font-family: "Montserrat", sans-serif;
+  font-size: 1rem;
+}
+
+.search-container {
+  margin-bottom: 20px;
+  padding-top: 30px;
+}
+
+.search-input {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid rgb(0, 255, 179);
+  background-color: rgb(209, 209, 209);
+  border-radius: 4px;
+  font-size: 16px;
+}
+
+.securities-table td:nth-child(1) {
+  width: 2%;
+}
+
 
 .back-button-container {
   display: flex;

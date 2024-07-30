@@ -1,32 +1,7 @@
-html, body {
-  margin: 0;
-  padding: 0;
-  background-color: gray; /* Set the desired background color for the entire page */
-  height: 100%;
-}
-
 .edp-container {
-  background-color: gray; /* Ensure the container's background matches the page */
-  padding: 0 15%; /* Align container padding with border */
-  min-height: 100vh; /* Ensure the container covers the full height of the viewport */
-  box-sizing: border-box; /* Include padding in the element's total width and height */
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between; /* Ensure space between content and footer */
-}
-
-.search-container {
-  margin-bottom: 20px;
-  padding-top: 100px;
-}
-
-.search-input {
-  width: 100%;
-  padding: 8px;
-  border: 1px solid rgb(0, 255, 179);
-  background-color: rgb(209, 209, 209);
-  border-radius: 4px;
-  font-size: 16px;
+  background-color: gray;
+  padding: 0 15%;
+  padding-bottom: 10px;
 }
 
 table {
@@ -52,6 +27,7 @@ th {
   text-align: center;
 }
 
+
 tbody tr {
   transition: background-color 0.3s;
 }
@@ -67,6 +43,43 @@ tbody tr a {
   display: block;
   color: inherit; /* Inherit text color */
   text-decoration: none; /* Remove underline */
+}
+
+.back-button {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.back-button a {
+  color: rgb(0, 255, 179);
+  text-decoration: none;
+  font-family: "Montserrat", sans-serif;
+  font-size: 1rem;
+}
+
+.search-container {
+  margin-bottom: 20px;
+  padding-top: 100px;
+}
+
+.search-input {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid rgb(0, 255, 179);
+  background-color: rgb(209, 209, 209);
+  border-radius: 4px;
+  font-size: 16px;
+}
+
+.edph-container {
+height: 100vh;
+width: 100vw;
+padding-top: 100px;
+background-color: #151213;
+}
+
+.ecodatapoints-table td:nth-child(1) {
+  width: 2%;
 }
 
 .back-button-container {
