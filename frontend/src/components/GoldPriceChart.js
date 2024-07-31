@@ -9,6 +9,7 @@ ChartJS.register(CategoryScale, LinearScale, TimeScale, Title, Tooltip, Legend, 
 
 const GoldPriceChart = () => {
   const [chartData, setChartData] = useState({ datasets: [] });
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 600);
 
   useEffect(() => {
     axios.get('http://localhost:5000/api/gold-price-history')
@@ -46,6 +47,13 @@ const GoldPriceChart = () => {
       .catch(error => {
         console.error('Error fetching gold price history:', error);
       });
+
+    // Handle window resize
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 600);
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
   }, []);
 
   return (
@@ -100,6 +108,11 @@ const GoldPriceChart = () => {
               ticks: {
                 color: 'rgb(0, 255, 179)', // Custom color for y-axis labels
               },
+              // Adjust Y-axis range for mobile
+              ...(isMobile ? {
+                min: 0, // Adjust as needed for mobile
+                max: 2000, // Adjust as needed for mobile
+              } : {}),
             },
           },
         }}
@@ -109,4 +122,3 @@ const GoldPriceChart = () => {
 };
 
 export default GoldPriceChart;
-
