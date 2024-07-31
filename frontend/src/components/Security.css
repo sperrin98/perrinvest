@@ -3,4 +3,14 @@
     width: 100vw;
     background-color: #151213;
     padding-top: 120px;
-}
+    box-sizing: border-box; /* Include padding in container's total width and height */
+  }
+  
+  .chart-wrapper {
+    height: 100%; /* Ensure the chart takes up full height */
+    width: 100%; /* Ensure the chart takes up full width */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
