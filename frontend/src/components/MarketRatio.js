@@ -3,6 +3,8 @@ import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import { Line } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend } from 'chart.js';
+import './MarketRatios.css';
+import useIsMobile from './useIsMobile'; // Ensure the path is correct
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
@@ -10,6 +12,7 @@ const MarketRatio = () => {
   const { id } = useParams();
   const [ratioData, setRatioData] = useState([]);
   const [ratioName, setRatioName] = useState('');
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     const fetchMarketRatioData = async () => {
@@ -31,11 +34,22 @@ const MarketRatio = () => {
     fetchMarketRatioData();
   }, [id]);
 
+  const values = ratioData.map(item => item.value);
+  const maxValue = Math.max(...values);
+  const minValue = Math.min(...values);
+
+  // Calculate the maximum value and step size
+  const yAxisPadding = 0.1; // 10% padding to the max value
+  const maxYAxisValue = Math.max(0, Math.ceil(maxValue * (1 + yAxisPadding)));
+  const stepSize = isMobile 
+    ? Math.ceil(maxYAxisValue / 6) // For mobile, divide into 6 steps
+    : Math.ceil(maxYAxisValue / 5); // For desktop, divide into 5 steps
+
   const chartData = {
     labels: ratioData.map(item => item.date),
     datasets: [{
       label: `Market Ratio History for ${ratioName}`,
-      data: ratioData.map(item => item.value),
+      data: values,
       borderColor: 'rgb(0, 255, 179)', // Line color
       backgroundColor: 'rgb(0, 255, 179)', // Fill color under the line
       fill: false,
@@ -44,6 +58,7 @@ const MarketRatio = () => {
 
   const chartOptions = {
     responsive: true,
+    maintainAspectRatio: false, // Allow the chart to adjust to container size
     scales: {
       x: {
         ticks: {
@@ -61,6 +76,7 @@ const MarketRatio = () => {
       y: {
         ticks: {
           color: 'rgb(0, 255, 179)', // Y-axis tick color
+          stepSize: stepSize,
         },
         grid: {
           color: 'rgb(68, 68, 68)', // Y-axis grid line color
@@ -69,7 +85,9 @@ const MarketRatio = () => {
           display: true,
           text: 'Value',
           color: 'rgb(0, 255, 179)', // Y-axis title color
-        }
+        },
+        min: Math.min(0, minValue), // Ensure the Y-axis starts at 0 or the minimum value if it's negative
+        max: maxYAxisValue, // Set the maximum value dynamically
       }
     },
     plugins: {
@@ -78,7 +96,6 @@ const MarketRatio = () => {
           color: 'rgb(0, 255, 179)', // Legend label color
         }
       },
-
       tooltip: {
         callbacks: {
           label: function(context) {
