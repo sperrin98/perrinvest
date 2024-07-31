@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import './Currencies.css';
 
 function Currencies() {
@@ -7,6 +7,7 @@ function Currencies() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetch('http://localhost:5000/currencies')
@@ -27,6 +28,10 @@ function Currencies() {
   const filteredCurrencies = currencies.filter(currency =>
     currency.security_long_name.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  const handleRowClick = (id) => {
+    navigate(`/currencies/${id}`);
+  };
 
   return (
     <div className='currencies-container'>
@@ -49,13 +54,9 @@ function Currencies() {
         </thead>
         <tbody>
           {filteredCurrencies.map(currency => (
-            <tr key={currency.security_id}>
+            <tr key={currency.security_id} onClick={() => handleRowClick(currency.security_id)}>
               <td>{currency.security_id}</td>
-              <td>
-                <Link to={`/currencies/${currency.security_id}`}>
-                  {currency.security_long_name}
-                </Link>
-              </td>
+              <td>{currency.security_long_name}</td>
             </tr>
           ))}
         </tbody>
