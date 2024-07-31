@@ -1,3 +1,4 @@
+/* Base styles for the securities container and table */
 .securities-container {
   background-color: gray;
   padding: 0 15%; /* Align container padding with border */
@@ -38,7 +39,6 @@ th {
   padding-left: 60px; /* Adjust this value as needed */
   text-align: center;
 }
-
 
 tbody tr {
   transition: background-color 0.3s;
@@ -87,7 +87,6 @@ tbody tr a {
   width: 2%;
 }
 
-
 .back-button-container {
   display: flex;
   justify-content: center; /* Center the button horizontally */
@@ -112,4 +111,65 @@ tbody tr a {
   text-decoration: none;
   font-family: "Montserrat", sans-serif;
   font-size: 1rem;
+}
+
+/* Responsive styles */
+@media (max-width: 600px) {
+  .securities-container {
+    padding: 0 5%; /* Reduce padding for smaller screens */
+    padding-bottom: 10px;
+  }
+
+  .security-header {
+    font-size: 24px; /* Reduce font size */
+    padding: 5px; /* Reduce padding */
+  }
+
+  table {
+    width: 100%;
+    font-size: 12px; /* Reduce font size */
+  }
+
+  th, td {
+    padding: 5px; /* Reduce padding */
+    font-size: 12px; /* Reduce font size */
+  }
+
+  .id-header {
+    width: 10px; /* Adjust width */
+  }
+
+  th {
+    padding-left: 10px; /* Adjust padding */
+  }
+
+  .search-container {
+    margin-bottom: 10px; /* Reduce margin */
+    padding-top: 10px; /* Reduce padding */
+  }
+
+  .search-input {
+    font-size: 14px; /* Adjust font size */
+    padding: 5px; /* Adjust padding */
+  }
+
+  .back-button-container {
+    margin-top: 10px; /* Adjust margin */
+    margin-bottom: 10px; /* Adjust margin */
+  }
+
+  .back-button {
+    font-size: 14px; /* Adjust font size */
+    padding: 5px 10px; /* Adjust padding */
+  }
+
+  .back-button a {
+    font-size: 14px; /* Adjust font size */
+  }
+
+  /* Hide unnecessary columns on phone screens */
+  th.id-header, th:nth-child(3),
+  td:nth-child(1), td:nth-child(3) {
+    display: none;
+  }
 }

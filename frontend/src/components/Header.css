@@ -1,3 +1,4 @@
+/* Base styles for the header and navbar */
 .header {
   background-color: rgb(0, 0, 0);
   color: rgb(0, 255, 179);
@@ -111,4 +112,67 @@
 .nav-links .dropdown:hover .dropbtn {
   color: rgb(30, 196, 146);
   transition: 1s ease;
+}
+
+/* Mobile styles */
+@media (max-width: 600px) {
+  .header {
+    padding: 0 10px; /* Reduce padding to make the navbar height smaller */
+  }
+
+  .brand {
+    display: none; /* Hide brand and logo on smaller screens */
+  }
+
+  .nav-links {
+    display: none; /* Hide nav links by default */
+  }
+
+  .menu-toggle {
+    display: block;
+    background-color: rgb(0, 0, 0);
+    color: rgb(0, 255, 179);
+    padding: 10px 12px; /* Adjust padding to make the button height smaller */
+    text-align: center;
+    cursor: pointer;
+    width: 100%;
+    border: none;
+  }
+
+  .nav-links.show {
+    display: block; /* Show nav links when toggled */
+    position: absolute;
+    top: 50px; /* Adjust this value if needed to avoid overlap */
+    left: 0;
+    width: 100%;
+    background-color: rgb(0, 0, 0);
+    z-index: 999; /* Ensure dropdown is above other content */
+  }
+
+  .nav-links.show li {
+    width: 100%;
+    margin: 0;
+  }
+
+  .nav-links.show li a {
+    padding: 10px;
+    border-top: 1px solid #333;
+    border-bottom: 1px solid #333;
+  }
+
+  .nav-links.show .dropdown-content {
+    display: block; /* Show dropdown content when menu is toggled */
+    position: static;
+    box-shadow: none;
+  }
+
+  .nav-links.show .dropdown:hover .dropdown-content {
+    display: block; /* Ensure dropdown content is shown on hover */
+  }
+}
+
+@media (min-width: 601px) {
+  .menu-toggle {
+    display: none; /* Hide the menu toggle button on desktop */
+  }
 }
