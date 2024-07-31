@@ -83,6 +83,8 @@ function EcoDataPoint() {
   };
 
   const chartOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
     plugins: {
       legend: {
         display: true,
@@ -104,6 +106,7 @@ function EcoDataPoint() {
         }
       },
       y: {
+        beginAtZero: true,
         ticks: {
           color: 'rgb(0, 255, 179)', 
         },
@@ -122,7 +125,7 @@ function EcoDataPoint() {
   return (
     <div className='edph-container'>
       {/* <h1 className='edp-header'>{ecoDataPointName}</h1> */}
-      <div className='chart-container'>
+      <div className='chart-wrapper'>
         <Line data={chartData} options={chartOptions} />
       </div>
     </div>

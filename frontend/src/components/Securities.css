@@ -133,6 +133,7 @@ tbody tr a {
   th, td {
     padding: 5px; /* Reduce padding */
     font-size: 12px; /* Reduce font size */
+    text-align: center !important;
   }
 
   .id-header {
