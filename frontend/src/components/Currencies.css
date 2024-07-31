@@ -58,3 +58,24 @@ table td {
   font-family: "Montserrat", sans-serif;
   font-size: 1rem;
 }
+
+@media (max-width: 768px) {
+  .currencies-container {
+    padding: 0 5%;
+  }
+
+  table td, table th {
+    display: block;
+    width: 100%;
+  }
+
+  tr {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Center rows on mobile */
+  }
+
+  tr:hover {
+    background-color: #151213; /* Keep row highlight consistent with background color */
+  }
+}

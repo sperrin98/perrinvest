@@ -62,6 +62,7 @@ function Currency() {
 
   const chartOptions = {
     responsive: true,
+    maintainAspectRatio: false,
     scales: {
       x: {
         title: {
@@ -73,7 +74,7 @@ function Currency() {
           color: 'rgb(0, 255, 179)',
         },
         grid: {
-            color: 'rgb(68, 68, 68)',
+          color: 'rgb(68, 68, 68)',
         }
       },
       y: {
@@ -84,9 +85,10 @@ function Currency() {
         },
         ticks: {
           color: 'rgb(0, 255, 179)',
+          beginAtZero: true, // Ensure the y-axis starts at zero
         },
         grid: {
-            color: 'rgb(68, 68, 68)'
+          color: 'rgb(68, 68, 68)',
         }
       },
     },
@@ -110,7 +112,9 @@ function Currency() {
 
   return (
     <div className="currency-container">
-      <Line data={data} options={chartOptions} />
+      <div className="chart-wrapper">
+        <Line data={data} options={chartOptions} />
+      </div>
     </div>
   );
 }
