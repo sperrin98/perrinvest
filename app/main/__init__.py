@@ -1,5 +1,5 @@
-from flask import Blueprint
+from flask import Flask
+from .routes import main  # Adjust the import based on your file structure
 
-main = Blueprint('main', __name__)
-
-from app.main import routes
+app = Flask(__name__)
+app.register_blueprint(main, url_prefix='/api')  # Register blueprint with a prefix if using Blueprints
