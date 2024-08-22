@@ -1,19 +1,14 @@
-from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
-from flask_cors import CORS
-
-db = SQLAlchemy()
+from flask import Flask, send_from_directory
 
 def create_app():
-    app = Flask(__name__)
-    app.config.from_object('config.Config')
+    app = Flask(__name__, static_folder='../frontend/build', template_folder='../frontend/build')
 
-    db.init_app(app)
+    @app.route('/')
+    def index():
+        return send_from_directory(app.template_folder, 'index.html')
 
-    # Enable CORS for all routes
-    CORS(app)
-
-    from app.main import main as main_blueprint
-    app.register_blueprint(main_blueprint)
+    @app.route('/<path:path>')
+    def static_proxy(path):
+        return send_from_directory(app.static_folder, path)
 
     return app
