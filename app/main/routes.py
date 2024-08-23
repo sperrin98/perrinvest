@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, jsonify, request, send_from_directory
 import yfinance as yf
 from app.db_utils import (
     fetch_securities, fetch_market_ratios, fetch_market_ratio_data, 
@@ -10,11 +10,16 @@ from app.db_utils import (
 
 main = Blueprint('main', __name__)
 
+# Serve the React app
 @main.route('/')
 def home():
-    return jsonify({"message": "Welcome to Perrinvest"})
+    return send_from_directory('static/build', 'index.html')
 
-@main.route('/securities')
+@main.route('/<path:path>')
+def serve_static(path):
+    return send_from_directory('static/build', path)
+
+@main.route('/api/securities')
 def get_securities():
     try:
         securities = fetch_securities()
@@ -22,7 +27,7 @@ def get_securities():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
-@main.route('/securities/<int:security_id>')
+@main.route('/api/securities/<int:security_id>')
 def get_security(security_id):
     try:
         security = fetch_security_data(security_id)
@@ -35,7 +40,7 @@ def get_security(security_id):
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
-@main.route('/securities/<int:security_id>/price-histories', methods=['GET'])
+@main.route('/api/securities/<int:security_id>/price-histories', methods=['GET'])
 def get_price_histories(security_id):
     try:
         price_histories = fetch_price_history(security_id)
@@ -43,7 +48,7 @@ def get_price_histories(security_id):
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
-@main.route('/market-ratios')
+@main.route('/api/market-ratios')
 def get_market_ratios():
     try:
         market_ratios_data = fetch_market_ratios()
@@ -51,7 +56,7 @@ def get_market_ratios():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
-@main.route('/market-ratios/<int:ratio_id>')
+@main.route('/api/market-ratios/<int:ratio_id>')
 def get_market_ratio(ratio_id):
     try:
         market_ratio_data = fetch_market_ratio_data(ratio_id)
@@ -65,7 +70,7 @@ def get_market_ratio(ratio_id):
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
-@main.route('/eco-data-points')
+@main.route('/api/eco-data-points')
 def get_eco_data_points():
     try:
         eco_data_points = fetch_eco_data_points()
@@ -73,7 +78,7 @@ def get_eco_data_points():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-@main.route('/eco-data-points/<int:eco_data_point_id>/histories')
+@main.route('/api/eco-data-points/<int:eco_data_point_id>/histories')
 def get_eco_data_point_histories(eco_data_point_id):
     try:
         histories = fetch_eco_data_point_histories(eco_data_point_id)
@@ -81,7 +86,7 @@ def get_eco_data_point_histories(eco_data_point_id):
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-@main.route('/eco-data-points/<int:eco_data_point_id>')
+@main.route('/api/eco-data-points/<int:eco_data_point_id>')
 def get_eco_data_point(eco_data_point_id):
     try:
         data_point = fetch_eco_data_point(eco_data_point_id)
@@ -89,7 +94,7 @@ def get_eco_data_point(eco_data_point_id):
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-@main.route('/currencies')
+@main.route('/api/currencies')
 def get_currencies():
     try:
         currencies_data = fetch_currencies()
@@ -110,7 +115,7 @@ def get_currencies():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-@main.route('/currencies/<int:currency_id>')
+@main.route('/api/currencies/<int:currency_id>')
 def get_currency(currency_id):
     try:
         currency_data = fetch_currency(currency_id)
@@ -123,7 +128,7 @@ def get_currency(currency_id):
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-@main.route('/currencies/divide', methods=['GET'])
+@main.route('/api/currencies/divide', methods=['GET'])
 def divide_currencies():
     security_long_name1 = request.args.get('security_long_name1')
     security_long_name2 = request.args.get('security_long_name2')
@@ -159,7 +164,7 @@ def divide_currencies():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
-@main.route('/market-ratios/divide', methods=['GET'])
+@main.route('/api/market-ratios/divide', methods=['GET'])
 def divide_market_ratios():
     security_long_name1 = request.args.get('security_long_name1')
     security_long_name2 = request.args.get('security_long_name2')
