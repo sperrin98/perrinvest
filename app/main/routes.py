@@ -7,8 +7,10 @@ from app.db_utils import (
     fetch_currency, call_divided_price_procedure, get_security_id,
     fetch_currency_price_history
 )
+import logging
 
 main = Blueprint('main', __name__)
+logging.basicConfig(level=logging.INFO)
 
 # Serve the React app
 @main.route('/')
@@ -25,7 +27,8 @@ def get_securities():
         securities = fetch_securities()
         return jsonify(securities)
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        logging.error(f"Error fetching securities: {e}")
+        return jsonify({'error': 'An internal error occurred.'}), 500
 
 @main.route('/api/securities/<int:security_id>')
 def get_security(security_id):
@@ -38,7 +41,8 @@ def get_security(security_id):
         }
         return jsonify(response)
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        logging.error(f"Error fetching security {security_id}: {e}")
+        return jsonify({'error': 'An internal error occurred.'}), 500
 
 @main.route('/api/securities/<int:security_id>/price-histories', methods=['GET'])
 def get_price_histories(security_id):
@@ -46,7 +50,8 @@ def get_price_histories(security_id):
         price_histories = fetch_price_history(security_id)
         return jsonify(price_histories)
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        logging.error(f"Error fetching price histories for security {security_id}: {e}")
+        return jsonify({'error': 'An internal error occurred.'}), 500
 
 @main.route('/api/market-ratios')
 def get_market_ratios():
@@ -54,7 +59,8 @@ def get_market_ratios():
         market_ratios_data = fetch_market_ratios()
         return jsonify(market_ratios_data)
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        logging.error(f"Error fetching market ratios: {e}")
+        return jsonify({'error': 'An internal error occurred.'}), 500
 
 @main.route('/api/market-ratios/<int:ratio_id>')
 def get_market_ratio(ratio_id):
@@ -68,7 +74,8 @@ def get_market_ratio(ratio_id):
         }
         return jsonify(response)
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        logging.error(f"Error fetching market ratio {ratio_id}: {e}")
+        return jsonify({'error': 'An internal error occurred.'}), 500
 
 @main.route('/api/eco-data-points')
 def get_eco_data_points():
@@ -76,7 +83,8 @@ def get_eco_data_points():
         eco_data_points = fetch_eco_data_points()
         return jsonify(eco_data_points)
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        logging.error(f"Error fetching eco data points: {e}")
+        return jsonify({'error': 'An internal error occurred.'}), 500
 
 @main.route('/api/eco-data-points/<int:eco_data_point_id>/histories')
 def get_eco_data_point_histories(eco_data_point_id):
@@ -84,7 +92,8 @@ def get_eco_data_point_histories(eco_data_point_id):
         histories = fetch_eco_data_point_histories(eco_data_point_id)
         return jsonify(histories)
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        logging.error(f"Error fetching eco data point histories for ID {eco_data_point_id}: {e}")
+        return jsonify({'error': 'An internal error occurred.'}), 500
 
 @main.route('/api/eco-data-points/<int:eco_data_point_id>')
 def get_eco_data_point(eco_data_point_id):
@@ -92,7 +101,8 @@ def get_eco_data_point(eco_data_point_id):
         data_point = fetch_eco_data_point(eco_data_point_id)
         return jsonify(data_point)
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        logging.error(f"Error fetching eco data point {eco_data_point_id}: {e}")
+        return jsonify({'error': 'An internal error occurred.'}), 500
 
 @main.route('/api/currencies')
 def get_currencies():
@@ -102,18 +112,22 @@ def get_currencies():
         security_id2 = request.args.get('security_id2')
 
         if security_id1 and security_id2:
-            divided_currency_data = get_divided_currency_price(int(security_id1), int(security_id2))
-            if divided_currency_data:
-                new_currency = {
-                    'id': f'divided_{security_id1}_{security_id2}',
-                    'security_long_name': f'Divided {security_id1}/{security_id2}',
-                    'price_history': divided_currency_data
-                }
-                currencies_data.append(new_currency)
+            try:
+                divided_currency_data = get_divided_currency_price(int(security_id1), int(security_id2))
+                if divided_currency_data:
+                    new_currency = {
+                        'id': f'divided_{security_id1}_{security_id2}',
+                        'security_long_name': f'Divided {security_id1}/{security_id2}',
+                        'price_history': divided_currency_data
+                    }
+                    currencies_data.append(new_currency)
+            except ValueError:
+                return jsonify({'error': 'Invalid security IDs'}), 400
         
         return jsonify(currencies_data)
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        logging.error(f"Error fetching currencies: {e}")
+        return jsonify({'error': 'An internal error occurred.'}), 500
 
 @main.route('/api/currencies/<int:currency_id>')
 def get_currency(currency_id):
@@ -126,7 +140,8 @@ def get_currency(currency_id):
         }
         return jsonify(response)
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        logging.error(f"Error fetching currency {currency_id}: {e}")
+        return jsonify({'error': 'An internal error occurred.'}), 500
 
 @main.route('/api/currencies/divide', methods=['GET'])
 def divide_currencies():
@@ -162,7 +177,8 @@ def divide_currencies():
     except ValueError:
         return jsonify({'error': 'Invalid parameters'}), 400
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        logging.error(f"Error dividing currencies: {e}")
+        return jsonify({'error': 'An internal error occurred.'}), 500
 
 @main.route('/api/market-ratios/divide', methods=['GET'])
 def divide_market_ratios():
@@ -185,7 +201,8 @@ def divide_market_ratios():
 
         return jsonify({'divided_prices': data})
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        logging.error(f"Error dividing market ratios: {e}")
+        return jsonify({'error': 'An internal error occurred.'}), 500
 
 @main.route('/api/crypto-prices', methods=['GET'])
 def get_crypto_prices():
@@ -200,7 +217,8 @@ def get_crypto_prices():
 
         return jsonify(crypto_data)
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        logging.error(f"Error fetching crypto prices: {e}")
+        return jsonify({'error': 'An internal error occurred.'}), 500
 
 @main.route('/api/crypto-price-history/<ticker>', methods=['GET'])
 def get_crypto_price_history(ticker):
@@ -220,7 +238,8 @@ def get_crypto_price_history(ticker):
         result = data[['Date', 'Open', 'High', 'Low', 'Close']].to_dict(orient='records')
         return jsonify(result)
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        logging.error(f"Error fetching crypto price history for {ticker}: {e}")
+        return jsonify({'error': 'An internal error occurred.'}), 500
 
 @main.route('/api/gold-price-history', methods=['GET'])
 def get_gold_price_history():
@@ -230,7 +249,8 @@ def get_gold_price_history():
         data = hist.reset_index().to_dict(orient='records')
         return jsonify(data)
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        logging.error(f"Error fetching gold price history: {e}")
+        return jsonify({'error': 'An internal error occurred.'}), 500
 
 @main.route('/api/bitcoin-price-history', methods=['GET'])
 def get_bitcoin_price_history():
@@ -241,7 +261,8 @@ def get_bitcoin_price_history():
         result = data[['Date', 'Open', 'High', 'Low', 'Close']].to_dict(orient='records')
         return jsonify(result)
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        logging.error(f"Error fetching bitcoin price history: {e}")
+        return jsonify({'error': 'An internal error occurred.'}), 500
 
 @main.route('/api/usd-price-history', methods=['GET'])
 def get_usd_price_history():
@@ -252,7 +273,8 @@ def get_usd_price_history():
         result = data[['Date', 'Open', 'High', 'Low', 'Close']].to_dict(orient='records')
         return jsonify(result)
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        logging.error(f"Error fetching USD price history: {e}")
+        return jsonify({'error': 'An internal error occurred.'}), 500
 
 @main.route('/api/sp500-price-history', methods=['GET'])
 def get_sp500_price_history():
@@ -263,7 +285,8 @@ def get_sp500_price_history():
         result = data[['Date', 'Open', 'High', 'Low', 'Close']].to_dict(orient='records')
         return jsonify(result)
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        logging.error(f"Error fetching S&P 500 price history: {e}")
+        return jsonify({'error': 'An internal error occurred.'}), 500
 
 @main.route('/api/apple-price-history', methods=['GET'])
 def get_apple_price_history():
@@ -274,4 +297,5 @@ def get_apple_price_history():
         result = data[['Date', 'Open', 'High', 'Low', 'Close']].to_dict(orient='records')
         return jsonify(result)
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        logging.error(f"Error fetching Apple price history: {e}")
+        return jsonify({'error': 'An internal error occurred.'}), 500
