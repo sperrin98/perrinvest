@@ -1,9 +1,9 @@
 from flask import Blueprint, jsonify, request, send_from_directory
 import yfinance as yf
 from app.db_utils import (
-    fetch_securities, fetch_market_ratios, fetch_market_ratio_data, 
-    fetch_security_data, fetch_price_history, fetch_eco_data_point_histories, 
-    fetch_eco_data_point, fetch_eco_data_points, fetch_currencies, 
+    fetch_securities, fetch_market_ratios, fetch_market_ratio_data,
+    fetch_security_data, fetch_price_history, fetch_eco_data_point_histories,
+    fetch_eco_data_point, fetch_eco_data_points, fetch_currencies,
     fetch_currency, call_divided_price_procedure, get_security_id,
     fetch_currency_price_history
 )
@@ -15,13 +15,21 @@ logging.basicConfig(level=logging.INFO)
 # Serve the React app
 @main.route('/')
 def home():
-    return send_from_directory('static/build', 'index.html')
+    try:
+        return send_from_directory('static/build', 'index.html')
+    except Exception as e:
+        logging.error(f"Error serving React app: {e}")
+        return jsonify({'error': 'An internal error occurred.'}), 500
 
 @main.route('/<path:path>')
 def serve_static(path):
-    return send_from_directory('static/build', path)
+    try:
+        return send_from_directory('static/build', path)
+    except Exception as e:
+        logging.error(f"Error serving static file {path}: {e}")
+        return jsonify({'error': 'An internal error occurred.'}), 500
 
-@main.route('/api/securities')
+@main.route('/api/securities', methods=['GET'])
 def get_securities():
     try:
         securities = fetch_securities()
@@ -30,7 +38,7 @@ def get_securities():
         logging.error(f"Error fetching securities: {e}")
         return jsonify({'error': 'An internal error occurred.'}), 500
 
-@main.route('/api/securities/<int:security_id>')
+@main.route('/api/securities/<int:security_id>', methods=['GET'])
 def get_security(security_id):
     try:
         security = fetch_security_data(security_id)
@@ -53,7 +61,7 @@ def get_price_histories(security_id):
         logging.error(f"Error fetching price histories for security {security_id}: {e}")
         return jsonify({'error': 'An internal error occurred.'}), 500
 
-@main.route('/api/market-ratios')
+@main.route('/api/market-ratios', methods=['GET'])
 def get_market_ratios():
     try:
         market_ratios_data = fetch_market_ratios()
@@ -62,7 +70,7 @@ def get_market_ratios():
         logging.error(f"Error fetching market ratios: {e}")
         return jsonify({'error': 'An internal error occurred.'}), 500
 
-@main.route('/api/market-ratios/<int:ratio_id>')
+@main.route('/api/market-ratios/<int:ratio_id>', methods=['GET'])
 def get_market_ratio(ratio_id):
     try:
         market_ratio_data = fetch_market_ratio_data(ratio_id)
@@ -77,7 +85,7 @@ def get_market_ratio(ratio_id):
         logging.error(f"Error fetching market ratio {ratio_id}: {e}")
         return jsonify({'error': 'An internal error occurred.'}), 500
 
-@main.route('/api/eco-data-points')
+@main.route('/api/eco-data-points', methods=['GET'])
 def get_eco_data_points():
     try:
         eco_data_points = fetch_eco_data_points()
@@ -86,7 +94,7 @@ def get_eco_data_points():
         logging.error(f"Error fetching eco data points: {e}")
         return jsonify({'error': 'An internal error occurred.'}), 500
 
-@main.route('/api/eco-data-points/<int:eco_data_point_id>/histories')
+@main.route('/api/eco-data-points/<int:eco_data_point_id>/histories', methods=['GET'])
 def get_eco_data_point_histories(eco_data_point_id):
     try:
         histories = fetch_eco_data_point_histories(eco_data_point_id)
@@ -95,7 +103,7 @@ def get_eco_data_point_histories(eco_data_point_id):
         logging.error(f"Error fetching eco data point histories for ID {eco_data_point_id}: {e}")
         return jsonify({'error': 'An internal error occurred.'}), 500
 
-@main.route('/api/eco-data-points/<int:eco_data_point_id>')
+@main.route('/api/eco-data-points/<int:eco_data_point_id>', methods=['GET'])
 def get_eco_data_point(eco_data_point_id):
     try:
         data_point = fetch_eco_data_point(eco_data_point_id)
@@ -104,7 +112,7 @@ def get_eco_data_point(eco_data_point_id):
         logging.error(f"Error fetching eco data point {eco_data_point_id}: {e}")
         return jsonify({'error': 'An internal error occurred.'}), 500
 
-@main.route('/api/currencies')
+@main.route('/api/currencies', methods=['GET'])
 def get_currencies():
     try:
         currencies_data = fetch_currencies()
@@ -129,7 +137,7 @@ def get_currencies():
         logging.error(f"Error fetching currencies: {e}")
         return jsonify({'error': 'An internal error occurred.'}), 500
 
-@main.route('/api/currencies/<int:currency_id>')
+@main.route('/api/currencies/<int:currency_id>', methods=['GET'])
 def get_currency(currency_id):
     try:
         currency_data = fetch_currency(currency_id)
