@@ -21,17 +21,20 @@ class Security(db.Model):
     
 class MarketRatio(db.Model):
     __tablename__ = 'market_ratios'
-    market_ratio_id = db.Column(db.Integer, primary_key = True, nullable=False)
+    market_ratio_id = db.Column(db.Integer, primary_key=True, nullable=False)
     ratio_name = db.Column(db.String(225), unique=False, nullable=False)
     description = db.Column(db.String(225), unique=False, nullable=False)
-    security_id1 = db.Integer(db.Integer, unique=False, nullable=False)
-    security_id2 = db.Integer(db.Integer, unique=False, nullable=False)
+    security_id1 = db.Column(db.Integer, unique=False, nullable=False)
+    security_id2 = db.Column(db.Integer, unique=False, nullable=False)
+
 
 class PriceHistory(db.Model):
-     security_id = db.Column(db.Integer, primary_key=True, nullable=False)
-     price_date = db.Column(db.Date, primary_key=True, nullable=False)
-     price = db.Column(db.Double, unique=False, nullable=False)
-     MA_5d = db.Column(db.Double, unique=False, nullable=False)
-     MA_40d = db.Column(db.Double, unique=False, nullable=False)
-     MA_200d = db.Column(db.Double, unique=False, nullable=False)
+    __tablename__ = 'price_history'  # You may want to add a table name
+    security_id = db.Column(db.Integer, primary_key=True, nullable=False)
+    price_date = db.Column(db.Date, primary_key=True, nullable=False)
+    price = db.Column(db.Float, unique=False, nullable=False)
+    MA_5d = db.Column(db.Float, unique=False, nullable=False)
+    MA_40d = db.Column(db.Float, unique=False, nullable=False)
+    MA_200d = db.Column(db.Float, unique=False, nullable=False)
+
 
