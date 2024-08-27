@@ -1,5 +1,5 @@
 import sys
-from app import create_app, db
+from app import create_app
 from flask_migrate import upgrade
 
 app = create_app()
@@ -15,7 +15,8 @@ def main():
         else:
             print("Usage: python run.py db upgrade")
     else:
-        app.run()  # Only run the server if no arguments are provided
+        # Run the app in production mode
+        app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 5000)))
 
 if __name__ == "__main__":
     main()
