@@ -1,6 +1,8 @@
 import os
 
 class Config:
-    SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL', 'mysql+mysqlconnector://user:password@localhost:3306/dbname')
-    SQLALCHEMY_TRACK_MODIFICATIONS = False
-    SECRET_KEY = os.getenv('SECRET_KEY', 'your_secret_key')
+    SQLALCHEMY_DATABASE_URI = os.environ.get('JAWSDB_URL')  # Get DB URL from environment variables
+    SECRET_KEY = os.environ.get('SECRET_KEY')               # Get secret key from environment variables
+    SQLALCHEMY_TRACK_MODIFICATIONS = False  # Optional: Disable SQLAlchemy track modifications to save resources
+
+# Additional configuration settings can be added here
