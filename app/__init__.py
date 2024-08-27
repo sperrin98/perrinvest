@@ -1,19 +1,28 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
-from flask_migrate import Migrate
-from config import Config
+import os
 
-db = SQLAlchemy()
-migrate = Migrate()
+# Initialize the Flask application
+app = Flask(__name__)
 
-def create_app(config_class=Config):
-    app = Flask(__name__)
-    app.config.from_object(config_class)
-    db.init_app(app)
-    migrate.init_app(app, db)
+# Load configuration from config.py
+app.config.from_object('config.Config')
 
-    # Import and register your blueprints here
-    from .main import main as main_blueprint
-    app.register_blueprint(main_blueprint)
+# Initialize the SQLAlchemy object
+db = SQLAlchemy(app)
 
-    return app
+# Define your models here
+# Example:
+# class User(db.Model):
+#     id = db.Column(db.Integer, primary_key=True)
+#     username = db.Column(db.String(80), unique=True, nullable=False)
+
+# Define your routes here
+@app.route('/')
+def index():
+    return "Hello, World!"
+
+# More routes and views can be defined here
+
+if __name__ == '__main__':
+    app.run(debug=True)
