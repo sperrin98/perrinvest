@@ -3,8 +3,8 @@ import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import { Line } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend } from 'chart.js';
-import './Security.css';
-import useIsMobile from './useIsMobile'; // Ensure the path is correct
+import './Security.css';  // Ensure this path is correct
+import useIsMobile from './useIsMobile';  // Ensure this path is correct
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
@@ -59,7 +59,7 @@ const Security = () => {
   const data = {
     labels: priceHistories.map(history => history.date),
     datasets: [{
-      label: `Price History for ${security[1]}`,
+      label: `Price History for ${security.security_long_name}`,
       data: prices,
       borderColor: 'rgb(0, 255, 179)',
       backgroundColor: 'rgb(0, 255, 179)',
