@@ -1,9 +1,8 @@
 import sys
 from app import create_app, db
-from flask_migrate import Migrate, upgrade
+from flask_migrate import upgrade
 
 app = create_app()
-migrate = Migrate(app, db)
 
 def main():
     if len(sys.argv) > 1:
