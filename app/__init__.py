@@ -5,7 +5,7 @@ from flask_migrate import Migrate
 db = SQLAlchemy()
 migrate = Migrate()
 
-def create_app(config_class='config.DevelopmentConfig'):
+def create_app(config_class='config.ProductionConfig'):
     app = Flask(__name__)
     app.config.from_object(config_class)
 
@@ -16,3 +16,4 @@ def create_app(config_class='config.DevelopmentConfig'):
     app.register_blueprint(main_blueprint)
 
     return app
+
