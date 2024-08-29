@@ -35,7 +35,6 @@ def get_securities():
         securities = fetch_securities()
         return jsonify(securities)
     except Exception as e:
-        print(f"Error fetching securities: {e}")
         return jsonify({'error': str(e)}), 500
 
 @main.route('/securities/<int:security_id>')
@@ -75,7 +74,6 @@ def get_eco_data_points():
         eco_data_points = fetch_eco_data_points()
         return jsonify(eco_data_points)
     except Exception as e:
-        print(f"Error fetching eco-data-points: {e}")
         return jsonify({"error": "Error fetching eco-data-points"}), 500
 
 @main.route('/eco-data-points/<int:eco_data_point_id>/histories')
@@ -84,7 +82,6 @@ def get_eco_data_point_histories(eco_data_point_id):
         histories = fetch_eco_data_point_histories(eco_data_point_id)
         return jsonify(histories)
     except Exception as e:
-        print(f"Error fetching eco-data-point histories: {e}")
         return jsonify({"error": "Error fetching eco-data-point histories"}), 500
 
 @main.route('/eco-data-points/<int:eco_data_point_id>')
@@ -93,7 +90,6 @@ def get_eco_data_point(eco_data_point_id):
         data_point = fetch_eco_data_point(eco_data_point_id)
         return jsonify(data_point)
     except Exception as e:
-        print(f"Error fetching eco-data-point: {e}")
         return jsonify({"error": "Error fetching eco-data-point"}), 500
 
 @main.route('/currencies')
@@ -115,7 +111,6 @@ def get_currencies():
         
         return jsonify(currencies_data)
     except Exception as e:
-        print(f"Error fetching currencies: {e}")
         return jsonify({"error": "Error fetching currencies"}), 500
 
 @main.route('/currencies/<int:currency_id>')
@@ -129,7 +124,6 @@ def get_currency(currency_id):
         }
         return jsonify(response)
     except Exception as e:
-        print(f"Error fetching currency data: {e}")
         return jsonify({"error": "Error fetching currency data"}), 500
 
 @main.route('/currencies/divide', methods=['GET'])
@@ -206,7 +200,6 @@ def get_crypto_prices():
 
         return jsonify(crypto_data)
     except Exception as e:
-        print(f"Error fetching cryptocurrency data: {e}")
         return jsonify({"error": str(e)}), 500
 
 @main.route('/api/crypto-price-history/<ticker>', methods=['GET'])
@@ -227,7 +220,6 @@ def get_crypto_price_history(ticker):
         result = data[['Date', 'Open', 'High', 'Low', 'Close']].to_dict(orient='records')
         return jsonify(result)
     except Exception as e:
-        print(f"Error fetching cryptocurrency price history for {ticker}: {e}")
         return jsonify({"error": str(e)}), 500
 
 @main.route('/api/gold-price-history', methods=['GET'])
