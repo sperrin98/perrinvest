@@ -1,4 +1,10 @@
-from app import app
+import sys
+import os
 
-if __name__ == "__main__":
-    app.run()
+# Ensure that the correct path is being used
+print("Current working directory:", os.getcwd())
+print("Python path:", sys.path)
+
+from app import create_app
+
+app = create_app()
