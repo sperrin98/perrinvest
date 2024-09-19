@@ -178,3 +178,30 @@ def call_divided_price_procedure(security_id1, security_id2):
     finally:
         cursor.close()
         conn.close()
+
+def update_price_history(security_id, ticker_symbol):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    try:
+        today = datetime.datetime.now().date()
+        ticker = yf.Ticker(ticker_symbol)
+        hist = ticker.history(period="1d") 
+        if not hist.empty:
+            closing_price = hist['Close'].iloc[0]
+            query = """
+                INSERT INTO price_histories (security_id, price_date, price)
+                VALUES (%s, %s, %s)
+                ON DUPLICATE KEY UPDATE price = %s
+            """
+            cursor.execute(query, (security_id, today, closing_price, closing_price))
+            conn.commit()
+            return {"message": "Price updated successfully"}
+        else:
+            return {"error": "No data found for ticker"}, 404
+    except Exception as e:
+        print(f"Error updating price history for {ticker_symbol}: {e}")
+        return {"error": str(e)}, 500
+    finally:
+        cursor.close()
+        conn.close()
