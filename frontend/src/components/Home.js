@@ -31,7 +31,7 @@ const Home = () => {
   return (
     <div>
       <div className="section section1">
-        <h1 className="home-header">{displayedText}</h1>
+        <h1 className="home-header">Perrinvest</h1>
       </div>
       <div className="section section2">
         <h2 className='section2-header'>Trending Markets</h2>
