@@ -1,17 +1,15 @@
-from flask import Flask, jsonify, request, make_response
+from flask import jsonify, request, make_response
 from . import main
 from app.db_utils import (
     fetch_securities, fetch_market_ratios, fetch_market_ratio_data, 
     fetch_security_data, fetch_price_history, fetch_eco_data_point_histories, 
     fetch_eco_data_point, fetch_eco_data_points, fetch_currencies, 
     fetch_currency, call_divided_price_procedure, get_security_id,
-    fetch_currency_price_history
+    fetch_currency_price_history, update_price_history
 )
 import yfinance as yf
 
-app = Flask(__name__)
-
-@app.before_request
+@main.before_request
 def before_request_func():
     if request.method == 'OPTIONS':
         response = make_response()
@@ -20,7 +18,7 @@ def before_request_func():
         response.headers.add("Access-Control-Allow-Headers", "Content-Type")
         return response
 
-@app.after_request
+@main.after_request
 def after_request_func(response):
     response.headers.add("Access-Control-Allow-Origin", "*")
     response.headers.add("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
@@ -201,24 +199,31 @@ def divide_market_ratios():
         })
     except Exception as e:
         return jsonify({'error': str(e)}), 500
-    
+
 @main.route('/api/crypto-prices', methods=['GET'])
 def get_crypto_prices():
     try:
         # List of cryptocurrencies to fetch data for
-        crypto_tickers = ['BTC-USD', 'ETH-USD', 'BNB-USD', 'XRP-USD', 'ADA-USD', 'DOGE-USD', 'SOL-USD', 'DOT-USD', 'UNI7083-USD', 'LTC-USD', 'TRX-USD', 'AVAX-USD', 'USDT-USD', 'SHIB-USD', 'BCH-USD', 'LINK-USD', 'DAI-USD']
+        crypto_tickers = ['BTC-USD', 'ETH-USD', 'BNB-USD', 'XRP-USD', 'ADA-USD', 'DOGE-USD', 'SOL-USD', 'DOT-USD', 'UNI-USD', 'LTC-USD']
         crypto_data = {}
 
         for ticker in crypto_tickers:
+            print(f"Fetching data for ticker: {ticker}")  # Debugging line
             crypto = yf.Ticker(ticker)
-            hist = crypto.history(period="10d")  # Fetch the last 10 days of data
-            crypto_data[ticker] = hist.reset_index().to_dict(orient='records')
+            # Use '1mo' to get up to 1 month of data
+            hist = crypto.history(period="1mo")  
+            if hist.empty:
+                crypto_data[ticker] = {"error": "No data found"}
+            else:
+                # Filter to the last 10 days
+                hist = hist.tail(10)
+                crypto_data[ticker] = hist.reset_index().to_dict(orient='records')
 
         return jsonify(crypto_data)
     except Exception as e:
-        print(f"Error fetching cryptocurrency data: {e}")
+        print(f"Error fetching cryptocurrency data: {e}")  # Debugging line
         return jsonify({"error": str(e)}), 500
-    
+
 @main.route('/api/crypto-price-history/<ticker>', methods=['GET'])
 def get_crypto_price_history(ticker):
     try:
@@ -245,71 +250,75 @@ def get_crypto_price_history(ticker):
         print(f"Error fetching cryptocurrency price history for {ticker}: {e}")  # Debugging line
         return jsonify({"error": str(e)}), 500
 
-
-
-@main.route('/api/crypto-prices', methods=['GET'], endpoint='crypto_prices')
-def get_crypto_prices():
-    try:
-        # List of valid cryptocurrency tickers
-        crypto_tickers = ['BTC-USD', 'ETH-USD', 'BNB-USD', 'XRP-USD', 'ADA-USD', 'DOGE-USD', 'SOL-USD', 'DOT-USD', 'UNI-USD', 'LTC-USD']
-        crypto_data = {}
-
-        for ticker in crypto_tickers:
-            print(f"Fetching data for ticker: {ticker}")  # Debugging line
-            crypto = yf.Ticker(ticker)
-            # Use '1mo' to get up to 1 month of data
-            hist = crypto.history(period="1mo")  
-            if hist.empty:
-                crypto_data[ticker] = {"error": "No data found"}
-            else:
-                # Filter to the last 10 days
-                hist = hist.tail(10)
-                crypto_data[ticker] = hist.reset_index().to_dict(orient='records')
-
-        return jsonify(crypto_data)
-    except Exception as e:
-        print(f"Error fetching cryptocurrency data: {e}")  # Debugging line
-        return jsonify({"error": str(e)}), 500
-
-
-
-
-
 @main.route('/api/gold-price-history', methods=['GET'])
 def get_gold_price_history():
-    gold = yf.Ticker("GC=F")
-    hist = gold.history(period="10y")
-    data = hist.reset_index().to_dict(orient='records')
-    return jsonify(data)
+    try:
+        gold = yf.Ticker("GC=F")
+        hist = gold.history(period="10y")
+        data = hist.reset_index().to_dict(orient='records')
+        return jsonify(data)
+    except Exception as e:
+        print(f"Error fetching gold price history: {e}")
+        return jsonify({"error": str(e)}), 500
 
 @main.route('/api/bitcoin-price-history', methods=['GET'])
 def get_bitcoin_price_history():
-    btc = yf.Ticker("BTC-USD")
-    data = btc.history(period="10y", interval="1d")
-    data.reset_index(inplace=True)
-    result = data[['Date', 'Open', 'High', 'Low', 'Close']].to_dict(orient='records')
-    return jsonify(result)
+    try:
+        btc = yf.Ticker("BTC-USD")
+        data = btc.history(period="10y", interval="1d")
+        data.reset_index(inplace=True)
+        result = data[['Date', 'Open', 'High', 'Low', 'Close']].to_dict(orient='records')
+        return jsonify(result)
+    except Exception as e:
+        print(f"Error fetching bitcoin price history: {e}")
+        return jsonify({"error": str(e)}), 500
 
 @main.route('/api/usd-price-history', methods=['GET'])
 def get_usd_price_history():
-    usd = yf.Ticker("DX-Y.NYB")
-    data = usd.history(period="10y", interval="1d")
-    data.reset_index(inplace=True)
-    result = data[['Date', 'Open', 'High', 'Low', 'Close']].to_dict(orient='records')
-    return jsonify(result)
+    try:
+        usd = yf.Ticker("DX-Y.NYB")
+        data = usd.history(period="10y", interval="1d")
+        data.reset_index(inplace=True)
+        result = data[['Date', 'Open', 'High', 'Low', 'Close']].to_dict(orient='records')
+        return jsonify(result)
+    except Exception as e:
+        print(f"Error fetching USD price history: {e}")
+        return jsonify({"error": str(e)}), 500
 
 @main.route('/api/sp500-price-history', methods=['GET'])
 def get_sp500_price_history():
-    sp500 = yf.Ticker("^GSPC")
-    data = sp500.history(period="10y", interval="1d")
-    data.reset_index(inplace=True)
-    result = data[['Date', 'Open', 'High', 'Low', 'Close']].to_dict(orient='records')
-    return jsonify(result)
+    try:
+        sp500 = yf.Ticker("^GSPC")
+        data = sp500.history(period="10y", interval="1d")
+        data.reset_index(inplace=True)
+        result = data[['Date', 'Open', 'High', 'Low', 'Close']].to_dict(orient='records')
+        return jsonify(result)
+    except Exception as e:
+        print(f"Error fetching S&P 500 price history: {e}")
+        return jsonify({"error": str(e)}), 500
 
 @main.route('/api/apple-price-history', methods=['GET'])
 def get_apple_price_history():
-    apple = yf.Ticker("AAPL")
-    data = apple.history(period="10y", interval="1d")
-    data.reset_index(inplace=True)
-    result = data[['Date', 'Open', 'High', 'Low', 'Close']].to_dict(orient='records')
-    return jsonify(result)
+    try:
+        apple = yf.Ticker("AAPL")
+        data = apple.history(period="10y", interval="1d")
+        data.reset_index(inplace=True)
+        result = data[['Date', 'Open', 'High', 'Low', 'Close']].to_dict(orient='records')
+        return jsonify(result)
+    except Exception as e:
+        print(f"Error fetching Apple price history: {e}")
+        return jsonify({"error": str(e)}), 500
+    
+@main.route('/update-price/<int:security_id>', methods=['POST'])
+def update_price(security_id):
+    try:
+        security = fetch_security_data(security_id)
+
+        if not security:
+            return jsonify({"error": "Security not found"}), 404
+
+        ticker_symbol = security.get("ticker_symbol")
+        result = update_price_history(security_id, ticker_symbol)
+        return jsonify(result)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500

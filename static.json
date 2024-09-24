@@ -1,0 +1,10 @@
+{
+    "root": "frontend/build/",
+    "routes": [
+      {
+        "src": "/.*",
+        "dest": "frontend/build/index.html"
+      }
+    ]
+  }
+  
