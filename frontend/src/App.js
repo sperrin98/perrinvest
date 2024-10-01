@@ -14,6 +14,7 @@ import CurrencySelection from './components/CurrencySelection';
 import MarketRatioSelection from './components/MarketRatioSelection';
 import CryptoCurrencies from './components/CryptoCurrencies';
 import CryptoCurrency from './components/CryptoCurrency';
+import Correlations from './components/Correlations';
 
 function App() {
   return (
@@ -33,9 +34,11 @@ function App() {
         <Route path="/market-ratios/divide" element={<MarketRatioSelection />} />
         <Route path="/currencies/crypto" element={<CryptoCurrencies />} />
         <Route path="/currencies/crypto/:ticker" element={<CryptoCurrency />} />
+        <Route path="/correlations" element={<Correlations />} />
       </Routes>
     </Router>
   );
 }
 
 export default App;
+

@@ -8,6 +8,7 @@
     "chart.js": "^4.4.3",
     "chartjs-adapter-date-fns": "^3.0.0",
     "chartjs-chart-financial": "^0.2.1",
+    "dayjs": "^1.11.13",
     "dotenv": "^10.0.0",
     "react": "^18.3.1",
     "react-bootstrap": "^2.10.4",

@@ -109,5 +109,5 @@ if __name__ == "__main__":
     }
 
     # Example: Update prices for all securities on a given date
-    price_date = '2024-09-23'  
+    price_date = '2024-09-25'  
     update_or_insert_prices_for_all_securities(price_date, db_config)
