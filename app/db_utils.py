@@ -1,5 +1,7 @@
 import mysql.connector
 from flask import current_app
+import datetime
+import yfinance as yf
 
 def get_db_connection():
     config = {
@@ -13,7 +15,7 @@ def get_db_connection():
 def fetch_securities():
     conn = get_db_connection()
     cursor = conn.cursor()
-    query = "SELECT * FROM securities"
+    query = "SELECT * FROM securities"  
     cursor.execute(query)
     rows = cursor.fetchall()
     columns = [desc[0] for desc in cursor.description]
@@ -22,6 +24,15 @@ def fetch_securities():
     conn.close()
     return result
 
+def get_security_id(security_name):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    query = "SELECT security_id FROM securities WHERE security_long_name = %s"  # Adjust based on your schema
+    cursor.execute(query, (security_name,))
+    result = cursor.fetchone()
+    cursor.close()
+    conn.close()
+    return result[0] if result else None
 
 def fetch_security_data(security_id):
     conn = get_db_connection()
@@ -205,3 +216,23 @@ def update_price_history(security_id, ticker_symbol):
     finally:
         cursor.close()
         conn.close()
+
+def get_correlation_data(sec_id, sec_id2, period_days, start_date):
+    try:
+        connection = get_db_connection()
+        cursor = connection.cursor(dictionary=True)
+        cursor.callproc('correlation_timeframe', [sec_id, sec_id2, period_days, start_date])
+        
+        # Fetch results from temp_correlation_results
+        for result in cursor.stored_results():
+            data = result.fetchall()
+
+        return data
+
+    except Error as e:
+        print(f"Error: {e}")
+        return None
+    finally:
+        if connection.is_connected():
+            cursor.close()
+            connection.close()
