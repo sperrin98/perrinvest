@@ -1,0 +1,21 @@
+/* src/components/Correlations.css */
+.correlation-container {
+    margin-top: 200px; /* Adding top margin to avoid navbar overlap */
+}
+
+/* Additional styles */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px; /* Space between form and table */
+}
+
+th, td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+
+th {
+    background-color: #f2f2f2;
+}
