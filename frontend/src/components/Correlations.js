@@ -1,24 +1,23 @@
-// src/components/Correlations.js
 import React, { useEffect, useState } from 'react';
 import './Correlations.css';
 
 const Correlations = () => {
-  const [correlations, setCorrelations] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+  // Correct order of state variables
+  const [secId1, setSecId1] = useState(1);  // Security 1
+  const [secId2, setSecId2] = useState(2);  // Security 2
+  const [period, setPeriod] = useState(90);  // Number of Periods
+  const [timeframeType, setTimeframeType] = useState('yearly');  // Timeframe Type
+  const [endDate, setEndDate] = useState('2023-01-01');  // End Date
+  const [correlations, setCorrelations] = useState([]);  
+  const [loading, setLoading] = useState(false);  
+  const [error, setError] = useState(null);  
+  const [securities, setSecurities] = useState([]);  
 
-  const [startDate, setStartDate] = useState('2023-01-01'); // Default start date
-  const [periodDays, setPeriodDays] = useState(90); // Default period of days
-  const [secId1, setSecId1] = useState(1); // Default first security ID
-  const [secId2, setSecId2] = useState(2); // Default second security ID
-
-  const [securities, setSecurities] = useState([]); // To hold the list of securities
-
-  // Fetch securities on component mount
+  // Fetch securities when the component mounts
   useEffect(() => {
     const fetchSecurities = async () => {
       try {
-        const response = await fetch('http://localhost:5000/securities'); // Adjust endpoint as necessary
+        const response = await fetch('http://localhost:5000/securities'); 
         if (!response.ok) {
           throw new Error('Failed to fetch securities');
         }
@@ -35,59 +34,77 @@ const Correlations = () => {
 
   // Function to fetch correlations based on input parameters
   const fetchCorrelations = async () => {
-    setLoading(true); // Start loading
-    setError(null); // Clear previous errors
+    setLoading(true);
+    setError(null);
     try {
-      const response = await fetch(
-        `http://localhost:5000/correlations?sec_id=${secId1}&sec_id2=${secId2}&period_days=${periodDays}&start_date=${startDate}`
-      );
+        const response = await fetch(
+            `http://localhost:5000/correlations?sec_id=${secId1}&sec_id2=${secId2}&period=${period}&timeframe_type=${timeframeType}&end_date=${endDate}`
+        );
 
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`Failed to fetch data: ${errorText}`);
-      }
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error('Response Error:', errorText);
+            throw new Error(`Failed to fetch data: ${errorText}`);
+        }
 
-      const data = await response.json();
-      setCorrelations(data);
+        const data = await response.json();
+        setCorrelations(data);
     } catch (error) {
-      console.error('Error fetching correlations:', error);
-      setError(error.message);
+        console.error('Error fetching correlations:', error);
+        setError(error.message);
     } finally {
-      setLoading(false); // Stop loading
+        setLoading(false);
     }
-  };
+};
 
-  // Handle form submission to fetch correlations
+
+  // Handle form submission
   const handleSubmit = (e) => {
-    e.preventDefault(); // Prevent default form submission
-    fetchCorrelations(); // Fetch correlations
+    e.preventDefault();  
+    fetchCorrelations();  
   };
 
   return (
     <div className="correlation-container" style={{ marginTop: '200px' }}>
       <h2>Calculate Correlation</h2>
-      
+
       <form onSubmit={handleSubmit}>
         <div>
-          <label htmlFor="start-date">Start Date:</label>
+          <label htmlFor="end-date">End Date:</label>
           <input
             type="date"
-            id="start-date"
-            value={startDate}
-            onChange={(e) => setStartDate(e.target.value)}
+            id="end-date"
+            value={endDate}
+            onChange={(e) => setEndDate(e.target.value)}
             required
           />
         </div>
-        
+
         <div>
-          <label htmlFor="period-days">Period of Days:</label>
+          <label htmlFor="period">Period (Number of Periods):</label>
           <input
             type="number"
-            id="period-days"
-            value={periodDays}
-            onChange={(e) => setPeriodDays(e.target.value)}
+            id="period"
+            value={period}
+            onChange={(e) => setPeriod(e.target.value)}
             required
           />
+        </div>
+
+        <div>
+          <label htmlFor="timeframe-type">Timeframe Type:</label>
+          <select
+            id="timeframe-type"
+            value={timeframeType}
+            onChange={(e) => setTimeframeType(e.target.value)}
+            required
+          >
+            <option value="daily">Daily</option>
+            <option value="weekly">Weekly</option>
+            <option value="monthly">Monthly</option>
+            <option value="quarterly">Quarterly</option>
+            <option value="yearly">Yearly</option>
+          </select>
         </div>
 
         <div>
@@ -140,7 +157,7 @@ const Correlations = () => {
               <tr key={index}>
                 <td>{correlation.window_start_date}</td>
                 <td>{correlation.window_end_date}</td>
-                <td>{correlation.correlation_value.toFixed(2)}</td>
+                <td>{correlation.correlation_value.toFixed(2)}</td> 
               </tr>
             ))}
           </tbody>

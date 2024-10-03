@@ -8,22 +8,24 @@ from app.db_utils import (
     fetch_currency_price_history, update_price_history, get_correlation_data
 )   
 import yfinance as yf
+import logging
+
+logging.basicConfig(level=logging.DEBUG)
 
 @main.before_request
 def before_request_func():
     if request.method == 'OPTIONS':
-        # Handle the preflight request
         response = make_response()
         response.headers.add("Access-Control-Allow-Origin", "*")
-        response.headers.add("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
-        response.headers.add("Access-Control-Allow-Headers", "Content-Type, Authorization")
+        response.headers.add("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+        response.headers.add("Access-Control-Allow-Headers", "Content-Type")
         return response
 
 @main.after_request
 def after_request_func(response):
     response.headers.add("Access-Control-Allow-Origin", "*")
     response.headers.add("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
-    response.headers.add("Access-Control-Allow-Headers", "Content-Type, Authorization")
+    response.headers.add("Access-Control-Allow-Headers", "Content-Type")
     return response
 
 @main.route('/')
@@ -201,19 +203,24 @@ def divide_market_ratios():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
     
+
 @main.route('/correlations', methods=['GET'])
 def correlations():
     sec_id = request.args.get('sec_id', type=int)
     sec_id2 = request.args.get('sec_id2', type=int)
-    period_days = request.args.get('period_days', type=int)
-    start_date = request.args.get('start_date')
+    period = request.args.get('period', type=int)
+    timeframe_type = request.args.get('timeframe_type', type=str)
+    end_date = request.args.get('end_date', type=str)
 
-    data = get_correlation_data(sec_id, sec_id2, period_days, start_date)
-    
-    if data:
-        return jsonify(data)
+    results = get_correlation_data(sec_id, sec_id2, period, timeframe_type, end_date)
+
+    if results:
+        return jsonify(results)  # or format the results as needed
     else:
         return jsonify({"error": "No data found"}), 404
+
+
+
 
 
 @main.route('/api/crypto-prices', methods=['GET'])
