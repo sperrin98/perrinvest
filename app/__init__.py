@@ -11,7 +11,7 @@ def create_app():
     db.init_app(app)
 
     # Enable CORS for all routes
-    CORS(app, resources={r"/*": {"origins": "http://localhost:3000"}})  # Change the origin to your frontend address
+    CORS(app)  # This allows all origins. You can specify origins as needed.
 
     from app.main import main as main_blueprint
     app.register_blueprint(main_blueprint)

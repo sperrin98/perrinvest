@@ -2,6 +2,13 @@ import mysql.connector
 from flask import current_app
 import datetime
 import yfinance as yf
+import logging 
+
+logging.basicConfig(
+    filename='db_utils.log',      # Log file path
+    level=logging.DEBUG,          # Log level
+    format='%(asctime)s - %(levelname)s - %(message)s'  # Log format
+)
 
 def get_db_connection():
     config = {
@@ -217,22 +224,33 @@ def update_price_history(security_id, ticker_symbol):
         cursor.close()
         conn.close()
 
-def get_correlation_data(sec_id, sec_id2, period_days, start_date):
+def get_correlation_data(sec_id, sec_id2, period, timeframe_type, end_date):
+    connection = get_db_connection()
     try:
-        connection = get_db_connection()
         cursor = connection.cursor(dictionary=True)
-        cursor.callproc('correlation_timeframe', [sec_id, sec_id2, period_days, start_date])
-        
-        # Fetch results from temp_correlation_results
+
+        # Log the procedure call and parameters
+        logging.debug(f"Calling stored procedure with parameters: sec_id={sec_id}, sec_id2={sec_id2}, period={period}, timeframe_type={timeframe_type}, end_date={end_date}")
+
+        # Call the stored procedure with correct order
+        cursor.callproc('correlation_dwmqy', [sec_id, sec_id2, period, timeframe_type, end_date])
+
+        # Fetch the results from the stored procedure
+        data = []
         for result in cursor.stored_results():
-            data = result.fetchall()
+            fetched_data = result.fetchall()  # Collect all results
+            logging.debug(f"Fetched data: {fetched_data}")
+            data.extend(fetched_data)
 
-        return data
+        if data:
+            return data
+        else:
+            logging.debug("No data returned by the stored procedure")
+            return None
 
-    except Error as e:
-        print(f"Error: {e}")
-        return None
+    except mysql.connector.Error as e:
+        logging.error(f"Database Error: {e}")
+        return None  # Handle error appropriately
     finally:
-        if connection.is_connected():
-            cursor.close()
-            connection.close()
+        cursor.close()
+        connection.close()  # Ensure connection is closed
