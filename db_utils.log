@@ -1,0 +1,11 @@
+2024-10-03 11:36:13,854 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2024-10-03 11:36:13,854 - INFO - [33mPress CTRL+C to quit[0m
+2024-10-03 11:36:13,869 - INFO -  * Restarting with stat
+2024-10-03 11:36:15,956 - WARNING -  * Debugger is active!
+2024-10-03 11:36:15,956 - INFO -  * Debugger PIN: 106-217-358
+2024-10-03 11:36:37,501 - INFO - 127.0.0.1 - - [03/Oct/2024 11:36:37] "GET /securities HTTP/1.1" 200 -
+2024-10-03 11:37:18,568 - INFO - 127.0.0.1 - - [03/Oct/2024 11:37:18] "GET /securities HTTP/1.1" 200 -
+2024-10-03 11:37:28,544 - INFO - 127.0.0.1 - - [03/Oct/2024 11:37:28] "[35m[1mGET /correlations?sec_id=33&sec_id2=2&period=20&timeframe_type=yearly&end_date=2023-01-01 HTTP/1.1[0m" 500 -
+2024-10-03 11:38:04,498 - INFO -  * Detected change in 'C:\\Users\\alexp\\onedrive\\desktop\\perrinvest\\app\\main\\routes.py', reloading
+2024-10-03 11:38:04,661 - INFO -  * Restarting with stat
