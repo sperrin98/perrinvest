@@ -1,8 +1,13 @@
 import React, { useEffect, useState } from 'react';
+import { Line } from 'react-chartjs-2'; // Import the Line chart component
 import './Correlations.css';
+import { Chart as ChartJS, LineElement, CategoryScale, LinearScale, PointElement, Title, Tooltip, Legend } from 'chart.js';
+
+// Register Chart.js components
+ChartJS.register(LineElement, CategoryScale, LinearScale, PointElement, Title, Tooltip, Legend);
 
 const Correlations = () => {
-  // Correct order of state variables
+  // State variables
   const [secId1, setSecId1] = useState(1);  // Security 1
   const [secId2, setSecId2] = useState(2);  // Security 2
   const [period, setPeriod] = useState(90);  // Number of Periods
@@ -37,31 +42,48 @@ const Correlations = () => {
     setLoading(true);
     setError(null);
     try {
-        const response = await fetch(
-            `http://localhost:5000/correlations?sec_id=${secId1}&sec_id2=${secId2}&period=${period}&timeframe_type=${timeframeType}&end_date=${endDate}`
-        );
+      const response = await fetch(
+        `http://localhost:5000/correlations?sec_id=${secId1}&sec_id2=${secId2}&period=${period}&timeframe_type=${timeframeType}&end_date=${endDate}`
+      );
 
-        if (!response.ok) {
-            const errorText = await response.text();
-            console.error('Response Error:', errorText);
-            throw new Error(`Failed to fetch data: ${errorText}`);
-        }
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('Response Error:', errorText);
+        throw new Error(`Failed to fetch data: ${errorText}`);
+      }
 
-        const data = await response.json();
-        setCorrelations(data);
+      const data = await response.json();
+      setCorrelations(data);
     } catch (error) {
-        console.error('Error fetching correlations:', error);
-        setError(error.message);
+      console.error('Error fetching correlations:', error);
+      setError(error.message);
     } finally {
-        setLoading(false);
+      setLoading(false);
     }
-};
-
+  };
 
   // Handle form submission
   const handleSubmit = (e) => {
     e.preventDefault();  
     fetchCorrelations();  
+  };
+
+  // Prepare data for the chart
+  const chartData = {
+    labels: correlations.map(correlation => {
+      // Convert the date to YYYY/MM/DD format for window_start_date
+      const date = new Date(correlation.window_start_date);
+      return `${date.getFullYear()}/${String(date.getMonth() + 1).padStart(2, '0')}/${String(date.getDate()).padStart(2, '0')}`;
+    }).reverse(), // Reverse the order of labels for X-axis
+    datasets: [
+      {
+        label: 'Correlation Value',
+        data: correlations.map(correlation => correlation.correlation_value).reverse(), // Reverse the order of data for Y-axis
+        fill: false, // No fill under the line
+        borderColor: 'rgba(75, 192, 192, 1)', // Line color
+        tension: 0.1, // Line smoothness
+      },
+    ],
   };
 
   return (
@@ -144,24 +166,72 @@ const Correlations = () => {
       {error && <div>Error: {error}</div>}
 
       {correlations.length > 0 && (
-        <table>
-          <thead>
-            <tr>
-              <th>Window Start Date</th>
-              <th>Window End Date</th>
-              <th>Correlation Value</th>
-            </tr>
-          </thead>
-          <tbody>
-            {correlations.map((correlation, index) => (
-              <tr key={index}>
-                <td>{correlation.window_start_date}</td>
-                <td>{correlation.window_end_date}</td>
-                <td>{correlation.correlation_value.toFixed(2)}</td> 
+        <>
+          <Line data={chartData} options={{
+            responsive: true,
+            scales: {
+              x: {
+                title: {
+                  display: true,
+                  text: 'Date',
+                },
+                grid: {
+                  borderColor: 'black', // Color of the X axis
+                  borderWidth: 2, // Width of the X axis
+                },
+              },
+              y: {
+                title: {
+                  display: true,
+                  text: 'Correlation Value',
+                },
+                min: -1, // Minimum value for the Y axis
+                max: 1,  // Maximum value for the Y axis
+                ticks: {
+                  stepSize: 0.2, // Y-axis increments
+                  callback: (value) => {
+                    // Center 0 and make labels for -1, 0, 1
+                    if (value === 0) return '0';
+                    if (value === 1) return '1';
+                    if (value === -1) return '-1';
+                    return value; // Return the value by default
+                  },
+                },
+                grid: {
+                  color: (context) => {
+                    const { tick } = context;
+                    return tick.value === 0 ? 'red' : 'black'; // Set color for the 0 grid line
+                  },
+                  borderColor: 'black', // Color of the Y axis
+                  borderWidth: 2, // Width of the Y axis
+                },
+              },
+            },
+          }} />
+          
+          <table>
+            <thead>
+              <tr>
+                <th>Window Start Date</th>
+                <th>Window End Date</th>
+                <th>Correlation Value</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {correlations.map((correlation, index) => (
+                <tr key={index}>
+                  <td>
+                    {`${new Date(correlation.window_start_date).getFullYear()}/${String(new Date(correlation.window_start_date).getMonth() + 1).padStart(2, '0')}/${String(new Date(correlation.window_start_date).getDate()).padStart(2, '0')}`}
+                  </td>
+                  <td>
+                    {`${new Date(correlation.window_end_date).getFullYear()}/${String(new Date(correlation.window_end_date).getMonth() + 1).padStart(2, '0')}/${String(new Date(correlation.window_end_date).getDate()).padStart(2, '0')}`}
+                  </td>
+                  <td>{correlation.correlation_value.toFixed(2)}</td> 
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </>
       )}
     </div>
   );
