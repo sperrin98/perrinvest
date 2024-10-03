@@ -220,9 +220,6 @@ def correlations():
         return jsonify({"error": "No data found"}), 404
 
 
-
-
-
 @main.route('/api/crypto-prices', methods=['GET'])
 def get_crypto_prices():
     try:
