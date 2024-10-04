@@ -10,9 +10,9 @@ const Correlations = () => {
   // State variables
   const [secId1, setSecId1] = useState(1);  // Security 1
   const [secId2, setSecId2] = useState(2);  // Security 2
-  const [period, setPeriod] = useState(90);  // Number of Periods
+  const [period, setPeriod] = useState(30);  // Number of Periods
   const [timeframeType, setTimeframeType] = useState('yearly');  // Timeframe Type
-  const [endDate, setEndDate] = useState('2023-01-01');  // End Date
+  const [endDate, setEndDate] = useState('2024-01-01');  // End Date
   const [correlations, setCorrelations] = useState([]);  
   const [loading, setLoading] = useState(false);  
   const [error, setError] = useState(null);  
@@ -103,7 +103,7 @@ const Correlations = () => {
         </div>
 
         <div>
-          <label htmlFor="period">Period (Number of Periods):</label>
+          <label htmlFor="period">Period (Number of D/W/M/Q/Ys):</label>
           <input
             type="number"
             id="period"

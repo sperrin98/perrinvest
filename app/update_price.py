@@ -2,6 +2,32 @@ import yfinance as yf
 import mysql.connector
 from mysql.connector import Error
 from datetime import datetime, timedelta
+import sys  # Used to capture command-line arguments
+
+def insert_update_date(price_date, db_config):
+    """Insert the selected price date into the update_date table."""
+    try:
+        # Connect to the MySQL database
+        connection = mysql.connector.connect(**db_config)
+
+        if connection.is_connected():
+            cursor = connection.cursor()
+
+            # Insert the date into the update_date table
+            insert_query = "INSERT INTO update_date (update_date_field) VALUES (%s)"
+            cursor.execute(insert_query, (price_date,))
+            connection.commit()
+            print(f"Inserted update date: {price_date} into update_date table.")
+
+    except Error as e:
+        print(f"Error while connecting to MySQL: {e}")
+
+    finally:
+        if connection.is_connected():
+            cursor.close()
+            connection.close()
+            print("MySQL connection is closed after inserting update date.")
+
 
 def fetch_price_from_yahoo(ticker_symbol, price_date):
     """Fetch the closing price for the given ticker_symbol and price_date using Yahoo Finance."""
@@ -100,6 +126,13 @@ def update_or_insert_prices_for_all_securities(price_date, db_config):
 
 # Example usage
 if __name__ == "__main__":
+    if len(sys.argv) != 2:
+        print("Usage: python update_prices.py <YYYY-MM-DD>")
+        sys.exit(1)
+
+    # Fetch the date from command line argument
+    price_date = sys.argv[1]
+
     # Define your MySQL database configuration
     db_config = {
         'host': 'localhost',
@@ -108,6 +141,6 @@ if __name__ == "__main__":
         'database': 'perrinvest'
     }
 
-    # Example: Update prices for all securities on a given date
-    price_date = '2024-09-25'  
+
+    # Update prices for all securities on the user-specified date
     update_or_insert_prices_for_all_securities(price_date, db_config)
