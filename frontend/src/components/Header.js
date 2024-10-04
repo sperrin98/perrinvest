@@ -36,6 +36,7 @@ const Header = () => {
               <Link to="/currencies/crypto">Cryptocurrencies</Link>
             </div>
           </li>
+          <li><Link to ="/correlations">Correlations</Link></li>
         </ul>
       </nav>
     </header>
