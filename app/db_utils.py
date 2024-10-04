@@ -1,19 +1,33 @@
 import mysql.connector
 from flask import current_app
+import datetime
+import yfinance as yf
+import logging
+from dotenv import load_dotenv
+import os
+
+
+load_dotenv()
+
+logging.basicConfig(
+    filename='db_utils.log',      # Log file path
+    level=logging.DEBUG,          # Log level
+    format='%(asctime)s - %(levelname)s - %(message)s'  # Log format
+)
 
 def get_db_connection():
     config = {
-        'user': 'root',
-        'password': 'Royals106#',
-        'host': 'localhost',
-        'database': 'perrinvest'
+        'host': os.getenv('DB_HOST'),
+        'user': os.getenv('DB_USER'),
+        'password': os.getenv('DB_PASSWORD'),
+        'database': os.getenv('DB_NAME')
     }
     return mysql.connector.connect(**config)
 
 def fetch_securities():
     conn = get_db_connection()
     cursor = conn.cursor()
-    query = "SELECT * FROM securities"
+    query = "SELECT * FROM securities"  
     cursor.execute(query)
     rows = cursor.fetchall()
     columns = [desc[0] for desc in cursor.description]
@@ -22,6 +36,15 @@ def fetch_securities():
     conn.close()
     return result
 
+def get_security_id(security_name):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    query = "SELECT security_id FROM securities WHERE security_long_name = %s"  # Adjust based on your schema
+    cursor.execute(query, (security_name,))
+    result = cursor.fetchone()
+    cursor.close()
+    conn.close()
+    return result[0] if result else None
 
 def fetch_security_data(security_id):
     conn = get_db_connection()
@@ -205,3 +228,34 @@ def update_price_history(security_id, ticker_symbol):
     finally:
         cursor.close()
         conn.close()
+
+def get_correlation_data(sec_id, sec_id2, period, timeframe_type, end_date):
+    connection = get_db_connection()
+    try:
+        cursor = connection.cursor(dictionary=True)
+
+        # Log the procedure call and parameters
+        logging.debug(f"Calling stored procedure with parameters: sec_id={sec_id}, sec_id2={sec_id2}, period={period}, timeframe_type={timeframe_type}, end_date={end_date}")
+
+        # Call the stored procedure with correct order
+        cursor.callproc('correlation_dwmqy', [sec_id, sec_id2, period, timeframe_type, end_date])
+
+        # Fetch the results from the stored procedure
+        data = []
+        for result in cursor.stored_results():
+            fetched_data = result.fetchall()  # Collect all results
+            logging.debug(f"Fetched data: {fetched_data}")
+            data.extend(fetched_data)
+
+        if data:
+            return data
+        else:
+            logging.debug("No data returned by the stored procedure")
+            return None
+
+    except mysql.connector.Error as e:
+        logging.error(f"Database Error: {e}")
+        return None  # Handle error appropriately
+    finally:
+        cursor.close()
+        connection.close()  # Ensure connection is closed

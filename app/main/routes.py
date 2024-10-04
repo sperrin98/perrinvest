@@ -5,9 +5,12 @@ from app.db_utils import (
     fetch_security_data, fetch_price_history, fetch_eco_data_point_histories, 
     fetch_eco_data_point, fetch_eco_data_points, fetch_currencies, 
     fetch_currency, call_divided_price_procedure, get_security_id,
-    fetch_currency_price_history, update_price_history
-)
+    fetch_currency_price_history, update_price_history, get_correlation_data
+)   
 import yfinance as yf
+import logging
+
+logging.basicConfig(level=logging.DEBUG)
 
 @main.before_request
 def before_request_func():
@@ -199,6 +202,23 @@ def divide_market_ratios():
         })
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+    
+
+@main.route('/correlations', methods=['GET'])
+def correlations():
+    sec_id = request.args.get('sec_id', type=int)
+    sec_id2 = request.args.get('sec_id2', type=int)
+    period = request.args.get('period', type=int)
+    timeframe_type = request.args.get('timeframe_type', type=str)
+    end_date = request.args.get('end_date', type=str)
+
+    results = get_correlation_data(sec_id, sec_id2, period, timeframe_type, end_date)
+
+    if results:
+        return jsonify(results)  # or format the results as needed
+    else:
+        return jsonify({"error": "No data found"}), 404
+
 
 @main.route('/api/crypto-prices', methods=['GET'])
 def get_crypto_prices():
