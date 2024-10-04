@@ -3,6 +3,10 @@ import mysql.connector
 from mysql.connector import Error
 from datetime import datetime, timedelta
 import sys  # Used to capture command-line arguments
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
 
 def insert_update_date(price_date, db_config):
     """Insert the selected price date into the update_date table."""
@@ -135,10 +139,10 @@ if __name__ == "__main__":
 
     # Define your MySQL database configuration
     db_config = {
-        'host': 'localhost',
-        'user': 'root',
-        'password': 'Royals106#',
-        'database': 'perrinvest'
+        'host': os.getenv('DB_HOST'),
+        'user': os.getenv('DB_USER'),
+        'password': os.getenv('DB_PASSWORD'),
+        'database': os.getenv('DB_NAME')
     }
 
 

@@ -1875,3 +1875,58 @@
 2024-10-04 12:30:31,236 - INFO -  * Debugger PIN: 106-217-358
 2024-10-04 12:55:42,278 - INFO -  * Detected change in 'C:\\Users\\alexp\\onedrive\\desktop\\perrinvest\\app\\update_price.py', reloading
 2024-10-04 12:55:42,620 - INFO -  * Restarting with stat
+2024-10-04 12:55:45,246 - WARNING -  * Debugger is active!
+2024-10-04 12:55:45,249 - INFO -  * Debugger PIN: 106-217-358
+2024-10-04 15:02:38,666 - INFO -  * Detected change in 'C:\\Users\\alexp\\onedrive\\desktop\\perrinvest\\app\\update_price.py', reloading
+2024-10-04 15:02:38,843 - INFO -  * Restarting with stat
+2024-10-04 15:02:42,229 - WARNING -  * Debugger is active!
+2024-10-04 15:02:42,233 - INFO -  * Debugger PIN: 106-217-358
+2024-10-04 15:02:49,653 - INFO -  * Detected change in 'C:\\Users\\alexp\\onedrive\\desktop\\perrinvest\\app\\update_price.py', reloading
+2024-10-04 15:02:49,855 - INFO -  * Restarting with stat
+2024-10-04 15:02:52,695 - WARNING -  * Debugger is active!
+2024-10-04 15:02:52,699 - INFO -  * Debugger PIN: 106-217-358
+2024-10-04 15:03:13,652 - INFO -  * Detected change in 'C:\\Users\\alexp\\onedrive\\desktop\\perrinvest\\app\\update_price.py', reloading
+2024-10-04 15:03:13,843 - INFO -  * Restarting with stat
+2024-10-04 15:03:16,641 - WARNING -  * Debugger is active!
+2024-10-04 15:03:16,646 - INFO -  * Debugger PIN: 106-217-358
+2024-10-04 15:03:37,600 - INFO -  * Detected change in 'C:\\Users\\alexp\\onedrive\\desktop\\perrinvest\\app\\db_utils.py', reloading
+2024-10-04 15:03:37,814 - INFO -  * Restarting with stat
+2024-10-04 15:03:40,783 - WARNING -  * Debugger is active!
+2024-10-04 15:03:40,786 - INFO -  * Debugger PIN: 106-217-358
+2024-10-04 15:03:46,893 - INFO - 127.0.0.1 - - [04/Oct/2024 15:03:46] "[35m[1mGET /securities HTTP/1.1[0m" 500 -
+2024-10-04 15:04:07,775 - INFO -  * Detected change in 'C:\\Users\\alexp\\onedrive\\desktop\\perrinvest\\app\\db_utils.py', reloading
+2024-10-04 15:04:08,023 - INFO -  * Restarting with stat
+2024-10-04 15:04:11,145 - WARNING -  * Debugger is active!
+2024-10-04 15:04:11,146 - INFO -  * Debugger PIN: 106-217-358
+2024-10-04 15:04:14,334 - INFO -  * Detected change in 'C:\\Users\\alexp\\onedrive\\desktop\\perrinvest\\app\\db_utils.py', reloading
+2024-10-04 15:04:14,593 - INFO -  * Restarting with stat
+2024-10-04 15:04:17,647 - WARNING -  * Debugger is active!
+2024-10-04 15:04:17,653 - INFO -  * Debugger PIN: 106-217-358
+2024-10-04 15:04:26,183 - INFO -  * Detected change in 'C:\\Users\\alexp\\onedrive\\desktop\\perrinvest\\app\\update_price.py', reloading
+2024-10-04 15:04:26,383 - INFO -  * Restarting with stat
+2024-10-04 15:04:30,125 - WARNING -  * Debugger is active!
+2024-10-04 15:04:30,125 - INFO -  * Debugger PIN: 106-217-358
+2024-10-04 15:04:30,165 - INFO - 127.0.0.1 - - [04/Oct/2024 15:04:30] "[35m[1mGET /securities HTTP/1.1[0m" 500 -
+2024-10-04 15:04:34,354 - INFO -  * Detected change in 'C:\\Users\\alexp\\onedrive\\desktop\\perrinvest\\app\\update_price.py', reloading
+2024-10-04 15:04:34,593 - INFO -  * Restarting with stat
+2024-10-04 15:04:37,443 - WARNING -  * Debugger is active!
+2024-10-04 15:04:37,443 - INFO -  * Debugger PIN: 106-217-358
+2024-10-04 15:04:40,674 - INFO -  * Detected change in 'C:\\Users\\alexp\\onedrive\\desktop\\perrinvest\\app\\db_utils.py', reloading
+2024-10-04 15:04:40,943 - INFO -  * Restarting with stat
+2024-10-04 15:04:43,762 - WARNING -  * Debugger is active!
+2024-10-04 15:04:43,765 - INFO -  * Debugger PIN: 106-217-358
+2024-10-04 15:04:43,807 - INFO - 127.0.0.1 - - [04/Oct/2024 15:04:43] "[35m[1mGET /securities HTTP/1.1[0m" 500 -
+2024-10-04 15:06:17,761 - INFO - 127.0.0.1 - - [04/Oct/2024 15:06:17] "[35m[1mGET /securities HTTP/1.1[0m" 500 -
+2024-10-04 15:07:30,013 - INFO -  * Detected change in 'C:\\Users\\alexp\\onedrive\\desktop\\perrinvest\\app\\db_utils.py', reloading
+2024-10-04 15:07:30,197 - INFO -  * Restarting with stat
+2024-10-04 15:07:32,803 - WARNING -  * Debugger is active!
+2024-10-04 15:07:32,807 - INFO -  * Debugger PIN: 106-217-358
+2024-10-04 15:07:45,490 - INFO -  * Detected change in 'C:\\Users\\alexp\\onedrive\\desktop\\perrinvest\\app\\db_utils.py', reloading
+2024-10-04 15:07:45,687 - INFO -  * Restarting with stat
+2024-10-04 15:07:48,558 - WARNING -  * Debugger is active!
+2024-10-04 15:07:48,563 - INFO -  * Debugger PIN: 106-217-358
+2024-10-04 15:08:05,355 - INFO -  * Detected change in 'C:\\Users\\alexp\\onedrive\\desktop\\perrinvest\\app\\update_price.py', reloading
+2024-10-04 15:08:05,571 - INFO -  * Restarting with stat
+2024-10-04 15:08:08,949 - WARNING -  * Debugger is active!
+2024-10-04 15:08:08,956 - INFO -  * Debugger PIN: 106-217-358
+2024-10-04 15:08:12,230 - INFO -  * Detected change in 'C:\\Users\\alexp\\onedrive\\desktop\\perrinvest\\app\\update_price.py', reloading

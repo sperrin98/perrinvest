@@ -2,7 +2,12 @@ import mysql.connector
 from flask import current_app
 import datetime
 import yfinance as yf
-import logging 
+import logging
+from dotenv import load_dotenv
+import os
+
+
+load_dotenv()
 
 logging.basicConfig(
     filename='db_utils.log',      # Log file path
@@ -12,10 +17,10 @@ logging.basicConfig(
 
 def get_db_connection():
     config = {
-        'user': 'root',
-        'password': 'Royals106#',
-        'host': 'localhost',
-        'database': 'perrinvest'
+        'host': os.getenv('DB_HOST'),
+        'user': os.getenv('DB_USER'),
+        'password': os.getenv('DB_PASSWORD'),
+        'database': os.getenv('DB_NAME')
     }
     return mysql.connector.connect(**config)
 
