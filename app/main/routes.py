@@ -5,7 +5,8 @@ from app.db_utils import (
     fetch_security_data, fetch_price_history, fetch_eco_data_point_histories, 
     fetch_eco_data_point, fetch_eco_data_points, fetch_currencies, 
     fetch_currency, call_divided_price_procedure, get_security_id,
-    fetch_currency_price_history, update_price_history, get_correlation_data
+    fetch_currency_price_history, update_price_history, get_correlation_data,
+    fetch_5d_moving_average, fetch_40d_moving_average, fetch_200d_moving_average
 )   
 import yfinance as yf
 import logging
@@ -55,6 +56,33 @@ def get_security(security_id):
 def get_price_histories(security_id):
     price_histories = fetch_price_history(security_id)
     return jsonify(price_histories)
+
+@main.route('/securities/<int:security_id>/5d-moving-average', methods=['GET'])
+def get_5d_moving_average(security_id):
+    try:
+        result = fetch_5d_moving_average(security_id)
+        return jsonify(result)
+    except Exception as e:
+        print(f"Error fetching 5-day moving average: {e}")
+        return jsonify({'error': str(e)}), 500
+
+@main.route('/securities/<int:security_id>/40d-moving-average', methods=['GET'])
+def get_40d_moving_average(security_id):
+    try:
+        result = fetch_40d_moving_average(security_id)
+        return jsonify(result)
+    except Exception as e:
+        print(f"Error fetching 40-day moving average: {e}")
+        return jsonify({'error': str(e)}), 500
+
+@main.route('/securities/<int:security_id>/200d-moving-average', methods=['GET'])
+def get_200d_moving_average(security_id):
+    try:
+        result = fetch_200d_moving_average(security_id)
+        return jsonify(result)
+    except Exception as e:
+        print(f"Error fetching 200-day moving average: {e}")
+        return jsonify({'error': str(e)}), 500
 
 @main.route('/market-ratios')
 def get_market_ratios():
