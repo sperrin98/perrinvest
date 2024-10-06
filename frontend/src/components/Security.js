@@ -6,19 +6,22 @@ import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement
 import './Security.css';  // Ensure this path is correct
 import useIsMobile from './useIsMobile';  // Ensure this path is correct
 
+// Register Chart.js components
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
 const Security = () => {
-  const { id } = useParams();
+  const { id } = useParams(); // Get the security ID from URL
   const [security, setSecurity] = useState(null);
   const [priceHistories, setPriceHistories] = useState([]);
   const isMobile = useIsMobile(); // Use the custom hook
 
+  // Fetch security details and price histories
   useEffect(() => {
     const fetchSecurity = async () => {
       try {
         const response = await axios.get(`http://localhost:5000/securities/${id}`);
-        setSecurity(response.data.security);
+        console.log('Fetched Security Data:', response.data); // Log the response data
+        setSecurity(response.data.security); // Set the fetched security
       } catch (error) {
         console.error('Error fetching security:', error);
       }
@@ -31,7 +34,7 @@ const Security = () => {
           date: new Date(history[1]).toISOString().split('T')[0],
           price: history[2],
         }));
-        setPriceHistories(formattedPriceHistories);
+        setPriceHistories(formattedPriceHistories); // Set the fetched price histories
       } catch (error) {
         console.error('Error fetching price histories:', error);
       }
@@ -41,83 +44,77 @@ const Security = () => {
     fetchPriceHistories();
   }, [id]);
 
+  // Handle loading state
   if (!security) {
     return <div>Loading...</div>;
   }
 
+  // Access the security long name from the security array
+  const securityLongName = security[1]; // Assuming security_long_name is the second item in the array
+
   const prices = priceHistories.map(history => history.price);
-  const maxPrice = Math.max(...prices);
-  const minPrice = Math.min(...prices);
 
-  // Calculate the maximum value and step size
-  const yAxisPadding = 0.1; // 10% padding to the max price
-  const maxYAxisValue = Math.max(0, Math.ceil(maxPrice * (1 + yAxisPadding)));
-  const stepSize = isMobile 
-    ? Math.ceil(maxYAxisValue / 6) // For mobile, divide into 6 steps
-    : Math.ceil(maxYAxisValue / 5); // For desktop, divide into 5 steps
-
-    const data = {
-      labels: priceHistories.map(history => history.date),
-      datasets: [{
-        label: `Price History for ${security.security_long_name}`,
-        data: prices,
-        borderColor: 'rgb(0, 255, 179)',
-        backgroundColor: 'rgb(0, 255, 179)',
-        fill: false,
-        borderWidth: 1,   // Thinner line
-        pointRadius: 0.5,   // Smaller points
-        pointHoverRadius: 4, // Adjust hover size if needed
-      }],
-    };
+  const data = {
+    labels: priceHistories.map(history => history.date),
+    datasets: [{
+      label: `Price History for ${securityLongName || "Unknown Security"}`, // Use the correct long name
+      data: prices,
+      borderColor: 'rgb(0, 255, 179)',
+      backgroundColor: 'rgba(0, 255, 179, 0.2)',
+      borderWidth: 1,   // Thinner line
+      pointRadius: 0.5, // Smaller points
+      fill: false,
+    }],
+  };
 
   const chartOptions = {
     responsive: true,
-    maintainAspectRatio: false, // Allow the chart to adjust to container size
+    maintainAspectRatio: false,
     scales: {
       x: {
-        ticks: {
-          color: 'rgb(0, 255, 179)',
-        },
-        grid: {
-          color: 'rgb(68, 68, 68)',
-        },
         title: {
           display: true,
           text: 'Date',
           color: 'rgb(0, 255, 179)',
-        }
-      },
-      y: {
+        },
         ticks: {
           color: 'rgb(0, 255, 179)',
-          stepSize: stepSize,
         },
         grid: {
           color: 'rgb(68, 68, 68)',
-        },
+        }
+      },
+      y: {
         title: {
           display: true,
-          text: 'Value',
-          color: 'rgb(0, 255, 179)'
+          text: 'Price',
+          color: 'rgb(0, 255, 179)',
         },
-        min: 0, // Ensure the Y-axis starts at 0
-        max: maxYAxisValue, // Set the maximum value dynamically
-      }
+        ticks: {
+          color: 'rgb(0, 255, 179)',
+          beginAtZero: true, // Ensure the y-axis starts at zero
+        },
+        grid: {
+          color: 'rgb(68, 68, 68)',
+        }
+      },
     },
     plugins: {
       legend: {
         labels: {
-          color: 'rgb(0, 255, 179)'
-        }
+          color: 'rgb(0, 255, 179)',
+        },
       },
       tooltip: {
         callbacks: {
           label: function(context) {
-            return `${context.dataset.label}: ${context.raw}`;
-          }
-        }
-      }
-    }
+            return `Price: ${context.raw}`;
+          },
+        },
+        titleColor: 'rgb(0, 255, 179)',
+        bodyColor: 'rgb(0, 255, 179)',
+      },
+    },
   };
 
   return (
