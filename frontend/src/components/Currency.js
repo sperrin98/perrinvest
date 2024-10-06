@@ -55,7 +55,8 @@ function Currency() {
       data: priceHistory.map(record => record.price),
       borderColor: 'rgb(0, 255, 179)',
       backgroundColor: 'rgba(0, 255, 179, 0.2)',
-      borderWidth: 2,
+      borderWidth: 1,   // Thinner line
+      pointRadius: 0.5,   // Smaller points
       fill: false,
     }],
   };
