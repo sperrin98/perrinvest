@@ -74,6 +74,8 @@ function MarketRatioSelection() {
           fill: false,
           borderColor: 'rgb(0, 255, 179)',
           backgroundColor: 'rgb(0, 255, 179)',
+          borderWidth: 1,   // Thinner line
+          pointRadius: 0.5, // Smaller points
         },
       ],
     };
