@@ -34,3 +34,19 @@
 .toggle-button-container button:hover {
   background-color: rgba(0, 255, 179, 0.8);
 }
+
+.moving-averages-section {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.moving-averages-title {
+  font-size: 1.5rem;
+  margin-bottom: 10px;
+  margin-top: 20px;
+}
+
+.moving-average-dropdown {
+  padding: 10px;
+  font-size: 1rem;
+}

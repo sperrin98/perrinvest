@@ -253,3 +253,54 @@ def get_correlation_data(sec_id, sec_id2, period, timeframe_type, end_date):
     finally:
         cursor.close()
         connection.close()  # Ensure connection is closed
+
+def fetch_5d_moving_average(security_id):
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+    
+    try:
+        cursor.callproc('5d_moving_average', [security_id])
+        result = []
+        for result_set in cursor.stored_results():
+            result = result_set.fetchall()
+        return result
+    except mysql.connector.Error as err:
+        print(f"Error fetching 5-day moving average: {err}")
+        return []
+    finally:
+        cursor.close()
+        conn.close()
+
+def fetch_40d_moving_average(security_id):
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+    
+    try:
+        cursor.callproc('40d_moving_average', [security_id])
+        result = []
+        for result_set in cursor.stored_results():
+            result = result_set.fetchall()
+        return result
+    except mysql.connector.Error as err:
+        print(f"Error fetching 40-day moving average: {err}")
+        return []
+    finally:
+        cursor.close()
+        conn.close()
+
+def fetch_200d_moving_average(security_id):
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+    
+    try:
+        cursor.callproc('200d_moving_average', [security_id])
+        result = []
+        for result_set in cursor.stored_results():
+            result = result_set.fetchall()
+        return result
+    except mysql.connector.Error as err:
+        print(f"Error fetching 200-day moving average: {err}")
+        return []
+    finally:
+        cursor.close()
+        conn.close()
