@@ -9,12 +9,6 @@ import os
 
 load_dotenv()
 
-logging.basicConfig(
-    filename='db_utils.log',      # Log file path
-    level=logging.DEBUG,          # Log level
-    format='%(asctime)s - %(levelname)s - %(message)s'  # Log format
-)
-
 def get_db_connection():
     config = {
         'host': os.getenv('DB_HOST'),
