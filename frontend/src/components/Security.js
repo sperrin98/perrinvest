@@ -56,16 +56,19 @@ const Security = () => {
     ? Math.ceil(maxYAxisValue / 6) // For mobile, divide into 6 steps
     : Math.ceil(maxYAxisValue / 5); // For desktop, divide into 5 steps
 
-  const data = {
-    labels: priceHistories.map(history => history.date),
-    datasets: [{
-      label: `Price History for ${security.security_long_name}`,
-      data: prices,
-      borderColor: 'rgb(0, 255, 179)',
-      backgroundColor: 'rgb(0, 255, 179)',
-      fill: false,
-    }],
-  };
+    const data = {
+      labels: priceHistories.map(history => history.date),
+      datasets: [{
+        label: `Price History for ${security.security_long_name}`,
+        data: prices,
+        borderColor: 'rgb(0, 255, 179)',
+        backgroundColor: 'rgb(0, 255, 179)',
+        fill: false,
+        borderWidth: 1,   // Thinner line
+        pointRadius: 0.5,   // Smaller points
+        pointHoverRadius: 4, // Adjust hover size if needed
+      }],
+    };
 
   const chartOptions = {
     responsive: true,

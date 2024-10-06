@@ -52,6 +52,8 @@ const MarketRatio = () => {
       data: values,
       borderColor: 'rgb(0, 255, 179)', // Line color
       backgroundColor: 'rgb(0, 255, 179)', // Fill color under the line
+      borderWidth: 1,   // Thinner line
+      pointRadius: 0.5,   // Smaller points
       fill: false,
     }],
   };
