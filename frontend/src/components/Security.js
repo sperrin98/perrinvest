@@ -2,17 +2,18 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import { Line } from 'react-chartjs-2';
-import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend } from 'chart.js';
+import { Chart as ChartJS, CategoryScale, LinearScale, LogarithmicScale, PointElement, LineElement, Title, Tooltip, Legend } from 'chart.js';
 import './Security.css';  // Ensure this path is correct
 import useIsMobile from './useIsMobile';  // Ensure this path is correct
 
 // Register Chart.js components
-ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
+ChartJS.register(CategoryScale, LinearScale, LogarithmicScale, PointElement, LineElement, Title, Tooltip, Legend);
 
 const Security = () => {
   const { id } = useParams(); // Get the security ID from URL
   const [security, setSecurity] = useState(null);
   const [priceHistories, setPriceHistories] = useState([]);
+  const [isLogScale, setIsLogScale] = useState(false); // State to toggle between linear and logarithmic scale
   const isMobile = useIsMobile(); // Use the custom hook
 
   // Fetch security details and price histories
@@ -85,6 +86,7 @@ const Security = () => {
         }
       },
       y: {
+        type: isLogScale ? 'logarithmic' : 'linear', // Toggle between logarithmic and linear
         title: {
           display: true,
           text: 'Price',
@@ -119,6 +121,11 @@ const Security = () => {
 
   return (
     <div className='security-container'>
+      <div className='toggle-button-container'>
+        <button onClick={() => setIsLogScale(!isLogScale)}>
+          Switch to {isLogScale ? 'Linear' : 'Logarithmic'} Scale
+        </button>
+      </div>
       <div className='chart-wrapper'>
         <Line data={data} options={chartOptions} />
       </div>
