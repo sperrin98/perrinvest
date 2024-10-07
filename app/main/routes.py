@@ -383,7 +383,17 @@ def get_stock_prices():
             "Natural Gas": "NG=F",
             "BP": "BP",
             "USD/GBP": "GBPUSD=X",
-            "Tesla": "TSLA"
+            "Tesla": "TSLA",
+            "Gold Futures": "GC=F",
+            "GBP/EUR": "GBPEUR=X",
+            "Bitcoin": "BTC-USD",
+            "Shell plc": "SHEL.L",
+            "Crude Oil": "CL=F",
+            "Silver": "SI=F",
+            "DAX": "^GDAXI",
+            "Hang Seng": "^HSI",
+            "S&P GSCI Precious Metals Index": "^SPGSPMTR",
+            "Vodafone": "VODL.XC"
         }
 
         stock_data = {}
