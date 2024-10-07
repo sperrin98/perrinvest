@@ -1,49 +1,47 @@
 /* StockDock.css */
 
 .stock-dock {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr); /* Two columns */
-    grid-gap: 10px; /* Space between cards */
-    max-height: 500px; /* Adjust as needed */
-    overflow: hidden; /* Hide overflow */
-    padding: 10px; /* Padding around the dock */
-    position: absolute; /* Use absolute positioning */
-    right: 20px; /* Position from the right side */
-    top: 50%; /* Center vertically */
-    transform: translateY(-50%); /* Adjust for half of its height */
-}
-
-.stock-item {
-    border: 1px solid #ccc; /* Card border */
-    padding: 10px; /* Padding inside cards */
-    border-radius: 5px; /* Rounded corners */
+    display: flex; /* Use flex to align items in a row */
+    position: fixed; /* Fixed position at the bottom */
+    bottom: 0; /* Fixed at the bottom */
+    left: 0; /* Start from the left */
+    width: 100%; /* Cover full width */
     background-color: #292828; /* Background color */
-    text-align: center; /* Center text */
-    display: flex;
-    flex-direction: column; /* Align items vertically */
-    justify-content: center; /* Center vertically */
-    width: 120px; /* Fixed width for the cards */
-    height: 80px; /* Fixed height for the cards */
+    padding: 10px 0; /* Padding for the ticker */
     overflow: hidden; /* Hide overflow */
 }
 
-.stock-name {
-    font-weight: bold; /* Bold stock names */
-    white-space: nowrap; /* Prevent line breaks */
-    overflow: hidden; /* Hide overflow text */
-    text-overflow: ellipsis; /* Show ellipsis for overflow */
+/* Each stock item */
+.stock-item {
+    display: inline-block; /* Display items inline */
+    padding: 10px 20px; /* Padding for each stock */
+    color: #fff; /* Text color */
+    margin-right: 40px; /* Spacing between stock items */
+    border-radius: 5px; /* Rounded corners */
+    text-align: center; /* Center text */
 }
 
-.stock-price {
-    margin-top: 5px; /* Space between name and price */
-    font-size: 1.2em; /* Larger font for price */
+/* Animation for scrolling */
+@keyframes scroll {
+    0% {
+        transform: translateX(0); /* Start at the beginning */
+    }
+    100% {
+        transform: translateX(-50%); /* Move off-screen to the left */
+    }
 }
 
-/* Additional styles for price color */
+/* Wrapper for animation */
+.scroll-wrapper {
+    display: flex; /* Flex for horizontal layout */
+    animation: scroll 60s linear infinite; /* Continuous scrolling (60 seconds) */
+}
+
+/* Classes for price trends */
 .price-up {
-    color: green; /* Color for price increase */
+    color: green; /* Green for positive price change */
 }
 
 .price-down {
-    color: red; /* Color for price decrease */
+    color: red; /* Red for negative price change */
 }
