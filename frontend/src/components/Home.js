@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import './Home.css'; // Import the CSS file
-import ChartCarousel from './ChartCarousel';
+import StockDock from './StockDock';  // Import StockDock
+import ChartCarousel from './ChartCarousel';  // Import ChartCarousel component
 import coinImage from '../assets/images/coin.jpg';
-import marketImage from '../assets/images/market-ratio.jpg'
+import marketImage from '../assets/images/market-ratio.jpg';
 
 const Home = () => {
   const [displayedText, setDisplayedText] = useState('');
@@ -32,11 +33,16 @@ const Home = () => {
     <div>
       <div className="section section1">
         <h1 className="home-header">Perrinvest</h1>
+
+        {/* Add the StockDock to the first section */}
+        <StockDock />
       </div>
+
       <div className="section section2">
         <h2 className='section2-header'>Trending Markets</h2>
         <ChartCarousel />
       </div>
+
       <div className="section section3">
         <h1 className="home-header">Currencies</h1>
         <div className="button-container">
@@ -48,6 +54,7 @@ const Home = () => {
           <img src={coinImage} alt="Coin" />
         </div>
       </div>
+
       <div className="section section4">
         <h1 className="market-ratio-home-header">Market Ratios</h1>
         <div className='button2-container'>

@@ -1,0 +1,47 @@
+/* StockDock.css */
+
+.stock-dock {
+    display: flex; /* Use flex to align items in a row */
+    position: fixed; /* Fixed position at the bottom */
+    bottom: 0; /* Fixed at the bottom */
+    left: 0; /* Start from the left */
+    width: 100%; /* Cover full width */
+    background-color: #292828; /* Background color */
+    padding: 10px 0; /* Padding for the ticker */
+    overflow: hidden; /* Hide overflow */
+}
+
+/* Each stock item */
+.stock-item {
+    display: inline-block; /* Display items inline */
+    padding: 10px 20px; /* Padding for each stock */
+    color: #fff; /* Text color */
+    margin-right: 40px; /* Spacing between stock items */
+    border-radius: 5px; /* Rounded corners */
+    text-align: center; /* Center text */
+}
+
+/* Animation for scrolling */
+@keyframes scroll {
+    0% {
+        transform: translateX(0); /* Start at the beginning */
+    }
+    100% {
+        transform: translateX(-50%); /* Move off-screen to the left */
+    }
+}
+
+/* Wrapper for animation */
+.scroll-wrapper {
+    display: flex; /* Flex for horizontal layout */
+    animation: scroll 60s linear infinite; /* Continuous scrolling (60 seconds) */
+}
+
+/* Classes for price trends */
+.price-up {
+    color: green; /* Green for positive price change */
+}
+
+.price-down {
+    color: red; /* Red for negative price change */
+}
