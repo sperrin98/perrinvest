@@ -6,6 +6,7 @@ import sys  # Used to capture command-line arguments
 from dotenv import load_dotenv
 import os
 
+# Load environment variables from .env file
 load_dotenv()
 
 def insert_update_date(price_date, db_config):
@@ -32,7 +33,6 @@ def insert_update_date(price_date, db_config):
             connection.close()
             print("MySQL connection is closed after inserting update date.")
 
-
 def fetch_price_from_yahoo(ticker_symbol, price_date):
     """Fetch the closing price for the given ticker_symbol and price_date using Yahoo Finance."""
     try:
@@ -49,7 +49,7 @@ def fetch_price_from_yahoo(ticker_symbol, price_date):
         data = ticker.history(start=start_date, end=end_date)
 
         if not data.empty:
-            # Try to locate the price closest to the requested date
+            # Check if the price_date exists in the fetched data
             if price_date in data.index.strftime('%Y-%m-%d'):
                 closing_price = data.loc[price_date]['Close']
                 return closing_price
@@ -87,37 +87,42 @@ def update_or_insert_prices_for_all_securities(price_date, db_config):
             # Step 2: Loop over each security and process the price update/insertion
             for security in securities:
                 security_id, ticker_symbol = security
+                print(f"Processing {ticker_symbol} for security_id {security_id}.")
 
-                # Step 3: Check if price data already exists for the given date
-                cursor.execute("""
-                    SELECT price FROM price_histories 
-                    WHERE security_id = %s AND price_date = %s
-                """, (security_id, price_date))
-                existing_data = cursor.fetchone()
-
-                # If price data exists, delete the existing record
-                if existing_data:
-                    print(f"Deleting existing price data for security_id {security_id} on {price_date}.")
+                try:
+                    # Step 3: Check if price data already exists for the given date
                     cursor.execute("""
-                        DELETE FROM price_histories 
+                        SELECT price FROM price_histories 
                         WHERE security_id = %s AND price_date = %s
                     """, (security_id, price_date))
-                    connection.commit()
+                    existing_data = cursor.fetchone()
 
-                # Step 4: Fetch the price from Yahoo Finance for the specified date
-                closing_price = fetch_price_from_yahoo(ticker_symbol, price_date)
+                    # If price data exists, delete the existing record
+                    if existing_data:
+                        print(f"Deleting existing price data for security_id {security_id} on {price_date}.")
+                        cursor.execute("""
+                            DELETE FROM price_histories 
+                            WHERE security_id = %s AND price_date = %s
+                        """, (security_id, price_date))
+                        connection.commit()
 
-                # If price data is found, insert it into the 'price_histories' table
-                if closing_price is not None:
-                    insert_query = """
-                        INSERT INTO price_histories (security_id, price_date, price)
-                        VALUES (%s, %s, %s)
-                    """
-                    cursor.execute(insert_query, (security_id, price_date, closing_price))
-                    connection.commit()
-                    print(f"{security_id}: Inserted price {closing_price} for {ticker_symbol} on {price_date}.")
-                else:
-                    print(f"{security_id} No price data available for {ticker_symbol} on {price_date}.")
+                    # Step 4: Fetch the price from Yahoo Finance for the specified date
+                    closing_price = fetch_price_from_yahoo(ticker_symbol, price_date)
+
+                    # If price data is found, insert it into the 'price_histories' table
+                    if closing_price is not None:
+                        insert_query = """
+                            INSERT INTO price_histories (security_id, price_date, price)
+                            VALUES (%s, %s, %s)
+                        """
+                        cursor.execute(insert_query, (security_id, price_date, closing_price))
+                        connection.commit()
+                        print(f"{security_id}: Inserted price {closing_price} for {ticker_symbol} on {price_date}.")
+                    else:
+                        print(f"{security_id}: No price data available for {ticker_symbol} on {price_date}.")
+                
+                except Error as e:
+                    print(f"Error processing security_id {security_id}: {e}")
 
     except Error as e:
         print(f"Error while connecting to MySQL: {e}")
@@ -144,7 +149,6 @@ if __name__ == "__main__":
         'password': os.getenv('DB_PASSWORD'),
         'database': os.getenv('DB_NAME')
     }
-
 
     # Update prices for all securities on the user-specified date
     update_or_insert_prices_for_all_securities(price_date, db_config)

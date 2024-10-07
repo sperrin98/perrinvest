@@ -9,6 +9,7 @@ from app.db_utils import (
     fetch_5d_moving_average, fetch_40d_moving_average, fetch_200d_moving_average
 )   
 import yfinance as yf
+from datetime import datetime
 import logging
 
 logging.basicConfig(level=logging.DEBUG)
@@ -370,3 +371,47 @@ def update_price(security_id):
         return jsonify(result)
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
+@main.route('/api/stock-prices', methods=['GET'])
+def get_stock_prices():
+    try:
+        stocks = {
+            "Gold": "GC=F",
+            "S&P500": "^GSPC",
+            "FTSE100": "^FTSE",
+            "BlackRock World Mining Trust": "BRWM.L",
+            "Natural Gas": "NG=F",
+            "BP": "BP",
+            "USD/GBP": "GBPUSD=X",
+            "Tesla": "TSLA",
+            "Gold Futures": "GC=F",
+            "GBP/EUR": "GBPEUR=X",
+            "Bitcoin": "BTC-USD",
+            "Shell plc": "SHEL.L",
+            "Crude Oil": "CL=F",
+            "Silver": "SI=F",
+            "DAX": "^GDAXI",
+            "Hang Seng": "^HSI",
+            "S&P GSCI Precious Metals Index": "^SPGSPMTR",
+            "Vodafone": "VODL.XC"
+        }
+
+        stock_data = {}
+        for name, symbol in stocks.items():
+            ticker = yf.Ticker(symbol)
+            hist = ticker.history(period="5d")  # Get last three days of data
+            if len(hist) >= 3:
+                # Extract the last two closing prices
+                current_price = hist['Close'].iloc[-1]
+                previous_price = hist['Close'].iloc[-2]
+                
+                stock_data[name] = {
+                    "current_price": current_price,
+                    "previous_price": previous_price,
+                }
+
+        return jsonify(stock_data)
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
