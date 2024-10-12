@@ -76,11 +76,21 @@ def fetch_market_ratio_data(market_ratio_id):
     conn.close()
     return rows
 
-def fetch_price_history(security_id):
+def fetch_price_history(security_id, start_date=None):
     conn = get_db_connection()
     cursor = conn.cursor()
-    query = "SELECT * FROM price_histories WHERE security_id = %s ORDER BY price_date"
-    cursor.execute(query, (security_id,))
+    
+    query = "SELECT * FROM price_histories WHERE security_id = %s"
+    params = [security_id]
+
+    # If a start_date is provided, limit the query to that timeframe
+    if start_date:
+        query += " AND price_date >= %s"
+        params.append(start_date)
+
+    query += " ORDER BY price_date"
+
+    cursor.execute(query, tuple(params))
     price_history = cursor.fetchall()
     cursor.close()
     conn.close()
