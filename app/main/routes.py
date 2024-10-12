@@ -9,10 +9,7 @@ from app.db_utils import (
     fetch_5d_moving_average, fetch_40d_moving_average, fetch_200d_moving_average
 )   
 import yfinance as yf
-from datetime import datetime
-import logging
-
-logging.basicConfig(level=logging.DEBUG)
+from datetime import datetime, timedelta
 
 @main.before_request
 def before_request_func():
@@ -55,7 +52,26 @@ def get_security(security_id):
 
 @main.route('/securities/<int:security_id>/price-histories', methods=['GET'])
 def get_price_histories(security_id):
-    price_histories = fetch_price_history(security_id)
+    timeframe = request.args.get('timeframe', 'all')  # Get timeframe from query parameter
+    start_date = None
+    
+    # Define the timeframes
+    if timeframe == '1w':
+        start_date = datetime.now() - timedelta(weeks=1)
+    elif timeframe == '1m':
+        start_date = datetime.now() - timedelta(days=30)
+    elif timeframe == '3m':
+        start_date = datetime.now() - timedelta(days=90)
+    elif timeframe == '6m':
+        start_date = datetime.now() - timedelta(days=180)
+    elif timeframe == 'ytd':
+        start_date = datetime(datetime.now().year, 1, 1)
+    elif timeframe == '1y':
+        start_date = datetime.now() - timedelta(days=365)
+    elif timeframe == '5y':
+        start_date = datetime.now() - timedelta(days=5*365)
+
+    price_histories = fetch_price_history(security_id, start_date)
     return jsonify(price_histories)
 
 @main.route('/securities/<int:security_id>/5d-moving-average', methods=['GET'])
@@ -414,4 +430,3 @@ def get_stock_prices():
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
-
