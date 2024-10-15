@@ -1,38 +1,36 @@
 from flask import jsonify, request, make_response
 from . import main
 from app.db_utils import (
-    fetch_securities, fetch_market_ratios, fetch_market_ratio_data, 
-    fetch_security_data, fetch_price_history, fetch_eco_data_point_histories, 
-    fetch_eco_data_point, fetch_eco_data_points, fetch_currencies, 
-    fetch_currency, call_divided_price_procedure, get_security_id,
-    fetch_currency_price_history, update_price_history, get_correlation_data,
-    fetch_5d_moving_average, fetch_40d_moving_average, fetch_200d_moving_average,
-    check_email_exists, insert_new_user, get_user_by_email
+    fetch_securities, 
+    fetch_market_ratios, 
+    fetch_market_ratio_data, 
+    fetch_security_data, 
+    fetch_price_history, 
+    fetch_eco_data_point_histories, 
+    fetch_eco_data_point, 
+    fetch_eco_data_points, 
+    fetch_currencies, 
+    fetch_currency, 
+    call_divided_price_procedure, 
+    get_security_id,
+    fetch_currency_price_history, 
+    update_price_history, 
+    get_correlation_data,
+    fetch_5d_moving_average, 
+    fetch_40d_moving_average, 
+    fetch_200d_moving_average,
+    check_email_exists, 
+    insert_new_user, 
+    get_user_by_email
 )   
 import yfinance as yf
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta  # Include datetime and timedelta
 from werkzeug.security import generate_password_hash, check_password_hash
 import logging
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
-
-@main.before_request
-def before_request_func():
-    if request.method == 'OPTIONS':
-        response = make_response()
-        response.headers.add("Access-Control-Allow-Origin", "*")
-        response.headers.add("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
-        response.headers.add("Access-Control-Allow-Headers", "Content-Type")
-        return response
-
-@main.after_request
-def after_request_func(response):
-    response.headers.add("Access-Control-Allow-Origin", "*")
-    response.headers.add("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
-    response.headers.add("Access-Control-Allow-Headers", "Content-Type")
-    return response
 
 @main.route('/')
 def home():
@@ -41,38 +39,46 @@ def home():
 @main.route('/register', methods=['POST'])
 def register():
     data = request.get_json()
-    username = data['username']
-    email = data['email']
-    password = data['password']
+    logger.info(f"Received registration data: {data}")
     
-    # Check if the email already exists
-    if check_email_exists(email):
-        return jsonify({'message': 'User already exists'}), 409
-    
-    # Hash the password and insert the new user into the database
-    password_hash = generate_password_hash(password)
-    insert_new_user(username, email, password_hash)
-    
-    return jsonify({'message': 'User registered successfully'}), 201
+    username = data.get('username')
+    email = data.get('email')
+    password = data.get('password')
 
-# User login route
+    if not username or not email or not password:
+        logger.warning("All fields are required.")
+        return jsonify({'error': 'All fields are required.'}), 400
+
+    try:
+        if check_email_exists(email):
+            logger.warning(f"Email already exists: {email}")
+            return jsonify({'error': 'Email already exists.'}), 400
+
+        hashed_password = generate_password_hash(password)
+        logger.info(f"Hashed password: {hashed_password}")  # Log the hashed password
+        
+        insert_new_user(username, email, hashed_password)
+        logger.info(f"User registered successfully: {username}")
+        return jsonify({'message': 'User registered successfully', 'username': username}), 201
+
+    except Exception as e:
+        logger.error(f"Error registering user: {str(e)}")  # Log the actual error
+        return jsonify({'error': 'Failed to register user.'}), 500
+
+
 @main.route('/login', methods=['POST'])
 def login():
     data = request.get_json()
     email = data['email']
     password = data['password']
 
-    # Fetch the user by email
     user = get_user_by_email(email)
-    if not user:
-        return jsonify({'message': 'Invalid email or password'}), 401
 
-    # Check if the password is correct
-    user_id, db_email, db_username, db_password = user  # Assuming user tuple is in this order
-    if not check_password_hash(db_password, password):
+    # Ensure user is not None and check password
+    if user and check_password_hash(user['password'], password):
+        return jsonify({'message': 'Login successful', 'username': user['username']}), 200
+    else:
         return jsonify({'message': 'Invalid email or password'}), 401
-
-    return jsonify({'message': 'Login successful', 'user': {'user_id': user_id, 'username': db_username}}), 200
 
 
 @main.route('/securities')

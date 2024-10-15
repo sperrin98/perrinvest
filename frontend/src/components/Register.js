@@ -1,63 +1,81 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios'; // Import axios for making HTTP requests
+import './Register.css'; // Import any necessary CSS
 
-const Register = () => {
-    const [username, setUsername] = useState('');
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [message, setMessage] = useState('');
+const Register = ({ onLogin }) => {
+  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const navigate = useNavigate();
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    // Basic form validation
+    if (!email || !username || !password) {
+      setError('All fields are required.');
+      return;
+    }
+
+    // Prepare the registration data
+    const userData = { email, username, password };
+
+    try {
+      // Send the registration data to the backend
+      const response = await axios.post('http://localhost:5000/register', userData);
+      
+      if (response.status === 201) {
+        // If successful, call onLogin to update the state in App.js
+        onLogin();
         
-        try {
-            const response = await axios.post('/register', { username, email, password });
-            setMessage(response.data.message);
-        } catch (error) {
-            if (error.response) {
-                setMessage(error.response.data.message || "An error occurred.");
-            } else {
-                setMessage("An error occurred.");
-            }
-        }
-    };
+        // Redirect to home page
+        navigate('/');
+      }
+    } catch (error) {
+      // Handle registration errors
+      setError('Registration failed. Please try again.');
+      console.error('Registration error:', error.response.data);
+    }
+  };
 
-    return (
+  return (
+    <div className="register-container">
+      <h2>Create Account</h2>
+      {error && <p className="error">{error}</p>}
+      <form onSubmit={handleSubmit}>
         <div>
-            <h2>Register</h2>
-            <form onSubmit={handleSubmit}>
-                <div>
-                    <label>Username:</label>
-                    <input 
-                        type="text" 
-                        value={username} 
-                        onChange={(e) => setUsername(e.target.value)} 
-                        required
-                    />
-                </div>
-                <div>
-                    <label>Email:</label>
-                    <input 
-                        type="email" 
-                        value={email} 
-                        onChange={(e) => setEmail(e.target.value)} 
-                        required
-                    />
-                </div>
-                <div>
-                    <label>Password:</label>
-                    <input 
-                        type="password" 
-                        value={password} 
-                        onChange={(e) => setPassword(e.target.value)} 
-                        required
-                    />
-                </div>
-                <button type="submit">Register</button>
-            </form>
-            {message && <p>{message}</p>}
+          <label>Email:</label>
+          <input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
         </div>
-    );
+        <div>
+          <label>Username:</label>
+          <input
+            type="text"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            required
+          />
+        </div>
+        <div>
+          <label>Password:</label>
+          <input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+        </div>
+        <button type="submit">Register</button>
+      </form>
+    </div>
+  );
 };
 
 export default Register;
