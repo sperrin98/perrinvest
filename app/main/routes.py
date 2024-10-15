@@ -6,10 +6,17 @@ from app.db_utils import (
     fetch_eco_data_point, fetch_eco_data_points, fetch_currencies, 
     fetch_currency, call_divided_price_procedure, get_security_id,
     fetch_currency_price_history, update_price_history, get_correlation_data,
-    fetch_5d_moving_average, fetch_40d_moving_average, fetch_200d_moving_average
+    fetch_5d_moving_average, fetch_40d_moving_average, fetch_200d_moving_average,
+    check_email_exists, insert_new_user, get_user_by_email
 )   
 import yfinance as yf
 from datetime import datetime, timedelta
+from werkzeug.security import generate_password_hash, check_password_hash
+import logging
+
+# Set up logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 @main.before_request
 def before_request_func():
@@ -30,6 +37,43 @@ def after_request_func(response):
 @main.route('/')
 def home():
     return jsonify({"message": "Welcome to Perrinvest"})
+
+@main.route('/register', methods=['POST'])
+def register():
+    data = request.get_json()
+    username = data['username']
+    email = data['email']
+    password = data['password']
+    
+    # Check if the email already exists
+    if check_email_exists(email):
+        return jsonify({'message': 'User already exists'}), 409
+    
+    # Hash the password and insert the new user into the database
+    password_hash = generate_password_hash(password)
+    insert_new_user(username, email, password_hash)
+    
+    return jsonify({'message': 'User registered successfully'}), 201
+
+# User login route
+@main.route('/login', methods=['POST'])
+def login():
+    data = request.get_json()
+    email = data['email']
+    password = data['password']
+
+    # Fetch the user by email
+    user = get_user_by_email(email)
+    if not user:
+        return jsonify({'message': 'Invalid email or password'}), 401
+
+    # Check if the password is correct
+    user_id, db_email, db_username, db_password = user  # Assuming user tuple is in this order
+    if not check_password_hash(db_password, password):
+        return jsonify({'message': 'Invalid email or password'}), 401
+
+    return jsonify({'message': 'Login successful', 'user': {'user_id': user_id, 'username': db_username}}), 200
+
 
 @main.route('/securities')
 def get_securities():
