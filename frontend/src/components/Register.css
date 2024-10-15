@@ -1,0 +1,55 @@
+/* Register.css */
+
+.register-container {
+    display: flex;                     /* Use flexbox for layout */
+    flex-direction: column;           /* Stack children vertically */
+    align-items: flex-start;          /* Align items to the start (left side) */
+    padding: 20px;                    /* Padding around the content */
+    width: 400px;                     /* Set a fixed width for the container */
+    background-color: #f9f9f9;       /* Light background color for contrast */
+    border-radius: 8px;               /* Rounded corners */
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Add a subtle shadow */
+    margin-left: 20px;                /* Margin on the left for spacing */
+    margin-top: 100px;                /* Margin on top to avoid navbar overlap */
+}
+
+.register-container h2 {
+    margin-bottom: 20px;              /* Space between the heading and the form */
+}
+
+.register-container form {
+    display: flex;                     /* Use flexbox for form layout */
+    flex-direction: column;           /* Stack form elements vertically */
+    width: 100%;                      /* Full width for the form */
+}
+
+.register-container label {
+    margin-bottom: 5px;               /* Space between label and input */
+}
+
+.register-container input {
+    padding: 10px;                    /* Add padding inside inputs */
+    margin-bottom: 15px;              /* Space between inputs */
+    border: 1px solid #ccc;           /* Border for inputs */
+    border-radius: 4px;               /* Rounded corners for inputs */
+    width: 100%;                      /* Full width for inputs */
+}
+
+.register-container button {
+    padding: 10px;                    /* Padding for button */
+    background-color: #007bff;        /* Button background color */
+    color: white;                     /* Button text color */
+    border: none;                     /* Remove border */
+    border-radius: 4px;               /* Rounded corners for button */
+    cursor: pointer;                   /* Change cursor to pointer on hover */
+    transition: background-color 0.3s; /* Transition for background color */
+}
+
+.register-container button:hover {
+    background-color: #0056b3;        /* Darker shade on hover */
+}
+
+.register-container p {
+    margin-top: 15px;                 /* Space above the message */
+    color: red;                       /* Color for error messages */
+}

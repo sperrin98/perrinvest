@@ -2,11 +2,16 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import './Header.css'; // Import the CSS file for styling
 
-const Header = () => {
+const Header = ({ isLoggedIn, onLogout }) => {
   const [menuOpen, setMenuOpen] = useState(false);
 
   const toggleMenu = () => {
     setMenuOpen(!menuOpen);
+  };
+
+  const handleLogout = () => {
+    // Call the logout handler
+    onLogout();
   };
 
   return (
@@ -36,7 +41,21 @@ const Header = () => {
               <Link to="/currencies/crypto">Cryptocurrencies</Link>
             </div>
           </li>
-          <li><Link to ="/correlations">Correlations</Link></li>
+          <li><Link to="/correlations">Correlations</Link></li>
+          {isLoggedIn ? (
+            <li>
+              {/* Use an anchor tag styled like the other links for Sign Out */}
+              <Link to="#" className="dropbtn" onClick={handleLogout}>Sign Out</Link>
+            </li>
+          ) : (
+            <li className='dropdown'>
+              <Link to="#" className="dropbtn">Login</Link>
+              <div className="dropdown-content">
+                <Link to="/login">Login</Link>
+                <Link to="/register">Create Account</Link>
+              </div>
+            </li>
+          )}
         </ul>
       </nav>
     </header>

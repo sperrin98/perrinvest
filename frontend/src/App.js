@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Header from './components/Header';
 import Home from './components/Home';
@@ -15,11 +15,23 @@ import MarketRatioSelection from './components/MarketRatioSelection';
 import CryptoCurrencies from './components/CryptoCurrencies';
 import CryptoCurrency from './components/CryptoCurrency';
 import Correlations from './components/Correlations';
+import Login from './components/Login'; 
+import Register from './components/Register';  
 
 function App() {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  const handleLogin = () => {
+    setIsLoggedIn(true);
+  };
+
+  const handleLogout = () => {
+    setIsLoggedIn(false);
+  };
+
   return (
     <Router>
-      <Header />
+      <Header isLoggedIn={isLoggedIn} onLogout={handleLogout} />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/securities" element={<Securities />} />
@@ -35,10 +47,11 @@ function App() {
         <Route path="/currencies/crypto" element={<CryptoCurrencies />} />
         <Route path="/currencies/crypto/:ticker" element={<CryptoCurrency />} />
         <Route path="/correlations" element={<Correlations />} />
+        <Route path="/login" element={<Login onLogin={handleLogin} />} />
+        <Route path="/register" element={<Register onLogin={handleLogin} />} />
       </Routes>
     </Router>
   );
 }
 
 export default App;
-
