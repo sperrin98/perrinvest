@@ -36,7 +36,14 @@ const Header = () => {
               <Link to="/currencies/crypto">Cryptocurrencies</Link>
             </div>
           </li>
-          <li><Link to ="/correlations">Correlations</Link></li>
+          <li><Link to="/correlations">Correlations</Link></li>
+          <li className='dropdown'>
+            <Link to="#" className="dropbtn">Login</Link>
+            <div className="dropdown-content">
+              <Link to="/login">Login</Link>
+              <Link to="/register">Create Account</Link>
+            </div>
+          </li>
         </ul>
       </nav>
     </header>
