@@ -314,3 +314,32 @@ def fetch_200d_moving_average(security_id):
     finally:
         cursor.close()
         conn.close()
+
+def check_email_exists(email):
+    connection = get_db_connection()
+    cursor = connection.cursor()
+    cursor.execute('SELECT * FROM users WHERE email = %s', (email,))
+    user = cursor.fetchone()
+    cursor.close()
+    connection.close()
+    return user
+
+# Register a new user by inserting the email, username, and hashed password
+def insert_new_user(username, email, password_hash):
+    connection = get_db_connection()
+    cursor = connection.cursor()
+    cursor.execute('INSERT INTO users (username, email, password) VALUES (%s, %s, %s)', 
+                   (username, email, password_hash))
+    connection.commit()
+    cursor.close()
+    connection.close()
+
+# Fetch a user based on their email
+def get_user_by_email(email):
+    connection = get_db_connection()
+    cursor = connection.cursor()
+    cursor.execute('SELECT * FROM users WHERE email = %s', (email,))
+    user = cursor.fetchone()
+    cursor.close()
+    connection.close()
+    return user
