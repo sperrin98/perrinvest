@@ -3,20 +3,18 @@ import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import { Line } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, LogarithmicScale, PointElement, LineElement, Title, Tooltip, Legend } from 'chart.js';
+import zoomPlugin from 'chartjs-plugin-zoom';  // Import the zoom plugin
 import './Security.css';  // Ensure this path is correct
-import useIsMobile from './useIsMobile';  // Ensure this path is correct
 
-// Register Chart.js components
-ChartJS.register(CategoryScale, LinearScale, LogarithmicScale, PointElement, LineElement, Title, Tooltip, Legend);
+// Register Chart.js components and the zoom plugin
+ChartJS.register(CategoryScale, LinearScale, LogarithmicScale, PointElement, LineElement, Title, Tooltip, Legend, zoomPlugin);
 
 const Security = () => {
   const { id } = useParams(); // Get the security ID from URL
   const [security, setSecurity] = useState(null);
   const [priceHistories, setPriceHistories] = useState([]);
-  const [movingAverageData, setMovingAverageData] = useState([]);
   const [selectedAverage, setSelectedAverage] = useState('5d'); // Default to 5-day moving average
   const [isLogScale, setIsLogScale] = useState(false); // State to toggle between linear and logarithmic scale
-  const isMobile = useIsMobile(); // Use the custom hook
 
   // Fetch security details and price histories
   useEffect(() => {
@@ -33,6 +31,8 @@ const Security = () => {
     const fetchPriceHistories = async () => {
       try {
         const response = await axios.get(`http://localhost:5000/securities/${id}/price-histories`);
+        
+        // Format the data correctly
         const formattedPriceHistories = response.data.map(history => ({
           date: new Date(history[1]).toISOString().split('T')[0],
           price: history[2],
@@ -45,25 +45,7 @@ const Security = () => {
 
     fetchSecurity();
     fetchPriceHistories();
-  }, [id]);
-
-  // Fetch moving average data when a new average is selected
-  useEffect(() => {
-    const fetchMovingAverage = async () => {
-      try {
-        const response = await axios.get(`http://localhost:5000/securities/${id}/${selectedAverage}-moving-average`);
-        const formattedAverageData = response.data.map(entry => ({
-          date: new Date(entry.price_date).toISOString().split('T')[0],
-          price: entry[`${selectedAverage}_moving_average`],
-        }));
-        setMovingAverageData(formattedAverageData);
-      } catch (error) {
-        console.error(`Error fetching ${selectedAverage} moving average:`, error);
-      }
-    };
-
-    fetchMovingAverage();
-  }, [id, selectedAverage]);
+  }, [id]);  // Only fetch when the component mounts
 
   // Handle loading state
   if (!security) {
@@ -89,10 +71,45 @@ const Security = () => {
     }],
   };
 
+  // Calculate moving average
+  const calculateMovingAverage = (data, period) => {
+    let movingAverageData = [];
+    for (let i = 0; i < data.length; i++) {
+      if (i < period - 1) {
+        movingAverageData.push(null);  // Not enough data for this period
+      } else {
+        const window = data.slice(i - period + 1, i + 1);
+        const average = window.reduce((sum, value) => sum + value.price, 0) / period;
+        movingAverageData.push(average);
+      }
+    }
+    return movingAverageData;
+  };
+
+  // Determine the moving average period based on the selected average
+  const movingAveragePeriod = selectedAverage === '5d' ? 5 : selectedAverage === '40d' ? 40 : 200;
+
+  // Calculate the moving average dataset
+  const movingAverageValues = calculateMovingAverage(priceHistories, movingAveragePeriod);
+
+  // Data for the moving average chart
+  const movingAverageChartData = {
+    labels: priceHistories.map(history => history.date),
+    datasets: [{
+      label: `${movingAveragePeriod}-Day Moving Average`,
+      data: movingAverageValues,
+      borderColor: 'rgb(255, 99, 132)',
+      backgroundColor: 'rgba(255, 99, 132, 0.2)',
+      borderWidth: 1,
+      pointRadius: 0.5,
+      fill: false,
+    }],
+  };
+
   // Chart options with toggle for linear/logarithmic scale
   const chartOptions = {
     responsive: true,
-    maintainAspectRatio: false,
+    maintainAspectRatio: true, // Maintain aspect ratio
     scales: {
       x: {
         title: {
@@ -138,26 +155,29 @@ const Security = () => {
         titleColor: 'rgb(0, 255, 179)',
         bodyColor: 'rgb(0, 255, 179)',
       },
+      zoom: {
+        // Allow zooming with the scroll wheel
+        zoom: {
+          wheel: {
+            enabled: true, // Enable zooming with the wheel
+          },
+          pinch: {
+            enabled: true, // Enable pinch zooming on touch devices
+          },
+        },
+        pan: {
+          enabled: true,
+          mode: 'xy', // Allow panning in both directions
+        },
+      },
     },
-  };
-
-  // Data for the moving average chart
-  const movingAverageChartData = {
-    labels: movingAverageData.map(entry => entry.date),
-    datasets: [{
-      label: `${selectedAverage.toUpperCase()} Moving Average`,
-      data: movingAverageData.map(entry => entry.price),
-      borderColor: 'rgb(0, 255, 179)',
-      backgroundColor: 'rgba(0, 255, 179, 0.2)',
-      borderWidth: 1,
-      pointRadius: 0.5,
-      fill: false,
-    }],
   };
 
   return (
     <div className='security-container'>
-      {/* Logarithmic scale toggle button at the top */}
+      <h2>{securityLongName || "Unknown Security"}</h2>
+
+      {/* Toggle between linear/logarithmic scale */}
       <div className='toggle-button-container'>
         <button onClick={() => setIsLogScale(!isLogScale)}>
           Switch to {isLogScale ? 'Linear' : 'Logarithmic'} Scale
@@ -170,17 +190,19 @@ const Security = () => {
       </div>
 
       {/* Moving Averages Section */}
-      <div className="average-dropdown" style={{ textAlign: 'center' }}>
-        <h3>Select Moving Average</h3>
-        <select
-          id="average"
-          value={selectedAverage}
-          onChange={e => setSelectedAverage(e.target.value)}
-        >
-          <option value="5d">5-Day Moving Average</option>
-          <option value="40d">40-Day Moving Average</option>
-          <option value="200d">200-Day Moving Average</option>
-        </select>
+      <div className="moving-averages-section">
+        <h3 className="moving-averages-title">Moving Averages</h3>
+        <div className="moving-average-dropdown" style={{ textAlign: 'center' }}>
+          <select
+            id="average"
+            value={selectedAverage}
+            onChange={e => setSelectedAverage(e.target.value)}
+          >
+            <option value="5d">5-Day Moving Average</option>
+            <option value="40d">40-Day Moving Average</option>
+            <option value="200d">200-Day Moving Average</option>
+          </select>
+        </div>
       </div>
 
       {/* Moving average chart */}
