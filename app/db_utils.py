@@ -322,9 +322,8 @@ def check_email_exists(email):
     user = cursor.fetchone()
     cursor.close()
     connection.close()
-    return user
+    return user is not None  
 
-# Register a new user by inserting the email, username, and hashed password
 def insert_new_user(username, email, password_hash):
     connection = get_db_connection()
     cursor = connection.cursor()
@@ -334,7 +333,6 @@ def insert_new_user(username, email, password_hash):
     cursor.close()
     connection.close()
 
-# Fetch a user based on their email
 def get_user_by_email(email):
     connection = get_db_connection()
     cursor = connection.cursor()
@@ -342,4 +340,12 @@ def get_user_by_email(email):
     user = cursor.fetchone()
     cursor.close()
     connection.close()
-    return user
+    if user:
+        # Convert the tuple to a dictionary for easier access
+        return {
+            'user_id': user[0],  # Assuming first column is user_id
+            'username': user[1],  # Assuming second column is username
+            'email': user[2],     # Assuming third column is email
+            'password': user[3]   # Assuming fourth column is password
+        }
+    return None
