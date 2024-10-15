@@ -37,7 +37,6 @@ function App() {
         <Route path="/currencies/crypto" element={<CryptoCurrencies />} />
         <Route path="/currencies/crypto/:ticker" element={<CryptoCurrency />} />
         <Route path="/correlations" element={<Correlations />} />
-        {/* Add the login and register routes */}
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
       </Routes>
