@@ -314,3 +314,38 @@ def fetch_200d_moving_average(security_id):
     finally:
         cursor.close()
         conn.close()
+
+def check_email_exists(email):
+    connection = get_db_connection()
+    cursor = connection.cursor()
+    cursor.execute('SELECT * FROM users WHERE email = %s', (email,))
+    user = cursor.fetchone()
+    cursor.close()
+    connection.close()
+    return user is not None  
+
+def insert_new_user(username, email, password_hash):
+    connection = get_db_connection()
+    cursor = connection.cursor()
+    cursor.execute('INSERT INTO users (username, email, password) VALUES (%s, %s, %s)', 
+                   (username, email, password_hash))
+    connection.commit()
+    cursor.close()
+    connection.close()
+
+def get_user_by_email(email):
+    connection = get_db_connection()
+    cursor = connection.cursor()
+    cursor.execute('SELECT * FROM users WHERE email = %s', (email,))
+    user = cursor.fetchone()
+    cursor.close()
+    connection.close()
+    if user:
+        # Convert the tuple to a dictionary for easier access
+        return {
+            'user_id': user[0],  # Assuming first column is user_id
+            'username': user[1],  # Assuming second column is username
+            'email': user[2],     # Assuming third column is email
+            'password': user[3]   # Assuming fourth column is password
+        }
+    return None
