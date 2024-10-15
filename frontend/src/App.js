@@ -15,6 +15,8 @@ import MarketRatioSelection from './components/MarketRatioSelection';
 import CryptoCurrencies from './components/CryptoCurrencies';
 import CryptoCurrency from './components/CryptoCurrency';
 import Correlations from './components/Correlations';
+import Login from './components/Login'; 
+import Register from './components/Register';  
 
 function App() {
   return (
@@ -35,10 +37,14 @@ function App() {
         <Route path="/currencies/crypto" element={<CryptoCurrencies />} />
         <Route path="/currencies/crypto/:ticker" element={<CryptoCurrency />} />
         <Route path="/correlations" element={<Correlations />} />
+        {/* Add the login and register routes */}
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
       </Routes>
     </Router>
   );
 }
 
 export default App;
+
 
