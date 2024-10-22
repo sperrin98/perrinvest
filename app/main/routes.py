@@ -21,7 +21,8 @@ from app.db_utils import (
     fetch_200d_moving_average,
     check_email_exists, 
     insert_new_user, 
-    get_user_by_email
+    get_user_by_email,
+    fetch_gld_currency_returns
 )   
 import yfinance as yf
 from datetime import datetime, timedelta  # Include datetime and timedelta
@@ -313,7 +314,20 @@ def correlations():
         return jsonify(results)  # or format the results as needed
     else:
         return jsonify({"error": "No data found"}), 404
+    
+@main.route('/returns', methods=['GET'])
+def get_currency_returns():
+    try:
+        result = fetch_gld_currency_returns()  # Fetch the data
+        if result:  
+            return jsonify(result), 200  
+        else:
+            return jsonify({"error": "No data found"}), 404  
+    except Exception as e:
+        print(f"Error fetching returns: {e}")  
+        return jsonify({'error': str(e)}), 500  
 
+    
 
 @main.route('/api/crypto-prices', methods=['GET'])
 def get_crypto_prices():
@@ -450,7 +464,7 @@ def get_stock_prices():
             "BP": "BP",
             "USD/GBP": "GBPUSD=X",
             "Tesla": "TSLA",
-            "Gold Futures": "GC=F",
+            "Ethereum": "ETH-USD",
             "GBP/EUR": "GBPEUR=X",
             "Bitcoin": "BTC-USD",
             "Shell plc": "SHEL.L",

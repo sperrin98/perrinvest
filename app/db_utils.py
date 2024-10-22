@@ -349,3 +349,15 @@ def get_user_by_email(email):
             'password': user[3]   # Assuming fourth column is password
         }
     return None
+
+def fetch_gld_currency_returns():
+    conn = get_db_connection()  # Ensure this function works
+    cursor = conn.cursor()
+    query = "CALL annual_gld_price_in_major_currencies()"  # Your stored procedure call
+    cursor.execute(query)
+    rows = cursor.fetchall()
+    columns = [desc[0] for desc in cursor.description]
+    result = [dict(zip(columns, row)) for row in rows]
+    cursor.close()
+    conn.close()
+    return result
