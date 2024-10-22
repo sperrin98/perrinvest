@@ -16,7 +16,8 @@ import CryptoCurrencies from './components/CryptoCurrencies';
 import CryptoCurrency from './components/CryptoCurrency';
 import Correlations from './components/Correlations';
 import Login from './components/Login'; 
-import Register from './components/Register';  
+import Register from './components/Register';
+import Returns from './components/Returns';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -49,6 +50,7 @@ function App() {
         <Route path="/correlations" element={<Correlations />} />
         <Route path="/login" element={<Login onLogin={handleLogin} />} />
         <Route path="/register" element={<Register onLogin={handleLogin} />} />
+        <Route path="/returns" element={<Returns />} />
       </Routes>
     </Router>
   );
