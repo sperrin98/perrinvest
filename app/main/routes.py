@@ -1,4 +1,4 @@
-from flask import jsonify, request, make_response
+from flask import jsonify, request, make_response, render_template
 from . import main
 from app.db_utils import (
     fetch_securities, 
@@ -22,7 +22,8 @@ from app.db_utils import (
     check_email_exists, 
     insert_new_user, 
     get_user_by_email,
-    fetch_gld_currency_returns
+    fetch_gld_currency_returns,
+    fetch_slv_currency_returns
 )   
 import yfinance as yf
 from datetime import datetime, timedelta  # Include datetime and timedelta
@@ -316,16 +317,38 @@ def correlations():
         return jsonify({"error": "No data found"}), 404
     
 @main.route('/returns', methods=['GET'])
-def get_currency_returns():
+def returns_overview():
     try:
-        result = fetch_gld_currency_returns()  # Fetch the data
+        return render_template('returns.html')  # Renders the main page with links
+    except Exception as e:
+        print(f"Error loading returns page: {e}")
+        return jsonify({'error': str(e)}), 500
+
+# Route for Gold returns (ID = 1)
+@main.route('/returns/1', methods=['GET'])
+def get_gold_returns():
+    try:
+        result = fetch_gld_currency_returns()  # Fetch the Gold data
         if result:  
             return jsonify(result), 200  
         else:
             return jsonify({"error": "No data found"}), 404  
     except Exception as e:
-        print(f"Error fetching returns: {e}")  
-        return jsonify({'error': str(e)}), 500  
+        print(f"Error fetching Gold returns: {e}")  
+        return jsonify({'error': str(e)}), 500
+
+# Route for Silver returns (ID = 2)
+@main.route('/returns/2', methods=['GET'])
+def get_silver_returns():
+    try:
+        result = fetch_slv_currency_returns()  # Fetch the Silver data
+        if result:  
+            return jsonify(result), 200  
+        else:
+            return jsonify({"error": "No data found"}), 404  
+    except Exception as e:
+        print(f"Error fetching Silver returns: {e}")
+        return jsonify({'error': str(e)}), 500
 
     
 
