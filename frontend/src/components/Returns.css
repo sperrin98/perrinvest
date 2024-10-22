@@ -43,7 +43,8 @@
 }
 
 .returns-table tr:hover {
-    background-color: #ddd;       /* Highlight row on hover */
+    background-color:  rgb(0, 255, 179);
+    color: black;
 }
 
 .returns-table .positive {

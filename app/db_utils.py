@@ -361,3 +361,15 @@ def fetch_gld_currency_returns():
     cursor.close()
     conn.close()
     return result
+
+def fetch_slv_currency_returns():
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    query = "CALL annual_slv_price_in_major_currencies()"
+    cursor.execute(query)
+    rows = cursor.fetchall()
+    columns = [desc[0] for desc in cursor.description]
+    result = [dict(zip(columns, row)) for row in rows]
+    cursor.close()
+    conn.close()
+    return result
