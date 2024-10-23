@@ -373,3 +373,29 @@ def fetch_slv_currency_returns():
     cursor.close()
     conn.close()
     return result
+
+def fetch_stock_markets():
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+    try:
+        query = "SELECT * FROM securities WHERE asset_class_id = 2"
+        cursor.execute(query)
+        stock_markets = cursor.fetchall()
+    finally:
+        cursor.close()
+        conn.close()
+    return stock_markets
+
+def divide_stock_market_by_gold(security_id):
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+    try:
+        # Call the stored procedure with the security_id parameter
+        cursor.callproc('DivideStockMarketByGold', (security_id,))
+        divided_stock_market = []
+        for result in cursor.stored_results():
+            divided_stock_market = result.fetchall()
+    finally:
+        cursor.close()
+        conn.close()
+    return divided_stock_market

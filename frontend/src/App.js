@@ -19,8 +19,9 @@ import Correlations from './components/Correlations';
 import Login from './components/Login'; 
 import Register from './components/Register';
 import Returns from './components/Returns';
-import GoldReturns from './components/GoldReturns';  // Import GoldReturns component
-import SilverReturns from './components/SilverReturns';  // Import SilverReturns component
+import GoldReturns from './components/GoldReturns';  
+import SilverReturns from './components/SilverReturns';  
+import StockMarketReturn from './components/StockMarketReturn';  // Import StockMarketReturn component
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -55,7 +56,8 @@ function App() {
         <Route path="/register" element={<Register onLogin={handleLogin} />} />
         <Route path="/returns" element={<Returns />} />
         <Route path="/returns/1" element={<GoldReturns />} />  
-        <Route path="/returns/2" element={<SilverReturns />} /> 
+        <Route path="/returns/2" element={<SilverReturns />} />
+        <Route path="/stockmarketreturn/:id" element={<StockMarketReturn />} />  {/* New route for StockMarketReturn */}
       </Routes>
     </Router>
   );
