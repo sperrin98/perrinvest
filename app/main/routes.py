@@ -23,7 +23,9 @@ from app.db_utils import (
     insert_new_user, 
     get_user_by_email,
     fetch_gld_currency_returns,
-    fetch_slv_currency_returns
+    fetch_slv_currency_returns,
+    fetch_stock_markets,
+    divide_stock_market_by_gold
 )   
 import yfinance as yf
 from datetime import datetime, timedelta  # Include datetime and timedelta
@@ -349,7 +351,33 @@ def get_silver_returns():
     except Exception as e:
         print(f"Error fetching Silver returns: {e}")
         return jsonify({'error': str(e)}), 500
+    
+@main.route('/securities/asset-class-2', methods=['GET'])
+def get_stock_markets_priced_in_gold():
+    try:
+        # Call the existing function to fetch stock markets
+        result = fetch_stock_markets()
+        if result:
+            return jsonify(result), 200
+        else:
+            return jsonify({"error": "No data found"}), 404
+    except Exception as e:
+        print(f"Error fetching stock markets: {e}")
+        return jsonify({'error': str(e)}), 500
 
+@main.route('/securities/returns/<int:security_id>', methods=['GET'])
+def get_stock_market_return_by_security(security_id):
+    """Fetches the stock market return by calling the stored procedure."""
+    try:
+        # Call the stored procedure with the security_id parameter
+        result = divide_stock_market_by_gold(security_id)
+        if result:
+            return jsonify(result), 200
+        else:
+            return jsonify({"error": "No data found for this security."}), 404
+    except Exception as e:
+        print(f"Error fetching stock market return for security_id {security_id}: {e}")
+        return jsonify({'error': str(e)}), 500
     
 
 @main.route('/api/crypto-prices', methods=['GET'])
