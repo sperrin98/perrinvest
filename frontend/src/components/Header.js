@@ -25,14 +25,24 @@ const Header = ({ isLoggedIn, onLogout }) => {
         </button>
         <ul className={`nav-links ${menuOpen ? 'show' : ''}`}>
           <li><Link to="/securities">Securities</Link></li>
-          <li className='dropdown'>
+
+          <li className="dropdown">
             <Link to="/market-ratios" className="dropbtn">Market Ratios</Link>
             <div className="dropdown-content">
               <Link to="/market-ratios">All Market Ratios</Link>
               <Link to="/market-ratios/divide">Compare Securities</Link>
             </div>
           </li>
-          <li><Link to="/eco-data-points">Economical Data</Link></li>
+
+          {/* Dropdown for Economical Data */}
+          <li className="dropdown">
+            <Link to="/eco-data-points" className="dropbtn">Economical Data</Link>
+            <div className="dropdown-content">
+              <Link to="/eco-data-points">Data Points</Link>
+              <Link to="/returns">Returns</Link> {/* Link to the Returns page */}
+            </div>
+          </li>
+
           <li className="dropdown">
             <Link to="/currencies" className="dropbtn">Currencies</Link>
             <div className="dropdown-content">
@@ -41,14 +51,15 @@ const Header = ({ isLoggedIn, onLogout }) => {
               <Link to="/currencies/crypto">Cryptocurrencies</Link>
             </div>
           </li>
+
           <li><Link to="/correlations">Correlations</Link></li>
+
           {isLoggedIn ? (
             <li>
-              {/* Use an anchor tag styled like the other links for Sign Out */}
               <Link to="#" className="dropbtn" onClick={handleLogout}>Sign Out</Link>
             </li>
           ) : (
-            <li className='dropdown'>
+            <li className="dropdown">
               <Link to="#" className="dropbtn">Login</Link>
               <div className="dropdown-content">
                 <Link to="/login">Login</Link>
