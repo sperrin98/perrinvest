@@ -349,3 +349,53 @@ def get_user_by_email(email):
             'password': user[3]   # Assuming fourth column is password
         }
     return None
+
+def fetch_gld_currency_returns():
+    conn = get_db_connection()  # Ensure this function works
+    cursor = conn.cursor()
+    query = "CALL annual_gld_price_in_major_currencies()"  # Your stored procedure call
+    cursor.execute(query)
+    rows = cursor.fetchall()
+    columns = [desc[0] for desc in cursor.description]
+    result = [dict(zip(columns, row)) for row in rows]
+    cursor.close()
+    conn.close()
+    return result
+
+def fetch_slv_currency_returns():
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    query = "CALL annual_slv_price_in_major_currencies()"
+    cursor.execute(query)
+    rows = cursor.fetchall()
+    columns = [desc[0] for desc in cursor.description]
+    result = [dict(zip(columns, row)) for row in rows]
+    cursor.close()
+    conn.close()
+    return result
+
+def fetch_stock_markets():
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+    try:
+        query = "SELECT * FROM securities WHERE asset_class_id = 2"
+        cursor.execute(query)
+        stock_markets = cursor.fetchall()
+    finally:
+        cursor.close()
+        conn.close()
+    return stock_markets
+
+def divide_stock_market_by_gold(security_id):
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+    try:
+        # Call the stored procedure with the security_id parameter
+        cursor.callproc('DivideStockMarketByGold', (security_id,))
+        divided_stock_market = []
+        for result in cursor.stored_results():
+            divided_stock_market = result.fetchall()
+    finally:
+        cursor.close()
+        conn.close()
+    return divided_stock_market

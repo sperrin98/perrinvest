@@ -1,3 +1,4 @@
+// src/App.js
 import React, { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Header from './components/Header';
@@ -16,7 +17,11 @@ import CryptoCurrencies from './components/CryptoCurrencies';
 import CryptoCurrency from './components/CryptoCurrency';
 import Correlations from './components/Correlations';
 import Login from './components/Login'; 
-import Register from './components/Register';  
+import Register from './components/Register';
+import Returns from './components/Returns';
+import GoldReturns from './components/GoldReturns';  
+import SilverReturns from './components/SilverReturns';  
+import StockMarketReturn from './components/StockMarketReturn';  // Import StockMarketReturn component
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -49,6 +54,10 @@ function App() {
         <Route path="/correlations" element={<Correlations />} />
         <Route path="/login" element={<Login onLogin={handleLogin} />} />
         <Route path="/register" element={<Register onLogin={handleLogin} />} />
+        <Route path="/returns" element={<Returns />} />
+        <Route path="/returns/1" element={<GoldReturns />} />  
+        <Route path="/returns/2" element={<SilverReturns />} />
+        <Route path="/stockmarketreturn/:id" element={<StockMarketReturn />} />  {/* New route for StockMarketReturn */}
       </Routes>
     </Router>
   );
