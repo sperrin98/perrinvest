@@ -1,4 +1,4 @@
-from flask import jsonify, request, make_response
+from flask import jsonify, request, make_response, render_template
 from . import main
 from app.db_utils import (
     fetch_securities, 
@@ -21,7 +21,11 @@ from app.db_utils import (
     fetch_200d_moving_average,
     check_email_exists, 
     insert_new_user, 
-    get_user_by_email
+    get_user_by_email,
+    fetch_gld_currency_returns,
+    fetch_slv_currency_returns,
+    fetch_stock_markets,
+    divide_stock_market_by_gold
 )   
 import yfinance as yf
 from datetime import datetime, timedelta  # Include datetime and timedelta
@@ -313,7 +317,68 @@ def correlations():
         return jsonify(results)  # or format the results as needed
     else:
         return jsonify({"error": "No data found"}), 404
+    
+@main.route('/returns', methods=['GET'])
+def returns_overview():
+    try:
+        return render_template('returns.html')  # Renders the main page with links
+    except Exception as e:
+        print(f"Error loading returns page: {e}")
+        return jsonify({'error': str(e)}), 500
 
+# Route for Gold returns (ID = 1)
+@main.route('/returns/1', methods=['GET'])
+def get_gold_returns():
+    try:
+        result = fetch_gld_currency_returns()  # Fetch the Gold data
+        if result:  
+            return jsonify(result), 200  
+        else:
+            return jsonify({"error": "No data found"}), 404  
+    except Exception as e:
+        print(f"Error fetching Gold returns: {e}")  
+        return jsonify({'error': str(e)}), 500
+
+# Route for Silver returns (ID = 2)
+@main.route('/returns/2', methods=['GET'])
+def get_silver_returns():
+    try:
+        result = fetch_slv_currency_returns()  # Fetch the Silver data
+        if result:  
+            return jsonify(result), 200  
+        else:
+            return jsonify({"error": "No data found"}), 404  
+    except Exception as e:
+        print(f"Error fetching Silver returns: {e}")
+        return jsonify({'error': str(e)}), 500
+    
+@main.route('/securities/asset-class-2', methods=['GET'])
+def get_stock_markets_priced_in_gold():
+    try:
+        # Call the existing function to fetch stock markets
+        result = fetch_stock_markets()
+        if result:
+            return jsonify(result), 200
+        else:
+            return jsonify({"error": "No data found"}), 404
+    except Exception as e:
+        print(f"Error fetching stock markets: {e}")
+        return jsonify({'error': str(e)}), 500
+
+@main.route('/securities/returns/<int:security_id>', methods=['GET'])
+def get_stock_market_return_by_security(security_id):
+    """Fetches the stock market return by calling the stored procedure."""
+    try:
+        # Call the stored procedure with the security_id parameter
+        result = divide_stock_market_by_gold(security_id)
+        if result:
+            return jsonify(result), 200
+        else:
+            return jsonify({"error": "No data found for this security."}), 404
+    except Exception as e:
+        print(f"Error fetching stock market return for security_id {security_id}: {e}")
+        return jsonify({'error': str(e)}), 500
+    
 
 @main.route('/api/crypto-prices', methods=['GET'])
 def get_crypto_prices():
@@ -450,7 +515,7 @@ def get_stock_prices():
             "BP": "BP",
             "USD/GBP": "GBPUSD=X",
             "Tesla": "TSLA",
-            "Gold Futures": "GC=F",
+            "Ethereum": "ETH-USD",
             "GBP/EUR": "GBPEUR=X",
             "Bitcoin": "BTC-USD",
             "Shell plc": "SHEL.L",
