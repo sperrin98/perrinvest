@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import './Returns.css'
 
 const Returns = () => {
   const [securities, setSecurities] = useState([]); // State to hold fetched securities
@@ -15,26 +16,26 @@ const Returns = () => {
           throw new Error(`Error: ${response.statusText}`);
         }
         const result = await response.json();
-        setSecurities(result);
+        setSecurities(result); // Set the fetched securities to state
       } catch (error) {
-        setError(error.message);
+        setError(error.message); // Set the error message to state
       } finally {
-        setLoading(false);
+        setLoading(false); // Set loading to false after fetching
       }
     };
 
-    fetchSecurities();
-  }, []);
+    fetchSecurities(); // Call the fetch function
+  }, []); // Empty dependency array ensures it only runs once
 
   return (
-    <div>
-      <h1>Annual Returns in Major Currencies</h1>
+    <div className='returns-container'>
+      <h1>Returns of Major Currencies priced in Gold</h1>
       <ul>
         <li><Link to="/returns/1">Gold Price Returns</Link></li>
         <li><Link to="/returns/2">Silver Price Returns</Link></li>
       </ul>
 
-      <h2>Stock Markets Priced in Gold</h2>
+      <h1>Stock Markets Priced in Gold</h1>
       {loading && <div>Loading stock markets...</div>}
       {error && <div>{`Error: ${error}`}</div>}
       <ul>
