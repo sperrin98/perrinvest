@@ -1,0 +1,26 @@
+# Use an official Python runtime as a parent image
+FROM python:3.9
+
+# Set the working directory to /app
+WORKDIR /app
+
+# Copy the backend requirements file to the container
+COPY app/requirements.txt . 
+
+# Install any needed packages specified in requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy the backend application code into the container
+COPY . .
+
+# Ensure the .env file is copied as well
+COPY app/.env .env
+
+# Expose the backend API on port 5000
+EXPOSE 5000
+
+# Set the environment variable to point to the correct backend URL for the frontend
+ENV REACT_APP_API_URL=http://localhost:5000
+
+# Run the Flask app (without any routes, as requested)
+CMD ["python", "run.py"]
