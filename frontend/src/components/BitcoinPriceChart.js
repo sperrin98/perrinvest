@@ -12,7 +12,7 @@ const BitcoinPriceChart = () => {
 
   useEffect(() => {
     // Fetch data from local CSV file or endpoint
-    fetch('http://localhost:5000/api/bitcoin-price-history')  // Adjust the URL as needed
+    fetch(`${process.env.REACT_APP_API_URL}/api/bitcoin-price-history`)  
       .then(response => response.json())
       .then(data => {
         // Filter out entries with missing data

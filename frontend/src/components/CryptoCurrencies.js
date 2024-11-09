@@ -13,7 +13,7 @@ function CryptoCurrencies() {
   useEffect(() => {
     async function fetchCryptocurrencies() {
       try {
-        const response = await axios.get('http://localhost:5000/api/crypto-prices');
+        const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/crypto-prices`);
         console.log(response.data);  // Log the data to inspect its structure
         setCryptocurrencies(response.data);
       } catch (err) {

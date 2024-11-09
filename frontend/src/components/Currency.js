@@ -23,7 +23,7 @@ function Currency() {
   };
 
   useEffect(() => {
-    fetch(`http://localhost:5000/currencies/${id}`)
+    fetch(`${process.env.REACT_APP_API_URL}/currencies/${id}`)
       .then(response => {
         if (!response.ok) {
           throw new Error('Network response was not ok');

@@ -36,7 +36,7 @@ function CryptoCurrency() {
   useEffect(() => {
     async function fetchPriceHistory() {
       try {
-        const response = await axios.get(`http://localhost:5000/api/crypto-price-history/${ticker}?timeframe=${timeframe}`);
+        const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/crypto-price-history/${ticker}?timeframe=${timeframe}`);
         setPriceHistory(response.data);
       } catch (err) {
         console.error('Error fetching price history:', err);
