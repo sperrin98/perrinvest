@@ -11,7 +11,7 @@ const Returns = () => {
   useEffect(() => {
     const fetchSecurities = async () => {
       try {
-        const response = await fetch('http://localhost:5000/securities/asset-class-2');
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/securities/asset-class-2`);
         if (!response.ok) {
           throw new Error(`Error: ${response.statusText}`);
         }

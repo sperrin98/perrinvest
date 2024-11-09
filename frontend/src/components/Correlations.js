@@ -22,7 +22,7 @@ const Correlations = () => {
   useEffect(() => {
     const fetchSecurities = async () => {
       try {
-        const response = await fetch('http://localhost:5000/securities'); 
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/securities`); 
         if (!response.ok) {
           throw new Error('Failed to fetch securities');
         }
@@ -43,7 +43,7 @@ const Correlations = () => {
     setError(null);
     try {
       const response = await fetch(
-        `http://localhost:5000/correlations?sec_id=${secId1}&sec_id2=${secId2}&period=${period}&timeframe_type=${timeframeType}&end_date=${endDate}`
+        `${process.env.REACT_APP_API_URL}/correlations?sec_id=${secId1}&sec_id2=${secId2}&period=${period}&timeframe_type=${timeframeType}&end_date=${endDate}`
       );
 
       if (!response.ok) {

@@ -25,7 +25,7 @@ function EcoDataPoint() {
     console.log('Fetching data for ID:', id);
 
     // Fetch histories
-    fetch(`http://localhost:5000/eco-data-points/${id}/histories`)
+    fetch(`${process.env.REACT_APP_API_URL}/eco-data-points/${id}/histories`)
       .then(response => {
         console.log('Response Status:', response.status);
         if (!response.ok) {
@@ -45,7 +45,7 @@ function EcoDataPoint() {
       });
 
     // Fetch eco data point name
-    fetch(`http://localhost:5000/eco-data-points/${id}`)
+    fetch(`${process.env.REACT_APP_API_URL}/eco-data-points/${id}`)
       .then(response => {
         console.log('Response Status:', response.status);
         if (!response.ok) {

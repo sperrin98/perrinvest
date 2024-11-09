@@ -12,7 +12,7 @@ const GoldPriceChart = () => {
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 600);
 
   useEffect(() => {
-    axios.get('http://localhost:5000/api/gold-price-history')
+    axios.get(`${process.env.REACT_APP_API_URL}/api/gold-price-history`)
       .then(response => {
         const data = response.data;
 

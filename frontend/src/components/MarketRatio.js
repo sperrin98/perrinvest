@@ -17,7 +17,7 @@ const MarketRatio = () => {
   useEffect(() => {
     const fetchMarketRatioData = async () => {
       try {
-        const response = await axios.get(`http://localhost:5000/market-ratios/${id}`);
+        const response = await axios.get(`${process.env.REACT_APP_API_URL}/market-ratios/${id}`);
         const data = response.data;
 
         setRatioName(data.ratio_name);

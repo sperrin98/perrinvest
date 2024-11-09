@@ -30,7 +30,7 @@ const Security = () => {
 
     const fetchPriceHistories = async () => {
       try {
-        const response = await axios.get(`http://localhost:5000/securities/${id}/price-histories`);
+        const response = await axios.get(`${process.env.REACT_APP_API_URL}/securities/${id}/price-histories`);
         
         // Format the data correctly
         const formattedPriceHistories = response.data.map(history => ({

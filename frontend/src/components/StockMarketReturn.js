@@ -15,7 +15,7 @@ const StockMarketReturn = () => {
     const fetchStockMarketData = async () => {
       try {
         console.log(`Fetching data for ID: ${id}`); // Log the ID being fetched
-        const response = await fetch(`http://localhost:5000/securities/returns/${id}`, { signal }); // Pass the signal
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/securities/returns/${id}`, { signal }); // Pass the signal
         if (!response.ok) {
           throw new Error(`Error: ${response.statusText}`);
         }

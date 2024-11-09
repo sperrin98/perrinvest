@@ -9,7 +9,7 @@ function EcoDataPoints() {
   const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
-    fetch('http://localhost:5000/eco-data-points')
+    fetch(`${process.env.REACT_APP_API_URL}/eco-data-points`)
       .then(response => response.json())
       .then(data => {
         console.log(data);

@@ -10,7 +10,7 @@ const ApplePriceChart = () => {
   const [chartData, setChartData] = useState({ datasets: [] });
 
   useEffect(() => {
-    fetch('http://localhost:5000/api/apple-price-history')
+    fetch(`${process.env.REACT_APP_API_URL}/api/apple-price-history`)
       .then(response => response.json())
       .then(data => {
         // Format the data for the chart
