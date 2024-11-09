@@ -10,7 +10,7 @@ function MarketRatios() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    axios.get('http://localhost:5000/market-ratios')
+    axios.get(`${process.env.REACT_APP_API_URL}/market-ratios`)
       .then(response => {
         if (Array.isArray(response.data)) {
           setMarketRatios(response.data);

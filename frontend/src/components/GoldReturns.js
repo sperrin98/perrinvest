@@ -11,7 +11,7 @@ const GoldReturns = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await fetch('http://localhost:5000/returns/1');  // Fetching gold data
+                const response = await fetch(`${process.env.REACT_APP_API_URL}/returns/1`);  // Fetching gold data
                 if (!response.ok) {
                     throw new Error(`Error: ${response.statusText}`);  // Handle response errors
                 }

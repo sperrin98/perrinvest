@@ -37,7 +37,7 @@ function MarketRatioSelection() {
       return;
     }
     try {
-      const response = await fetch(`http://localhost:5000/market-ratios/divide?security_long_name1=${selectedSecurity1}&security_long_name2=${selectedSecurity2}`);
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/market-ratios/divide?security_long_name1=${selectedSecurity1}&security_long_name2=${selectedSecurity2}`);
       const data = await response.json();
       if (response.ok) {
         setResult(data.divided_prices);

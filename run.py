@@ -1,8 +1,8 @@
-from flask import Flask
+from app import create_app
+import os
 
-# Create the Flask app
-app = Flask(__name__)
+app = create_app()
 
-# Ensure the Flask app is accessible from any network by binding it to 0.0.0.0
-if __name__ == '__main__':
-    app.run(host="0.0.0.0", port=5000)
+if __name__ == "__main__":
+    port = int(os.environ.get("PORT", 5000))  # Default to 5000 if PORT isn't set
+    app.run(host="0.0.0.0", port=port)

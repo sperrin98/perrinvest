@@ -9,7 +9,7 @@ function Markets() {
   useEffect(() => {
     const fetchMarkets = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/markets');
+        const response = await axios.get(`${process.env.REACT_APP_API_URL}/markets`);
         console.log(response.data); // Log the data to inspect its structure
         setMarkets(response.data);
       } catch (err) {

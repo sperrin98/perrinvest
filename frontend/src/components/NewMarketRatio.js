@@ -10,7 +10,7 @@ const NewMarketRatio = () => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    axios.get('http://localhost:5000/api/securities')
+    axios.get(`${process.env.REACT_APP_API_URL}/api/securities`)
       .then(response => {
         setSecurities(response.data);
       })
@@ -26,7 +26,7 @@ const NewMarketRatio = () => {
       return;
     }
 
-    axios.post('http://localhost:5000/api/market-ratio', { security_id1: security1, security_id2: security2 })
+    axios.post(`${process.env.REACT_APP_API_URL}/api/market-ratio`, { security_id1: security1, security_id2: security2 })
       .then(response => {
         setRatioData(response.data.market_ratio);
         setError(null);

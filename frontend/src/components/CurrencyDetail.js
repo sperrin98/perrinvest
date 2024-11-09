@@ -9,7 +9,7 @@ function CurrencyDetail() {
   const [chart, setChart] = useState(null);
 
   useEffect(() => {
-    fetch(`http://localhost:5000/currencies/${id}`)
+    fetch(`${process.env.REACT_APP_API_URL}/currencies/${id}`)
       .then(response => response.json())
       .then(data => {
         setCurrency(data.currency);
