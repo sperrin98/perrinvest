@@ -34,7 +34,7 @@
 .correlation-button {
     padding: 12px;
     background-color: rgb(0, 255, 179);
-    color: white;
+    color: rgb(0, 0, 0);
     border: none;
     border-radius: 5px;
     font-size: 1rem;
@@ -46,6 +46,7 @@
 .correlation-button:hover {
     background-color: #00cc99;
     transform: scale(1.03);
+    color: black;
 }
 
 .error {
@@ -69,7 +70,7 @@
 
 .correlation-table th {
     background-color: rgb(0, 255, 179);
-    color: white;
+    color: rgb(0, 0, 0);
 }
 
 .correlation-table tr:nth-child(even) {
