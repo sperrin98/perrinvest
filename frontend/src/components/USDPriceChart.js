@@ -10,7 +10,7 @@ const USDPriceChart = () => {
   const [chartData, setChartData] = useState({ datasets: [] });
 
   useEffect(() => {
-    fetch('http://localhost:5000/api/usd-price-history')
+    fetch(`${process.env.REACT_APP_API_URL}/api/usd-price-history`)
       .then(response => response.json())
       .then(data => {
         // Format the data for the chart

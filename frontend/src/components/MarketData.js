@@ -11,7 +11,7 @@ function MarketData() {
   });
 
   useEffect(() => {
-    axios.get('http://localhost:5000/market-data')
+    axios.get(`${process.env.REACT_APP_API_URL}/market-data`)
       .then(response => {
         console.log('Data fetched from backend:', response.data);  // Debug log
         setData(response.data);

@@ -24,7 +24,7 @@ const Register = ({ onLogin }) => {
 
     try {
       // Send the registration data to the backend
-      const response = await axios.post('http://localhost:5000/register', userData);
+      const response = await axios.post(`${process.env.REACT_APP_API_URL}/register`, userData);
       
       if (response.status === 201) {
         // If successful, call onLogin to update the state in App.js

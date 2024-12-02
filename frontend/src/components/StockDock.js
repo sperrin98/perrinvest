@@ -7,7 +7,7 @@ const StockDock = () => {
 
     const fetchStockPrices = async () => {
         try {
-            const response = await axios.get('http://127.0.0.1:5000/api/stock-prices');
+            const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/stock-prices`);
             const data = response.data;
 
             // Map the stock data into an array for display

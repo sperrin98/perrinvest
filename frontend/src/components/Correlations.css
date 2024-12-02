@@ -1,13 +1,12 @@
 .correlation-container {
-    margin-top: 200px; /* Adjusting the margin to ensure it doesn't hide behind the navbar */
+    margin-top: 70px;
     padding: 20px;
-    background-color: #f9f9f9;
+    background-color: #f5f0f0;
     border-radius: 8px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    max-width: 600px;
 }
 
-h2 {
+.correlation-title {
     text-align: center;
     color: #333;
 }
@@ -15,37 +14,39 @@ h2 {
 .correlation-form {
     display: flex;
     flex-direction: column;
+    gap: 15px;
 }
 
-.form-group {
-    margin-bottom: 15px;
-}
-
-label {
-    margin-bottom: 5px;
+.form-group label {
+    font-size: 1rem;
     font-weight: bold;
+    margin-bottom: 5px;
 }
 
-select,
-input[type="number"],
-input[type="date"] {
-    padding: 10px;
+.form-group input,
+.form-group select {
+    padding: 12px;
     border: 1px solid #ccc;
     border-radius: 5px;
+    font-size: 1rem;
 }
 
-button {
-    padding: 10px;
-    background-color: #007bff;
-    color: white;
+.correlation-button {
+    padding: 12px;
+    background-color: rgb(0, 255, 179);
+    color: rgb(0, 0, 0);
     border: none;
     border-radius: 5px;
+    font-size: 1rem;
+    font-weight: bold;
     cursor: pointer;
-    transition: background-color 0.3s ease;
+    transition: background-color 0.3s, transform 0.1s;
 }
 
-button:hover {
-    background-color: #0056b3;
+.correlation-button:hover {
+    background-color: #00cc99;
+    transform: scale(1.03);
+    color: black;
 }
 
 .error {
@@ -54,19 +55,30 @@ button:hover {
     margin-top: 10px;
 }
 
-table {
+.correlation-table {
     width: 100%;
     border-collapse: collapse;
     margin-top: 20px;
 }
 
-th, td {
+.correlation-table th,
+.correlation-table td {
     border: 1px solid #ddd;
-    padding: 8px;
+    padding: 10px;
     text-align: left;
 }
 
-th {
-    background-color: #007bff;
-    color: white;
+.correlation-table th {
+    background-color: rgb(0, 255, 179);
+    color: rgb(0, 0, 0);
+}
+
+.correlation-table tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.loading {
+    text-align: center;
+    font-size: 1.2rem;
+    color: #555;
 }

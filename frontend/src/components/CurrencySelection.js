@@ -13,7 +13,7 @@ function CurrencySelection() {
 
   useEffect(() => {
     // Fetch currencies when the component mounts
-    fetch('http://localhost:5000/currencies')
+    fetch(`${process.env.REACT_APP_API_URL}/currencies`)
       .then(response => response.json())
       .then(data => {
         if (Array.isArray(data)) {
@@ -29,7 +29,7 @@ function CurrencySelection() {
     console.log('Currency 1:', currency1);
     console.log('Currency 2:', currency2);
     if (currency1 && currency2) {
-      fetch(`http://localhost:5000/currencies/divide?security_long_name1=${currency1}&security_long_name2=${currency2}`)
+      fetch(`${process.env.REACT_APP_API_URL}/currencies/divide?security_long_name1=${currency1}&security_long_name2=${currency2}`)
         .then(response => response.json())
         .then(data => {
           console.log('Divided currency result:', data);
