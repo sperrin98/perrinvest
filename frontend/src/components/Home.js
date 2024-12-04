@@ -16,13 +16,13 @@ const Home = () => {
       if (index < text.length) {
         setDisplayedText((prev) => prev + text.charAt(index));
         index++;
-        setTimeout(type, 100); // Adjust typing speed here (100ms)
+        setTimeout(type, 100); 
       } else {
         setTimeout(() => {
           setDisplayedText('');
           index = 0;
           type();
-        }, 2000); // Adjust delay before restart here (2000ms)
+        }, 2000); 
       }
     };
 
@@ -33,8 +33,6 @@ const Home = () => {
     <div>
       <div className="section section1">
         <h1 className="home-header">Perrinvest</h1>
-
-        {/* Add the StockDock to the first section */}
         <StockDock />
       </div>
 
