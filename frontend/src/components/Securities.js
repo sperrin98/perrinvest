@@ -1,4 +1,3 @@
-// Securities.js
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
@@ -8,22 +7,20 @@ function Securities() {
   const [securities, setSecurities] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredSecurities, setFilteredSecurities] = useState([]);
-  const navigate = useNavigate();
   const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
+  // Fetch securities on component mount
   useEffect(() => {
     async function fetchSecurities() {
       try {
-        // Log and validate API URL from environment variables
-        console.log("API URL: ", process.env.REACT_APP_API_URL);
-
-        if (!process.env.REACT_APP_API_URL) {
-          throw new Error('API URL is not defined in the environment variables.');
-        }
-
-        // Fetch securities data from API
+        // Fetch data from backend
         const response = await axios.get(`${process.env.REACT_APP_API_URL}/securities`);
-        console.log(response.data);
+        
+        // Log the fetched data to verify that it contains latest_price and percent_change
+        console.log("Securities Data from API:", response.data);
+        
+        // Update the state with fetched data
         setSecurities(response.data);
       } catch (err) {
         console.error('Error fetching securities:', err);
@@ -34,7 +31,7 @@ function Securities() {
     fetchSecurities();
   }, []);
 
-  // Filter securities based on search term
+  // Filter securities based on the search term
   useEffect(() => {
     setFilteredSecurities(
       securities.filter(security =>
@@ -44,7 +41,6 @@ function Securities() {
     );
   }, [searchTerm, securities]);
 
-  // Navigate to detailed security page on row click
   const handleRowClick = (id) => {
     navigate(`/securities/${id}`);
   };
@@ -60,17 +56,19 @@ function Securities() {
           className="search-input"
         />
       </div>
-      
-      <table className='securities-table'>
+
+      <table className="securities-table">
         <thead>
           <tr>
-            <th className='id-header'></th>
             <th className="first-header">Security Long Name</th>
             <th>Security Short Name</th>
+            <th>Latest Price</th>
+            <th>% Change</th>
+            <th>Day Chart</th>
           </tr>
         </thead>
         <tbody>
-          {error && <tr><td colSpan="3">{error}</td></tr>}
+          {error && <tr><td colSpan="5">{error}</td></tr>}
           {filteredSecurities.length > 0 ? (
             filteredSecurities.map(security => (
               <tr
@@ -78,14 +76,28 @@ function Securities() {
                 onClick={() => handleRowClick(security.security_id)}
                 className="clickable-row"
               >
-                <td>{security.security_id}</td>
                 <td className="first-column">{security.security_long_name}</td>
                 <td>{security.security_short_name}</td>
+                <td>{security.latest_price ? `$${security.latest_price.toFixed(2)}` : 'No Price Available'}</td>
+                <td
+                  className={security.percent_change >= 0 ? 'positive-change' : 'negative-change'}
+                >
+                  {security.percent_change !== null && security.percent_change !== undefined
+                    ? `${security.percent_change.toFixed(2)}%`
+                    : 'No Change Available'}
+                </td>
+                <td>
+                  <img 
+                    src={security.day_chart_url || '/placeholder-chart.png'} 
+                    alt={`Day chart for ${security.security_short_name}`} 
+                    className="day-chart" 
+                  />
+                </td>
               </tr>
             ))
           ) : (
             <tr>
-              <td colSpan="3">No securities found</td>
+              <td colSpan="5">No securities found</td>
             </tr>
           )}
         </tbody>
