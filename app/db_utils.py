@@ -399,3 +399,36 @@ def divide_stock_market_by_gold(security_id):
         cursor.close()
         conn.close()
     return divided_stock_market
+
+def fetch_securities_with_prices():
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+
+    query = """
+    SELECT 
+        s.security_long_name,
+        s.security_short_name,
+        ph.price AS latest_price,
+        ROUND((ph.price - prev_ph.price) / prev_ph.price * 100, 2) AS percent_change
+    FROM securities s
+    JOIN price_histories ph ON s.security_id = ph.security_id
+    LEFT JOIN price_histories prev_ph 
+        ON s.security_id = prev_ph.security_id 
+        AND prev_ph.price_date = (SELECT MAX(price_date) FROM price_histories WHERE security_id = s.security_id AND price_date < ph.price_date)
+    WHERE ph.price_date = (SELECT MAX(price_date) FROM price_histories WHERE security_id = s.security_id)
+    ORDER BY s.security_id;
+    """
+    
+    try:
+        cursor.execute(query)
+        results = cursor.fetchall()
+        print("Fetched Securities with Latest Price and Percent Change:", results)  # Debugging line
+    except Exception as e:
+        logging.error(f"Error executing query: {str(e)}")  # Log the query error if there's an issue
+        raise e
+
+    cursor.close()
+    conn.close()
+
+    return results
+
