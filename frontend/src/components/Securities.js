@@ -60,15 +60,14 @@ function Securities() {
       <table className="securities-table">
         <thead>
           <tr>
-            <th className="first-header">Security Long Name</th>
+            <th className="long-name-header">Security Long Name</th>
             <th>Security Short Name</th>
             <th>Latest Price</th>
             <th>% Change</th>
-            <th>Day Chart</th>
           </tr>
         </thead>
         <tbody>
-          {error && <tr><td colSpan="5">{error}</td></tr>}
+          {error && <tr><td colSpan="4">{error}</td></tr>}
           {filteredSecurities.length > 0 ? (
             filteredSecurities.map(security => (
               <tr
@@ -76,7 +75,7 @@ function Securities() {
                 onClick={() => handleRowClick(security.security_id)}
                 className="clickable-row"
               >
-                <td className="first-column">{security.security_long_name}</td>
+                <td className="security-long-name">{security.security_long_name}</td>
                 <td>{security.security_short_name}</td>
                 <td>{security.latest_price ? `$${security.latest_price.toFixed(2)}` : 'No Price Available'}</td>
                 <td
@@ -86,18 +85,11 @@ function Securities() {
                     ? `${security.percent_change.toFixed(2)}%`
                     : 'No Change Available'}
                 </td>
-                <td>
-                  <img 
-                    src={security.day_chart_url || '/placeholder-chart.png'} 
-                    alt={`Day chart for ${security.security_short_name}`} 
-                    className="day-chart" 
-                  />
-                </td>
               </tr>
             ))
           ) : (
             <tr>
-              <td colSpan="5">No securities found</td>
+              <td colSpan="4">No securities found</td>
             </tr>
           )}
         </tbody>
