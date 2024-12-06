@@ -50,10 +50,9 @@ function MarketRatios() {
         />
       </div>
 
-      <table>
+      <table className='market-ratios-table'>
         <thead>
           <tr>
-            <th>Ratio ID</th>
             <th>Ratio Name</th>
           </tr>
         </thead>
@@ -61,13 +60,12 @@ function MarketRatios() {
           {filteredMarketRatios.length > 0 ? (
             filteredMarketRatios.map(ratio => (
               <tr key={ratio[0]} onClick={() => handleRowClick(ratio[0])} className='clickable-row'>
-                <td>{ratio[0] || 'N/A'}</td>
                 <td>{ratio[1] || 'N/A'}</td>
               </tr>
             ))
           ) : (
             <tr>
-              <td colSpan='2'>No market ratios found</td>
+              <td colSpan='1'>No market ratios found</td>
             </tr>
           )}
         </tbody>
