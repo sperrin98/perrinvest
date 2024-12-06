@@ -25,8 +25,7 @@ from app.db_utils import (
     fetch_gld_currency_returns,
     fetch_slv_currency_returns,
     fetch_stock_markets,
-    divide_stock_market_by_gold,
-    fetch_securities_with_prices
+    divide_stock_market_by_gold
 )   
 import yfinance as yf
 from datetime import datetime, timedelta  # Include datetime and timedelta
@@ -86,24 +85,36 @@ def login():
         return jsonify({'message': 'Invalid email or password'}), 401
 
 
-@main.route('/securities', methods=['GET'])
+@main.route('/securities')
 def get_securities():
     try:
-        securities_data = fetch_securities_with_prices()    
-        # Check if there's no data
-        if not securities_data:
-            return jsonify({"error": "No securities data found"}), 404        
-        return jsonify(securities_data)
+        securities = fetch_securities()  # Ensure this function returns a list of dictionaries or tuples
+        return jsonify(securities)
     except Exception as e:
-        logging.error(f"Error fetching securities: {str(e)}")
-        return jsonify({"error": f"An internal error occurred: {str(e)}"}), 500
+        print(f"Error fetching securities: {e}")
+        return jsonify({'error': str(e)}), 500
 
+@main.route('/securities/<int:security_id>')
+def get_security(security_id):
+    try:
+        security = fetch_security_data(security_id)
+        price_history = fetch_price_history(security_id)
+        response = {
+            "security": security,
+            "price_history": price_history
+        }
+        return jsonify(response)
+    except Exception as e:
+        print(f"Error fetching security: {e}")
+        return jsonify({'error': str(e)}), 500
 
 
 @main.route('/securities/<int:security_id>/price-histories', methods=['GET'])
 def get_price_histories(security_id):
-    timeframe = request.args.get('timeframe', 'all') 
+    timeframe = request.args.get('timeframe', 'all')  # Get timeframe from query parameter
     start_date = None
+    
+    # Define the timeframes
     if timeframe == '1w':
         start_date = datetime.now() - timedelta(weeks=1)
     elif timeframe == '1m':
@@ -148,6 +159,7 @@ def get_200d_moving_average(security_id):
     except Exception as e:
         print(f"Error fetching 200-day moving average: {e}")
         return jsonify({'error': str(e)}), 500
+
 
 @main.route('/market-ratios')
 def get_market_ratios():
