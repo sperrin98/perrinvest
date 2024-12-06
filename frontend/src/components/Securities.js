@@ -79,8 +79,8 @@ function Securities() {
                 className="clickable-row"
               >
                 <td className="security-long-name">{security.security_long_name}</td>
-                <td>{security.security_short_name}</td>
-                <td>{security.latest_price ? `$${security.latest_price.toFixed(2)}` : 'No Price Available'}</td>
+                <td className='security-short-name'>{security.security_short_name}</td>
+                <td className='latest-price'>{security.latest_price ? `$${security.latest_price.toFixed(2)}` : 'No Price Available'}</td>
                 <td className={security.percent_change >= 0 ? 'positive-change' : 'negative-change'}>
                   {security.percent_change !== null && security.percent_change !== undefined
                     ? `${security.percent_change.toFixed(2)}%`
