@@ -52,7 +52,7 @@ tbody tr:hover {
   transition: background-color 0.2s ease;
 }
 
-/* Hover Effect: Security Long Name, Security Short Name, and Latest Price change to green */
+/* Hover Effect for Security Long Name, Security Short Name, and Latest Price (Turns Green) */
 tbody tr:hover td.security-long-name,
 tbody tr:hover td.security-short-name,
 tbody tr:hover td.latest-price {
@@ -87,6 +87,7 @@ th, td {
   width: 20%; /* Security Short Name, Latest Price, and Percent Change columns should all be the same width */
 }
 
+/* Back Button */
 .back-button {
   text-align: center;
   margin-top: 20px;
