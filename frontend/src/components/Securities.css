@@ -24,22 +24,17 @@ table {
 }
 
 th, td {
-  padding: 12px 15px; /* Adequate padding for readability */
+  padding: 12px 15px; /* Same padding for th and td */
   text-align: left;
   font-size: 14px; /* Slightly smaller font size for a more professional look */
   border-bottom: 1px solid #e0e0e0; /* Lighter border for subtle separation */
   color: #333; /* Darker text for readability */
-  max-width: 200px; /* Adjust max-width as needed */
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 
 th {
-  padding-left: 20px; /* Less padding in header */
-  text-align: left; /* Align headers to the left for consistency */
-  font-weight: 600; /* Bold headers for better readability */
-  background-color: #f9f9f9; /* Light gray background for headers */
+  font-weight: 600;
+  background-color: #f9f9f9;
+  padding-left: 20px;
 }
 
 tbody tr {
@@ -57,19 +52,30 @@ tbody tr:hover {
   transition: background-color 0.2s ease;
 }
 
-tbody tr a {
-  display: block;
-  color: inherit; /* Inherit text color */
-  text-decoration: none; /* Remove underline */
+/* Hover Effect: Security Long Name, Security Short Name, and Latest Price change to green */
+tbody tr:hover td.security-long-name,
+tbody tr:hover td.security-short-name,
+tbody tr:hover td.latest-price {
+  color: #00ffb3; /* Green color */
 }
 
-/* Change the color for positive and negative percentage changes */
+/* No hover effect for percentage change column */
+tbody tr:hover td.percent-change {
+  color: inherit; /* Do not change color */
+}
+
+/* Styling for the percentage change column */
 .positive-change {
-  color: #1d9e4f; /* Subtle green for positive */
+  color: #1d9e4f; /* Positive green */
 }
 
 .negative-change {
-  color: #e74c3c; /* Subtle red for negative */
+  color: #e74c3c; /* Negative red */
+}
+
+/* Specific column classes for alignment */
+.security-long-name, .security-short-name, .latest-price, .percent-change {
+  width: 25%; /* Adjust column widths */
 }
 
 /* Adjust widths for columns */
