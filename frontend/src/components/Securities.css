@@ -1,54 +1,60 @@
 /* Base styles for the securities container and table */
 .securities-container {
-  background-color: gray;
+  background-color: #f4f4f4; /* Light gray background */
   padding: 0 15%; /* Align container padding with border */
   padding-bottom: 10px;
+  font-family: "Montserrat", sans-serif;
 }
 
 .security-header {
-  font-family: "Montserrat", sans-serif;
   text-align: center;
   margin-top: 0;
   padding: 10px;
   font-size: 32px;
+  color: #333; /* Darker text for better contrast */
 }
 
 table {
   width: 100%;
   border-collapse: collapse;
   margin: 0 auto; /* Center the table */
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1); /* Light shadow for depth */
+  background-color: #fff; /* White background for the table */
+  border-radius: 8px; /* Rounded corners for a more modern look */
 }
 
 th, td {
-  padding: 10px;
+  padding: 12px 15px; /* Adequate padding for readability */
   text-align: left;
-  font-family: "Montserrat", sans-serif;
-  border-bottom: 1px solid rgb(0, 255, 179);
-  padding-left: 40px;
+  font-size: 14px; /* Slightly smaller font size for a more professional look */
+  border-bottom: 1px solid #e0e0e0; /* Lighter border for subtle separation */
+  color: #333; /* Darker text for readability */
   max-width: 200px; /* Adjust max-width as needed */
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-.id-header {
-  width: 5px;
-}
-
 th {
-  padding-left: 60px; /* Adjust this value as needed */
-  text-align: center;
+  padding-left: 20px; /* Less padding in header */
+  text-align: left; /* Align headers to the left for consistency */
+  font-weight: 600; /* Bold headers for better readability */
+  background-color: #f9f9f9; /* Light gray background for headers */
 }
 
 tbody tr {
-  transition: background-color 0.3s;
+  transition: background-color 0.3s ease;
+  background-color: #ffffff; /* Light background color */
+}
+
+tbody tr:nth-child(even) {
+  background-color: #f9f9f9; /* Subtle alternating row colors */
 }
 
 tbody tr:hover {
-  background-color: #151213;
+  background-color: #f0f0f0; /* Subtle hover effect */
   cursor: pointer;
-  color: rgb(0, 255, 179);
-  transition: ease 0.5s;
+  transition: background-color 0.2s ease;
 }
 
 tbody tr a {
@@ -57,16 +63,36 @@ tbody tr a {
   text-decoration: none; /* Remove underline */
 }
 
+/* Change the color for positive and negative percentage changes */
+.positive-change {
+  color: #1d9e4f; /* Subtle green for positive */
+}
+
+.negative-change {
+  color: #e74c3c; /* Subtle red for negative */
+}
+
+/* Adjust widths for columns */
+.long-name-header {
+  width: 40%; /* Long name column should be the widest */
+}
+
+th, td {
+  width: 20%; /* Security Short Name, Latest Price, and Percent Change columns should all be the same width */
+}
+
 .back-button {
   text-align: center;
   margin-top: 20px;
 }
 
 .back-button a {
-  color: rgb(0, 255, 179);
+  color: #ffffff;
   text-decoration: none;
-  font-family: "Montserrat", sans-serif;
   font-size: 1rem;
+  background-color: #00ffb3;
+  padding: 10px 20px;
+  border-radius: 4px;
 }
 
 .search-container {
@@ -76,11 +102,12 @@ tbody tr a {
 
 .search-input {
   width: 100%;
-  padding: 8px;
-  border: 1px solid rgb(0, 255, 179);
-  background-color: rgb(209, 209, 209);
+  padding: 10px;
+  border: 1px solid #00ffb3;
+  background-color: #f9f9f9;
   border-radius: 4px;
   font-size: 16px;
+  color: #333;
 }
 
 .securities-table td:nth-child(1) {
@@ -96,7 +123,7 @@ tbody tr a {
 }
 
 .back-button {
-  background-color: rgb(0, 255, 179);
+  background-color: #00ffb3;
   color: #151213 !important;
   padding: 10px 20px;
   border-radius: 4px;
@@ -136,14 +163,6 @@ tbody tr a {
     text-align: center !important;
   }
 
-  .id-header {
-    width: 10px; /* Adjust width */
-  }
-
-  th {
-    padding-left: 10px; /* Adjust padding */
-  }
-
   .search-container {
     margin-bottom: 10px; /* Reduce margin */
     padding-top: 10px; /* Reduce padding */
@@ -169,8 +188,8 @@ tbody tr a {
   }
 
   /* Hide unnecessary columns on phone screens */
-  th.id-header, th:nth-child(3),
-  td:nth-child(1), td:nth-child(3) {
+  th.id-header, th:nth-child(4),
+  td:nth-child(1), td:nth-child(4) {
     display: none;
   }
 }

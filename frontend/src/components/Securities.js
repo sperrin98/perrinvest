@@ -1,30 +1,26 @@
-// Securities.js
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import './Securities.css';
 
 function Securities() {
   const [securities, setSecurities] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredSecurities, setFilteredSecurities] = useState([]);
-  const navigate = useNavigate();
   const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     async function fetchSecurities() {
       try {
-        // Log and validate API URL from environment variables
-        console.log("API URL: ", process.env.REACT_APP_API_URL);
-
-        if (!process.env.REACT_APP_API_URL) {
-          throw new Error('API URL is not defined in the environment variables.');
-        }
-
-        // Fetch securities data from API
         const response = await axios.get(`${process.env.REACT_APP_API_URL}/securities`);
-        console.log(response.data);
-        setSecurities(response.data);
+        console.log("Fetched securities:", response.data);
+
+        if (response.data.error) {
+          setError(response.data.error);
+        } else {
+          setSecurities(response.data);
+        }
       } catch (err) {
         console.error('Error fetching securities:', err);
         setError('Failed to load securities.');
@@ -34,7 +30,6 @@ function Securities() {
     fetchSecurities();
   }, []);
 
-  // Filter securities based on search term
   useEffect(() => {
     setFilteredSecurities(
       securities.filter(security =>
@@ -44,9 +39,13 @@ function Securities() {
     );
   }, [searchTerm, securities]);
 
-  // Navigate to detailed security page on row click
-  const handleRowClick = (id) => {
-    navigate(`/securities/${id}`);
+  const handleRowClick = (security_id) => {
+    console.log("Clicked row with security_id:", security_id);  // Debugging line
+    if (security_id) {
+      navigate(`/securities/${security_id}`);  // This will navigate to the correct security page
+    } else {
+      console.error("Security ID is missing!");
+    }
   };
 
   return (
@@ -60,39 +59,45 @@ function Securities() {
           className="search-input"
         />
       </div>
-      
-      <table className='securities-table'>
+
+      <table className="securities-table">
         <thead>
           <tr>
-            <th className='id-header'></th>
-            <th className="first-header">Security Long Name</th>
+            <th className="long-name-header">Security Long Name</th>
             <th>Security Short Name</th>
+            <th>Latest Price</th>
+            <th>% Change</th>
           </tr>
         </thead>
         <tbody>
-          {error && <tr><td colSpan="3">{error}</td></tr>}
+          {error && <tr><td colSpan="4">{error}</td></tr>}
           {filteredSecurities.length > 0 ? (
             filteredSecurities.map(security => (
               <tr
                 key={security.security_id}
-                onClick={() => handleRowClick(security.security_id)}
+                onClick={() => handleRowClick(security.security_id)}  // Clicking a row navigates to /securities/{security_id}
                 className="clickable-row"
               >
-                <td>{security.security_id}</td>
-                <td className="first-column">{security.security_long_name}</td>
+                <td className="security-long-name">{security.security_long_name}</td>
                 <td>{security.security_short_name}</td>
+                <td>{security.latest_price ? `$${security.latest_price.toFixed(2)}` : 'No Price Available'}</td>
+                <td className={security.percent_change >= 0 ? 'positive-change' : 'negative-change'}>
+                  {security.percent_change !== null && security.percent_change !== undefined
+                    ? `${security.percent_change.toFixed(2)}%`
+                    : 'No Change Available'}
+                </td>
               </tr>
             ))
           ) : (
             <tr>
-              <td colSpan="3">No securities found</td>
+              <td colSpan="4">No securities found</td>
             </tr>
           )}
         </tbody>
       </table>
 
       <div className="back-button-container">
-        <Link to="/" className="back-button">Go Back to Homepage</Link>
+        <button onClick={() => navigate('/')} className="back-button">Go Back to Homepage</button>
       </div>
     </div>
   );

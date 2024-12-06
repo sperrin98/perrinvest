@@ -96,13 +96,18 @@ def get_securities():
 
 @main.route('/securities/<int:security_id>')
 def get_security(security_id):
-    security = fetch_security_data(security_id)
-    price_history = fetch_price_history(security_id)
-    response = {
-        "security": security,
-        "price_history": price_history
-    }
-    return jsonify(response)
+    try:
+        security = fetch_security_data(security_id)
+        price_history = fetch_price_history(security_id)
+        response = {
+            "security": security,
+            "price_history": price_history
+        }
+        return jsonify(response)
+    except Exception as e:
+        print(f"Error fetching security: {e}")
+        return jsonify({'error': str(e)}), 500
+
 
 @main.route('/securities/<int:security_id>/price-histories', methods=['GET'])
 def get_price_histories(security_id):
@@ -154,6 +159,7 @@ def get_200d_moving_average(security_id):
     except Exception as e:
         print(f"Error fetching 200-day moving average: {e}")
         return jsonify({'error': str(e)}), 500
+
 
 @main.route('/market-ratios')
 def get_market_ratios():
