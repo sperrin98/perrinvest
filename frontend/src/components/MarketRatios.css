@@ -1,51 +1,165 @@
-.market-ratios-header {
-    font-family: "Montserrat", sans-serif;
-    text-align: center;
-    margin-top: 0;
-    padding: 10px;
-    font-size: 32px;
-}
-
+/* Styling for the market ratios container */
 .market-ratios-container {
-    background-color: gray;
-    padding: 0 15%;
+  background-color: #f4f4f4; /* Light gray background */
+  padding: 0 15%; /* Align container padding with border */
+  padding-bottom: 10px;
+  font-family: "Montserrat", sans-serif;
+}
+
+.market-ratios-header {
+  text-align: center;
+  margin-top: 0;
+  padding: 10px;
+  font-size: 32px;
+  color: #333; /* Darker text for better contrast */
+}
+
+/* Styling for the table */
+.market-ratios-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 0 auto; /* Center the table */
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1); /* Light shadow for depth */
+  background-color: #fff; /* White background for the table */
+  border-radius: 8px; /* Rounded corners for a more modern look */
+}
+
+.market-ratios-table th,
+.market-ratios-table td {
+  padding: 12px 15px; /* Same padding for th and td */
+  text-align: left;
+  font-size: 14px; /* Slightly smaller font size for a more professional look */
+  border-bottom: 1px solid #e0e0e0; /* Lighter border for subtle separation */
+  color: #333; /* Darker text for readability */
+}
+
+.market-ratios-table th {
+  font-weight: 600;
+  background-color: #f9f9f9;
+  padding-left: 20px;
+}
+
+.market-ratios-table tbody tr {
+  transition: background-color 0.3s ease;
+  background-color: #ffffff; /* Light background color */
+}
+
+.market-ratios-table tbody tr:nth-child(even) {
+  background-color: #f9f9f9; /* Subtle alternating row colors */
+}
+
+/* Hover Effect for Market Ratios Rows */
+.market-ratios-table tbody tr:hover {
+  background-color: #151213; /* Dark background color on hover (black) */
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+/* Hover Effect for Specific Columns - Turns text green */
+.market-ratios-table tbody tr:hover td {
+  color: #00ffb3; /* Change text color to green on hover */
+}
+
+/* Specific Hover Effect for Market Ratios Columns */
+.market-ratios-table tbody tr:hover td.security-long-name,
+.market-ratios-table tbody tr:hover td.security-short-name,
+.market-ratios-table tbody tr:hover td.latest-price {
+  color: #00ffb3; /* Green color for specific columns */
+}
+
+/* Hover effect for the percentage change column (keep original color) */
+.market-ratios-table tbody tr:hover td.percent-change {
+  color: inherit; /* No color change for percentage column */
+}
+
+/* Styling for the search container and input */
+.market-ratios-search-container {
+  margin-bottom: 20px;
+  padding-top: 30px;
+}
+
+.market-ratios-search-input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #00ffb3;
+  background-color: #f9f9f9;
+  border-radius: 4px;
+  font-size: 16px;
+  color: #333;
+}
+
+/* Styling for the back button container */
+.market-ratios-back-button-container {
+  display: flex;
+  justify-content: center; /* Center the button horizontally */
+  margin-top: 20px; /* Add some space above the button */
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+.market-ratios-back-button {
+  background-color: #00ffb3;
+  color: #151213 !important;
+  padding: 10px 20px;
+  border-radius: 4px;
+  text-decoration: none;
+  display: block;
+  width: 100%; /* Make it the same width as the table */
+  text-align: center; /* Center the text inside the button */
+}
+
+.market-ratios-back-button a {
+  color: #151213 !important;
+  text-decoration: none;
+  font-family: "Montserrat", sans-serif;
+  font-size: 1rem;
+}
+
+/* Responsive styles */
+@media (max-width: 600px) {
+  .market-ratios-container {
+    padding: 0 5%; /* Reduce padding for smaller screens */
     padding-bottom: 10px;
-}
+  }
 
-.mr-header {
-    padding-top: 10px;
-    margin-top: 70px;
-    color: rgb(0, 255, 179);
-}
+  .market-ratios-header {
+    font-size: 24px; /* Reduce font size */
+    padding: 5px; /* Reduce padding */
+  }
 
-.mr-container {
-    height: 100vh;
-    width: 100vw;
-    background-color: #151213;
-    padding-top: 120px;
-}
-
-.back-button-container {
-    display: flex;
-    justify-content: center; /* Center the button horizontally */
-    margin-top: 20px; /* Add some space above the button */
+  .market-ratios-table {
     width: 100%;
+    font-size: 12px; /* Reduce font size */
   }
-  
-  .back-button {
-    background-color: rgb(0, 255, 179);
-    color: #151213 !important;
-    padding: 10px 20px;
-    border-radius: 4px;
-    text-decoration: none;
-    display: block;
-    width: 100%; /* Make it the same width as the container */
-    text-align: center; /* Center the text inside the button */
+
+  .market-ratios-table th,
+  .market-ratios-table td {
+    padding: 5px; /* Reduce padding */
+    font-size: 12px; /* Reduce font size */
+    text-align: center !important;
   }
-  
-  .back-button a {
-    color: #151213 !important;
-    text-decoration: none;
-    font-family: "Montserrat", sans-serif;
-    font-size: 1rem;
+
+  .market-ratios-search-container {
+    margin-bottom: 10px; /* Reduce margin */
+    padding-top: 10px; /* Reduce padding */
   }
+
+  .market-ratios-search-input {
+    font-size: 14px; /* Adjust font size */
+    padding: 5px; /* Adjust padding */
+  }
+
+  .market-ratios-back-button-container {
+    margin-top: 10px; /* Adjust margin */
+    margin-bottom: 10px; /* Adjust margin */
+  }
+
+  .market-ratios-back-button {
+    font-size: 14px; /* Adjust font size */
+    padding: 5px 10px; /* Adjust padding */
+  }
+
+  .market-ratios-back-button a {
+    font-size: 14px; /* Adjust font size */
+  }
+}
