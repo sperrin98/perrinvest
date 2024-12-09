@@ -45,7 +45,6 @@ function EcoDataPoints() {
       <table className='ecodatapoints-table'>
         <thead>
           <tr>
-            <th className='id-header'></th>
             <th className='first-header'>Name</th>
             <th>Period</th>
           </tr>
@@ -53,7 +52,6 @@ function EcoDataPoints() {
         <tbody>
           {filteredDataPoints.map(point => (
             <tr key={point.eco_data_point_id}>
-              <td>{point.eco_data_point_id}</td>
               <td>
                 <Link to={`/eco-data-points/${point.eco_data_point_id}`}>
                   {point.eco_data_point_name}
