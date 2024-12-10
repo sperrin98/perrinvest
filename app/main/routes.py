@@ -207,24 +207,18 @@ def get_eco_data_point(eco_data_point_id):
 @main.route('/currencies')
 def get_currencies():
     try:
-        currencies_data = fetch_currencies()
-        security_id1 = request.args.get('security_id1')
-        security_id2 = request.args.get('security_id2')
+        # Call the function that fetches the currencies data with price and percent change
+        currencies = fetch_currencies()  # Ensure this function returns the correct data structure
 
-        if security_id1 and security_id2:
-            divided_currency_data = get_divided_currency_price(int(security_id1), int(security_id2))
-            if divided_currency_data:
-                new_currency = {
-                    'id': f'divided_{security_id1}_{security_id2}',
-                    'security_long_name': f'Divided {security_id1}/{security_id2}',
-                    'price_history': divided_currency_data
-                }
-                currencies_data.append(new_currency)
-        
-        return jsonify(currencies_data)
+        # If currencies were fetched successfully
+        if currencies:
+            return jsonify(currencies), 200
+        else:
+            return jsonify({"message": "No currencies found."}), 404
     except Exception as e:
+        # Handle any unexpected errors
         print(f"Error fetching currencies: {e}")
-        return jsonify({"error": "Error fetching currencies"}), 500
+        return jsonify({"error": "Internal server error"}), 500
 
 @main.route('/currencies/<int:currency_id>')
 def get_currency(currency_id):

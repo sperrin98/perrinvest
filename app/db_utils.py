@@ -155,14 +155,39 @@ def fetch_currencies():
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
     query = """
-    SELECT * FROM securities 
-    WHERE security_id IN (16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 43)
+    SELECT 
+        s.security_id,
+        s.security_long_name,
+        ph.price AS latest_price,
+        ROUND((ph.price - prev_ph.price) / prev_ph.price * 100, 2) AS percent_change
+    FROM securities s
+    JOIN price_histories ph ON s.security_id = ph.security_id
+    LEFT JOIN price_histories prev_ph 
+        ON s.security_id = prev_ph.security_id
+        AND prev_ph.price_date = (
+            SELECT MAX(price_date)
+            FROM price_histories
+            WHERE security_id = s.security_id AND price_date < ph.price_date
+        )
+    WHERE s.security_id IN (16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 43)
+      AND ph.price_date = (
+          SELECT MAX(price_date)
+          FROM price_histories
+          WHERE security_id = s.security_id
+      )
     """
-    cursor.execute(query)
-    rows = cursor.fetchall()
-    cursor.close()
-    conn.close()
-    return rows
+    try:
+        cursor.execute(query)
+        rows = cursor.fetchall()
+        return rows
+    except Exception as e:
+        print(f"Error fetching currencies: {str(e)}")
+        return []
+    finally:
+        cursor.close()
+        conn.close()
+
+
 
 def fetch_currency(currency_id):
     conn = get_db_connection()
