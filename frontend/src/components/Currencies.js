@@ -13,6 +13,7 @@ function Currencies() {
     fetch(`${process.env.REACT_APP_API_URL}/currencies`)
       .then(response => response.json())
       .then(data => {
+        console.log('Fetched data:', data);  // Log data to ensure it's coming through correctly
         setCurrencies(data);
         setLoading(false);
       })
@@ -48,15 +49,17 @@ function Currencies() {
       <table>
         <thead>
           <tr>
-            <th></th>
             <th>Currency</th>
+            <th>Latest Price</th>
+            <th>% Change</th>
           </tr>
         </thead>
         <tbody>
           {filteredCurrencies.map(currency => (
             <tr key={currency.security_id} onClick={() => handleRowClick(currency.security_id)}>
-              <td>{currency.security_id}</td>
               <td>{currency.security_long_name}</td>
+              <td>{currency.latest_price}</td>
+              <td>{currency.percent_change}%</td>
             </tr>
           ))}
         </tbody>
