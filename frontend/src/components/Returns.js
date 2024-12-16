@@ -1,56 +1,85 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import './Returns.css'
+import './Returns.css';
 
 const Returns = () => {
-  const [securities, setSecurities] = useState([]); // State to hold fetched securities
-  const [loading, setLoading] = useState(true); // State to handle loading state
-  const [error, setError] = useState(null); // State to handle errors
+  const [securities, setSecurities] = useState([]); // For storing fetched securities
+  const [error, setError] = useState(null); // For error handling
+  const [selectedOption, setSelectedOption] = useState(''); // For storing selected dropdown option
 
-  // Fetch stock markets priced in gold
+  // Fetch data based on selected option (Stock Markets or Currencies)
   useEffect(() => {
+    if (!selectedOption) return; // Do nothing if no option is selected
+
     const fetchSecurities = async () => {
-      try {
-        const response = await fetch(`${process.env.REACT_APP_API_URL}/securities/asset-class-2`);
-        if (!response.ok) {
-          throw new Error(`Error: ${response.statusText}`);
+      // Fetching data based on dropdown selection
+      if (selectedOption === 'stock-markets') {
+        const url = `${process.env.REACT_APP_API_URL}/securities/asset-class-2`; // Stock markets URL
+        try {
+          const response = await fetch(url);
+          if (!response.ok) {
+            throw new Error(`Error: ${response.statusText}`);
+          }
+          const result = await response.json();
+          setSecurities(result); // Store stock markets data in state
+        } catch (error) {
+          setError(error.message); // Handle errors
         }
-        const result = await response.json();
-        setSecurities(result); // Set the fetched securities to state
-      } catch (error) {
-        setError(error.message); // Set the error message to state
-      } finally {
-        setLoading(false); // Set loading to false after fetching
       }
     };
 
-    fetchSecurities(); // Call the fetch function
-  }, []); // Empty dependency array ensures it only runs once
+    fetchSecurities(); // Fetch data when option changes
+  }, [selectedOption]);
 
   return (
-    <div className='returns-container'>
-      <h1>Returns of Major Currencies priced in Gold</h1>
-      <ul>
-        <li><Link to="/returns/1">Gold Price Returns</Link></li>
-        <li><Link to="/returns/2">Silver Price Returns</Link></li>
-      </ul>
+    <div className="returns-container">
+      <h1>Returns of Major Assets</h1>
 
-      <h1>Stock Markets Priced in Gold</h1>
-      {loading && <div>Loading stock markets...</div>}
+      {/* Dropdown for selecting either Currencies or Stock Markets */}
+      <div className="dropdown-container">
+        <label htmlFor="securities-select" className="dropdown-label">Select Option:</label>
+        <select
+          id="securities-select"
+          value={selectedOption}
+          onChange={(e) => setSelectedOption(e.target.value)} // Update selected option
+        >
+          <option value="">Select...</option>
+          <option value="currencies">Currencies Priced in Gold/Silver</option>
+          <option value="stock-markets">Stock Markets Priced in Gold</option>
+        </select>
+      </div>
+
+      {/* Show Currencies-related links when "Currencies" is selected */}
+      {selectedOption === 'currencies' && (
+        <div className="currencies-links">
+          <ul>
+            <li><Link to="/returns/1">Gold Price Returns</Link></li>
+            <li><Link to="/returns/2">Silver Price Returns</Link></li>
+          </ul>
+        </div>
+      )}
+
+      {/* Show error message if data fetch fails */}
       {error && <div>{`Error: ${error}`}</div>}
-      <ul>
-        {securities.length > 0 ? (
-          securities.map((security) => (
-            <li key={security.security_id}>
-              <Link to={`/stockmarketreturn/${security.security_id}`}>
-                {security.security_long_name}
-              </Link>
-            </li>
-          ))
-        ) : (
-          <li>No stock markets available.</li>
-        )}
-      </ul>
+
+      {/* Show the list of Stock Markets when "Stock Markets" is selected */}
+      {selectedOption === 'stock-markets' && (
+        <div className="securities-list">
+          {securities.length > 0 ? (
+            <ul>
+              {securities.map((security) => (
+                <li key={security.security_id}>
+                  <Link to={`/stockmarketreturn/${security.security_id}`}>
+                    {security.security_long_name}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <div>No stock markets available.</div>
+          )}
+        </div>
+      )}
     </div>
   );
 };
