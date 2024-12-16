@@ -34,6 +34,16 @@ function Currencies() {
     navigate(`/currencies/${id}`);
   };
 
+  // Function to format the price to two decimal places
+  const formatPrice = (price) => {
+    return price.toFixed(2);
+  };
+
+  // Function to determine the color based on the percentage change
+  const getChangeColor = (percentChange) => {
+    return percentChange < 0 ? 'red' : 'green';
+  };
+
   return (
     <div className='currencies-container'>
       <div className='search-container'>
@@ -58,8 +68,10 @@ function Currencies() {
           {filteredCurrencies.map(currency => (
             <tr key={currency.security_id} onClick={() => handleRowClick(currency.security_id)}>
               <td>{currency.security_long_name}</td>
-              <td>{currency.latest_price}</td>
-              <td>{currency.percent_change}%</td>
+              <td>{formatPrice(currency.latest_price)}</td>
+              <td className={getChangeColor(currency.percent_change)}>
+                {currency.percent_change}%
+              </td>
             </tr>
           ))}
         </tbody>
