@@ -1,135 +1,200 @@
-/* Base styles for the returns container */
-.returns-container {
-  background-color: #f4f4f4;
-  padding: 30px 50px;
-  border-radius: 8px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-  margin-top: 40px;
+.securities-container {
+  background-color: #f4f4f4; /* Light gray background */
+  padding: 0 15%; /* Align container padding with border */
+  padding-bottom: 10px;
   font-family: "Montserrat", sans-serif;
 }
 
-/* Header Styling */
-.returns-header {
-  font-size: 2.5rem;
-  font-weight: 600;
-  color: #333;
+.security-header {
   text-align: center;
-  margin-bottom: 30px;
-}
-
-.returns-title {
-  font-size: 2.8rem;
-  font-weight: 700;
-  color: #333;
-}
-
-.returns-links ul {
-  padding: 0;
-  list-style: none;
-  display: flex;
-  justify-content: center;
-}
-
-.returns-links ul li {
-  margin: 0 15px;
-}
-
-.returns-link {
-  color: #00ffb3;
-  text-decoration: none;
-  font-size: 1.2rem;
-}
-
-.returns-link:hover {
-  color: #00796b;
-}
-
-/* Dropdown for selecting between options */
-.returns-dropdown-container {
-  display: flex;
-  justify-content: center;
-  margin-bottom: 30px;
-}
-
-.returns-dropdown {
-  width: 250px;
+  margin-top: 0;
   padding: 10px;
-  font-size: 1.1rem;
-  border: 1px solid #00ffb3;
-  border-radius: 4px;
-  background-color: #fff;
-  color: #333;
-  font-weight: 500;
-  outline: none;
-  transition: all 0.3s ease;
+  font-size: 32px;
+  color: #333; /* Darker text for better contrast */
 }
 
-.returns-dropdown:focus {
-  border-color: #00796b;
-  box-shadow: 0 0 5px rgba(0, 179, 150, 0.7);
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 0 auto; /* Center the table */
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1); /* Light shadow for depth */
+  background-color: #fff; /* White background for the table */
+  border-radius: 8px; /* Rounded corners for a more modern look */
 }
 
-/* Styling for Stock Markets Section */
-.securities-section {
-  margin-top: 40px;
+th, td {
+  padding: 12px 15px; /* Same padding for th and td */
+  text-align: left;
+  font-size: 14px; /* Slightly smaller font size for a more professional look */
+  border-bottom: 1px solid #e0e0e0; /* Lighter border for subtle separation */
+  color: #333; /* Darker text for readability */
 }
 
-.securities-heading {
-  font-size: 2rem;
+th {
   font-weight: 600;
-  color: #333;
-  text-align: center;
-  margin-bottom: 20px;
+  background-color: #f9f9f9;
+  padding-left: 20px;
 }
 
-.loading-message, .error-message, .no-securities-message {
-  text-align: center;
-  font-size: 1.2rem;
-  color: #666;
+tbody tr {
+  transition: background-color 0.3s ease;
+  background-color: #ffffff; /* Light background color */
 }
 
-/* List of securities */
-.securities-list {
+tbody tr:nth-child(even) {
+  background-color: #f9f9f9; /* Subtle alternating row colors */
+}
+
+tbody tr:hover {
+  background-color: #f0f0f0; /* Subtle hover effect */
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+/* Hover Effect: Security Long Name, Security Short Name, and Latest Price change to green */
+tbody tr:hover td.security-long-name,
+tbody tr:hover td.security-short-name,
+tbody tr:hover td.latest-price {
+  color: #00ffb3; /* Green color */
+}
+
+/* No hover effect for percentage change column */
+tbody tr:hover td.percent-change {
+  color: inherit; /* Do not change color */
+}
+
+/* Styling for the percentage change column */
+.positive-change {
+  color: #1d9e4f; /* Positive green */
+}
+
+.negative-change {
+  color: #e74c3c; /* Negative red */
+}
+
+/* Specific column classes for alignment */
+.security-long-name, .security-short-name, .latest-price, .percent-change {
+  width: 25%; /* Adjust column widths */
+}
+
+/* Adjust widths for columns */
+.long-name-header {
+  width: 40%; /* Long name column should be the widest */
+}
+
+th, td {
+  width: 20%; /* Security Short Name, Latest Price, and Percent Change columns should all be the same width */
+}
+
+.back-button {
+  text-align: center;
   margin-top: 20px;
 }
 
-.securities-ul {
-  padding: 0;
-  list-style: none;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.security-item {
-  margin: 10px 0;
-}
-
-.security-link {
-  color: #00796b;
-  font-size: 1.2rem;
+.back-button a {
+  color: #ffffff;
   text-decoration: none;
+  font-size: 1rem;
+  background-color: #00ffb3;
+  padding: 10px 20px;
+  border-radius: 4px;
 }
 
-.security-link:hover {
-  color: #00ffb3;
+.search-container {
+  margin-bottom: 20px;
+  padding-top: 30px;
+}
+
+.search-input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #00ffb3;
+  background-color: #f9f9f9;
+  border-radius: 4px;
+  font-size: 16px;
+  color: #333;
+}
+
+.securities-table td:nth-child(1) {
+  width: 2%;
+}
+
+.back-button-container {
+  display: flex;
+  justify-content: center; /* Center the button horizontally */
+  margin-top: 20px; /* Add some space above the button */
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+.back-button {
+  background-color: #00ffb3;
+  color: #151213 !important;
+  padding: 10px 20px;
+  border-radius: 4px;
+  text-decoration: none;
+  display: block;
+  width: 100%; /* Make it the same width as the table */
+  text-align: center; /* Center the text inside the button */
+}
+
+.back-button a {
+  color: #151213 !important;
+  text-decoration: none;
+  font-family: "Montserrat", sans-serif;
+  font-size: 1rem;
 }
 
 /* Responsive styles */
 @media (max-width: 600px) {
-  .returns-container {
-    padding: 20px;
+  .securities-container {
+    padding: 0 5%; /* Reduce padding for smaller screens */
+    padding-bottom: 10px;
   }
 
-  .returns-header {
-    font-size: 1.8rem;
+  .security-header {
+    font-size: 24px; /* Reduce font size */
+    padding: 5px; /* Reduce padding */
   }
 
-  .returns-title {
-    font-size: 2rem;
+  table {
+    width: 100%;
+    font-size: 12px; /* Reduce font size */
   }
 
-  .returns-dropdown {
-    width: 200px;
+  th, td {
+    padding: 5px; /* Reduce padding */
+    font-size: 12px; /* Reduce font size */
+    text-align: center !important;
+  }
+
+  .search-container {
+    margin-bottom: 10px; /* Reduce margin */
+    padding-top: 10px; /* Reduce padding */
+  }
+
+  .search-input {
+    font-size: 14px; /* Adjust font size */
+    padding: 5px; /* Adjust padding */
+  }
+
+  .back-button-container {
+    margin-top: 10px; /* Adjust margin */
+    margin-bottom: 10px; /* Adjust margin */
+  }
+
+  .back-button {
+    font-size: 14px; /* Adjust font size */
+    padding: 5px 10px; /* Adjust padding */
+  }
+
+  .back-button a {
+    font-size: 14px; /* Adjust font size */
+  }
+
+  /* Hide unnecessary columns on phone screens */
+  th.id-header, th:nth-child(4),
+  td:nth-child(1), td:nth-child(4) {
+    display: none;
   }
 }
