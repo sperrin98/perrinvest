@@ -21,7 +21,8 @@ import Register from './components/Register';
 import Returns from './components/Returns';
 import GoldReturns from './components/GoldReturns';  
 import SilverReturns from './components/SilverReturns';  
-import StockMarketReturn from './components/StockMarketReturn';  // Import StockMarketReturn component
+import StockMarketReturn from './components/StockMarketReturn';
+import AnnualReturns from './components/AnnualReturns';  {/* Import the new AnnualReturns component */}
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -57,7 +58,8 @@ function App() {
         <Route path="/returns" element={<Returns />} />
         <Route path="/returns/1" element={<GoldReturns />} />  
         <Route path="/returns/2" element={<SilverReturns />} />
-        <Route path="/stockmarketreturn/:id" element={<StockMarketReturn />} />  {/* New route for StockMarketReturn */}
+        <Route path="/stockmarketreturn/:id" element={<StockMarketReturn />} />  
+        <Route path="/annualreturns" element={<AnnualReturns />} />  {/* Added the route for AnnualReturns */}
       </Routes>
     </Router>
   );

@@ -35,7 +35,7 @@ const Returns = () => {
     <div className="returns-container">
       <h1>Returns of Major Assets</h1>
 
-      {/* Dropdown for selecting either Currencies or Stock Markets */}
+      {/* Dropdown for selecting either Currencies, Stock Markets or Annual Returns */}
       <div className="dropdown-container">
         <label htmlFor="securities-select" className="dropdown-label">Select Option:</label>
         <select
@@ -46,6 +46,7 @@ const Returns = () => {
           <option value="">Select...</option>
           <option value="currencies">Currencies Priced in Gold/Silver</option>
           <option value="stock-markets">Stock Markets Priced in Gold</option>
+          <option value="annual-returns">Annual Returns</option> {/* New option */}
         </select>
       </div>
 
@@ -78,6 +79,13 @@ const Returns = () => {
           ) : (
             <div>No stock markets available.</div>
           )}
+        </div>
+      )}
+
+      {/* Show link for Annual Returns */}
+      {selectedOption === 'annual-returns' && (
+        <div className="annual-returns-link">
+          <Link to="/annualreturns">Go to Annual Returns</Link>
         </div>
       )}
     </div>
