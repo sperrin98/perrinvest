@@ -25,8 +25,9 @@ from app.db_utils import (
     fetch_gld_currency_returns,
     fetch_slv_currency_returns,
     fetch_stock_markets,
-    divide_stock_market_by_gold
-)   
+    divide_stock_market_by_gold,
+    get_annual_returns
+    )   
 import yfinance as yf
 from datetime import datetime, timedelta  # Include datetime and timedelta
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -350,6 +351,14 @@ def get_silver_returns():
             return jsonify({"error": "No data found"}), 404  
     except Exception as e:
         print(f"Error fetching Silver returns: {e}")
+        return jsonify({'error': str(e)}), 500
+    
+@main.route('/annualreturns', methods=['GET'])
+def annual_returns():
+    try:
+        data = get_annual_returns()  # Fetch data from stored procedure
+        return jsonify(data)  # Return the data as JSON
+    except Exception as e:
         return jsonify({'error': str(e)}), 500
     
 @main.route('/securities/asset-class-2', methods=['GET'])
