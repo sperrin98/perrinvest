@@ -26,7 +26,8 @@ from app.db_utils import (
     fetch_slv_currency_returns,
     fetch_stock_markets,
     divide_stock_market_by_gold,
-    get_annual_returns
+    get_annual_returns,
+    get_nw_hpi
     )   
 import yfinance as yf
 from datetime import datetime, timedelta  # Include datetime and timedelta
@@ -387,6 +388,20 @@ def get_stock_market_return_by_security(security_id):
     except Exception as e:
         print(f"Error fetching stock market return for security_id {security_id}: {e}")
         return jsonify({'error': str(e)}), 500
+
+@main.route('/nw-hpi/<int:eco_data_point_id>', methods=['GET'])
+def nw_hpi(eco_data_point_id):
+    """
+    Route to fetch NW HPI data for a given eco_data_point_id.
+    """
+    if eco_data_point_id < 1 or eco_data_point_id > 14:
+        return jsonify({'error': 'Invalid eco_data_point_id. Must be between 1 and 14.'}), 400
+    
+    data = get_nw_hpi(eco_data_point_id)
+    if not data:
+        return jsonify({'error': 'No data found or an error occurred.'}), 404
+    
+    return jsonify(data)
     
 
 @main.route('/api/crypto-prices', methods=['GET'])
