@@ -482,3 +482,17 @@ def fetch_securities_with_prices():
         cursor.close()
         conn.close()
 
+
+def get_annual_returns():
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+
+    cursor.callproc('calculate_average_annual_returns') 
+
+    cursor.execute("SELECT * FROM annual_returns")  
+    results = cursor.fetchall()
+
+    cursor.close()
+    conn.close()
+
+    return results
