@@ -22,7 +22,8 @@ import Returns from './components/Returns';
 import GoldReturns from './components/GoldReturns';  
 import SilverReturns from './components/SilverReturns';  
 import StockMarketReturn from './components/StockMarketReturn';
-import AnnualReturns from './components/AnnualReturns';  {/* Import the new AnnualReturns component */}
+import AnnualReturns from './components/AnnualReturns';
+import NwHpi from './components/NwHpi'; 
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -59,7 +60,8 @@ function App() {
         <Route path="/returns/1" element={<GoldReturns />} />  
         <Route path="/returns/2" element={<SilverReturns />} />
         <Route path="/stockmarketreturn/:id" element={<StockMarketReturn />} />  
-        <Route path="/annualreturns" element={<AnnualReturns />} />  {/* Added the route for AnnualReturns */}
+        <Route path="/annualreturns" element={<AnnualReturns />} />
+        <Route path="/nw-hpi/:id" element={<NwHpi />} /> 
       </Routes>
     </Router>
   );
