@@ -496,3 +496,28 @@ def get_annual_returns():
     conn.close()
 
     return results
+
+def get_nw_hpi(eco_data_point_id):
+    """
+    Fetches Nationwide House Price Index (NW HPI) data for a given ID.
+    """
+    connection = None
+    try:
+        connection = get_db_connection()  # Reuse your existing connection function
+        cursor = connection.cursor(dictionary=True)
+        
+        # Call the stored procedure
+        cursor.callproc('calculate_gold_hpi_indexed', [eco_data_point_id])
+        
+        # Fetch results
+        results = []
+        for result in cursor.stored_results():
+            results = result.fetchall()
+        
+        return results
+    except Exception as e:
+        print(f"Error fetching NW HPI data: {e}")
+        return []
+    finally:
+        if connection:
+            connection.close()
