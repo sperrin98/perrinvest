@@ -27,7 +27,8 @@ from app.db_utils import (
     fetch_stock_markets,
     divide_stock_market_by_gold,
     get_annual_returns,
-    get_nw_hpi
+    get_nw_hpi,
+    fetch_market_leagues
     )   
 import yfinance as yf
 from datetime import datetime, timedelta  # Include datetime and timedelta
@@ -402,7 +403,15 @@ def nw_hpi(eco_data_point_id):
         return jsonify({'error': 'No data found or an error occurred.'}), 404
     
     return jsonify(data)
-    
+
+@main.route('/market_leagues')
+def get_market_leagues():
+    try:
+        market_leagues = fetch_market_leagues()  # Correct function call to fetch market leagues
+        return jsonify(market_leagues)
+    except Exception as e:
+        print(f"Error fetching market leagues: {e}")
+        return jsonify({'error': str(e)}), 500
 
 @main.route('/api/crypto-prices', methods=['GET'])
 def get_crypto_prices():
