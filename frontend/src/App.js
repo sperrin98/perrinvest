@@ -24,6 +24,7 @@ import SilverReturns from './components/SilverReturns';
 import StockMarketReturn from './components/StockMarketReturn';
 import AnnualReturns from './components/AnnualReturns';
 import NwHpi from './components/NwHpi'; 
+import MarketLeagues from './components/MarketLeagues';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -61,7 +62,8 @@ function App() {
         <Route path="/returns/2" element={<SilverReturns />} />
         <Route path="/stockmarketreturn/:id" element={<StockMarketReturn />} />  
         <Route path="/annualreturns" element={<AnnualReturns />} />
-        <Route path="/nw-hpi/:id" element={<NwHpi />} /> 
+        <Route path="/nw-hpi/:id" element={<NwHpi />} />
+        <Route path="/market-leagues" element={<MarketLeagues />} />
       </Routes>
     </Router>
   );

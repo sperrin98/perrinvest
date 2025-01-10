@@ -521,3 +521,15 @@ def get_nw_hpi(eco_data_point_id):
     finally:
         if connection:
             connection.close()
+
+def fetch_market_leagues():
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    query = "SELECT * FROM market_leagues"
+    print("Executing query:", query)  # Debugging line
+    cursor.execute(query)
+    rows = cursor.fetchall()
+    print("Fetched rows:", rows)  # Debugging line
+    cursor.close()
+    conn.close()
+    return rows
