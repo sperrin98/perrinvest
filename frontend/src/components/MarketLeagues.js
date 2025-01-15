@@ -44,8 +44,16 @@ const MarketLeagues = () => {
       const date = getPreviousTradingDay(); // Fetch previous trading day dynamically
       console.log(`Fetching league table for league ID: ${leagueId} on date: ${date}`);
       const response = await axios.get(`${apiUrl}/market_league_table/${leagueId}/${date}`);
+      
+      // Log the response data to check if it contains the right values
       console.log('Fetched league table:', response.data);
-      setLeagueTable(response.data);
+      
+      if (response.data && response.data.length > 0) {
+        setLeagueTable(response.data);
+      } else {
+        console.log('No data returned for the league table');
+      }
+
       setSelectedLeagueId(leagueId);
     } catch (error) {
       console.error('Error fetching league table:', error);
@@ -71,15 +79,34 @@ const MarketLeagues = () => {
       {selectedLeagueId && (
         <div>
           <h2>League Table for League ID: {selectedLeagueId}</h2>
-          <ul>
-            {leagueTable.length > 0 ? (
-              leagueTable.map((row, index) => (
-                <li key={index}>{JSON.stringify(row)}</li>
-              ))
-            ) : (
-              <p>No league data available.</p>
-            )}
-          </ul>
+          <table border="1" cellPadding="10">
+            <thead>
+              <tr>
+                <th>Security</th>
+                <th>Price</th>
+                <th>Daily Move</th>
+                <th>Score</th>
+                <th>Relative Momentum</th>
+              </tr>
+            </thead>
+            <tbody>
+              {leagueTable.length > 0 ? (
+                leagueTable.map((row, index) => (
+                  <tr key={index}>
+                    <td>{row[0]}</td> {/* Security */}
+                    <td>{row[1]}</td> {/* Price */}
+                    <td>{row[2]}</td> {/* Daily Move */}
+                    <td>{row[3]}</td> {/* Score */}
+                    <td>{row[4]}</td> {/* Relative Momentum */}
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="5">No league data available.</td>
+                </tr>
+              )}
+            </tbody>
+          </table>
         </div>
       )}
     </div>
