@@ -1,25 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import './MarketLeagues.css'; // Importing the CSS file
 
 const MarketLeagues = () => {
   const [marketLeagues, setMarketLeagues] = useState([]);
   const [leagueTable, setLeagueTable] = useState([]);
   const [selectedLeagueId, setSelectedLeagueId] = useState(null);
-
-  // Calculate the previous trading day (excluding weekends)
-  const getPreviousTradingDay = () => {
-    const today = new Date();
-    let previousDay = new Date(today.setDate(today.getDate() - 1));
-
-    // Adjust for weekends
-    if (previousDay.getDay() === 0) {
-      previousDay.setDate(previousDay.getDate() - 2); // Sunday -> Friday
-    } else if (previousDay.getDay() === 6) {
-      previousDay.setDate(previousDay.getDate() - 1); // Saturday -> Friday
-    }
-
-    return previousDay.toISOString().split('T')[0];
-  };
 
   useEffect(() => {
     // Fetch market leagues when the component mounts
@@ -41,19 +27,10 @@ const MarketLeagues = () => {
   const fetchLeagueTable = async (leagueId) => {
     try {
       const apiUrl = process.env.REACT_APP_API_URL;
-      const date = getPreviousTradingDay(); // Fetch previous trading day dynamically
-      console.log(`Fetching league table for league ID: ${leagueId} on date: ${date}`);
+      const date = "2025-01-13";  // Set the date for the league table
       const response = await axios.get(`${apiUrl}/market_league_table/${leagueId}/${date}`);
-      
-      // Log the response data to check if it contains the right values
       console.log('Fetched league table:', response.data);
-      
-      if (response.data && response.data.length > 0) {
-        setLeagueTable(response.data);
-      } else {
-        console.log('No data returned for the league table');
-      }
-
+      setLeagueTable(response.data);
       setSelectedLeagueId(leagueId);
     } catch (error) {
       console.error('Error fetching league table:', error);
@@ -61,54 +38,63 @@ const MarketLeagues = () => {
   };
 
   return (
-    <div>
-      <h1>Market Leagues</h1>
-      <ul>
-        {marketLeagues.length > 0 ? (
-          marketLeagues.map((league) => (
-            <li key={league[0]} onClick={() => fetchLeagueTable(league[0])}>
-              {league[1]}
-            </li>
-          ))
-        ) : (
-          <p>No market leagues available.</p>
-        )}
-      </ul>
+    <div className="market-league-container">
+      {/* Market Leagues List on the Left */}
+      <div className="market-league-list-container">
+        <h1>Market Leagues</h1>
+        <ul className="market-league-list">
+          {marketLeagues.length > 0 ? (
+            marketLeagues.map((league) => (
+              <li
+                key={league[0]}
+                onClick={() => fetchLeagueTable(league[0])}
+                className="market-league-item"
+              >
+                {league[1]}
+              </li>
+            ))
+          ) : (
+            <p>No market leagues available.</p>
+          )}
+        </ul>
+      </div>
 
-      {/* Display league table for selected league */}
-      {selectedLeagueId && (
-        <div>
-          <h2>League Table for League ID: {selectedLeagueId}</h2>
-          <table border="1" cellPadding="10">
-            <thead>
-              <tr>
-                <th>Security</th>
-                <th>Price</th>
-                <th>Daily Move</th>
-                <th>Score</th>
-                <th>Relative Momentum</th>
-              </tr>
-            </thead>
-            <tbody>
-              {leagueTable.length > 0 ? (
-                leagueTable.map((row, index) => (
-                  <tr key={index}>
-                    <td>{row[0]}</td> {/* Security */}
-                    <td>{row[1]}</td> {/* Price */}
-                    <td>{row[2]}</td> {/* Daily Move */}
-                    <td>{row[3]}</td> {/* Score */}
-                    <td>{row[4]}</td> {/* Relative Momentum */}
-                  </tr>
-                ))
-              ) : (
+      {/* League Table on the Right */}
+      <div className="league-table-container">
+        {selectedLeagueId && (
+          <div>
+            <h2>League Table for League ID: {selectedLeagueId}</h2>
+            <table className="league-table">
+              <thead>
                 <tr>
-                  <td colSpan="5">No league data available.</td>
+                  <th>Security</th>
+                  <th>Price</th>
+                  <th>Daily Move</th>
+                  <th>Score</th>
+                  <th>Relative Momentum</th>
                 </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
-      )}
+              </thead>
+              <tbody>
+                {leagueTable.length > 0 ? (
+                  leagueTable.map((row, index) => (
+                    <tr key={index}>
+                      <td>{row[0]}</td> {/* Security */}
+                      <td>{row[1]}</td> {/* Price */}
+                      <td>{row[2]}</td> {/* Daily Move */}
+                      <td>{row[3]}</td> {/* Score */}
+                      <td>{row[4]}</td> {/* Relative Momentum */}
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan="5">No data available.</td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
     </div>
   );
 };

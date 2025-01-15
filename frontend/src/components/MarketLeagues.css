@@ -1,0 +1,75 @@
+/* MarketLeagues.css */
+
+/* Container for the market leagues */
+.market-league-container {
+    margin-top: 100px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 0 30px;  /* Add padding on the left and right to create space */
+  }
+  
+  /* Style for the Market Leagues list on the left */
+  .market-league-list-container {
+    width: 30%;  /* Limit the width to 30% */
+    padding-right: 20px;  /* Add space between the list and the table */
+  }
+  
+  /* Style the list of market leagues */
+  .market-league-list {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .market-league-item {
+    cursor: pointer;
+    padding: 10px;
+    background-color: #f0f0f0;
+    margin: 5px 0;
+    border-radius: 5px;
+    transition: all 0.3s ease;
+  }
+  
+  .market-league-item:hover {
+    background-color: #d6d6d6; /* Hover effect for a clickable feel */
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1); /* Add shadow for click effect */
+  }
+  
+  /* Style for the League Table on the right */
+  .league-table-container {
+    width: 65%;  /* Limit the table to 65% of the container width */
+    padding-left: 20px;  /* Add space between the table and the list */
+  }
+  
+  /* Style the league table */
+  .league-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 30px;
+  }
+  
+  .league-table th,
+  .league-table td {
+    padding: 10px;
+    text-align: left;
+    border: 1px solid #ddd;
+  }
+  
+  .league-table th {
+    background-color: #f0f0f0;
+    font-weight: bold;
+  }
+  
+  .league-table tr:nth-child(even) {
+    background-color: #f9f9f9;
+  }
+  
+  .league-table tr:hover {
+    background-color: #e0e0e0;
+  }
+  
+  /* Center the header */
+  h1 {
+    text-align: center;
+  }
+  
