@@ -533,3 +533,28 @@ def fetch_market_leagues():
     cursor.close()
     conn.close()
     return rows
+
+def fetch_market_league_table(league_id, date):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    try:
+        print(f"Calling stored procedure: market_league_table({league_id}, '{date}')")
+        
+        # Call the stored procedure
+        cursor.callproc('market_league_table', [league_id, date])
+        
+        # Fetch results from the procedure
+        results = []
+        for result in cursor.stored_results():
+            results = result.fetchall()
+            print(f"Stored procedure returned: {results}")
+        
+        cursor.close()
+        conn.close()
+        return results
+    except Exception as e:
+        print(f"Error executing stored procedure: {e}")
+        cursor.close()
+        conn.close()
+        return []

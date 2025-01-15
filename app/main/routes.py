@@ -28,7 +28,8 @@ from app.db_utils import (
     divide_stock_market_by_gold,
     get_annual_returns,
     get_nw_hpi,
-    fetch_market_leagues
+    fetch_market_leagues,
+    fetch_market_league_table,
     )   
 import yfinance as yf
 from datetime import datetime, timedelta  # Include datetime and timedelta
@@ -412,6 +413,25 @@ def get_market_leagues():
     except Exception as e:
         print(f"Error fetching market leagues: {e}")
         return jsonify({'error': str(e)}), 500
+    
+@main.route('/market_league_table/<int:league_id>/<string:date>', methods=['GET'])
+def get_market_league_table(league_id, date):
+    try:
+        print(f"Fetching league table for league ID: {league_id} on date: {date}")
+        
+        # Call the stored procedure through db_utils
+        league_table = fetch_market_league_table(league_id, date)
+        
+        print(f"Fetched league table: {league_table}")
+        
+        if league_table:
+            return jsonify(league_table), 200
+        else:
+            return jsonify({'error': 'No data found'}), 404
+    except Exception as e:
+        print(f"Error fetching league table: {e}")
+        return jsonify({'error': str(e)}), 500
+
 
 @main.route('/api/crypto-prices', methods=['GET'])
 def get_crypto_prices():
