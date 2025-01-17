@@ -558,3 +558,45 @@ def fetch_market_league_table(league_id, date):
         cursor.close()
         conn.close()
         return []
+
+def fetch_market_league_constituents(ml_id):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    try:
+        query = """
+            SELECT constituent_id, security_long_name
+            FROM market_league_constituents c
+            JOIN securities s ON s.security_id = c.security_id
+            WHERE market_league_id = %s
+            ORDER BY security_long_name
+        """
+        cursor.execute(query, (ml_id,))
+        results = cursor.fetchall()
+        cursor.close()
+        conn.close()
+        return results
+    except Exception as e:
+        print(f"Error fetching market league constituents: {e}")
+        cursor.close()
+        conn.close()
+        return []
+
+def fetch_market_league_data_by_constituent_id(constituent_id):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    try:
+        cursor.callproc('get_market_league_data_by_constituent_id', [constituent_id])
+        
+        results = []
+        for result in cursor.stored_results():
+            results = result.fetchall()
+
+        cursor.close()
+        conn.close()
+        return results
+    except Exception as e:
+        print(f"Error fetching market league data: {e}")
+        cursor.close()
+        conn.close()
+        return []
+
