@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import DatePicker from 'react-datepicker';
+import { Line } from 'react-chartjs-2';
 import 'react-datepicker/dist/react-datepicker.css';
 import './MarketLeagues.css';
 
@@ -13,7 +14,6 @@ const MarketLeagues = () => {
   const [errorMessage, setErrorMessage] = useState('');
   const [constituentData, setConstituentData] = useState([]);
 
-  // Fetch market leagues when the component mounts
   useEffect(() => {
     const fetchMarketLeagues = async () => {
       try {
@@ -29,7 +29,6 @@ const MarketLeagues = () => {
     fetchMarketLeagues();
   }, []);
 
-  // Fetch league table data for selected league and date
   const fetchLeagueTable = async (leagueId, leagueName, date) => {
     try {
       const apiUrl = process.env.REACT_APP_API_URL;
@@ -38,7 +37,7 @@ const MarketLeagues = () => {
       setLeagueTable(response.data);
       setSelectedLeagueId(leagueId);
       setSelectedLeagueName(leagueName);
-      setConstituentData([]); // Clear previous constituent data
+      setConstituentData([]);
       setErrorMessage('');
     } catch (error) {
       console.error('Error fetching league table:', error);
@@ -46,7 +45,6 @@ const MarketLeagues = () => {
     }
   };
 
-  // Fetch constituent data when a row is clicked
   const fetchConstituentData = async (constituentId) => {
     try {
       const apiUrl = process.env.REACT_APP_API_URL;
@@ -64,12 +62,62 @@ const MarketLeagues = () => {
     }
   };
 
-  // Handle date change from the date picker
   const handleDateChange = (date) => {
     setSelectedDate(date);
     if (selectedLeagueId) {
       fetchLeagueTable(selectedLeagueId, selectedLeagueName, date);
     }
+  };
+
+  // Prepare data for the line graph
+  const lineChartData = {
+    labels: constituentData.map((row) => new Date(row[0]).toISOString().split('T')[0]), // Format dates as YYYY-MM-DD
+    datasets: [
+      {
+        label: 'Relative Index',
+        data: constituentData.map((row) => row[1]),
+        borderColor: 'rgba(75,192,192,1)',
+        fill: false,
+        pointRadius: 1, // Smaller points
+      },
+      {
+        label: 'Short EMA',
+        data: constituentData.map((row) => row[2]),
+        borderColor: 'rgba(153,102,255,1)',
+        fill: false,
+        pointRadius: 1, // Smaller points
+      },
+      {
+        label: 'Long EMA',
+        data: constituentData.map((row) => row[3]),
+        borderColor: 'rgba(255,159,64,1)',
+        fill: false,
+        pointRadius: 1, // Smaller points
+      },
+    ],
+  };
+
+  const lineChartOptions = {
+    responsive: true,
+    plugins: {
+      legend: {
+        position: 'top',
+      },
+    },
+    scales: {
+      x: {
+        title: {
+          display: true,
+          text: 'Date',
+        },
+      },
+      y: {
+        title: {
+          display: true,
+          text: 'Values',
+        },
+      },
+    },
   };
 
   return (
@@ -92,7 +140,6 @@ const MarketLeagues = () => {
           )}
         </ul>
 
-        {/* Date picker */}
         <div className="date-picker-container">
           <label htmlFor="date-picker">Select Date: </label>
           <DatePicker
@@ -105,7 +152,6 @@ const MarketLeagues = () => {
         </div>
       </div>
 
-      {/* Display league table for selected league */}
       {selectedLeagueId && (
         <div className="league-table-container">
           <h2>League Table for {selectedLeagueName}</h2>
@@ -126,11 +172,11 @@ const MarketLeagues = () => {
                     key={index}
                     onClick={() => fetchConstituentData(row[0])} // Fetch constituent data
                   >
-                    <td>{row[1]}</td> {/* Security name */}
-                    <td>{row[2]}</td> {/* Price */}
-                    <td>{row[3]}</td> {/* Daily Move */}
-                    <td>{row[4]}</td> {/* Score */}
-                    <td>{row[5]}</td> {/* Relative Momentum */}
+                    <td>{row[1]}</td>
+                    <td>{row[2]}</td>
+                    <td>{row[3]}</td>
+                    <td>{row[4]}</td>
+                    <td>{row[5]}</td>
                   </tr>
                 ))
               ) : (
@@ -139,32 +185,10 @@ const MarketLeagues = () => {
             </tbody>
           </table>
 
-          {/* Display constituent data below the league table */}
           {constituentData.length > 0 && (
             <div className="constituent-data-container">
               <h3>Constituent Data</h3>
-              <table className="constituent-table">
-                <thead>
-                  <tr>
-                    <th>Date</th>
-                    <th>Relative Index</th>
-                    <th>Short EMA</th>
-                    <th>Long EMA</th>
-                    <th>Score</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {constituentData.map((row, index) => (
-                    <tr key={index}>
-                      <td>{row[0]}</td>
-                      <td>{row[1]}</td>
-                      <td>{row[2]}</td>
-                      <td>{row[3]}</td>
-                      <td>{row[4]}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+              <Line data={lineChartData} options={lineChartOptions} />
             </div>
           )}
         </div>
