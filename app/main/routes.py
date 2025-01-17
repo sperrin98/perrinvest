@@ -30,6 +30,8 @@ from app.db_utils import (
     get_nw_hpi,
     fetch_market_leagues,
     fetch_market_league_table,
+    fetch_market_league_data_by_constituent_id,
+    fetch_market_league_constituents
     )   
 import yfinance as yf
 from datetime import datetime, timedelta  # Include datetime and timedelta
@@ -431,6 +433,24 @@ def get_market_league_table(league_id, date):
     except Exception as e:
         print(f"Error fetching league table: {e}")
         return jsonify({'error': str(e)}), 500
+    
+@main.route('/get_market_league_constituents/<int:ml_id>', methods=['GET'])
+def get_market_league_constituents(ml_id):
+    try:
+        data = fetch_market_league_constituents(ml_id)
+        return jsonify(data)
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
+@main.route('/get_market_league_data/<int:constituent_id>', methods=['GET'])
+def get_market_league_data(constituent_id):
+    try:
+        data = fetch_market_league_data_by_constituent_id(constituent_id)
+        return jsonify(data)
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
 
 
 @main.route('/api/crypto-prices', methods=['GET'])
