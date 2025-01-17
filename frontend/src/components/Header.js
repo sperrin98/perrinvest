@@ -53,6 +53,7 @@ const Header = ({ isLoggedIn, onLogout }) => {
           </li>
 
           <li><Link to="/correlations">Correlations</Link></li>
+          <li><Link to="/market-leagues">Market Leagues</Link></li>
 
           {isLoggedIn ? (
             <li>
