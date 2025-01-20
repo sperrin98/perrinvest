@@ -1,18 +1,62 @@
+/* General Container */
 .securities-container {
   background-color: #f4f4f4; /* Light gray background */
-  padding: 0 15%; /* Align container padding with border */
+  padding: 0 15%; /* Keep the existing padding */
   padding-bottom: 10px;
   font-family: "Montserrat", sans-serif;
+  margin-top: 100px; /* Ensure content is pushed below the navbar */
+  background-color: #f4f4f4; /* Ensure background matches */
+  position: relative; /* Ensures proper layout of child elements */
 }
 
-.security-header {
-  text-align: center;
-  margin-top: 0;
+/* Search and Filter Container (Side by side) */
+.search-filter-container {
+  margin-bottom: 20px;
+  padding-top: 30px;
+  display: flex; /* Flexbox layout for side by side */
+  justify-content: space-between; /* Spread items apart */
+  width: 100%; /* Full container width */
+}
+
+.sec-search-container {
+  width: 48%; /* Adjust search bar width */
+}
+
+.filter-container {
+  width: 48%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.filter-container label {
+  margin-right: 8px; /* Slight margin between label and dropdown */
+  font-size: 13px; /* Smaller font for label */
+  white-space: nowrap; /* Prevent text wrapping */
+}
+
+/* Search bar input */
+.sec-search-input {
+  width: 100%; /* Make the input take full width of its container */
   padding: 10px;
-  font-size: 32px;
-  color: #333; /* Darker text for better contrast */
+  border: 1px solid #00ffb3;
+  background-color: #f9f9f9;
+  border-radius: 4px;
+  font-size: 16px;
+  color: #333;
 }
 
+/* Asset Class Dropdown */
+#asset-class-filter {
+  width: 100%; /* Make dropdown take full width of its container */
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #00ffb3;
+  border-radius: 4px;
+  max-width: 100%; /* Prevent overflow */
+}
+
+/* Table Styling */
 table {
   width: 100%;
   border-collapse: collapse;
@@ -86,39 +130,7 @@ th, td {
   width: 20%; /* Security Short Name, Latest Price, and Percent Change columns should all be the same width */
 }
 
-.back-button {
-  text-align: center;
-  margin-top: 20px;
-}
-
-.back-button a {
-  color: #ffffff;
-  text-decoration: none;
-  font-size: 1rem;
-  background-color: #00ffb3;
-  padding: 10px 20px;
-  border-radius: 4px;
-}
-
-.search-container {
-  margin-bottom: 20px;
-  padding-top: 30px;
-}
-
-.search-input {
-  width: 100%;
-  padding: 10px;
-  border: 1px solid #00ffb3;
-  background-color: #f9f9f9;
-  border-radius: 4px;
-  font-size: 16px;
-  color: #333;
-}
-
-.securities-table td:nth-child(1) {
-  width: 2%;
-}
-
+/* Back Button Styling */
 .back-button-container {
   display: flex;
   justify-content: center; /* Center the button horizontally */
@@ -145,7 +157,7 @@ th, td {
   font-size: 1rem;
 }
 
-/* Responsive styles */
+/* Responsive Layout for Mobile Screens */
 @media (max-width: 600px) {
   .securities-container {
     padding: 0 5%; /* Reduce padding for smaller screens */
@@ -168,14 +180,22 @@ th, td {
     text-align: center !important;
   }
 
-  .search-container {
+  .search-filter-container {
     margin-bottom: 10px; /* Reduce margin */
     padding-top: 10px; /* Reduce padding */
+    flex-direction: column; /* Stack elements vertically on small screens */
+    align-items: stretch; /* Make them stretch to the container width */
   }
 
-  .search-input {
+  .sec-search-input {
     font-size: 14px; /* Adjust font size */
     padding: 5px; /* Adjust padding */
+    width: 100%; /* Full width */
+  }
+
+  #asset-class-filter {
+    font-size: 14px; /* Adjust font size */
+    width: 100%; /* Full width */
   }
 
   .back-button-container {
