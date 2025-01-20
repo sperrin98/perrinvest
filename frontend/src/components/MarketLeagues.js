@@ -78,21 +78,21 @@ const MarketLeagues = () => {
         data: constituentData.map((row) => row[1]),
         borderColor: 'rgba(75,192,192,1)',
         fill: false,
-        pointRadius: 1, // Smaller points
+        pointRadius: 0.5, // Smaller points
       },
       {
         label: 'Short EMA',
         data: constituentData.map((row) => row[2]),
         borderColor: 'rgba(153,102,255,1)',
         fill: false,
-        pointRadius: 1, // Smaller points
+        pointRadius: 0.5, // Smaller points
       },
       {
         label: 'Long EMA',
         data: constituentData.map((row) => row[3]),
         borderColor: 'rgba(255,159,64,1)',
         fill: false,
-        pointRadius: 1, // Smaller points
+        pointRadius: 0.5, // Smaller points
       },
     ],
   };

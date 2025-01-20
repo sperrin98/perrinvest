@@ -31,7 +31,8 @@ from app.db_utils import (
     fetch_market_leagues,
     fetch_market_league_table,
     fetch_market_league_data_by_constituent_id,
-    fetch_market_league_constituents
+    fetch_market_league_constituents,
+    fetch_asset_classes
     )   
 import yfinance as yf
 from datetime import datetime, timedelta  # Include datetime and timedelta
@@ -94,10 +95,19 @@ def login():
 @main.route('/securities')
 def get_securities():
     try:
-        securities = fetch_securities()  # Ensure this function returns a list of dictionaries or tuples
+        securities = fetch_securities()
         return jsonify(securities)
     except Exception as e:
         print(f"Error fetching securities: {e}")
+        return jsonify({'error': str(e)}), 500
+
+@main.route('/asset_classes')
+def get_asset_classes():
+    try:
+        asset_classes = fetch_asset_classes()
+        return jsonify(asset_classes)
+    except Exception as e:
+        print(f"Error fetching asset classes: {e}")
         return jsonify({'error': str(e)}), 500
 
 @main.route('/securities/<int:security_id>')
