@@ -37,7 +37,8 @@ def fetch_securities():
         s.security_long_name,
         s.security_short_name,
         ph.price AS latest_price,
-        ROUND((ph.price - prev_ph.price) / prev_ph.price * 100, 2) AS percent_change
+        ROUND((ph.price - prev_ph.price) / prev_ph.price * 100, 2) AS percent_change,
+        s.asset_class_id
     FROM securities s
     JOIN price_histories ph ON s.security_id = ph.security_id
     LEFT JOIN price_histories prev_ph 
@@ -46,14 +47,32 @@ def fetch_securities():
     WHERE ph.price_date = (SELECT MAX(price_date) FROM price_histories WHERE security_id = s.security_id)
     ORDER BY s.security_id;
     """
-    
     cursor.execute(query)
     rows = cursor.fetchall()
-    columns = [desc[0] for desc in cursor.description]
-    result = [dict(zip(columns, row)) for row in rows]
-    cursor.close()
-    conn.close()
-    return result
+    
+    return [
+        {
+            'security_id': row[0],
+            'security_long_name': row[1],
+            'security_short_name': row[2],
+            'latest_price': row[3],
+            'percent_change': row[4],
+            'asset_class_id': row[5]
+        }
+        for row in rows
+    ]
+
+def fetch_asset_classes():
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    
+    query = "SELECT asset_class_id, asse_class_name FROM asset_classes ORDER BY asse_class_name;"
+    cursor.execute(query)
+    rows = cursor.fetchall()
+    
+    return [{'asset_class_id': row[0], 'asset_class_name': row[1]} for row in rows]
+
+
 
 def get_security_id(security_name):
     conn = get_db_connection()
