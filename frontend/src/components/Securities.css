@@ -4,7 +4,7 @@
   padding: 0 15%; /* Keep the existing padding */
   padding-bottom: 10px;
   font-family: "Montserrat", sans-serif;
-  margin-top: 100px; /* Ensure content is pushed below the navbar */
+  margin-top: 70px; /* Ensure content is pushed below the navbar */
   background-color: #f4f4f4; /* Ensure background matches */
   position: relative; /* Ensures proper layout of child elements */
 }
