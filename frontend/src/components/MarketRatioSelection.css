@@ -27,8 +27,8 @@
 }
   
 select {
-    color: #00FFB3;
-    background-color: black;
+  color: gray;
+  background-color: white;
     border: 1px solid #00FFB3;
 }
   
