@@ -412,17 +412,17 @@ def get_user_by_email(email):
     if user:
         # Convert the tuple to a dictionary for easier access
         return {
-            'user_id': user[0],  # Assuming first column is user_id
-            'username': user[1],  # Assuming second column is username
-            'email': user[2],     # Assuming third column is email
-            'password': user[3]   # Assuming fourth column is password
+            'user_id': user[0],  
+            'username': user[1],  
+            'email': user[2],    
+            'password': user[3]   
         }
     return None
 
 def fetch_gld_currency_returns():
     conn = get_db_connection()  # Ensure this function works
     cursor = conn.cursor()
-    query = "CALL annual_gld_price_in_major_currencies()"  # Your stored procedure call
+    query = "CALL annual_gld_price_in_major_currencies()"  
     cursor.execute(query)
     rows = cursor.fetchall()
     columns = [desc[0] for desc in cursor.description]
