@@ -41,6 +41,15 @@ const Home = () => {
         <ChartCarousel />
       </div>
 
+      {/* New Securities Section */}
+      <div className="section section-securities">
+        <h1 className="securities-header">Securities</h1>
+        <div className='sec-button-container'>
+          <Link to="/securities" className='security-btn'>Securities</Link>
+          <Link to="/correlations" className='correlation-btn'>Correlate Securities</Link>
+        </div>
+      </div>
+
       <div className="section section3">
         <h1 className="home-header">Currencies</h1>
         <div className="button-container">
@@ -54,10 +63,11 @@ const Home = () => {
       </div>
 
       <div className="section section4">
-        <h1 className="market-ratio-home-header">Market Ratios</h1>
+        <h1 className="market-ratio-home-header">Leagues & Ratios</h1>
         <div className='button2-container'>
           <Link to="/market-ratios" className='market-ratio-button'>Market Ratios</Link>
           <Link to="/market-ratios/divide" className='compare-btn'>Compare Securities</Link>
+          <Link to="/market-leagues" className='league-btn'>Market Leagues</Link>
         </div>
         <div className="image-container2">
           <img src={marketImage} alt="Market" />

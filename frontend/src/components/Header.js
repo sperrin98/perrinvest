@@ -24,12 +24,21 @@ const Header = ({ isLoggedIn, onLogout }) => {
           ☰ Menu
         </button>
         <ul className={`nav-links ${menuOpen ? 'show' : ''}`}>
-          <li><Link to="/securities">Securities</Link></li>
-
+          {/* Dropdown for Securities */}
           <li className="dropdown">
-            <Link to="/market-ratios" className="dropbtn">Market Ratios</Link>
+            <Link to="/securities" className="dropbtn">Securities</Link>
             <div className="dropdown-content">
-              <Link to="/market-ratios">All Market Ratios</Link>
+              <Link to="/securities">All Securities</Link>
+              <Link to="/correlations">Correlations</Link>
+            </div>
+          </li>
+
+          {/* Dropdown for Leagues & Ratios */}
+          <li className="dropdown">
+            <Link to="/market-ratios" className="dropbtn">Leagues & Ratios</Link>
+            <div className="dropdown-content">
+              <Link to="/market-ratios">Market Ratios</Link>
+              <Link to="/market-leagues">Market Leagues</Link>
               <Link to="/market-ratios/divide">Compare Securities</Link>
             </div>
           </li>
@@ -39,10 +48,11 @@ const Header = ({ isLoggedIn, onLogout }) => {
             <Link to="/eco-data-points" className="dropbtn">Economical Data</Link>
             <div className="dropdown-content">
               <Link to="/eco-data-points">Data Points</Link>
-              <Link to="/returns">Returns</Link> {/* Link to the Returns page */}
+              <Link to="/returns">Returns</Link>
             </div>
           </li>
 
+          {/* Dropdown for Currencies */}
           <li className="dropdown">
             <Link to="/currencies" className="dropbtn">Currencies</Link>
             <div className="dropdown-content">
@@ -52,9 +62,7 @@ const Header = ({ isLoggedIn, onLogout }) => {
             </div>
           </li>
 
-          <li><Link to="/correlations">Correlations</Link></li>
-          <li><Link to="/market-leagues">Market Leagues</Link></li>
-
+          {/* Login / Logout Logic */}
           {isLoggedIn ? (
             <li>
               <Link to="#" className="dropbtn" onClick={handleLogout}>Sign Out</Link>
@@ -69,6 +77,7 @@ const Header = ({ isLoggedIn, onLogout }) => {
             </li>
           )}
         </ul>
+
       </nav>
     </header>
   );

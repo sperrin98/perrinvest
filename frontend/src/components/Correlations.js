@@ -70,8 +70,8 @@ const Correlations = () => {
         label: 'Correlation Value',
         data: correlations.map(correlation => correlation.correlation_value).reverse(),
         fill: false,
-        borderColor: 'rgb(0, 255, 179)',
-        pointBackgroundColor: 'rgb(0, 255, 179)',
+        borderColor: '#00796b',
+        pointBackgroundColor: '#00796b',
         tension: 0.2,
       },
     ],
@@ -102,36 +102,19 @@ const Correlations = () => {
 
   return (
     <div className="correlation-container">
-      <h2 className="correlation-title">Calculate Correlation</h2>
+      <h2 className="correlation-title">Correlation Analysis</h2>
       <form className="correlation-form" onSubmit={handleSubmit}>
         <div className="form-group">
           <label htmlFor="end-date">End Date:</label>
-          <input
-            type="date"
-            id="end-date"
-            value={endDate}
-            onChange={(e) => setEndDate(e.target.value)}
-            required
-          />
+          <input type="date" id="end-date" value={endDate} onChange={(e) => setEndDate(e.target.value)} required />
         </div>
         <div className="form-group">
-          <label htmlFor="period">Period (Number of D/W/M/Q/Ys):</label>
-          <input
-            type="number"
-            id="period"
-            value={period}
-            onChange={(e) => setPeriod(e.target.value)}
-            required
-          />
+          <label htmlFor="period">Period:</label>
+          <input type="number" id="period" value={period} onChange={(e) => setPeriod(e.target.value)} required />
         </div>
         <div className="form-group">
           <label htmlFor="timeframe-type">Timeframe Type:</label>
-          <select
-            id="timeframe-type"
-            value={timeframeType}
-            onChange={(e) => setTimeframeType(e.target.value)}
-            required
-          >
+          <select id="timeframe-type" value={timeframeType} onChange={(e) => setTimeframeType(e.target.value)} required>
             <option value="daily">Daily</option>
             <option value="weekly">Weekly</option>
             <option value="monthly">Monthly</option>
@@ -159,7 +142,7 @@ const Correlations = () => {
             ))}
           </select>
         </div>
-        <button className="correlation-button" type="submit">Calculate Correlation</button>
+        <button className="correlation-button" type="submit">Analyse Correlation</button>
       </form>
       {loading && <div className="loading">Loading...</div>}
       {error && <div className="error">Error: {error}</div>}
