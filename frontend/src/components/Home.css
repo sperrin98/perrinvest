@@ -111,7 +111,7 @@ body {
 }
 
 /* Button containers */
-.button-container, .button2-container {
+.button-container, .button2-container, .sec-button-container {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -124,13 +124,13 @@ body {
   top: calc(20% + 70px);
 }
 
-.button2-container {
+.button2-container, .sec-button-container {
   right: 20%;
   top: calc(20% + 70px);
 }
 
 /* Buttons */
-.currency-btn, .compare-btn, .crypto-btn, .market-ratio-button,  .security-btn, .correlation-btn {
+.currency-btn, .compare-btn, .crypto-btn, .market-ratio-button,  .security-btn, .correlation-btn, .league-btn {
   display: block;
   padding: 10px 25px;
   border: 1px solid #00FFB3;
@@ -143,7 +143,7 @@ body {
   text-decoration: none;
 }
 
-.currency-btn:hover, .compare-btn:hover, .crypto-btn:hover, .market-ratio-button:hover, .security-btn:hover, .correlation-btn:hover {
+.currency-btn:hover, .compare-btn:hover, .crypto-btn:hover, .market-ratio-button:hover, .security-btn:hover, .correlation-btn:hover, .league-btn:hover {
   background-color: #00FFB3;
   color: #151213;
   border: 1px solid #151213;
@@ -186,7 +186,19 @@ body {
   font-weight: 500;
   position: absolute;
   top: 25%;
-  right: 17%;
+  right: 20%;
+  margin-bottom: 20px;
+}
+
+.securities-header {
+  font-size: 50px;
+  color: #00FFB3;
+  text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3),
+              5px 5px 70px rgba(255, 255, 255, 0.5);
+  font-weight: 500;
+  position: absolute;
+  top: 25%;
+  right: 20%;
   margin-bottom: 20px;
 }
 
@@ -342,7 +354,8 @@ body {
   }
 }
 
-/* Adjust layout for desktop screens */
+/* Adjust layout for desktop */
+
 @media (min-width: 1024px) {
   body {
     font-size: 18px;
@@ -358,7 +371,7 @@ body {
   .market-ratio-home-header {
     font-size: 50px;
     top: 25%;
-    right: 17%;
+    right: 16%;
   }
 
   .button-container, .button2-container {
@@ -367,7 +380,7 @@ body {
     justify-content: flex-start; /* Align buttons to the start */
   }
 
-  .currency-btn, .compare-btn, .crypto-btn, .market-ratio-button {
+  .currency-btn, .compare-btn, .crypto-btn, .market-ratio-button, .securities-btn, .league-btn {
     width: 200px; /* Fixed width for buttons */
     margin: 10px; /* Adjust margin */
   }
