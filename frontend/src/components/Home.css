@@ -130,7 +130,7 @@ body {
 }
 
 /* Buttons */
-.currency-btn, .compare-btn, .crypto-btn, .market-ratio-button {
+.currency-btn, .compare-btn, .crypto-btn, .market-ratio-button,  .security-btn, .correlation-btn {
   display: block;
   padding: 10px 25px;
   border: 1px solid #00FFB3;
@@ -143,7 +143,7 @@ body {
   text-decoration: none;
 }
 
-.currency-btn:hover, .compare-btn:hover, .crypto-btn:hover, .market-ratio-button:hover {
+.currency-btn:hover, .compare-btn:hover, .crypto-btn:hover, .market-ratio-button:hover, .security-btn:hover, .correlation-btn:hover {
   background-color: #00FFB3;
   color: #151213;
   border: 1px solid #151213;
