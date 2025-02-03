@@ -1,20 +1,30 @@
 .correlation-container {
-    margin-top: 70px;
-    padding: 20px;
-    background-color: #f5f0f0;
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    max-width: 75%;
+    margin: 100px auto;
+    padding: 25px;
+    background: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    font-family: 'Inter', sans-serif;
 }
 
 .correlation-title {
     text-align: center;
-    color: #333;
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: #003366;
+    margin-bottom: 20px;
 }
 
 .correlation-form {
     display: flex;
     flex-direction: column;
     gap: 15px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
 }
 
 .form-group label {
@@ -29,6 +39,14 @@
     border: 1px solid #ccc;
     border-radius: 5px;
     font-size: 1rem;
+    background: #f8f9fa;
+    transition: border 0.3s ease-in-out;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    border-color: #00796b;
+    outline: none;
 }
 
 .correlation-button {
@@ -55,6 +73,12 @@
     margin-top: 10px;
 }
 
+.loading {
+    text-align: center;
+    font-size: 1.2rem;
+    color: #555;
+}
+
 .correlation-table {
     width: 100%;
     border-collapse: collapse;
@@ -77,8 +101,7 @@
     background-color: #f9f9f9;
 }
 
-.loading {
-    text-align: center;
-    font-size: 1.2rem;
-    color: #555;
+/* Adding subtle hover effect for table rows */
+.correlation-table tbody tr:hover {
+    background-color: rgba(0, 255, 179, 0.2);
 }
