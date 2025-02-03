@@ -63,10 +63,11 @@ const Home = () => {
       </div>
 
       <div className="section section4">
-        <h1 className="market-ratio-home-header">Markets</h1>
+        <h1 className="market-ratio-home-header">Leagues & Ratios</h1>
         <div className='button2-container'>
           <Link to="/market-ratios" className='market-ratio-button'>Market Ratios</Link>
           <Link to="/market-ratios/divide" className='compare-btn'>Compare Securities</Link>
+          <Link to="/market-leagues" className='league-btn'>Market Leagues</Link>
         </div>
         <div className="image-container2">
           <img src={marketImage} alt="Market" />
