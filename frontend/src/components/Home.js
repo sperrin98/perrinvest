@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import './Home.css'; // Import the CSS file
+import './Home.css'; // Import CSS
 import StockDock from './StockDock';  // Import StockDock
 import ChartCarousel from './ChartCarousel';  // Import ChartCarousel component
 import coinImage from '../assets/images/coin.jpg';
@@ -8,6 +8,7 @@ import marketImage from '../assets/images/market-ratio.jpg';
 
 const Home = () => {
   const [displayedText, setDisplayedText] = useState('');
+  const [trendingSecurities, setTrendingSecurities] = useState([]);
   const text = "Perrinvest";
 
   useEffect(() => {
@@ -29,6 +30,20 @@ const Home = () => {
     type();
   }, [text]);
 
+  useEffect(() => {
+    const fetchTrendingSecurities = async () => {
+      try {
+        const response = await fetch('http://localhost:5000/trending-securities'); // Replace with your API endpoint
+        const data = await response.json();
+        setTrendingSecurities(data.trending || []);
+      } catch (error) {
+        console.error('Error fetching trending securities:', error);
+      }
+    };
+
+    fetchTrendingSecurities();
+  }, []);
+
   return (
     <div>
       <div className="section section1">
@@ -41,9 +56,23 @@ const Home = () => {
         <ChartCarousel />
       </div>
 
-      {/* New Securities Section */}
+      {/* Securities Section */}
       <div className="section section-securities">
         <h1 className="securities-header">Securities</h1>
+
+        {/* Trending Securities List */}
+        <ul className="trending-securities">
+          {trendingSecurities.length > 0 ? (
+            trendingSecurities.map((security, index) => (
+              <li key={index}>
+                {security.name} ({security.performance}%)  {/* Display the name here */}
+              </li>
+            ))
+          ) : (
+            <li>Loading...</li>
+          )}
+        </ul>
+
         <div className='sec-button-container'>
           <Link to="/securities" className='security-btn'>Securities</Link>
           <Link to="/correlations" className='correlation-btn'>Correlate Securities</Link>
