@@ -33,7 +33,7 @@ const Home = () => {
   useEffect(() => {
     const fetchTrendingSecurities = async () => {
       try {
-        const response = await fetch('http://localhost:5000/trending-securities'); // Replace with your API endpoint
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/trending-securities`);
         const data = await response.json();
         setTrendingSecurities(data.trending || []);
       } catch (error) {
@@ -61,18 +61,20 @@ const Home = () => {
         <h1 className="securities-header">Securities</h1>
 
         {/* Trending Securities List */}
-        <ul className="trending-securities">
-          {trendingSecurities.length > 0 ? (
-            trendingSecurities.map((security, index) => (
-              <li key={index}>
-                {security.name} ({security.performance}%)  {/* Display the name here */}
-              </li>
-            ))
-          ) : (
-            <li>Loading...</li>
-          )}
-        </ul>
-
+        <div className="trending-container">
+          <h1 className='trending-title'>Trending Tickers</h1>
+          <ul className="trending-securities">
+            {trendingSecurities.length > 0 ? (
+              trendingSecurities.map((security, index) => (
+                <li key={index}>
+                  {security.name} ({security.performance}%)  {/* Display the name here */}
+                </li>
+              ))
+            ) : (
+              <li>Loading...</li>
+            )}
+          </ul>
+        </div>
         <div className='sec-button-container'>
           <Link to="/securities" className='security-btn'>Securities</Link>
           <Link to="/correlations" className='correlation-btn'>Correlate Securities</Link>
