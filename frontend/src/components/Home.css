@@ -202,6 +202,70 @@ body {
   margin-bottom: 20px;
 }
 
+.trending-title {
+  font-size: 50px;
+  color: #00FFB3;
+  text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3),
+              5px 5px 70px rgba(255, 255, 255, 0.5);
+  font-weight: 500;
+  position: absolute;
+  top: 25%;
+  left: 20%;
+}
+
+.trending-container {
+  margin-top: 100px;
+  margin-right: 675px;
+  background-color: #1e1e1e;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  height: auto;
+}
+
+.trending-securities {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px; /* Add some space between items */
+  width: 100%;
+}
+
+.trending-securities li {
+  font-size: 18px;
+  color: #fff;
+  background-color: #2c2c2c; /* Dark gray background for each item */
+  padding: 15px;
+  margin-bottom: 10px;
+  border-radius: 8px; /* Rounded corners */
+  transition: all 0.3s ease;
+  width: 100%; /* Ensure items take full width of the container */
+}
+
+.trending-securities li:hover {
+  background-color: #00FFB3; /* Hover effect to match the title color */
+  color: #1e1e1e; /* Change text color on hover for contrast */
+  transform: translateY(-5px); /* Slight hover lift effect */
+}
+
+.trending-securities li span {
+  font-size: 14px;
+  color: #FF6347; /* Use a contrasting color for performance percentage */
+}
+
+.loading-message {
+  font-size: 18px;
+  color: #fff;
+  text-align: center;
+}
+
+
 /* Base styles for mobile devices (small screens) */
 @media (max-width: 600px) {
   /* Adjust the chart-carousel for mobile */
