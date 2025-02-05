@@ -631,89 +631,53 @@ def get_stock_prices():
     
 @main.route('/trending-securities')
 def get_trending_securities():
-    # Manual mapping for tickers to full names
-    ticker_to_name = {
-        '^GSPC': 'S&P 500 Index',
-        '^DJI': 'Dow Jones Industrial Average',
-        '^IXIC': 'NASDAQ Composite',
-        '^RUT': 'Russell 2000 Index',
-        '^FTSE': 'FTSE 100',
-        '^N225': 'Nikkei 225',
-        '^HSI': 'Hang Seng Index',
-        '^STI': 'Straits Times Index',
-        'AAPL': 'Apple Inc.',
-        'GOOG': 'Alphabet Inc. (Google)',  # Ensure full name here
-        'MSFT': 'Microsoft Corporation',
-        'AMZN': 'Amazon.com, Inc.',
-        'TSLA': 'Tesla, Inc.',
-        'FB': 'Meta Platforms, Inc. (Facebook)',
-        'NVDA': 'NVIDIA Corporation',
-        'AMD': 'Advanced Micro Devices, Inc.',
-        'NFLX': 'Netflix, Inc.',
-        'BABA': 'Alibaba Group',
-        'PYPL': 'PayPal Holdings, Inc.',
-        'DIS': 'The Walt Disney Company',
-        'INTC': 'Intel Corporation',
-        'CSCO': 'Cisco Systems, Inc.',
-        'GC=F': 'Gold Futures',
-        'SI=F': 'Silver Futures',
-        'CL=F': 'Crude Oil Futures',
-        'NG=F': 'Natural Gas Futures',
-        'PL=F': 'Platinum Futures',
-        'ZS=F': 'Soybean Futures',
-        'ZR=F': 'Corn Futures',
-        'BTC-USD': 'Bitcoin',
-        'ETH-USD': 'Ethereum',
-        'XRP-USD': 'Ripple (XRP)',
-        'SOL-USD': 'Solana',
-        'LTC-USD': 'Litecoin',
-        'ADA-USD': 'Cardano',
-        'DOGE-USD': 'Dogecoin',
-        'EURUSD=X': 'Euro to US Dollar',
-        'GBPUSD=X': 'British Pound to US Dollar',
-        'JPY=X': 'Japanese Yen to US Dollar',
-        'AUDUSD=X': 'Australian Dollar to US Dollar',
-        'CADUSD=X': 'Canadian Dollar to US Dollar',
-        'NZDUSD=X': 'New Zealand Dollar to US Dollar',
-        'CHFUSD=X': 'Swiss Franc to US Dollar',
-        'SPY': 'SPDR S&P 500 ETF Trust',
-        'QQQ': 'Invesco QQQ Trust',
-        'VTI': 'Vanguard Total Stock Market ETF',
-        'IWM': 'iShares Russell 2000 ETF',
-        'XLF': 'Financial Select Sector SPDR Fund',
-        'XLY': 'Consumer Discretionary Select Sector SPDR Fund',
-        'XLC': 'Communication Services Select Sector SPDR Fund',
-        'XLE': 'Energy Select Sector SPDR Fund',
-        'XLB': 'Materials Select Sector SPDR Fund',
-        'VXX': 'iPath Series B S&P 500 VIX Short-Term Futures ETN'
-    }
+    try:
+        # Corrected list of stock tickers you provided
+        stocks = {
+            "Gold": "GC=F",
+            "Cocoa": "CC=F",
+            "Platinum": "PL=F",
+            "Natural Gas": "NG=F",
+            "Silver": "SI=F",
+            "US Dollar": "USD=X",
+            "British Pound": "GBPUSD=X",
+            "Bitcoin": "BTC-USD",
+            "Euro": "EURUSD=X",
+            "Australian Dollar": "AUDUSD=X",
+            "Dow Jones": "^DJI",
+            "Hang Seng": "^HSI",
+            "FTSE100": "^FTSE",
+            "DAX": "^GDAXI",
+            "Shanghai Composite": "000001.SS"
+        }
 
-    # List of tickers you're interested in (combine all)
-    tickers = ['^GSPC', '^DJI', '^IXIC', '^RUT', '^FTSE', '^N225', '^HSI', '^STI', 'AAPL', 'GOOG', 'MSFT', 'AMZN', 'TSLA', 'FB', 'NVDA', 'AMD', 'NFLX', 'BABA', 'PYPL', 'DIS', 'INTC', 'CSCO', 'GC=F', 'SI=F', 'CL=F', 'NG=F', 'PL=F', 'ZS=F', 'ZR=F', 'BTC-USD', 'ETH-USD', 'XRP-USD', 'SOL-USD', 'LTC-USD', 'ADA-USD', 'DOGE-USD', 'EURUSD=X', 'GBPUSD=X', 'JPY=X', 'AUDUSD=X', 'CADUSD=X', 'NZDUSD=X', 'CHFUSD=X', 'SPY', 'QQQ', 'VTI', 'IWM', 'XLF', 'XLY', 'XLC', 'XLE', 'XLB', 'VXX']
+        stock_data = {}
 
-    performance = {}
+        # Loop through each ticker symbol and get the historical data
+        for name, symbol in stocks.items():
+            ticker = yf.Ticker(symbol)
+            hist = ticker.history(period="5d")  # Get the last 5 days of data
 
-    # Calculate performance for each ticker
-    for ticker in tickers:
-        stock = yf.Ticker(ticker)
-        hist = stock.history(period="5d")  # Changed from '7d' to '5d'
+            if len(hist) >= 2:  # Ensure we have at least two data points
+                current_price = hist['Close'].iloc[-1]
+                previous_price = hist['Close'].iloc[-2]
 
-        if not hist.empty:
-            start_price = hist["Close"].iloc[0]
-            end_price = hist["Close"].iloc[-1]
-            percent_change = ((end_price - start_price) / start_price) * 100
-            performance[ticker] = percent_change
+                # Calculate the percentage change
+                percent_change = ((current_price - previous_price) / previous_price) * 100
 
-    # Sort tickers by performance
-    top_tickers = sorted(performance, key=performance.get, reverse=True)[:5]
+                stock_data[name] = {
+                    "current_price": current_price,
+                    "previous_price": previous_price,
+                    "percent_change": round(percent_change, 2),  # Add percentage change to the result
+                }
+            else:
+                stock_data[name] = {
+                    "current_price": None,
+                    "previous_price": None,
+                    "percent_change": "No Data"  # If not enough data is available
+                }
 
-    # Prepare trending securities with full names
-    trending_securities = []
-    for ticker in top_tickers:
-        security_name = ticker_to_name.get(ticker, "Unknown Security")  # Get full name
-        trending_securities.append({
-            "name": security_name,  # Full name here
-            "performance": round(performance[ticker], 2)  # Performance percentage
-        })
+        return jsonify(stock_data)
 
-    return jsonify({"trending": trending_securities})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
