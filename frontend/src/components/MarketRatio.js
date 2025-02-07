@@ -50,8 +50,8 @@ const MarketRatio = () => {
     datasets: [{
       label: `Market Ratio History for ${ratioName}`,
       data: values,
-      borderColor: 'rgb(0, 255, 179)', // Line color
-      backgroundColor: 'rgb(0, 255, 179)', // Fill color under the line
+      borderColor: '#00796b', // Line color
+      backgroundColor: '#00796b', // Fill color under the line
       borderWidth: 1,   // Thinner line
       pointRadius: 0.5,   // Smaller points
       fill: false,
@@ -64,7 +64,7 @@ const MarketRatio = () => {
     scales: {
       x: {
         ticks: {
-          color: 'rgb(0, 255, 179)', // X-axis tick color
+          color: '#00796b', // X-axis tick color
         },
         grid: {
           color: 'rgb(68, 68, 68)', // X-axis grid line color
@@ -72,12 +72,12 @@ const MarketRatio = () => {
         title: {
           display: true,
           text: 'Date',
-          color: 'rgb(0, 255, 179)', // X-axis title color
+          color: '#00796b', // X-axis title color
         }
       },
       y: {
         ticks: {
-          color: 'rgb(0, 255, 179)', // Y-axis tick color
+          color: '#00796b', // Y-axis tick color
           stepSize: stepSize,
         },
         grid: {
@@ -86,7 +86,7 @@ const MarketRatio = () => {
         title: {
           display: true,
           text: 'Value',
-          color: 'rgb(0, 255, 179)', // Y-axis title color
+          color: '#00796b', // Y-axis title color
         },
         min: Math.min(0, minValue), // Ensure the Y-axis starts at 0 or the minimum value if it's negative
         max: maxYAxisValue, // Set the maximum value dynamically
@@ -95,7 +95,7 @@ const MarketRatio = () => {
     plugins: {
       legend: {
         labels: {
-          color: 'rgb(0, 255, 179)', // Legend label color
+          color: '#00796b', // Legend label color
         }
       },
       tooltip: {
