@@ -63,7 +63,7 @@ const Security = () => {
     datasets: [{
       label: `Price History for ${securityLongName || "Unknown Security"}`, // Use the correct long name
       data: prices,
-      borderColor: 'rgb(0, 255, 179)',
+      borderColor: '#00796b',
       backgroundColor: 'rgba(0, 255, 179, 0.2)',
       borderWidth: 1,   // Thinner line
       pointRadius: 0.5, // Smaller points
@@ -115,10 +115,10 @@ const Security = () => {
         title: {
           display: true,
           text: 'Date',
-          color: 'rgb(0, 255, 179)',
+          color: '#00796b',
         },
         ticks: {
-          color: 'rgb(0, 255, 179)',
+          color: '#00796b',
         },
         grid: {
           color: 'rgb(68, 68, 68)',
@@ -129,10 +129,10 @@ const Security = () => {
         title: {
           display: true,
           text: 'Price',
-          color: 'rgb(0, 255, 179)',
+          color: '#00796b',
         },
         ticks: {
-          color: 'rgb(0, 255, 179)',
+          color: '#00796b',
           beginAtZero: true, // Ensure the y-axis starts at zero
         },
         grid: {
@@ -143,7 +143,7 @@ const Security = () => {
     plugins: {
       legend: {
         labels: {
-          color: 'rgb(0, 255, 179)',
+          color: '#00796b',
         },
       },
       tooltip: {
@@ -152,8 +152,8 @@ const Security = () => {
             return `Price: ${context.raw}`;
           },
         },
-        titleColor: 'rgb(0, 255, 179)',
-        bodyColor: 'rgb(0, 255, 179)',
+        titleColor: '#00796b',
+        bodyColor: '#00796b',
       },
       zoom: {
         // Allow zooming with the scroll wheel
