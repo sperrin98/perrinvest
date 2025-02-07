@@ -118,7 +118,7 @@ function EcoDataPoint() {
         title: {
           display: true,
           text: 'Value',
-          color: '#00796b',
+          color: 'rgb(0, 255, 179)',
         }
       }
     }
