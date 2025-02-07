@@ -75,8 +75,8 @@ function EcoDataPoint() {
         label: `${ecoDataPointName}`,
         data: data.map(point => point.price), // Prices on the y-axis
         fill: false,
-        borderColor: 'rgb(0, 255, 179)',
-        backgroundColor: 'rgb(0, 255, 179)',
+        borderColor: '#00796b',
+        backgroundColor: '#00796b',
         borderWidth: 2,   // Thinner line
         pointRadius: 1,   // Smaller points
         tension: 0.1
@@ -91,17 +91,17 @@ function EcoDataPoint() {
       legend: {
         display: true,
         labels: {
-          color: 'rgb(0, 255, 179)' 
+          color: '#00796b' 
         }
       },
       tooltip: {
-        backgroundColor: 'rgba(0, 255, 179, 0.8)'
+        backgroundColor: '#00796b'
       },
     },
     scales: {
       x: {
         ticks: {
-          color: 'rgb(0, 255, 179)', 
+          color: '#00796b', 
         },
         grid: {
           color: 'rgb(68, 68, 68)', 
@@ -110,7 +110,7 @@ function EcoDataPoint() {
       y: {
         beginAtZero: true,
         ticks: {
-          color: 'rgb(0, 255, 179)', 
+          color: '#00796b', 
         },
         grid: {
           color: 'rgb(68, 68, 68)',
@@ -118,7 +118,7 @@ function EcoDataPoint() {
         title: {
           display: true,
           text: 'Value',
-          color: 'rgb(0, 255, 179)',
+          color: '#00796b',
         }
       }
     }
