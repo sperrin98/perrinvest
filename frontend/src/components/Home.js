@@ -10,45 +10,39 @@ const Home = () => {
   const [commodities, setCommodities] = useState([]);
   const [currencies, setCurrencies] = useState([]);
   const [stockMarkets, setStockMarkets] = useState([]);
-  const [activeIndex, setActiveIndex] = useState(0); // Track active category
-  const [error, setError] = useState(null);
+  const [activeIndex, setActiveIndex] = useState(0);
 
   useEffect(() => {
     const fetchTrendingSecurities = async () => {
       try {
         const apiUrl = process.env.REACT_APP_API_URL;
         const response = await fetch(`${apiUrl}/trending-securities`);
-        if (!response.ok) {
-          throw new Error('Failed to fetch data');
-        }
         const data = await response.json();
 
-        // Update states with fetched data
         setCommodities([
-          { name: 'Gold', performance: data['Gold']?.percent_change ?? 'No Data' },
-          { name: 'Cocoa', performance: data['Cocoa']?.percent_change ?? 'No Data' },
-          { name: 'Platinum', performance: data['Platinum']?.percent_change ?? 'No Data' },
-          { name: 'Natural Gas', performance: data['Natural Gas']?.percent_change ?? 'No Data' },
-          { name: 'Silver', performance: data['Silver']?.percent_change ?? 'No Data' }
+          { name: 'Gold', performance: data['Gold']?.percent_change ?? "No Data" },
+          { name: 'Cocoa', performance: data['Cocoa']?.percent_change ?? "No Data" },
+          { name: 'Platinum', performance: data['Platinum']?.percent_change ?? "No Data" },
+          { name: 'Natural Gas', performance: data['Natural Gas']?.percent_change ?? "No Data" },
+          { name: 'Silver', performance: data['Silver']?.percent_change ?? "No Data" }
         ]);
 
         setCurrencies([
-          { name: 'US Dollar', performance: data['US Dollar']?.percent_change ?? 'No Data' },
-          { name: 'British Pound', performance: data['British Pound']?.percent_change ?? 'No Data' },
-          { name: 'Bitcoin', performance: data['Bitcoin']?.percent_change ?? 'No Data' },
-          { name: 'Euro', performance: data['Euro']?.percent_change ?? 'No Data' },
-          { name: 'Australian Dollar', performance: data['Australian Dollar']?.percent_change ?? 'No Data' }
+          { name: 'US Dollar', performance: data['US Dollar']?.percent_change ?? "No Data" },
+          { name: 'British Pound', performance: data['British Pound']?.percent_change ?? "No Data" },
+          { name: 'Bitcoin', performance: data['Bitcoin']?.percent_change ?? "No Data" },
+          { name: 'Euro', performance: data['Euro']?.percent_change ?? "No Data" },
+          { name: 'Australian Dollar', performance: data['Australian Dollar']?.percent_change ?? "No Data" }
         ]);
 
         setStockMarkets([
-          { name: 'Dow Jones', performance: data['Dow Jones']?.percent_change ?? 'No Data' },
-          { name: 'Hang Seng', performance: data['Hang Seng']?.percent_change ?? 'No Data' },
-          { name: 'FTSE100', performance: data['FTSE100']?.percent_change ?? 'No Data' },
-          { name: 'DAX', performance: data['DAX']?.percent_change ?? 'No Data' },
-          { name: 'Shanghai Composite', performance: data['Shanghai Composite']?.percent_change ?? 'No Data' }
+          { name: 'Dow Jones', performance: data['Dow Jones']?.percent_change ?? "No Data" },
+          { name: 'Hang Seng', performance: data['Hang Seng']?.percent_change ?? "No Data" },
+          { name: 'FTSE100', performance: data['FTSE100']?.percent_change ?? "No Data" },
+          { name: 'DAX', performance: data['DAX']?.percent_change ?? "No Data" },
+          { name: 'Shanghai Composite', performance: data['Shanghai Composite']?.percent_change ?? "No Data" }
         ]);
       } catch (error) {
-        setError(error.message);
         console.error('Error fetching trending securities:', error);
       }
     };
@@ -57,13 +51,8 @@ const Home = () => {
   }, []);
 
   const getColor = (performance) => {
-    if (performance === 'No Data' || performance === 0) return 'gray';
+    if (performance === "No Data") return 'gray';
     return performance < 0 ? 'red' : 'green';
-  };
-
-  const formatPerformance = (performance) => {
-    if (performance === 'No Data') return 'No Data';
-    return `${performance}%`;
   };
 
   const sections = [commodities, currencies, stockMarkets];
@@ -78,40 +67,54 @@ const Home = () => {
         <h1 className="home-header">Perrinvest</h1>
         <StockDock />
       </div>
-
       <div className="section section2">
-        <h2 className="section2-header">Trending Markets</h2>
+        <h2 className='section2-header'>Trending Markets</h2>
         <ChartCarousel />
       </div>
 
+
       <div className="section section-securities">
-        <h1 className="securities-header">Securities</h1>
-
-        <div className="trending-container">
-          <h1 className="trending-title">Trending Tickers</h1>
-          {error && <p className="error-message">{error}</p>}
-          <div className="trending-carousel">
-            <h3>{sectionTitles[activeIndex]}</h3>
-            <ul className="trending-securities">
-              {sections[activeIndex].map((item, index) => (
-                <li key={index} style={{ color: getColor(item.performance) }}>
-                  {item.name}: {formatPerformance(item.performance)}
-                </li>
-              ))}
-            </ul>
-
-            <div className="carousel-controls">
-              <button onClick={handlePrev}>⬅ Prev</button>
-              <button onClick={handleNext}>Next ➡</button>
-            </div>
+        {/* Right Side: Securities Header & Buttons */}
+        <div className="securities-right">
+          <h1 className="securities-header">Securities</h1>
+          <div className="sec-button-container">
+            <Link to="/securities" className="security-btn">Securities</Link>
+            <Link to="/correlations" className="correlation-btn">Correlate Securities</Link>
           </div>
         </div>
 
-        <div className="sec-button-container">
-          <Link to="/securities" className="security-btn">Securities</Link>
-          <Link to="/correlations" className="correlation-btn">Correlate Securities</Link>
+        {/* Left Side: Trending Section */}
+        <div className="trending-container">
+          <h1 className="trending-title">Trending Tickers</h1>
+
+          <div className="carousel-wrapper">
+            {/* Left Arrow */}
+            <button className="carousel-arrow carousel-arrow-left" onClick={handlePrev}>‹</button>
+
+            <div className="trending-carousel">
+              <div className="carousel-content">
+                {/* Centered Section Title */}
+                <h3 className="carousel-title">{sectionTitles[activeIndex]}</h3>
+
+                <ul className="trending-securities">
+                  {sections[activeIndex].map((item, index) => (
+                    <li key={index}>
+                      <span className="item-name">{item.name}</span>
+                      <span className={`item-performance ${item.performance >= 0 ? 'positive' : 'negative'}`}>
+                        {item.performance}%
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+
+            {/* Right Arrow */}
+            <button className="carousel-arrow carousel-arrow-right" onClick={handleNext}>›</button>
+          </div>
         </div>
       </div>
+
 
       <div className="section section3">
         <h1 className="home-header">Currencies</h1>

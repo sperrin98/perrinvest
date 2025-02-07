@@ -632,14 +632,13 @@ def get_stock_prices():
 @main.route('/trending-securities')
 def get_trending_securities():
     try:
-        # Corrected list of stock tickers you provided
         stocks = {
             "Gold": "GC=F",
             "Cocoa": "CC=F",
             "Platinum": "PL=F",
             "Natural Gas": "NG=F",
             "Silver": "SI=F",
-            "US Dollar": "USD=X",
+            "US Dollar": "DX=F",
             "British Pound": "GBPUSD=X",
             "Bitcoin": "BTC-USD",
             "Euro": "EURUSD=X",
@@ -653,28 +652,25 @@ def get_trending_securities():
 
         stock_data = {}
 
-        # Loop through each ticker symbol and get the historical data
         for name, symbol in stocks.items():
             ticker = yf.Ticker(symbol)
-            hist = ticker.history(period="5d")  # Get the last 5 days of data
+            hist = ticker.history(period="5d")
 
-            if len(hist) >= 2:  # Ensure we have at least two data points
+            if len(hist) >= 2:
                 current_price = hist['Close'].iloc[-1]
                 previous_price = hist['Close'].iloc[-2]
-
-                # Calculate the percentage change
                 percent_change = ((current_price - previous_price) / previous_price) * 100
 
                 stock_data[name] = {
                     "current_price": current_price,
                     "previous_price": previous_price,
-                    "percent_change": round(percent_change, 2),  # Add percentage change to the result
+                    "percent_change": round(percent_change, 2)
                 }
             else:
                 stock_data[name] = {
                     "current_price": None,
                     "previous_price": None,
-                    "percent_change": "No Data"  # If not enough data is available
+                    "percent_change": "No Data"
                 }
 
         return jsonify(stock_data)
