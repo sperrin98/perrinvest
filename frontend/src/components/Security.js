@@ -152,8 +152,8 @@ const Security = () => {
             return `Price: ${context.raw}`;
           },
         },
-        titleColor: '#00796b',
-        bodyColor: '#00796b',
+        titleColor: '#f8f8f8',
+        bodyColor: '#f8f8f8',
       },
       zoom: {
         // Allow zooming with the scroll wheel

@@ -53,7 +53,7 @@ function Currency() {
     datasets: [{
       label: currency?.security_long_name || 'Price',
       data: priceHistory.map(record => record.price),
-      borderColor: 'rgb(0, 255, 179)',
+      borderColor: '#00796b',
       backgroundColor: 'rgba(0, 255, 179, 0.2)',
       borderWidth: 1,   // Thinner line
       pointRadius: 0.5,   // Smaller points
@@ -69,10 +69,10 @@ function Currency() {
         title: {
           display: true,
           text: 'Date',
-          color: 'rgb(0, 255, 179)',
+          color: '#00796b',
         },
         ticks: {
-          color: 'rgb(0, 255, 179)',
+          color: '#00796b',
         },
         grid: {
           color: 'rgb(68, 68, 68)',
@@ -82,10 +82,10 @@ function Currency() {
         title: {
           display: true,
           text: 'Price',
-          color: 'rgb(0, 255, 179)',
+          color: '#00796b',
         },
         ticks: {
-          color: 'rgb(0, 255, 179)',
+          color: '#00796b',
           beginAtZero: true, // Ensure the y-axis starts at zero
         },
         grid: {
@@ -96,7 +96,7 @@ function Currency() {
     plugins: {
       legend: {
         labels: {
-          color: 'rgb(0, 255, 179)',
+          color: '#00796b',
         },
       },
       tooltip: {
@@ -105,8 +105,8 @@ function Currency() {
             return `Price: ${context.raw}`;
           },
         },
-        titleColor: 'rgb(0, 255, 179)',
-        bodyColor: 'rgb(0, 255, 179)',
+        titleColor: '#f8f8f8',
+        bodyColor: '#f8f8f8',
       },
     },
   };
