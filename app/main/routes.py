@@ -628,3 +628,52 @@ def get_stock_prices():
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+    
+@main.route('/trending-securities')
+def get_trending_securities():
+    try:
+        stocks = {
+            "Gold": "GC=F",
+            "Cocoa": "CC=F",
+            "Platinum": "PL=F",
+            "Natural Gas": "NG=F",
+            "Silver": "SI=F",
+            "US Dollar": "DX=F",
+            "British Pound": "GBPUSD=X",
+            "Bitcoin": "BTC-USD",
+            "Euro": "EURUSD=X",
+            "Australian Dollar": "AUDUSD=X",
+            "Dow Jones": "^DJI",
+            "Hang Seng": "^HSI",
+            "FTSE100": "^FTSE",
+            "DAX": "^GDAXI",
+            "Shanghai Composite": "000001.SS"
+        }
+
+        stock_data = {}
+
+        for name, symbol in stocks.items():
+            ticker = yf.Ticker(symbol)
+            hist = ticker.history(period="5d")
+
+            if len(hist) >= 2:
+                current_price = hist['Close'].iloc[-1]
+                previous_price = hist['Close'].iloc[-2]
+                percent_change = ((current_price - previous_price) / previous_price) * 100
+
+                stock_data[name] = {
+                    "current_price": current_price,
+                    "previous_price": previous_price,
+                    "percent_change": round(percent_change, 2)
+                }
+            else:
+                stock_data[name] = {
+                    "current_price": None,
+                    "previous_price": None,
+                    "percent_change": "No Data"
+                }
+
+        return jsonify(stock_data)
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500

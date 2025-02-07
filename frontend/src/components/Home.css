@@ -202,6 +202,185 @@ body {
   margin-bottom: 20px;
 }
 
+.trending-title {
+  font-size: 50px;
+  color: #00FFB3 !important;
+  text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3),
+              5px 5px 70px rgba(255, 255, 255, 0.5);
+  font-weight: 500;
+  position: absolute;
+  top: 25%;
+  color: #00FFB3;
+}
+
+.trending-container {
+  margin-top: 100px;
+  margin-right: 675px;
+  background-color: #1e1e1e;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  height: auto;
+  width: 350px;
+}
+
+.trending-securities {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 120%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: revert;
+  max-width: 230px;
+}
+
+.trending-securities li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.item-name {
+  font-size: 18px;
+  color: #00FFB3 !important;
+  background-color: #3a3a3a;
+  padding: 10px;
+  border-radius: 5px;
+  flex-grow: 1;
+  text-align: left;
+  margin-right: 15px;
+  font-weight: bold;
+  white-space: nowrap; /* Prevents wrapping */
+  overflow: auto; /* Allows horizontal scrolling if the text is too long */
+  text-overflow: clip; /* Ensures no ellipsis are shown */
+  max-width: 230px; /* Restrict the width of the item */
+}
+
+
+.item-performance {
+  font-size: 16px;
+  font-weight: bold;
+  background-color: transparent;
+  padding: 10px;
+  border-radius: 5px;
+  min-width: 80px;
+  text-align: center;
+  color: white !important;
+}
+
+.positive {
+  background-color: #28a745;
+  color: white !important;
+}
+
+.negative {
+  background-color: #dc3545;
+  color: white !important;
+}
+
+.trending-securities li span {
+  font-size: 14px;
+  color: #FF6347;
+}
+
+.loading-message {
+  font-size: 18px;
+  color: #fff;
+  text-align: center;
+}
+
+.trending-carousel {
+  position: relative; /* Positioning for arrows */
+  display: flex;
+  overflow-x: auto;
+  gap: 20px;
+  padding: 20px;
+  scroll-behavior: smooth;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+}
+
+.carousel-content {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.trending-card {
+  flex: 0 0 auto;
+  width: 100%;
+  height: 220px;
+  padding: 20px;
+  background: #f8f9fa;
+  border-radius: 12px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  font-size: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.carousel-title {
+  text-align: center;
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 15px;
+  width: 100%;
+}
+
+.carousel-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: rgba(0, 0, 0, 0.5);
+  color: #fff;
+  border: none;
+  padding: 10px;
+  font-size: 2rem;
+  cursor: pointer;
+  z-index: 20; /* Increased z-index for visibility */
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  opacity: 0.8;
+  transition: opacity 0.3s ease; /* Add transition for hover effect */
+}
+
+.carousel-arrow:hover {
+  opacity: 1; /* Make arrows more visible when hovered */
+}
+
+/* Position arrows next to the trending-carousel */
+.carousel-arrow-left {
+  left: -110px; /* Adjust left arrow's position */
+}
+
+.carousel-arrow-right {
+  right: -110px; /* Adjust right arrow's position */
+}
+
+.carousel-wrapper {
+  position: relative;
+  overflow: visible; /* Ensure arrows are not hidden */
+}
+
+
 /* Base styles for mobile devices (small screens) */
 @media (max-width: 600px) {
   /* Adjust the chart-carousel for mobile */
