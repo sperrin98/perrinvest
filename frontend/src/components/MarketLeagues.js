@@ -10,9 +10,10 @@ const MarketLeagues = () => {
   const [leagueTable, setLeagueTable] = useState([]);
   const [selectedLeagueId, setSelectedLeagueId] = useState(null);
   const [selectedLeagueName, setSelectedLeagueName] = useState('');
-  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [selectedDate, setSelectedDate] = useState(null);
   const [errorMessage, setErrorMessage] = useState('');
   const [constituentData, setConstituentData] = useState([]);
+  const [selectedConstituentName, setSelectedConstituentName] = useState('');
 
   useEffect(() => {
     const fetchMarketLeagues = async () => {
@@ -20,6 +21,11 @@ const MarketLeagues = () => {
         const apiUrl = process.env.REACT_APP_API_URL;
         const response = await axios.get(`${apiUrl}/market_leagues`);
         setMarketLeagues(response.data);
+
+        if (response.data.length > 0) {
+          const previousBusinessDay = await getPreviousBusinessDay();
+          fetchLeagueTable(response.data[0][0], response.data[0][1], previousBusinessDay);
+        }
       } catch (error) {
         console.error('Error fetching market leagues:', error);
         setErrorMessage('Error fetching market leagues');
@@ -28,6 +34,30 @@ const MarketLeagues = () => {
 
     fetchMarketLeagues();
   }, []);
+
+  const getPreviousBusinessDay = async () => {
+    let date = new Date();
+    date.setDate(date.getDate() - 1); // Start from yesterday
+
+    while (date.getDay() === 0 || date.getDay() === 6 || await isBankHoliday(date)) {
+      date.setDate(date.getDate() - 1);
+    }
+
+    setSelectedDate(date);
+    return date;
+  };
+
+  const isBankHoliday = async (date) => {
+    try {
+      const apiUrl = process.env.REACT_APP_API_URL;
+      const formattedDate = date.toISOString().split('T')[0];
+      const response = await axios.get(`${apiUrl}/is_bank_holiday/${formattedDate}`);
+      return response.data.is_holiday;
+    } catch (error) {
+      console.error('Error checking bank holiday:', error);
+      return false;
+    }
+  };
 
   const fetchLeagueTable = async (leagueId, leagueName, date) => {
     try {
@@ -45,20 +75,24 @@ const MarketLeagues = () => {
     }
   };
 
-  const fetchConstituentData = async (constituentId) => {
+  const fetchConstituentData = async (constituentId, constituentName) => {
     try {
       const apiUrl = process.env.REACT_APP_API_URL;
       const response = await axios.get(`${apiUrl}/get_market_league_data/${constituentId}`);
+
       if (response.data.error) {
         setErrorMessage(response.data.error);
         setConstituentData([]);
+        setSelectedConstituentName('');
       } else {
         setConstituentData(response.data);
+        setSelectedConstituentName(constituentName);
         setErrorMessage('');
       }
     } catch (error) {
       console.error('Error fetching constituent data:', error);
       setErrorMessage('Error fetching constituent data');
+      setSelectedConstituentName('');
     }
   };
 
@@ -69,30 +103,37 @@ const MarketLeagues = () => {
     }
   };
 
-  // Prepare data for the line graph
+  const formatPercentage = (value) => {
+    return value ? `${(value * 100).toFixed(2)}%` : '0.00%';
+  };
+
+  const formatDecimal = (value) => {
+    return value ? value.toFixed(2) : '0.00';
+  };
+
   const lineChartData = {
-    labels: constituentData.map((row) => new Date(row[0]).toISOString().split('T')[0]), // Format dates as YYYY-MM-DD
+    labels: constituentData.map((row) => new Date(row[0]).toISOString().split('T')[0]),
     datasets: [
       {
         label: 'Relative Index',
         data: constituentData.map((row) => row[1]),
         borderColor: 'rgba(75,192,192,1)',
         fill: false,
-        pointRadius: 0.5, // Smaller points
+        pointRadius: 0.5,
       },
       {
         label: 'Short EMA',
         data: constituentData.map((row) => row[2]),
         borderColor: 'rgba(153,102,255,1)',
         fill: false,
-        pointRadius: 0.5, // Smaller points
+        pointRadius: 0.5,
       },
       {
         label: 'Long EMA',
         data: constituentData.map((row) => row[3]),
         borderColor: 'rgba(255,159,64,1)',
         fill: false,
-        pointRadius: 0.5, // Smaller points
+        pointRadius: 0.5,
       },
     ],
   };
@@ -152,47 +193,42 @@ const MarketLeagues = () => {
         </div>
       </div>
 
-      {selectedLeagueId && (
-        <div className="league-table-container">
-          <h2>League Table for {selectedLeagueName}</h2>
-          <table className="league-table">
-            <thead>
-              <tr>
-                <th>Security</th>
-                <th>Price</th>
-                <th>Daily Move</th>
-                <th>Score</th>
-                <th>Relative Momentum</th>
-              </tr>
-            </thead>
-            <tbody>
-              {leagueTable.length > 0 ? (
-                leagueTable.map((row, index) => (
-                  <tr
-                    key={index}
-                    onClick={() => fetchConstituentData(row[0])} // Fetch constituent data
-                  >
-                    <td>{row[1]}</td>
-                    <td>{row[2]}</td>
-                    <td>{row[3]}</td>
-                    <td>{row[4]}</td>
-                    <td>{row[5]}</td>
-                  </tr>
-                ))
-              ) : (
-                <tr><td colSpan="5">{errorMessage || 'No data available'}</td></tr>
-              )}
-            </tbody>
-          </table>
+      <div className="league-table-container">
+        <h2>League Table for {selectedLeagueName || 'Loading...'}</h2>
+        <table className="league-table">
+          <thead>
+            <tr>
+              <th>Security</th>
+              <th>Price</th>
+              <th>Daily Move</th>
+              <th>Score</th>
+              <th>Relative Momentum</th>
+            </tr>
+          </thead>
+          <tbody>
+            {leagueTable.length > 0 ? (
+              leagueTable.map((row, index) => (
+                <tr key={index} onClick={() => fetchConstituentData(row[0], row[1])}>
+                  <td>{row[1]}</td>
+                  <td>{row[2]}</td>
+                  <td>{formatPercentage(row[3])}</td>
+                  <td>{formatPercentage(row[4])}</td>
+                  <td>{formatDecimal(row[5])}</td>
+                </tr>
+              ))
+            ) : (
+              <tr><td colSpan="5">{errorMessage || 'No data available'}</td></tr>
+            )}
+          </tbody>
+        </table>
 
-          {constituentData.length > 0 && (
-            <div className="constituent-data-container">
-              <h3>Constituent Data</h3>
-              <Line data={lineChartData} options={lineChartOptions} />
-            </div>
-          )}
-        </div>
-      )}
+        {constituentData.length > 0 && selectedConstituentName && (
+          <div className="constituent-data-container">
+            <h3>Constituent Data for {selectedConstituentName}</h3>
+            <Line data={lineChartData} options={lineChartOptions} />
+          </div>
+        )}
+      </div>
     </div>
   );
 };
