@@ -39,7 +39,6 @@ const MarketLeagues = () => {
     let date = new Date();
     date.setDate(date.getDate() - 1); // Start from yesterday
 
-    // Keep moving back if it's a weekend or a bank holiday
     while (date.getDay() === 0 || date.getDay() === 6 || await isBankHoliday(date)) {
       date.setDate(date.getDate() - 1);
     }
@@ -53,7 +52,7 @@ const MarketLeagues = () => {
       const apiUrl = process.env.REACT_APP_API_URL;
       const formattedDate = date.toISOString().split('T')[0];
       const response = await axios.get(`${apiUrl}/is_bank_holiday/${formattedDate}`);
-      return response.data.is_holiday; // True if it's a holiday
+      return response.data.is_holiday;
     } catch (error) {
       console.error('Error checking bank holiday:', error);
       return false;
@@ -80,28 +79,36 @@ const MarketLeagues = () => {
     try {
       const apiUrl = process.env.REACT_APP_API_URL;
       const response = await axios.get(`${apiUrl}/get_market_league_data/${constituentId}`);
-  
+
       if (response.data.error) {
         setErrorMessage(response.data.error);
         setConstituentData([]);
-        setSelectedConstituentName(''); // Ensure the name clears on error
+        setSelectedConstituentName('');
       } else {
         setConstituentData(response.data);
-        setSelectedConstituentName(constituentName); // Correctly store the name
+        setSelectedConstituentName(constituentName);
         setErrorMessage('');
       }
     } catch (error) {
       console.error('Error fetching constituent data:', error);
       setErrorMessage('Error fetching constituent data');
-      setSelectedConstituentName(''); // Clear the name on error
+      setSelectedConstituentName('');
     }
-  };  
+  };
 
   const handleDateChange = (date) => {
     setSelectedDate(date);
     if (selectedLeagueId) {
       fetchLeagueTable(selectedLeagueId, selectedLeagueName, date);
     }
+  };
+
+  const formatPercentage = (value) => {
+    return value ? `${(value * 100).toFixed(2)}%` : '0.00%';
+  };
+
+  const formatDecimal = (value) => {
+    return value ? value.toFixed(2) : '0.00';
   };
 
   const lineChartData = {
@@ -201,13 +208,13 @@ const MarketLeagues = () => {
           <tbody>
             {leagueTable.length > 0 ? (
               leagueTable.map((row, index) => (
-              <tr key={index} onClick={() => fetchConstituentData(row[0], row[1])}>
-                <td>{row[1]}</td> {/* This is the name */}
-                <td>{row[2]}</td>
-                <td>{row[3]}</td>
-                <td>{row[4]}</td>
-                <td>{row[5]}</td>
-              </tr>
+                <tr key={index} onClick={() => fetchConstituentData(row[0], row[1])}>
+                  <td>{row[1]}</td>
+                  <td>{row[2]}</td>
+                  <td>{formatPercentage(row[3])}</td>
+                  <td>{formatPercentage(row[4])}</td>
+                  <td>{formatDecimal(row[5])}</td>
+                </tr>
               ))
             ) : (
               <tr><td colSpan="5">{errorMessage || 'No data available'}</td></tr>
