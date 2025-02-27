@@ -12,6 +12,11 @@ const Security = () => {
   const { id } = useParams();
   const [security, setSecurity] = useState(null);
   const [priceHistories, setPriceHistories] = useState([]);
+  const [movingAverages, setMovingAverages] = useState({
+    '5d': [],
+    '40d': [],
+    '200d': []
+  });
   const [selectedAverage, setSelectedAverage] = useState(null); // Default: No moving average
   const [selectedTimeFrame, setSelectedTimeFrame] = useState('daily'); // Default: Daily
   const [isLogScale, setIsLogScale] = useState(false);
@@ -39,8 +44,40 @@ const Security = () => {
       }
     };
 
+    const fetchMovingAverages = async () => {
+      try {
+        const movingAveragesData = {};
+
+        // Fetch 5d moving average data
+        const response5d = await axios.get(`${process.env.REACT_APP_API_URL}/securities/${id}/5d-moving-average`);
+        movingAveragesData['5d'] = response5d.data.map(item => ({
+          date: new Date(item.price_date).toISOString().split('T')[0],
+          movingAverage: item['5d_moving_average'],
+        }));
+
+        // Fetch 40d moving average data
+        const response40d = await axios.get(`${process.env.REACT_APP_API_URL}/securities/${id}/40d-moving-average`);
+        movingAveragesData['40d'] = response40d.data.map(item => ({
+          date: new Date(item.price_date).toISOString().split('T')[0],
+          movingAverage: item['40d_moving_average'],
+        }));
+
+        // Fetch 200d moving average data
+        const response200d = await axios.get(`${process.env.REACT_APP_API_URL}/securities/${id}/200d-moving-average`);
+        movingAveragesData['200d'] = response200d.data.map(item => ({
+          date: new Date(item.price_date).toISOString().split('T')[0],
+          movingAverage: item['200d_moving_average'],
+        }));
+
+        setMovingAverages(movingAveragesData);
+      } catch (error) {
+        console.error('Error fetching moving averages:', error);
+      }
+    };
+
     fetchSecurity();
     fetchPriceHistories();
+    fetchMovingAverages();
   }, [id]);
 
   if (!security) {
@@ -62,7 +99,25 @@ const Security = () => {
   };
 
   // Filter the price history based on selected timeframe
-  const filteredPriceHistories = priceHistories.slice(0, priceHistories.length / getTimeFrameMultiplier(selectedTimeFrame));
+  const getFilteredPriceHistories = () => {
+    const multiplier = getTimeFrameMultiplier(selectedTimeFrame);
+    const filtered = [];
+    let currentDate = new Date();
+    
+    // Ensure we are filtering data so the most recent data is shown last, no matter the timeframe
+    priceHistories.forEach((history, index) => {
+      const date = new Date(history.date);
+      const diffInDays = Math.floor((currentDate - date) / (1000 * 60 * 60 * 24));
+      
+      if (diffInDays % multiplier === 0) {
+        filtered.push(history);
+      }
+    });
+
+    return filtered; // Do not reverse the array, it should be sorted from oldest to most recent
+  };
+
+  const filteredPriceHistories = getFilteredPriceHistories();
 
   // Calculate min and max for the price history data (this will not be affected by the moving average)
   const priceValues = filteredPriceHistories.map(history => history.price);
@@ -70,23 +125,17 @@ const Security = () => {
   const yAxisMax = Math.max(...priceValues);
 
   // Prepare the filtered moving average values based on selected timeframe
-  const calculateMovingAverageForTimeframe = (timeFrame) => {
-    const movingAverageData = [];
-    for (let i = 0; i < filteredPriceHistories.length; i++) {
-      const windowSize = timeFrame === 'daily' ? 5 : timeFrame === 'weekly' ? 5 * 7 : timeFrame === 'monthly' ? 5 * 30 : 5;
-      if (i >= windowSize - 1) {
-        const window = filteredPriceHistories.slice(i - windowSize + 1, i + 1);
-        const avg = window.reduce((sum, data) => sum + data.price, 0) / window.length;
-        movingAverageData.push(avg);
-      } else {
-        movingAverageData.push(null);
-      }
-    }
-    return movingAverageData;
+  const getMovingAverageValues = (movingAverageType) => {
+    const movingAverageData = movingAverages[movingAverageType] || [];
+    return movingAverageData.map(item => ({
+      date: item.date,
+      movingAverage: item.movingAverage,
+    }));
   };
 
-  // Get the moving average values based on the selected timeframe
-  const movingAverageValues = selectedAverage ? calculateMovingAverageForTimeframe(selectedTimeFrame) : [];
+  const movingAverageValues5d = selectedAverage === '5d' ? getMovingAverageValues('5d') : [];
+  const movingAverageValues40d = selectedAverage === '40d' ? getMovingAverageValues('40d') : [];
+  const movingAverageValues200d = selectedAverage === '200d' ? getMovingAverageValues('200d') : [];
 
   // Chart Data
   const data = {
@@ -101,11 +150,41 @@ const Security = () => {
         pointRadius: 0.5,
         fill: false,
       },
-      selectedAverage && {
-        label: `${selectedAverage}-Day Moving Average`,
-        data: movingAverageValues,
+      selectedAverage === '5d' && {
+        label: `5-Day Moving Average`,
+        data: filteredPriceHistories.map(history => {
+          // For each price history point, match with moving average data
+          const matchedAvg = movingAverageValues5d.find(item => item.date === history.date);
+          return matchedAvg ? matchedAvg.movingAverage : null;
+        }),
         borderColor: 'rgb(255, 99, 132)', // Red Line (Moving Average)
         backgroundColor: 'rgba(255, 99, 132, 0.2)',
+        borderWidth: 1,
+        pointRadius: 0.5,
+        fill: false,
+      },
+      selectedAverage === '40d' && {
+        label: `40-Day Moving Average`,
+        data: filteredPriceHistories.map(history => {
+          // For each price history point, match with moving average data
+          const matchedAvg = movingAverageValues40d.find(item => item.date === history.date);
+          return matchedAvg ? matchedAvg.movingAverage : null;
+        }),
+        borderColor: 'rgb(255, 159, 64)', // Orange Line (40d)
+        backgroundColor: 'rgba(255, 159, 64, 0.2)',
+        borderWidth: 1,
+        pointRadius: 0.5,
+        fill: false,
+      },
+      selectedAverage === '200d' && {
+        label: `200-Day Moving Average`,
+        data: filteredPriceHistories.map(history => {
+          // For each price history point, match with moving average data
+          const matchedAvg = movingAverageValues200d.find(item => item.date === history.date);
+          return matchedAvg ? matchedAvg.movingAverage : null;
+        }),
+        borderColor: 'rgb(153, 102, 255)', // Purple Line (200d)
+        backgroundColor: 'rgba(153, 102, 255, 0.2)',
         borderWidth: 1,
         pointRadius: 0.5,
         fill: false,
@@ -122,6 +201,7 @@ const Security = () => {
         title: { display: true, text: 'Date', color: '#00796b' },
         ticks: { color: '#00796b' },
         grid: { color: 'rgb(68, 68, 68)' },
+        reverse: false,  // Do not reverse the x-axis, it should be ordered correctly
       },
       y: {
         type: isLogScale ? 'logarithmic' : 'linear',
