@@ -224,7 +224,7 @@ const MarketLeagues = () => {
 
         {constituentData.length > 0 && selectedConstituentName && (
           <div className="constituent-data-container">
-            <h3>Constituent Data for {selectedConstituentName}</h3>
+            <h3>{selectedConstituentName}</h3>
             <Line data={lineChartData} options={lineChartOptions} />
           </div>
         )}
