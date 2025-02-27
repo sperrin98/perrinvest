@@ -1,15 +1,40 @@
 .security-container {
   height: 100vh; /* Full viewport height */
   width: 100vw; /* Full viewport width */
-  background-color: #F8F8F8; /* Change background color to black */
-  padding-top: 120px; /* Maintain padding at the top */
-  box-sizing: border-box; /* Include padding in container's total width and height */
-  overflow: auto; /* Allow scrolling if content exceeds viewport height */
+  background-color: #F8F8F8; /* Background color */
+  display: flex; /* Flex layout */
+  flex-direction: row; /* Sidebar and chart in row layout */
+  box-sizing: border-box;
+}
+
+.sidebar {
+  width: 20%; /* Sidebar takes up 20% of the page */
+  background-color: #FFFFFF;
+  padding: 20px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column; /* Stack elements vertically */
+  justify-content: center; /* Vertically center the sidebar content */
+  height: 100vh; /* Ensure the sidebar takes up the full height */
+}
+
+.main-content {
+  width: 80%; /* Main content takes up the remaining space */
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start; /* Align content to the top */
+  align-items: center; /* Horizontally center the chart */
+}
+
+.main-content h2 {
+  font-size: 2rem;
+  margin-bottom: 20px; /* Just below the title */
 }
 
 .chart-wrapper {
-  height: 80%; /* Keep this size to maintain a specific aspect ratio */
-  width: 100%; /* Ensure the chart takes up full width */
+  height: 100%; /* Ensure chart wrapper takes up remaining space */
+  width: 100%; /* Ensure chart takes up full width */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -17,8 +42,8 @@
 
 .toggle-button-container {
   display: flex;
-  justify-content: center; /* Center the button horizontally */
-  margin-bottom: 20px; /* Add some space below the button */
+  justify-content: center;
+  margin-bottom: 20px;
 }
 
 .toggle-button-container button {
@@ -36,17 +61,35 @@
 }
 
 .moving-averages-section {
-  text-align: center;
+  text-align: left;
   margin-bottom: 20px;
 }
 
 .moving-averages-title {
   font-size: 1.5rem;
   margin-bottom: 10px;
-  margin-top: 20px;
 }
 
 .moving-average-dropdown {
   padding: 10px;
   font-size: 1rem;
+}
+
+.time-period-section {
+  margin-top: 20px;
+  text-align: left;
+}
+
+.time-period-section h3 {
+  font-size: 1.2rem;
+  margin-bottom: 10px;
+}
+
+.time-period-section select {
+  padding: 5px;
+  font-size: 1rem;
+}
+
+.security-hdr {
+  margin-top: 110px;
 }

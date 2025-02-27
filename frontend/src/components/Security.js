@@ -12,10 +12,10 @@ const Security = () => {
   const { id } = useParams();
   const [security, setSecurity] = useState(null);
   const [priceHistories, setPriceHistories] = useState([]);
-  const [selectedAverage, setSelectedAverage] = useState('5d');
-  const [selectedPeriod, setSelectedPeriod] = useState('daily');
+  const [selectedAverage, setSelectedAverage] = useState(null); // Default: No moving average
+  const [selectedTimeFrame, setSelectedTimeFrame] = useState('daily'); // Default: Daily
   const [isLogScale, setIsLogScale] = useState(false);
-  const [showMovingAverage, setShowMovingAverage] = useState(false);
+  const [yAxisBounds, setYAxisBounds] = useState({ min: null, max: null });
 
   useEffect(() => {
     const fetchSecurity = async () => {
@@ -35,6 +35,12 @@ const Security = () => {
           price: history[2],
         }));
         setPriceHistories(formattedPriceHistories);
+        
+        // Set initial Y-axis bounds (before moving average)
+        const priceValues = formattedPriceHistories.map(history => history.price);
+        const yAxisMin = Math.min(...priceValues);
+        const yAxisMax = Math.max(...priceValues);
+        setYAxisBounds({ min: yAxisMin, max: yAxisMax });
       } catch (error) {
         console.error('Error fetching price histories:', error);
       }
@@ -44,96 +50,83 @@ const Security = () => {
     fetchPriceHistories();
   }, [id]);
 
-  const aggregateDataByPeriod = (data, period) => {
-    if (period === 'daily') return data; // No aggregation needed for daily
-    const aggregatedData = [];
-    let currentGroup = { date: "", prices: [] };
+  if (!security) {
+    return <div>Loading...</div>;
+  }
 
-    data.forEach(item => {
-      const currentDate = new Date(item.date);
-      let periodStart;
+  const securityLongName = security[1];
 
-      switch (period) {
-        case 'weekly':
-          periodStart = new Date(currentDate.setDate(currentDate.getDate() - currentDate.getDay())); // Set to Sunday
-          break;
-        case 'monthly':
-          periodStart = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1); // Set to first day of month
-          break;
-        case 'quarterly':
-          periodStart = new Date(currentDate.getFullYear(), Math.floor(currentDate.getMonth() / 3) * 3, 1); // Set to first day of quarter
-          break;
-        case 'annually':
-          periodStart = new Date(currentDate.getFullYear(), 0, 1); // Set to first day of year
-          break;
-        default:
-          periodStart = currentDate; // Default is daily
-      }
-
-      const formattedDate = periodStart.toISOString().split('T')[0]; // formatted date for the group
-      if (currentGroup.date === formattedDate) {
-        currentGroup.prices.push(item.price);
-      } else {
-        if (currentGroup.date) {
-          const avgPrice = currentGroup.prices.reduce((acc, price) => acc + price, 0) / currentGroup.prices.length;
-          aggregatedData.push({ date: currentGroup.date, price: avgPrice });
-        }
-        currentGroup = { date: formattedDate, prices: [item.price] };
-      }
-    });
-
-    if (currentGroup.date) {
-      const avgPrice = currentGroup.prices.reduce((acc, price) => acc + price, 0) / currentGroup.prices.length;
-      aggregatedData.push({ date: currentGroup.date, price: avgPrice });
-    }
-
-    return aggregatedData;
-  };
-
+  // Calculate Moving Average
   const calculateMovingAverage = (data, period) => {
-    let movingAverageData = [];
-    for (let i = 0; i < data.length; i++) {
-      if (i < period - 1) {
-        movingAverageData.push(null);
-      } else {
-        const window = data.slice(i - period + 1, i + 1);
-        const average = window.reduce((sum, value) => sum + value.price, 0) / period;
-        movingAverageData.push(average);
-      }
+    let movingAverageData = new Array(period - 1).fill(null); // Fill initial values with null
+    for (let i = period - 1; i < data.length; i++) {
+      const window = data.slice(i - period + 1, i + 1);
+      const average = window.reduce((sum, value) => sum + value.price, 0) / period;
+      movingAverageData.push(average);
     }
     return movingAverageData;
   };
 
-  const periodMapping = {
-    '5d': 5,
-    '40d': 40,
-    '200d': 200,
-    'weekly': 7, // Weekly is considered 7 days
-    'monthly': 30, // Monthly is approximately 30 days
-    'quarterly': 90, // Quarterly is approximately 90 days
-    'annually': 365, // Annually is approximately 365 days
+  // Define period for selected moving average
+  const movingAveragePeriod =
+    selectedAverage === '5d' ? 5 :
+    selectedAverage === '40d' ? 40 :
+    selectedAverage === '200d' ? 200 :
+    null;
+
+  const movingAverageValues = movingAveragePeriod
+    ? calculateMovingAverage(priceHistories, movingAveragePeriod)
+    : [];
+
+  // Timeframe filtering logic
+  const getTimeFrameMultiplier = (timeFrame) => {
+    switch(timeFrame) {
+      case 'daily': return 1;
+      case 'weekly': return 7;
+      case 'monthly': return 30;
+      case 'quarterly': return 90;
+      case 'annually': return 365;
+      default: return 1;
+    }
   };
 
-  const aggregatedPriceHistories = aggregateDataByPeriod(priceHistories, selectedPeriod);
-  const movingAveragePeriod = periodMapping[selectedAverage] || periodMapping[selectedPeriod];
-  const movingAverageValues = calculateMovingAverage(aggregatedPriceHistories, movingAveragePeriod);
+  // Filter price histories based on the selected timeframe
+  const getFilteredPriceHistories = (timeFrame) => {
+    const multiplier = getTimeFrameMultiplier(timeFrame);
+    const filteredHistories = priceHistories.filter((_, index) => index % multiplier === 0);
+    
+    // Adjust x-axis labels for the filtered data
+    const labels = filteredHistories.map(history => {
+      if (timeFrame === 'annually') {
+        return new Date(history.date).getFullYear(); // Display only year for annual data
+      } else if (timeFrame === 'monthly') {
+        return new Date(history.date).toLocaleString('default', { month: 'short', year: 'numeric' }); // Display month and year for monthly data
+      }
+      return history.date; // Default for daily and other timeframes
+    });
 
+    return { filteredHistories, labels };
+  };
+
+  const { filteredHistories, labels } = getFilteredPriceHistories(selectedTimeFrame);
+
+  // Chart Data
   const data = {
-    labels: aggregatedPriceHistories.map(history => history.date),
+    labels: labels,
     datasets: [
       {
-        label: `Price History for ${security?.[1]}`,
-        data: aggregatedPriceHistories.map(history => history.price),
-        borderColor: '#00796b',
+        label: `Price History for ${securityLongName}`,
+        data: filteredHistories.map(history => history.price),
+        borderColor: '#00796b', // Green Line (Price History)
         backgroundColor: 'rgba(0, 255, 179, 0.2)',
         borderWidth: 1,
         pointRadius: 0.5,
         fill: false,
       },
-      showMovingAverage && {
+      selectedAverage && {
         label: `${movingAveragePeriod}-Day Moving Average`,
-        data: movingAverageValues,
-        borderColor: 'rgb(255, 99, 132)',
+        data: movingAverageValues.slice(0, filteredHistories.length), // Adjust moving average data length to match filtered data
+        borderColor: 'rgb(255, 99, 132)', // Red Line (Moving Average)
         backgroundColor: 'rgba(255, 99, 132, 0.2)',
         borderWidth: 1,
         pointRadius: 0.5,
@@ -142,6 +135,7 @@ const Security = () => {
     ].filter(Boolean),
   };
 
+  // Chart Options
   const chartOptions = {
     responsive: true,
     maintainAspectRatio: true,
@@ -154,21 +148,14 @@ const Security = () => {
       y: {
         type: isLogScale ? 'logarithmic' : 'linear',
         title: { display: true, text: 'Price', color: '#00796b' },
-        ticks: { color: '#00796b', beginAtZero: true },
+        ticks: { color: '#00796b', beginAtZero: false },
         grid: { color: 'rgb(68, 68, 68)' },
+        suggestedMin: yAxisBounds.min, // Always use the fixed Y-axis min value
+        suggestedMax: yAxisBounds.max, // Always use the fixed Y-axis max value
       },
     },
     plugins: {
       legend: { labels: { color: '#00796b' } },
-      tooltip: {
-        callbacks: {
-          label: function (context) {
-            return `Price: ${context.raw}`;
-          },
-        },
-        titleColor: '#f8f8f8',
-        bodyColor: '#f8f8f8',
-      },
       zoom: {
         zoom: { wheel: { enabled: true }, pinch: { enabled: true } },
         pan: { enabled: true, mode: 'xy' },
@@ -178,59 +165,52 @@ const Security = () => {
 
   return (
     <div className='security-container'>
-      <h2>{security?.[1] || "Unknown Security"}</h2>
+      <div className="sidebar">
+        {/* Time Period Selection */}
+        <h3>Time Period</h3>
+        {['daily', 'weekly', 'monthly', 'quarterly', 'annually'].map(time => (
+          <button
+            key={time}
+            onClick={() => setSelectedTimeFrame(time)}
+            className={selectedTimeFrame === time ? 'selected' : ''}
+          >
+            {time.charAt(0).toUpperCase() + time.slice(1)}
+          </button>
+        ))}
 
-      {/* Toggle buttons */}
-      <div className='toggle-button-container'>
-        <button onClick={() => setIsLogScale(!isLogScale)}>
-          Switch to {isLogScale ? 'Linear' : 'Logarithmic'} Scale
+        {/* Moving Averages Selection */}
+        <h3>Moving Averages</h3>
+        {['5d', '40d', '200d'].map(avg => (
+          <button
+            key={avg}
+            onClick={() => setSelectedAverage(avg === selectedAverage ? null : avg)}
+            className={selectedAverage === avg ? 'selected' : ''}
+          >
+            {avg}
+          </button>
+        ))}
+
+        {/* Scale Selection */}
+        <h3>Scale</h3>
+        <button
+          onClick={() => setIsLogScale(false)}
+          className={!isLogScale ? 'selected' : ''}
+        >
+          Linear
+        </button>
+        <button
+          onClick={() => setIsLogScale(true)}
+          className={isLogScale ? 'selected' : ''}
+        >
+          Logarithmic
         </button>
       </div>
 
-      {/* Moving Averages Section */}
-      <div className="moving-averages-section">
-        <h3 className="moving-averages-title">Moving Averages</h3>
-        <div className="moving-average-dropdown" style={{ textAlign: 'center' }}>
-          <label>
-            <input
-              type="checkbox"
-              checked={showMovingAverage}
-              onChange={() => setShowMovingAverage(!showMovingAverage)}
-            />
-            Show Moving Average
-          </label>
-          <select
-            id="average"
-            value={selectedAverage}
-            onChange={e => setSelectedAverage(e.target.value)}
-            disabled={!showMovingAverage}
-          >
-            <option value="5d">5-Day Moving Average</option>
-            <option value="40d">40-Day Moving Average</option>
-            <option value="200d">200-Day Moving Average</option>
-          </select>
+      <div className="main-content">
+        <h2 className='security-hdr'>{securityLongName || "Unknown Security"}</h2>
+        <div className="chart-wrapper">
+          <Line data={data} options={chartOptions} />
         </div>
-      </div>
-
-      {/* Time period selection */}
-      <div className="time-period-section">
-        <h3>Select Time Period</h3>
-        <select
-          id="time-period"
-          value={selectedPeriod}
-          onChange={e => setSelectedPeriod(e.target.value)}
-        >
-          <option value="daily">Daily</option>
-          <option value="weekly">Weekly</option>
-          <option value="monthly">Monthly</option>
-          <option value="quarterly">Quarterly</option>
-          <option value="annually">Annually</option>
-        </select>
-      </div>
-
-      {/* Price history chart with optional moving average */}
-      <div className='chart-wrapper'>
-        <Line data={data} options={chartOptions} />
       </div>
     </div>
   );
