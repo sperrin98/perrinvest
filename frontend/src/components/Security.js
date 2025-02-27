@@ -15,7 +15,6 @@ const Security = () => {
   const [selectedAverage, setSelectedAverage] = useState(null); // Default: No moving average
   const [selectedTimeFrame, setSelectedTimeFrame] = useState('daily'); // Default: Daily
   const [isLogScale, setIsLogScale] = useState(false);
-  const [yAxisBounds, setYAxisBounds] = useState({ min: null, max: null });
 
   useEffect(() => {
     const fetchSecurity = async () => {
@@ -35,12 +34,6 @@ const Security = () => {
           price: history[2],
         }));
         setPriceHistories(formattedPriceHistories);
-        
-        // Set initial Y-axis bounds (before moving average)
-        const priceValues = formattedPriceHistories.map(history => history.price);
-        const yAxisMin = Math.min(...priceValues);
-        const yAxisMax = Math.max(...priceValues);
-        setYAxisBounds({ min: yAxisMin, max: yAxisMax });
       } catch (error) {
         console.error('Error fetching price histories:', error);
       }
@@ -56,28 +49,6 @@ const Security = () => {
 
   const securityLongName = security[1];
 
-  // Calculate Moving Average
-  const calculateMovingAverage = (data, period) => {
-    let movingAverageData = new Array(period - 1).fill(null); // Fill initial values with null
-    for (let i = period - 1; i < data.length; i++) {
-      const window = data.slice(i - period + 1, i + 1);
-      const average = window.reduce((sum, value) => sum + value.price, 0) / period;
-      movingAverageData.push(average);
-    }
-    return movingAverageData;
-  };
-
-  // Define period for selected moving average
-  const movingAveragePeriod =
-    selectedAverage === '5d' ? 5 :
-    selectedAverage === '40d' ? 40 :
-    selectedAverage === '200d' ? 200 :
-    null;
-
-  const movingAverageValues = movingAveragePeriod
-    ? calculateMovingAverage(priceHistories, movingAveragePeriod)
-    : [];
-
   // Timeframe filtering logic
   const getTimeFrameMultiplier = (timeFrame) => {
     switch(timeFrame) {
@@ -90,33 +61,40 @@ const Security = () => {
     }
   };
 
-  // Filter price histories based on the selected timeframe
-  const getFilteredPriceHistories = (timeFrame) => {
-    const multiplier = getTimeFrameMultiplier(timeFrame);
-    const filteredHistories = priceHistories.filter((_, index) => index % multiplier === 0);
-    
-    // Adjust x-axis labels for the filtered data
-    const labels = filteredHistories.map(history => {
-      if (timeFrame === 'annually') {
-        return new Date(history.date).getFullYear(); // Display only year for annual data
-      } else if (timeFrame === 'monthly') {
-        return new Date(history.date).toLocaleString('default', { month: 'short', year: 'numeric' }); // Display month and year for monthly data
-      }
-      return history.date; // Default for daily and other timeframes
-    });
+  // Filter the price history based on selected timeframe
+  const filteredPriceHistories = priceHistories.slice(0, priceHistories.length / getTimeFrameMultiplier(selectedTimeFrame));
 
-    return { filteredHistories, labels };
+  // Calculate min and max for the price history data (this will not be affected by the moving average)
+  const priceValues = filteredPriceHistories.map(history => history.price);
+  const yAxisMin = Math.min(...priceValues);
+  const yAxisMax = Math.max(...priceValues);
+
+  // Prepare the filtered moving average values based on selected timeframe
+  const calculateMovingAverageForTimeframe = (timeFrame) => {
+    const movingAverageData = [];
+    for (let i = 0; i < filteredPriceHistories.length; i++) {
+      const windowSize = timeFrame === 'daily' ? 5 : timeFrame === 'weekly' ? 5 * 7 : timeFrame === 'monthly' ? 5 * 30 : 5;
+      if (i >= windowSize - 1) {
+        const window = filteredPriceHistories.slice(i - windowSize + 1, i + 1);
+        const avg = window.reduce((sum, data) => sum + data.price, 0) / window.length;
+        movingAverageData.push(avg);
+      } else {
+        movingAverageData.push(null);
+      }
+    }
+    return movingAverageData;
   };
 
-  const { filteredHistories, labels } = getFilteredPriceHistories(selectedTimeFrame);
+  // Get the moving average values based on the selected timeframe
+  const movingAverageValues = selectedAverage ? calculateMovingAverageForTimeframe(selectedTimeFrame) : [];
 
   // Chart Data
   const data = {
-    labels: labels,
+    labels: filteredPriceHistories.map(history => history.date),
     datasets: [
       {
         label: `Price History for ${securityLongName}`,
-        data: filteredHistories.map(history => history.price),
+        data: filteredPriceHistories.map(history => history.price),
         borderColor: '#00796b', // Green Line (Price History)
         backgroundColor: 'rgba(0, 255, 179, 0.2)',
         borderWidth: 1,
@@ -124,8 +102,8 @@ const Security = () => {
         fill: false,
       },
       selectedAverage && {
-        label: `${movingAveragePeriod}-Day Moving Average`,
-        data: movingAverageValues.slice(0, filteredHistories.length), // Adjust moving average data length to match filtered data
+        label: `${selectedAverage}-Day Moving Average`,
+        data: movingAverageValues,
         borderColor: 'rgb(255, 99, 132)', // Red Line (Moving Average)
         backgroundColor: 'rgba(255, 99, 132, 0.2)',
         borderWidth: 1,
@@ -150,8 +128,8 @@ const Security = () => {
         title: { display: true, text: 'Price', color: '#00796b' },
         ticks: { color: '#00796b', beginAtZero: false },
         grid: { color: 'rgb(68, 68, 68)' },
-        suggestedMin: yAxisBounds.min, // Always use the fixed Y-axis min value
-        suggestedMax: yAxisBounds.max, // Always use the fixed Y-axis max value
+        suggestedMin: yAxisMin, // Adjust the min value based on filtered price history
+        suggestedMax: yAxisMax, // Adjust the max value based on filtered price history
       },
     },
     plugins: {
