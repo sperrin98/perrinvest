@@ -3,26 +3,29 @@ import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import { Line } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, LogarithmicScale, PointElement, LineElement, Title, Tooltip, Legend } from 'chart.js';
-import zoomPlugin from 'chartjs-plugin-zoom';  // Import the zoom plugin
-import './Security.css';  // Ensure this path is correct
+import zoomPlugin from 'chartjs-plugin-zoom';  
+import './Security.css';
 
-// Register Chart.js components and the zoom plugin
 ChartJS.register(CategoryScale, LinearScale, LogarithmicScale, PointElement, LineElement, Title, Tooltip, Legend, zoomPlugin);
 
 const Security = () => {
-  const { id } = useParams(); // Get the security ID from URL
+  const { id } = useParams();
   const [security, setSecurity] = useState(null);
   const [priceHistories, setPriceHistories] = useState([]);
-  const [selectedAverage, setSelectedAverage] = useState('5d'); // Default to 5-day moving average
-  const [isLogScale, setIsLogScale] = useState(false); // State to toggle between linear and logarithmic scale
+  const [movingAverages, setMovingAverages] = useState({
+    '5d': [],
+    '40d': [],
+    '200d': []
+  });
+  const [selectedAverage, setSelectedAverage] = useState(null); // Default: No moving average
+  const [selectedTimeFrame, setSelectedTimeFrame] = useState('daily'); // Default: Daily
+  const [isLogScale, setIsLogScale] = useState(false);
 
-  // Fetch security details and price histories
   useEffect(() => {
     const fetchSecurity = async () => {
       try {
         const response = await axios.get(`${process.env.REACT_APP_API_URL}/securities/${id}`);
-        console.log('Fetched Security Data:', response.data); // Log the response data
-        setSecurity(response.data.security); // Set the fetched security
+        setSecurity(response.data.security);
       } catch (error) {
         console.error('Error fetching security:', error);
       }
@@ -31,183 +34,241 @@ const Security = () => {
     const fetchPriceHistories = async () => {
       try {
         const response = await axios.get(`${process.env.REACT_APP_API_URL}/securities/${id}/price-histories`);
-        
-        // Format the data correctly
         const formattedPriceHistories = response.data.map(history => ({
           date: new Date(history[1]).toISOString().split('T')[0],
           price: history[2],
         }));
-        setPriceHistories(formattedPriceHistories); // Set the fetched price histories
+        setPriceHistories(formattedPriceHistories);
       } catch (error) {
         console.error('Error fetching price histories:', error);
       }
     };
 
+    const fetchMovingAverages = async () => {
+      try {
+        const movingAveragesData = {};
+
+        // Fetch 5d moving average data
+        const response5d = await axios.get(`${process.env.REACT_APP_API_URL}/securities/${id}/5d-moving-average`);
+        movingAveragesData['5d'] = response5d.data.map(item => ({
+          date: new Date(item.price_date).toISOString().split('T')[0],
+          movingAverage: item['5d_moving_average'],
+        }));
+
+        // Fetch 40d moving average data
+        const response40d = await axios.get(`${process.env.REACT_APP_API_URL}/securities/${id}/40d-moving-average`);
+        movingAveragesData['40d'] = response40d.data.map(item => ({
+          date: new Date(item.price_date).toISOString().split('T')[0],
+          movingAverage: item['40d_moving_average'],
+        }));
+
+        // Fetch 200d moving average data
+        const response200d = await axios.get(`${process.env.REACT_APP_API_URL}/securities/${id}/200d-moving-average`);
+        movingAveragesData['200d'] = response200d.data.map(item => ({
+          date: new Date(item.price_date).toISOString().split('T')[0],
+          movingAverage: item['200d_moving_average'],
+        }));
+
+        setMovingAverages(movingAveragesData);
+      } catch (error) {
+        console.error('Error fetching moving averages:', error);
+      }
+    };
+
     fetchSecurity();
     fetchPriceHistories();
-  }, [id]);  // Only fetch when the component mounts
+    fetchMovingAverages();
+  }, [id]);
 
-  // Handle loading state
   if (!security) {
     return <div>Loading...</div>;
   }
 
-  // Access the security long name from the security array
-  const securityLongName = security[1]; // Assuming security_long_name is the second item in the array
+  const securityLongName = security[1];
 
-  const prices = priceHistories.map(history => history.price);
-
-  // Data for the price history chart
-  const data = {
-    labels: priceHistories.map(history => history.date),
-    datasets: [{
-      label: `Price History for ${securityLongName || "Unknown Security"}`, // Use the correct long name
-      data: prices,
-      borderColor: '#00796b',
-      backgroundColor: 'rgba(0, 255, 179, 0.2)',
-      borderWidth: 1,   // Thinner line
-      pointRadius: 0.5, // Smaller points
-      fill: false,
-    }],
-  };
-
-  // Calculate moving average
-  const calculateMovingAverage = (data, period) => {
-    let movingAverageData = [];
-    for (let i = 0; i < data.length; i++) {
-      if (i < period - 1) {
-        movingAverageData.push(null);  // Not enough data for this period
-      } else {
-        const window = data.slice(i - period + 1, i + 1);
-        const average = window.reduce((sum, value) => sum + value.price, 0) / period;
-        movingAverageData.push(average);
-      }
+  // Timeframe filtering logic
+  const getTimeFrameMultiplier = (timeFrame) => {
+    switch(timeFrame) {
+      case 'daily': return 1;
+      case 'weekly': return 7;
+      case 'monthly': return 30;
+      case 'quarterly': return 90;
+      case 'annually': return 365;
+      default: return 1;
     }
-    return movingAverageData;
   };
 
-  // Determine the moving average period based on the selected average
-  const movingAveragePeriod = selectedAverage === '5d' ? 5 : selectedAverage === '40d' ? 40 : 200;
+  // Filter the price history based on selected timeframe
+  const getFilteredPriceHistories = () => {
+    const multiplier = getTimeFrameMultiplier(selectedTimeFrame);
+    const filtered = [];
+    let currentDate = new Date();
+    
+    // Ensure we are filtering data so the most recent data is shown last, no matter the timeframe
+    priceHistories.forEach((history, index) => {
+      const date = new Date(history.date);
+      const diffInDays = Math.floor((currentDate - date) / (1000 * 60 * 60 * 24));
+      
+      if (diffInDays % multiplier === 0) {
+        filtered.push(history);
+      }
+    });
 
-  // Calculate the moving average dataset
-  const movingAverageValues = calculateMovingAverage(priceHistories, movingAveragePeriod);
-
-  // Data for the moving average chart
-  const movingAverageChartData = {
-    labels: priceHistories.map(history => history.date),
-    datasets: [{
-      label: `${movingAveragePeriod}-Day Moving Average`,
-      data: movingAverageValues,
-      borderColor: 'rgb(255, 99, 132)',
-      backgroundColor: 'rgba(255, 99, 132, 0.2)',
-      borderWidth: 1,
-      pointRadius: 0.5,
-      fill: false,
-    }],
+    return filtered; // Do not reverse the array, it should be sorted from oldest to most recent
   };
 
-  // Chart options with toggle for linear/logarithmic scale
+  const filteredPriceHistories = getFilteredPriceHistories();
+
+  // Calculate min and max for the price history data (this will not be affected by the moving average)
+  const priceValues = filteredPriceHistories.map(history => history.price);
+  const yAxisMin = Math.min(...priceValues);
+  const yAxisMax = Math.max(...priceValues);
+
+  // Prepare the filtered moving average values based on selected timeframe
+  const getMovingAverageValues = (movingAverageType) => {
+    const movingAverageData = movingAverages[movingAverageType] || [];
+    return movingAverageData.map(item => ({
+      date: item.date,
+      movingAverage: item.movingAverage,
+    }));
+  };
+
+  const movingAverageValues5d = selectedAverage === '5d' ? getMovingAverageValues('5d') : [];
+  const movingAverageValues40d = selectedAverage === '40d' ? getMovingAverageValues('40d') : [];
+  const movingAverageValues200d = selectedAverage === '200d' ? getMovingAverageValues('200d') : [];
+
+  // Chart Data
+  const data = {
+    labels: filteredPriceHistories.map(history => history.date),
+    datasets: [
+      {
+        label: `Price History for ${securityLongName}`,
+        data: filteredPriceHistories.map(history => history.price),
+        borderColor: '#00796b', // Green Line (Price History)
+        backgroundColor: 'rgba(0, 255, 179, 0.2)',
+        borderWidth: 1,
+        pointRadius: 0.5,
+        fill: false,
+      },
+      selectedAverage === '5d' && {
+        label: `5-Day Moving Average`,
+        data: filteredPriceHistories.map(history => {
+          // For each price history point, match with moving average data
+          const matchedAvg = movingAverageValues5d.find(item => item.date === history.date);
+          return matchedAvg ? matchedAvg.movingAverage : null;
+        }),
+        borderColor: 'rgb(255, 99, 132)', // Red Line (Moving Average)
+        backgroundColor: 'rgba(255, 99, 132, 0.2)',
+        borderWidth: 1,
+        pointRadius: 0.5,
+        fill: false,
+      },
+      selectedAverage === '40d' && {
+        label: `40-Day Moving Average`,
+        data: filteredPriceHistories.map(history => {
+          // For each price history point, match with moving average data
+          const matchedAvg = movingAverageValues40d.find(item => item.date === history.date);
+          return matchedAvg ? matchedAvg.movingAverage : null;
+        }),
+        borderColor: 'rgb(255, 159, 64)', // Orange Line (40d)
+        backgroundColor: 'rgba(255, 159, 64, 0.2)',
+        borderWidth: 1,
+        pointRadius: 0.5,
+        fill: false,
+      },
+      selectedAverage === '200d' && {
+        label: `200-Day Moving Average`,
+        data: filteredPriceHistories.map(history => {
+          // For each price history point, match with moving average data
+          const matchedAvg = movingAverageValues200d.find(item => item.date === history.date);
+          return matchedAvg ? matchedAvg.movingAverage : null;
+        }),
+        borderColor: 'rgb(153, 102, 255)', // Purple Line (200d)
+        backgroundColor: 'rgba(153, 102, 255, 0.2)',
+        borderWidth: 1,
+        pointRadius: 0.5,
+        fill: false,
+      },
+    ].filter(Boolean),
+  };
+
+  // Chart Options
   const chartOptions = {
     responsive: true,
-    maintainAspectRatio: true, // Maintain aspect ratio
+    maintainAspectRatio: true,
     scales: {
       x: {
-        title: {
-          display: true,
-          text: 'Date',
-          color: '#00796b',
-        },
-        ticks: {
-          color: '#00796b',
-        },
-        grid: {
-          color: 'rgb(68, 68, 68)',
-        },
+        title: { display: true, text: 'Date', color: '#00796b' },
+        ticks: { color: '#00796b' },
+        grid: { color: 'rgb(202, 202, 202)' },
+        reverse: false,  // Do not reverse the x-axis, it should be ordered correctly
       },
       y: {
-        type: isLogScale ? 'logarithmic' : 'linear', // Toggle between logarithmic and linear
-        title: {
-          display: true,
-          text: 'Price',
-          color: '#00796b',
-        },
-        ticks: {
-          color: '#00796b',
-          beginAtZero: true, // Ensure the y-axis starts at zero
-        },
-        grid: {
-          color: 'rgb(68, 68, 68)',
-        },
+        type: isLogScale ? 'logarithmic' : 'linear',
+        title: { display: true, text: 'Price', color: '#00796b' },
+        ticks: { color: '#00796b', beginAtZero: false },
+        grid: { color: 'rgb(202, 202, 202)' },
+        suggestedMin: yAxisMin, // Adjust the min value based on filtered price history
+        suggestedMax: yAxisMax, // Adjust the max value based on filtered price history
       },
     },
     plugins: {
-      legend: {
-        labels: {
-          color: '#00796b',
-        },
-      },
-      tooltip: {
-        callbacks: {
-          label: function (context) {
-            return `Price: ${context.raw}`;
-          },
-        },
-        titleColor: '#f8f8f8',
-        bodyColor: '#f8f8f8',
-      },
+      legend: { labels: { color: '#00796b' } },
       zoom: {
-        // Allow zooming with the scroll wheel
-        zoom: {
-          wheel: {
-            enabled: true, // Enable zooming with the wheel
-          },
-          pinch: {
-            enabled: true, // Enable pinch zooming on touch devices
-          },
-        },
-        pan: {
-          enabled: true,
-          mode: 'xy', // Allow panning in both directions
-        },
+        zoom: { wheel: { enabled: true }, pinch: { enabled: true } },
+        pan: { enabled: true, mode: 'xy' },
       },
     },
   };
 
   return (
     <div className='security-container'>
-      <h2>{securityLongName || "Unknown Security"}</h2>
+      <div className="sidebar">
+        {/* Time Period Selection */}
+        <h3>Time Period</h3>
+        {['daily', 'weekly', 'monthly', 'quarterly', 'annually'].map(time => (
+          <button
+            key={time}
+            onClick={() => setSelectedTimeFrame(time)}
+            className={selectedTimeFrame === time ? 'selected' : ''}
+          >
+            {time.charAt(0).toUpperCase() + time.slice(1)}
+          </button>
+        ))}
 
-      {/* Toggle between linear/logarithmic scale */}
-      <div className='toggle-button-container'>
-        <button onClick={() => setIsLogScale(!isLogScale)}>
-          Switch to {isLogScale ? 'Linear' : 'Logarithmic'} Scale
+        {/* Moving Averages Selection */}
+        <h3>Moving Averages</h3>
+        {['5d', '40d', '200d'].map(avg => (
+          <button
+            key={avg}
+            onClick={() => setSelectedAverage(avg === selectedAverage ? null : avg)}
+            className={selectedAverage === avg ? 'selected' : ''}
+          >
+            {avg}
+          </button>
+        ))}
+
+        {/* Scale Selection */}
+        <h3>Scale</h3>
+        <button
+          onClick={() => setIsLogScale(false)}
+          className={!isLogScale ? 'selected' : ''}
+        >
+          Linear
+        </button>
+        <button
+          onClick={() => setIsLogScale(true)}
+          className={isLogScale ? 'selected' : ''}
+        >
+          Logarithmic
         </button>
       </div>
 
-      {/* Price history chart */}
-      <div className='chart-wrapper'>
-        <Line data={data} options={chartOptions} />
-      </div>
-
-      {/* Moving Averages Section */}
-      <div className="moving-averages-section">
-        <h3 className="moving-averages-title">Moving Averages</h3>
-        <div className="moving-average-dropdown" style={{ textAlign: 'center' }}>
-          <select
-            id="average"
-            value={selectedAverage}
-            onChange={e => setSelectedAverage(e.target.value)}
-          >
-            <option value="5d">5-Day Moving Average</option>
-            <option value="40d">40-Day Moving Average</option>
-            <option value="200d">200-Day Moving Average</option>
-          </select>
+      <div className="main-content">
+        <h2 className='security-hdr'>{securityLongName || "Unknown Security"}</h2>
+        <div className="chart-wrapper">
+          <Line data={data} options={chartOptions} />
         </div>
-      </div>
-
-      {/* Moving average chart */}
-      <div className="chart-wrapper">
-        <Line data={movingAverageChartData} options={chartOptions} />
       </div>
     </div>
   );

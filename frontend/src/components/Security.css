@@ -1,15 +1,44 @@
 .security-container {
   height: 100vh; /* Full viewport height */
   width: 100vw; /* Full viewport width */
-  background-color: #F8F8F8; /* Change background color to black */
-  padding-top: 120px; /* Maintain padding at the top */
-  box-sizing: border-box; /* Include padding in container's total width and height */
-  overflow: auto; /* Allow scrolling if content exceeds viewport height */
+  background-color: #F8F8F8; /* Background color */
+  display: flex; /* Flex layout */
+  flex-direction: row; /* Sidebar and chart in row layout */
+  box-sizing: border-box;
+}
+
+.sidebar {
+  width: 22%;
+  background: linear-gradient(135deg, #00796b, #004d40);
+  padding: 25px;
+  padding-top: 120px; /* Add space to push content down */
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  color: white;
+  font-family: 'Arial', sans-serif;
+  border-right: 3px solid #00332c;
+}
+
+
+.main-content {
+  width: 80%; /* Main content takes up the remaining space */
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start; /* Align content to the top */
+  align-items: center; /* Horizontally center the chart */
+}
+
+.main-content h2 {
+  font-size: 2rem;
+  margin-bottom: 20px; /* Just below the title */
 }
 
 .chart-wrapper {
-  height: 80%; /* Keep this size to maintain a specific aspect ratio */
-  width: 100%; /* Ensure the chart takes up full width */
+  height: 100%; /* Ensure chart wrapper takes up remaining space */
+  width: 100%; /* Ensure chart takes up full width */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -17,8 +46,8 @@
 
 .toggle-button-container {
   display: flex;
-  justify-content: center; /* Center the button horizontally */
-  margin-bottom: 20px; /* Add some space below the button */
+  justify-content: center;
+  margin-bottom: 20px;
 }
 
 .toggle-button-container button {
@@ -36,17 +65,89 @@
 }
 
 .moving-averages-section {
-  text-align: center;
+  text-align: left;
   margin-bottom: 20px;
 }
 
 .moving-averages-title {
   font-size: 1.5rem;
   margin-bottom: 10px;
-  margin-top: 20px;
 }
 
 .moving-average-dropdown {
   padding: 10px;
   font-size: 1rem;
+}
+
+.time-period-section {
+  margin-top: 20px;
+  text-align: left;
+}
+
+.time-period-section h3 {
+  font-size: 1.2rem;
+  margin-bottom: 10px;
+}
+
+.time-period-section select {
+  padding: 5px;
+  font-size: 1rem;
+}
+
+.security-hdr {
+  margin-top: 110px;
+  color: #00796b;
+  font-size: 32px;  
+  font-weight: 600;  
+  letter-spacing: 1px; 
+  text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1); 
+}
+
+
+.sidebar h3 {
+  font-size: 1.3rem;
+  margin-bottom: 15px;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.3);
+  padding-bottom: 5px;
+}
+
+.sidebar button {
+  width: 100%;
+  padding: 12px;
+  margin: 5px 0;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 5px;
+  color: white;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: 0.3s ease-in-out;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sidebar button.selected {
+  background: rgba(0, 255, 179, 0.9);
+  color: #004d40;
+  font-weight: bold;
+}
+
+.sidebar button:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: scale(1.05);
+}
+
+.sidebar .icon {
+  margin-right: 8px;
+  font-size: 1.2rem;
+}
+
+.scale-buttons {
+  display: flex;
+  justify-content: space-between;
+}
+
+.scale-buttons button {
+  width: 48%;
 }
