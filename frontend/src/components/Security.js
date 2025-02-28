@@ -200,14 +200,14 @@ const Security = () => {
       x: {
         title: { display: true, text: 'Date', color: '#00796b' },
         ticks: { color: '#00796b' },
-        grid: { color: 'rgb(68, 68, 68)' },
+        grid: { color: 'rgb(202, 202, 202)' },
         reverse: false,  // Do not reverse the x-axis, it should be ordered correctly
       },
       y: {
         type: isLogScale ? 'logarithmic' : 'linear',
         title: { display: true, text: 'Price', color: '#00796b' },
         ticks: { color: '#00796b', beginAtZero: false },
-        grid: { color: 'rgb(68, 68, 68)' },
+        grid: { color: 'rgb(202, 202, 202)' },
         suggestedMin: yAxisMin, // Adjust the min value based on filtered price history
         suggestedMax: yAxisMax, // Adjust the max value based on filtered price history
       },
