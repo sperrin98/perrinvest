@@ -8,15 +8,19 @@
 }
 
 .sidebar {
-  width: 20%; /* Sidebar takes up 20% of the page */
-  background-color: #FFFFFF;
-  padding: 20px;
+  width: 22%;
+  background: linear-gradient(135deg, #00796b, #004d40);
+  padding: 25px;
+  padding-top: 120px; /* Add space to push content down */
   box-sizing: border-box;
   display: flex;
-  flex-direction: column; /* Stack elements vertically */
-  justify-content: center; /* Vertically center the sidebar content */
-  height: 100vh; /* Ensure the sidebar takes up the full height */
+  flex-direction: column;
+  height: 100vh;
+  color: white;
+  font-family: 'Arial', sans-serif;
+  border-right: 3px solid #00332c;
 }
+
 
 .main-content {
   width: 80%; /* Main content takes up the remaining space */
@@ -92,4 +96,58 @@
 
 .security-hdr {
   margin-top: 110px;
+  color: #00796b;
+  font-size: 32px;  
+  font-weight: 600;  
+  letter-spacing: 1px; 
+  text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1); 
+}
+
+
+.sidebar h3 {
+  font-size: 1.3rem;
+  margin-bottom: 15px;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.3);
+  padding-bottom: 5px;
+}
+
+.sidebar button {
+  width: 100%;
+  padding: 12px;
+  margin: 5px 0;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 5px;
+  color: white;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: 0.3s ease-in-out;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sidebar button.selected {
+  background: rgba(0, 255, 179, 0.9);
+  color: #004d40;
+  font-weight: bold;
+}
+
+.sidebar button:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: scale(1.05);
+}
+
+.sidebar .icon {
+  margin-right: 8px;
+  font-size: 1.2rem;
+}
+
+.scale-buttons {
+  display: flex;
+  justify-content: space-between;
+}
+
+.scale-buttons button {
+  width: 48%;
 }
