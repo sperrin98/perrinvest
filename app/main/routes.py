@@ -32,7 +32,9 @@ from app.db_utils import (
     fetch_market_league_table,
     fetch_market_league_data_by_constituent_id,
     fetch_market_league_constituents,
-    fetch_asset_classes
+    fetch_asset_classes,
+    fetch_daily_moves_by_year_and_security,
+    fetch_precious_metals
     )   
 import yfinance as yf
 from datetime import datetime, timedelta  # Include datetime and timedelta
@@ -460,7 +462,28 @@ def get_market_league_data(constituent_id):
         return jsonify(data)
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+    
+@main.route("/precious-metals", methods=["GET"])
+def get_precious_metals_route():
+    try:
+        metals = fetch_precious_metals()
+        return jsonify({"data": metals})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
+@main.route("/precious-metals/daily-moves", methods=["GET"])
+def get_daily_moves_route():
+    security_id = request.args.get("id")
+    year = request.args.get("year", datetime.now().year)
+
+    if not security_id:
+        return jsonify({"error": "Missing id parameter"}), 400
+
+    try:
+        data = fetch_daily_moves_by_year_and_security(year, security_id)
+        return jsonify({"data": data})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 
 @main.route('/api/crypto-prices', methods=['GET'])

@@ -618,4 +618,55 @@ def fetch_market_league_data_by_constituent_id(constituent_id):
         cursor.close()
         conn.close()
         return []
+    
+def fetch_precious_metals():
+    precious_ids = [36, 37, 38, 149, 153, 154, 155, 156]
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+    try:
+        format_ids = ",".join(str(i) for i in precious_ids)
+        query = f"""
+            SELECT security_id, security_long_name
+            FROM securities
+            WHERE security_id IN ({format_ids})
+            ORDER BY security_id
+        """
+        cursor.execute(query)
+        results = cursor.fetchall()
+        cursor.close()
+        conn.close()
+        return results
+    except Exception as e:
+        cursor.close()
+        conn.close()
+        print(f"Error fetching precious metals: {e}")
+        return []
 
+def fetch_daily_moves_by_year_and_security(year, security_id):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    try:
+        cursor.callproc("get_daily_moves_by_year_and_security", [year, security_id])
+        results = []
+        for result in cursor.stored_results():
+            results = result.fetchall()
+        cursor.close()
+        conn.close()
+        return [
+            {
+                "year": row[0],
+                "week": row[1],
+                "monday": row[2],
+                "tuesday": row[3],
+                "wednesday": row[4],
+                "thursday": row[5],
+                "friday": row[6],
+                "week_total": row[7]
+            }
+            for row in results
+        ]
+    except Exception as e:
+        cursor.close()
+        conn.close()
+        print(f"Error fetching daily moves: {e}")
+        return []
