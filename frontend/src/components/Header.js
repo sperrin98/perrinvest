@@ -30,6 +30,7 @@ const Header = ({ isLoggedIn, onLogout }) => {
             <div className="dropdown-content">
               <Link to="/securities">All Securities</Link>
               <Link to="/correlations">Correlations</Link>
+              <Link to='/precious-metals'>Precious Metals</Link>
             </div>
           </li>
 
