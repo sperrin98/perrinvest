@@ -77,7 +77,7 @@ export default function MonthlyReturns() {
             <h1 className="monthly-title">{selectedMetal.security_long_name} - Monthly Returns</h1>
             <table className="monthly-table">
               <thead>
-                <tr>
+                <tr className="monthly-table-header">
                   <th>YEAR</th>
                   {MONTH_ORDER.map((month) => (
                     <th key={month}>{month}</th>
