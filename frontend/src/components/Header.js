@@ -24,13 +24,16 @@ const Header = ({ isLoggedIn, onLogout }) => {
           ☰ Menu
         </button>
         <ul className={`nav-links ${menuOpen ? 'show' : ''}`}>
+
+          <li className="dropdown">
+            <Link to='/precious-metals'>Precious Metals</Link>
+          </li>
           {/* Dropdown for Securities */}
           <li className="dropdown">
-            <Link to="/securities" className="dropbtn">Securities</Link>
+            <Link to="/securities" className="dropbtn">Markets</Link>
             <div className="dropdown-content">
               <Link to="/securities">All Securities</Link>
               <Link to="/correlations">Correlations</Link>
-              <Link to='/precious-metals'>Precious Metals</Link>
             </div>
           </li>
 
@@ -46,7 +49,7 @@ const Header = ({ isLoggedIn, onLogout }) => {
 
           {/* Dropdown for Economical Data */}
           <li className="dropdown">
-            <Link to="/eco-data-points" className="dropbtn">Economical Data</Link>
+            <Link to="/eco-data-points" className="dropbtn">Economic Data</Link>
             <div className="dropdown-content">
               <Link to="/eco-data-points">Data Points</Link>
               <Link to="/returns">Returns</Link>
