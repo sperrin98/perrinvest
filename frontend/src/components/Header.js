@@ -27,6 +27,9 @@ const Header = ({ isLoggedIn, onLogout }) => {
 
           <li className="dropdown">
             <Link to='/precious-metals'>Precious Metals</Link>
+            <div className="dropdown-content">
+              <Link to='/monthly-returns'>Monthly Returns</Link>
+            </div>
           </li>
           {/* Dropdown for Securities */}
           <li className="dropdown">
