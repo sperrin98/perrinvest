@@ -26,6 +26,7 @@ import AnnualReturns from './components/AnnualReturns';
 import NwHpi from './components/NwHpi'; 
 import MarketLeagues from './components/MarketLeagues';
 import PreciousMetals from './components/PreciousMetals';
+import MonthlyReturns from './components/MonthlyReturns';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -66,6 +67,7 @@ function App() {
         <Route path="/nw-hpi/:id" element={<NwHpi />} />
         <Route path="/market-leagues" element={<MarketLeagues />} />
         <Route path="/precious-metals" element={<PreciousMetals />} />
+        <Route path="/monthly-returns" element={<MonthlyReturns />} />
       </Routes>
     </Router>
   );
