@@ -117,9 +117,14 @@
 }
 
 .pm-table-header {
-  background-color: #e0f2f1;
+  background-color:#00796b;
   font-weight: bold;
 }
+
+.pm-table-header th {
+  color: white;
+}
+
 
 .pm-week-total {
   font-weight: 600;
@@ -129,3 +134,39 @@
   color: red;
   font-weight: bold;
 }
+
+.pm-table {
+  table-layout: fixed;
+  width: 100%;
+}
+
+/* Override all inherited hover effects */
+.pm-table tr:hover,
+.pm-table tr:hover td,
+.pm-table tr td:hover {
+  background-color: rgb(191, 228, 204) !important; /* your hover color */
+  transition: background-color 0.2s ease !important; /* only hover color changes */
+}
+
+/* Reset all td and th to transparent so no global hover leaks through */
+.pm-table th,
+.pm-table td {
+  text-align: center;
+  width: 12.5%;
+  word-wrap: break-word;
+  background-color: transparent !important;
+  transition: none !important; /* cancel any inherited transitions */
+}
+
+/* Positive/negative text color, keep text only */
+td.positive {
+  color: green !important;
+  background-color: transparent !important;
+}
+
+td.negative {
+  color: red !important;
+  background-color: transparent !important;
+}
+
+

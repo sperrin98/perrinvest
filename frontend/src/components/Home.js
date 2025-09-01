@@ -50,11 +50,6 @@ const Home = () => {
     fetchTrendingSecurities();
   }, []);
 
-  const getColor = (performance) => {
-    if (performance === "No Data") return 'gray';
-    return performance < 0 ? 'red' : 'green';
-  };
-
   const sections = [commodities, currencies, stockMarkets];
   const sectionTitles = ['Commodities', 'Currencies', 'Stock Markets'];
 
@@ -63,18 +58,20 @@ const Home = () => {
 
   return (
     <div>
+      {/* Section 1 */}
       <div className="section section1">
         <h1 className="home-header">Perrinvest</h1>
         <StockDock />
       </div>
+
+      {/* Section 2 */}
       <div className="section section2">
         <h2 className='section2-header'>Trending Markets</h2>
         <ChartCarousel />
       </div>
 
-
+      {/* Section Securities */}
       <div className="section section-securities">
-        {/* Right Side: Securities Header & Buttons */}
         <div className="securities-right">
           <h1 className="securities-header">Securities</h1>
           <div className="sec-button-container">
@@ -83,19 +80,13 @@ const Home = () => {
           </div>
         </div>
 
-        {/* Left Side: Trending Section */}
         <div className="trending-container">
           <h1 className="trending-title">Trending Tickers</h1>
-
           <div className="carousel-wrapper">
-            {/* Left Arrow */}
             <button className="carousel-arrow carousel-arrow-left" onClick={handlePrev}>‹</button>
-
             <div className="trending-carousel">
               <div className="carousel-content">
-                {/* Centered Section Title */}
                 <h3 className="carousel-title">{sectionTitles[activeIndex]}</h3>
-
                 <ul className="trending-securities">
                   {sections[activeIndex].map((item, index) => (
                     <li key={index}>
@@ -108,14 +99,12 @@ const Home = () => {
                 </ul>
               </div>
             </div>
-
-            {/* Right Arrow */}
             <button className="carousel-arrow carousel-arrow-right" onClick={handleNext}>›</button>
           </div>
         </div>
       </div>
 
-
+      {/* Section 3 */}
       <div className="section section3">
         <h1 className="home-header">Currencies</h1>
         <div className="button-container">
@@ -128,6 +117,7 @@ const Home = () => {
         </div>
       </div>
 
+      {/* Section 4 */}
       <div className="section section4">
         <h1 className="market-ratio-home-header">Leagues & Ratios</h1>
         <div className="button2-container">
