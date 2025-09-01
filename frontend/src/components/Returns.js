@@ -1,109 +1,96 @@
-import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState } from 'react';
 import './Returns.css';
+import EcoDataPoint from './EcoDataPoint';
+import AnnualReturns from './AnnualReturns';
+import GoldReturns from './GoldReturns';
+import SilverReturns from './SilverReturns';
 
 const Returns = () => {
-  const [securities, setSecurities] = useState([]); // For storing fetched securities
-  const [error, setError] = useState(null); // For error handling
-  const [selectedOption, setSelectedOption] = useState(''); // For storing selected dropdown option
-  const [nwHpiIds, setNwHpiIds] = useState([]); // NW HPI IDs (1–14)
-
-  // Fetch data based on selected option (Stock Markets or Currencies)
-  useEffect(() => {
-    if (!selectedOption) return; // Do nothing if no option is selected
-
-    const fetchSecurities = async () => {
-      if (selectedOption === 'stock-markets') {
-        const url = `${process.env.REACT_APP_API_URL}/securities/asset-class-2`; // Stock markets URL
-        try {
-          const response = await fetch(url);
-          if (!response.ok) {
-            throw new Error(`Error: ${response.statusText}`);
-          }
-          const result = await response.json();
-          setSecurities(result); // Store stock markets data in state
-        } catch (error) {
-          setError(error.message); // Handle errors
-        }
-      } else if (selectedOption === 'nw-hpi') {
-        setNwHpiIds(Array.from({ length: 14 }, (_, i) => i + 1)); // Populate static IDs for NW HPI
-      }
-    };
-
-    fetchSecurities(); // Fetch data when option changes
-  }, [selectedOption]);
+  const [selectedOption, setSelectedOption] = useState({ type: null, id: null });
+  const nwHpiIds = Array.from({ length: 21 }, (_, i) => i + 1);
 
   return (
     <div className="returns-container">
-      <h1>Returns of Major Assets</h1>
+      <div className="returns-sidebar">
+        <div className="sidebar-scroll">
+          <h3>Currencies priced in Gold/Silver</h3>
+          <div className="option-list">
+            <button
+              onClick={() => setSelectedOption({ type: 'gold' })}
+              className={selectedOption.type === 'gold' ? 'selected' : ''}
+            >
+              Gold Price Returns
+            </button>
+            <button
+              onClick={() => setSelectedOption({ type: 'silver' })}
+              className={selectedOption.type === 'silver' ? 'selected' : ''}
+            >
+              Silver Price Returns
+            </button>
+          </div>
 
-      {/* Dropdown for selecting either Currencies, Stock Markets, NW HPI, or Annual Returns */}
-      <div className="dropdown-container">
-        <label htmlFor="securities-select" className="dropdown-label">Select Option:</label>
-        <select
-          id="securities-select"
-          value={selectedOption}
-          onChange={(e) => setSelectedOption(e.target.value)} // Update selected option
-        >
-          <option value="">Select...</option>
-          <option value="currencies">Currencies Priced in Gold/Silver</option>
-          <option value="stock-markets">Stock Markets Priced in Gold</option>
-          <option value="annual-returns">Annual Returns</option>
-          <option value="nw-hpi">Nationwide House Price Indexes</option>
-        </select>
+          <h3>Annual Returns</h3>
+          <div className="option-list">
+            <button
+              onClick={() => setSelectedOption({ type: 'annual' })}
+              className={selectedOption.type === 'annual' ? 'selected' : ''}
+            >
+              Go to Annual Returns
+            </button>
+          </div>
+
+          <h3>Nationwide House Price Indexes</h3>
+          <div className="option-list">
+            {nwHpiIds.map(id => (
+              <button
+                key={id}
+                onClick={() => setSelectedOption({ type: 'eco-data', id })}
+                className={selectedOption.type === 'eco-data' && selectedOption.id === id ? 'selected' : ''}
+              >
+                Nationwide HPI ID {id}
+              </button>
+            ))}
+          </div>
+        </div>
       </div>
 
-      {/* Show Currencies-related links when "Currencies" is selected */}
-      {selectedOption === 'currencies' && (
-        <div className="currencies-links">
-          <ul>
-            <li><Link to="/returns/1">Gold Price Returns</Link></li>
-            <li><Link to="/returns/2">Silver Price Returns</Link></li>
-          </ul>
-        </div>
-      )}
+      <div className="returns-main-content">
+        {selectedOption.type === 'gold' && (
+          <div className="content-block">
+            <h2>Gold Price Returns</h2>
+            <div className="wrapper">
+              <GoldReturns />
+            </div>
+          </div>
+        )}
 
-      {/* Show the list of Stock Markets when "Stock Markets" is selected */}
-      {selectedOption === 'stock-markets' && (
-        <div className="securities-list">
-          {securities.length > 0 ? (
-            <ul>
-              {securities.map((security) => (
-                <li key={security.security_id}>
-                  <Link to={`/stockmarketreturn/${security.security_id}`}>
-                    {security.security_long_name}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <div>No stock markets available.</div>
-          )}
-        </div>
-      )}
+        {selectedOption.type === 'silver' && (
+          <div className="content-block">
+            <h2>Silver Price Returns</h2>
+            <div className="wrapper">
+              <SilverReturns />
+            </div>
+          </div>
+        )}
 
-      {/* Show link for Annual Returns */}
-      {selectedOption === 'annual-returns' && (
-        <div className="annual-returns-link">
-          <Link to="/annualreturns">Go to Annual Returns</Link>
-        </div>
-      )}
+        {selectedOption.type === 'annual' && (
+          <div className="content-block">
+            <h2>Annual Returns</h2>
+            <div className="wrapper">
+              <AnnualReturns />
+            </div>
+          </div>
+        )}
 
-      {/* Show NW HPI-related links when "Nationwide House Price Indexes" is selected */}
-      {selectedOption === 'nw-hpi' && (
-        <div className="nw-hpi-links">
-          <ul>
-            {nwHpiIds.map((id) => (
-              <li key={id}>
-                <Link to={`/nw-hpi/${id}`}>Nationwide HPI ID {id}</Link>
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
-
-      {/* Show error message if data fetch fails */}
-      {error && <div>{`Error: ${error}`}</div>}
+        {selectedOption.type === 'eco-data' && selectedOption.id && (
+          <div className="content-block">
+            <h2>Nationwide HPI ID {selectedOption.id}</h2>
+            <div className="wrapper">
+              <EcoDataPoint id={selectedOption.id} />
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 };
