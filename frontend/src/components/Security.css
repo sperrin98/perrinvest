@@ -19,8 +19,9 @@
   color: white;
   font-family: 'Arial', sans-serif;
   border-right: 3px solid #00332c;
+  
+  overflow-y: auto;  /* <-- Add this line for vertical scrolling */
 }
-
 
 .main-content {
   width: 80%; /* Main content takes up the remaining space */

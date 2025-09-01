@@ -1,60 +1,133 @@
-/* Returns.css */
-
+/* Main container */
 .returns-container {
-    margin-top: 100px; /* Margin at the top of the container */
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  background-color: #F8F8F8;
+  box-sizing: border-box;
 }
 
 .returns-header {
-    text-align: center; /* Center the header text */
+  text-align: center;   /* centers the text */
+  margin: 0 0 20px;     /* keeps spacing below */
+  width: 100%;          /* makes it stretch full width */
 }
 
-.returns-table-container {
-    display: flex;               /* Use flexbox for layout */
-    justify-content: center;     /* Center the table container */
-    margin: 0 20px;             /* Equal margin on the left and right of the table */
-    margin-bottom: 20px;        /* Margin at the bottom of the table */
+
+/* Sidebar */
+.returns-sidebar {
+  width: 22%;
+  background: linear-gradient(135deg, #00796b, #004d40);
+  padding: 25px;
+  padding-top: 120px;
+  box-sizing: border-box;
+  color: white;
+  font-family: Arial, sans-serif;
+  border-right: 3px solid #00332c;
+  overflow-y: auto;
+}
+.returns-sidebar h3 {
+  font-size: 1.3rem;
+  margin-bottom: 15px;
+  border-bottom: 2px solid rgba(255,255,255,0.3);
+  padding-bottom: 5px;
+}
+.returns-sidebar button {
+  width: 100%;
+  padding: 12px;
+  margin: 5px 0;
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.3);
+  border-radius: 5px;
+  color: white;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: 0.3s;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.returns-sidebar button.selected {
+  background: rgba(0,255,179,0.9);
+  color: #004d40;
+  font-weight: bold;
+}
+.returns-sidebar button:hover {
+  background: rgba(255,255,255,0.2);
+  transform: scale(1.05);
 }
 
+/* Main content */
+.returns-main-content {
+  width: 78%;
+  padding: 20px;
+  box-sizing: border-box;
+  overflow-y: auto;
+}
+
+/* Content block: column layout, full width */
+.content-block {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  margin-bottom: 40px;
+}
+
+/* Title: allow wrap, full width, centered text */
+.content-block h2 {
+  width: 100%;
+  margin: 0 0 20px;
+  text-align: center;
+  white-space: normal;      /* allow wrapping */
+  word-break: break-word;   /* break long words */
+  font-size: 1.75rem;
+}
+
+/* Wrapper for charts/tables: full width, centers its child */
+.wrapper {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  box-sizing: border-box;
+}
+
+/* If your tables use .returns-table, keep existing styles below */
 .returns-table {
-    width: 100%;                 /* Full width for the table */
-    border-collapse: collapse;   /* Collapse borders for cleaner look */
-    table-layout: fixed;         /* Fixed layout to prevent overflow */
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
 }
-
 .returns-table th,
 .returns-table td {
-    border: 1px solid #ddd;      /* Add border to cells */
-    padding: 10px;               /* Padding for better spacing */
-    text-align: center;          /* Center align the text */
-    min-width: 80px;             /* Minimum width for consistency */
-    overflow: hidden;            /* Prevent overflow of content */
-    white-space: nowrap;         /* Prevent wrapping of content */
-    text-overflow: ellipsis;     /* Show ellipsis for overflow text */
+  border: 1px solid #ddd;
+  padding: 10px;
+  text-align: center;
+  min-width: 80px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
-
 .returns-table th {
-    background-color: #f2f2f2;   /* Light background for headers */
-    font-weight: bold;
-    color: black;            /* Make header text bold */
+  background-color: #f2f2f2;
+  font-weight: bold;
 }
-
 .returns-table tr:nth-child(even) {
-    background-color: #f9f9f9;   /* Alternate row color for better readability */
+  background-color: #f9f9f9;
 }
-
 .returns-table tr:hover {
-    background-color:  rgb(0, 255, 179);
-    color: black;
+  background-color: rgb(0,255,179);
 }
 
-.returns-table .positive {
-    color: green;                 /* Green for positive numbers */
-}
-
-.returns-table .negative {
-    color: red;                   /* Red for negative numbers */
-}
-
-.returns-table .year-column {
-    font-weight: bold;            /* Make year column bold */
+/* Responsive */
+@media (max-width: 768px) {
+  .returns-container {
+    flex-direction: column;
+  }
+  .returns-sidebar {
+    width: 100%;
+    border-right: none;
+    position: relative;
+  }
+  .returns-main-content {
+    width: 100%;
+  }
 }
