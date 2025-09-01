@@ -34,7 +34,8 @@ from app.db_utils import (
     fetch_market_league_constituents,
     fetch_asset_classes,
     fetch_daily_moves_by_year_and_security,
-    fetch_precious_metals
+    fetch_precious_metals,
+    fetch_monthly_returns_by_year
     )   
 import yfinance as yf
 from datetime import datetime, timedelta  # Include datetime and timedelta
@@ -482,6 +483,19 @@ def get_daily_moves_route():
     try:
         data = fetch_daily_moves_by_year_and_security(year, security_id)
         return jsonify({"data": data})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    
+@main.route("/precious-metals/monthly-returns", methods=["GET"])
+def monthly_returns_route():
+    security_id = request.args.get("id")
+
+    if not security_id:
+        return jsonify({"error": "Missing required parameter: id"}), 400
+
+    try:
+        monthly_data = fetch_monthly_returns_by_year(security_id)
+        return jsonify({"data": monthly_data})
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
