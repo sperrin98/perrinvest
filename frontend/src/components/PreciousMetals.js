@@ -4,13 +4,13 @@ import Select from "react-select";
 import "./PreciousMetals.css";
 
 export default function PreciousMetals() {
-  const API_URL = "http://localhost:5000"; // Local Flask backend
-
   const [metals, setMetals] = useState([]);
   const [selectedMetal, setSelectedMetal] = useState(null);
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   const [dailyMoves, setDailyMoves] = useState([]);
   const [error, setError] = useState(null);
+
+  const API_URL = process.env.REACT_APP_API_URL; // <- Use environment variable
 
   // Fetch metals
   useEffect(() => {
@@ -25,7 +25,7 @@ export default function PreciousMetals() {
       }
     }
     fetchMetals();
-  }, []);
+  }, [API_URL]);
 
   // Fetch daily moves
   useEffect(() => {
@@ -44,10 +44,17 @@ export default function PreciousMetals() {
     }
 
     fetchDailyMoves();
-  }, [selectedMetal, selectedYear]);
+  }, [selectedMetal, selectedYear, API_URL]);
 
   // Years from current down to 1971
-  const years = Array.from({ length: new Date().getFullYear() - 1970 }, (_, i) => new Date().getFullYear() - i);
+  const years = Array.from(
+    { length: new Date().getFullYear() - 1970 },
+    (_, i) => new Date().getFullYear() - i
+  );
+
+  // Helper to format numbers as percentages
+  const formatPercent = (num) =>
+    num !== null && num !== undefined ? (num * 100).toFixed(2) + "%" : "-";
 
   return (
     <div className="pm-container">
@@ -72,7 +79,7 @@ export default function PreciousMetals() {
           value={{ label: selectedYear, value: selectedYear }}
           onChange={(option) => setSelectedYear(option.value)}
           options={years.map((y) => ({ label: y, value: y }))}
-          menuPlacement="bottom" // ensures dropdown opens below
+          menuPlacement="bottom"
           className="pm-year-select"
           classNamePrefix="pm-year-select"
         />
@@ -103,12 +110,25 @@ export default function PreciousMetals() {
                   <tr key={idx}>
                     <td>{row.year}</td>
                     <td>{row.week}</td>
-                    <td>{row.monday}%</td>
-                    <td>{row.tuesday}%</td>
-                    <td>{row.wednesday}%</td>
-                    <td>{row.thursday}%</td>
-                    <td>{row.friday}%</td>
-                    <td className="pm-week-total">{row.week_total}%</td>
+                    <td className={row.monday < 0 ? "negative" : "positive"}>
+                      {(row.monday * 100).toFixed(2)}%
+                    </td>
+                    <td className={row.tuesday < 0 ? "negative" : "positive"}>
+                      {(row.tuesday * 100).toFixed(2)}%
+                    </td>
+                    <td className={row.wednesday < 0 ? "negative" : "positive"}>
+                      {(row.wednesday * 100).toFixed(2)}%
+                    </td>
+                    <td className={row.thursday < 0 ? "negative" : "positive"}>
+                      {(row.thursday * 100).toFixed(2)}%
+                    </td>
+                    <td className={row.friday < 0 ? "negative" : "positive"}>
+                      {(row.friday * 100).toFixed(2)}%
+                    </td>
+                    <td className={`pm-week-total ${row.week_total < 0 ? "negative" : "positive"}`}>
+                      {(row.week_total * 100).toFixed(2)}%
+                    </td>
+
                   </tr>
                 ))}
               </tbody>
