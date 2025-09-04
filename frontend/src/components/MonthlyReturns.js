@@ -8,7 +8,8 @@ export default function MonthlyReturns() {
   const [monthlyData, setMonthlyData] = useState([]);
   const [error, setError] = useState(null);
 
-  const API_URL = "http://localhost:5000"; // use localhost in development
+  // Use the API URL from the environment variable
+  const API_URL = process.env.REACT_APP_API_URL;
 
   const MONTH_ORDER = [
     "JANUARY", "FEBRUARY", "MARCH", "APRIL", "MAY", "JUNE",
@@ -28,7 +29,7 @@ export default function MonthlyReturns() {
       }
     }
     fetchMetals();
-  }, []);
+  }, [API_URL]);
 
   // Fetch monthly returns for selected metal
   useEffect(() => {
@@ -49,7 +50,7 @@ export default function MonthlyReturns() {
     }
 
     fetchMonthlyReturns();
-  }, [selectedMetal]);
+  }, [selectedMetal, API_URL]);
 
   return (
     <div className="monthly-container">
