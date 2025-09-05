@@ -28,10 +28,12 @@ const Header = ({ isLoggedIn, onLogout }) => {
         <li className="dropdown">
           <Link to="#">Precious Metals</Link>
           <div className="dropdown-content">
-            <Link to='/precious-metals'>Annual Returns</Link>
-            <Link to='/monthly-returns'>Monthly Returns</Link>
+            <Link to="/precious-metals">Annual Returns</Link>
+            <Link to="/monthly-returns">Monthly Returns</Link>
+            <Link to="/equity-markets">Equity Markets</Link>
           </div>
         </li>
+
 
 
           {/* Dropdown for Securities */}
