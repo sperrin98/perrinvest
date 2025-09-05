@@ -1,4 +1,3 @@
-// src/App.js
 import React, { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Header from './components/Header';
@@ -26,6 +25,8 @@ import AnnualReturns from './components/AnnualReturns';
 import NwHpi from './components/NwHpi'; 
 import MarketLeagues from './components/MarketLeagues';
 import PreciousMetals from './components/PreciousMetals';
+import MonthlyReturns from './components/MonthlyReturns';
+import EquityMarkets from './components/EquityMarkets';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -66,6 +67,8 @@ function App() {
         <Route path="/nw-hpi/:id" element={<NwHpi />} />
         <Route path="/market-leagues" element={<MarketLeagues />} />
         <Route path="/precious-metals" element={<PreciousMetals />} />
+        <Route path="/monthly-returns" element={<MonthlyReturns />} />
+        <Route path="/equity-markets" element={<EquityMarkets />} />
       </Routes>
     </Router>
   );
