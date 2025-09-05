@@ -25,9 +25,17 @@ const Header = ({ isLoggedIn, onLogout }) => {
         </button>
         <ul className={`nav-links ${menuOpen ? 'show' : ''}`}>
 
-          <li className="dropdown">
-            <Link to='/precious-metals'>Precious Metals</Link>
-          </li>
+        <li className="dropdown">
+          <Link to="#">Precious Metals</Link>
+          <div className="dropdown-content">
+            <Link to="/precious-metals">Annual Returns</Link>
+            <Link to="/monthly-returns">Monthly Returns</Link>
+            <Link to="/equity-markets">Equity Markets</Link>
+          </div>
+        </li>
+
+
+
           {/* Dropdown for Securities */}
           <li className="dropdown">
             <Link to="/securities" className="dropbtn">Markets</Link>

@@ -34,12 +34,17 @@ from app.db_utils import (
     fetch_market_league_constituents,
     fetch_asset_classes,
     fetch_daily_moves_by_year_and_security,
-    fetch_precious_metals
+    fetch_precious_metals,
+    fetch_monthly_returns_by_year,
+    get_gold_priced_securities, 
+    get_equity_market_data
     )   
 import yfinance as yf
 from datetime import datetime, timedelta  # Include datetime and timedelta
 from werkzeug.security import generate_password_hash, check_password_hash
 import logging
+import traceback
+import sys
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)
@@ -484,8 +489,37 @@ def get_daily_moves_route():
         return jsonify({"data": data})
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+    
+@main.route("/precious-metals/monthly-returns", methods=["GET"])
+def monthly_returns_route():
+    security_id = request.args.get("id")
+
+    if not security_id:
+        return jsonify({"error": "Missing required parameter: id"}), 400
+
+    try:
+        monthly_data = fetch_monthly_returns_by_year(security_id)
+        return jsonify({"data": monthly_data})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    
+@main.route("/equity-markets", methods=["GET"])
+def equity_markets_list():
+    try:
+        data = get_gold_priced_securities()
+        return jsonify(data)
+    except Exception as e:
+        return jsonify({"error": f"DB error: {str(e)}"}), 500
 
 
+@main.route("/equity-markets/<int:security_id>", methods=["GET"])
+def equity_markets_detail(security_id):
+    try:
+        data = get_equity_market_data(security_id)
+        return jsonify(data)
+    except Exception as e:
+        return jsonify({"error": f"Stored procedure error: {str(e)}"}), 500
+    
 @main.route('/api/crypto-prices', methods=['GET'])
 def get_crypto_prices():
     try:
