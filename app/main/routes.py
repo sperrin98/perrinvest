@@ -35,12 +35,16 @@ from app.db_utils import (
     fetch_asset_classes,
     fetch_daily_moves_by_year_and_security,
     fetch_precious_metals,
-    fetch_monthly_returns_by_year
+    fetch_monthly_returns_by_year,
+    get_gold_priced_securities, 
+    get_equity_market_data
     )   
 import yfinance as yf
 from datetime import datetime, timedelta  # Include datetime and timedelta
 from werkzeug.security import generate_password_hash, check_password_hash
 import logging
+import traceback
+import sys
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)
@@ -498,8 +502,24 @@ def monthly_returns_route():
         return jsonify({"data": monthly_data})
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+    
+@main.route("/equity-markets", methods=["GET"])
+def equity_markets_list():
+    try:
+        data = get_gold_priced_securities()
+        return jsonify(data)
+    except Exception as e:
+        return jsonify({"error": f"DB error: {str(e)}"}), 500
 
 
+@main.route("/equity-markets/<int:security_id>", methods=["GET"])
+def equity_markets_detail(security_id):
+    try:
+        data = get_equity_market_data(security_id)
+        return jsonify(data)
+    except Exception as e:
+        return jsonify({"error": f"Stored procedure error: {str(e)}"}), 500
+    
 @main.route('/api/crypto-prices', methods=['GET'])
 def get_crypto_prices():
     try:
