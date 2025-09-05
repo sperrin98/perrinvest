@@ -688,4 +688,40 @@ def fetch_monthly_returns_by_year(security_id):
         print(f"Error fetching monthly returns: {e}")
         return []
 
+def get_gold_priced_securities():
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+    try:
+        cursor.execute("""
+            SELECT security_id, security_long_name
+            FROM securities
+            WHERE gold_pricing_security_id > 0
+              AND investment_type_id = 4;
+        """)
+        return cursor.fetchall()
+    finally:
+        cursor.close()
+        conn.close()
 
+
+def get_equity_market_data(security_id: int):
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+    try:
+        # Directly execute the stored procedure
+        cursor.execute("CALL get_equity_market_priced_in_gold(%s)", (security_id,))
+        rows = cursor.fetchall()
+
+        # Normalize keys to match React expectations
+        normalized = []
+        for r in rows:
+            normalized.append({
+                "security_id": r.get("security_id"),
+                "price_date": str(r.get("price_date")),
+                "price": r.get("price"),
+                "price_in_gold": r.get("price_in_gold"),
+            })
+        return normalized
+    finally:
+        cursor.close()
+        conn.close()
