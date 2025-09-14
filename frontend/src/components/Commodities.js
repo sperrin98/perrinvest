@@ -18,13 +18,11 @@ export default function Commodities() {
   const [selectedCommodityName, setSelectedCommodityName] = useState("");
   const [error, setError] = useState("");
 
-  // Hardcoded localhost API for development
   const API_URL = "http://localhost:5000";
 
   useEffect(() => {
     async function fetchCommodities() {
       try {
-        console.log("Fetching commodities from:", `${API_URL}/commodities`);
         const response = await axios.get(`${API_URL}/commodities`);
         setCommodities(response.data);
         if (response.data.length > 0) {
@@ -46,7 +44,6 @@ export default function Commodities() {
     setError("");
 
     try {
-      console.log("Fetching commodity data from:", `${API_URL}/commodities/${security_id}`);
       const response = await axios.get(`${API_URL}/commodities/${security_id}`);
       const data = response.data;
       if (!data || data.length === 0) {
@@ -93,7 +90,7 @@ export default function Commodities() {
           <>
             <h1 className="cm-title">{selectedCommodityName}</h1>
             <div className="cm-chart-wrapper">
-              <ResponsiveContainer width="100%" height={400}>
+              <ResponsiveContainer width="100%" height="90%">
                 <LineChart
                   data={commodityData}
                   margin={{ top: 20, right: 50, left: 20, bottom: 20 }}
@@ -123,7 +120,7 @@ export default function Commodities() {
                     yAxisId="left"
                     type="monotone"
                     dataKey="price"
-                    stroke="#8884d8"
+                    stroke="#FF4C4C" 
                     dot={false}
                     name="Price"
                   />
