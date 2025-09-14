@@ -99,3 +99,39 @@
 .recharts-line:hover {
   stroke-width: 3;
 }
+
+.cm-date-filter {
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.cm-date-filter label {
+  margin-bottom: 5px;
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.cm-date-filter input[type="date"] {
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  font-size: 14px;
+  outline: none;
+  transition: 0.3s ease;
+}
+
+.cm-date-filter input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+}
+
+.cm-date-filter input[type="date"]:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.cm-date-filter input[type="date"]:focus {
+  background: rgba(255, 255, 255, 0.25);
+  border-color: #00ffb3;
+}
