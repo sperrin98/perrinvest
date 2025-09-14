@@ -12,13 +12,29 @@ import {
 import axios from "axios";
 import "./Commodities.css";
 
+// Helper function to format date as DD/MM/YYYY
+const formatDate = (dateStr) => {
+  const d = new Date(dateStr);
+  const day = String(d.getDate()).padStart(2, "0");
+  const month = String(d.getMonth() + 1).padStart(2, "0");
+  const year = d.getFullYear();
+  return `${day}/${month}/${year}`;
+};
+
 export default function Commodities() {
   const [commodities, setCommodities] = useState([]);
   const [commodityData, setCommodityData] = useState([]);
   const [selectedCommodityName, setSelectedCommodityName] = useState("");
+  const [selectedCommodityId, setSelectedCommodityId] = useState(null);
   const [error, setError] = useState("");
 
-  const API_URL = "http://localhost:5000";
+  const API_URL = process.env.REACT_APP_API_URL;
+
+  const tenYearsAgo = new Date();
+  tenYearsAgo.setFullYear(tenYearsAgo.getFullYear() - 10);
+  const [startDate, setStartDate] = useState(
+    tenYearsAgo.toISOString().split("T")[0]
+  );
 
   useEffect(() => {
     async function fetchCommodities() {
@@ -27,7 +43,6 @@ export default function Commodities() {
         setCommodities(response.data);
         if (response.data.length > 0) {
           const first = response.data[0];
-          setSelectedCommodityName(first.security_long_name);
           fetchCommodityData(first.security_id, first.security_long_name);
         }
       } catch (err) {
@@ -39,6 +54,7 @@ export default function Commodities() {
   }, []);
 
   const fetchCommodityData = async (security_id, security_name) => {
+    setSelectedCommodityId(security_id);
     setSelectedCommodityName(security_name);
     setCommodityData([]);
     setError("");
@@ -60,16 +76,31 @@ export default function Commodities() {
     }
   };
 
+  const filteredData = commodityData.filter(
+    (d) => d.price_date >= startDate
+  );
+
   return (
     <div className="cm-container">
       <div className="cm-sidebar">
+        <div className="cm-date-filter">
+          <label htmlFor="start-date">Start Date:</label>
+          <input
+            type="date"
+            id="start-date"
+            value={startDate}
+            max={new Date().toISOString().split("T")[0]}
+            onChange={(e) => setStartDate(e.target.value)}
+          />
+        </div>
+
         <h2 className="cm-sidebar-title">Select Commodity</h2>
         <ul className="cm-commodity-list">
           {commodities.map((com) => (
             <li
               key={com.security_id}
               className={`cm-commodity-item ${
-                selectedCommodityName === com.security_long_name
+                selectedCommodityId === com.security_id
                   ? "cm-selected-commodity"
                   : ""
               }`}
@@ -86,17 +117,20 @@ export default function Commodities() {
       <div className="cm-main">
         {error && <p className="cm-error">{error}</p>}
 
-        {selectedCommodityName && commodityData.length > 0 && (
+        {selectedCommodityName && filteredData.length > 0 && (
           <>
             <h1 className="cm-title">{selectedCommodityName}</h1>
             <div className="cm-chart-wrapper">
               <ResponsiveContainer width="100%" height="90%">
                 <LineChart
-                  data={commodityData}
+                  data={filteredData}
                   margin={{ top: 20, right: 50, left: 20, bottom: 20 }}
                 >
                   <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="price_date" />
+                  <XAxis
+                    dataKey="price_date"
+                    tickFormatter={formatDate} // Format X-axis
+                  />
                   <YAxis
                     yAxisId="left"
                     label={{
@@ -114,13 +148,15 @@ export default function Commodities() {
                       position: "insideRight",
                     }}
                   />
-                  <Tooltip />
+                  <Tooltip
+                    labelFormatter={formatDate} // Format tooltip dates
+                  />
                   <Legend />
                   <Line
                     yAxisId="left"
                     type="monotone"
                     dataKey="price"
-                    stroke="#FF4C4C" 
+                    stroke="#FF4C4C"
                     dot={false}
                     name="Price"
                   />
