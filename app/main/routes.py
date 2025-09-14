@@ -37,7 +37,9 @@ from app.db_utils import (
     fetch_precious_metals,
     fetch_monthly_returns_by_year,
     get_gold_priced_securities, 
-    get_equity_market_data
+    get_equity_market_data,
+    fetch_commodities, 
+    fetch_commodity_priced_in_gold
     )   
 import yfinance as yf
 from datetime import datetime, timedelta  # Include datetime and timedelta
@@ -511,7 +513,6 @@ def equity_markets_list():
     except Exception as e:
         return jsonify({"error": f"DB error: {str(e)}"}), 500
 
-
 @main.route("/equity-markets/<int:security_id>", methods=["GET"])
 def equity_markets_detail(security_id):
     try:
@@ -519,6 +520,24 @@ def equity_markets_detail(security_id):
         return jsonify(data)
     except Exception as e:
         return jsonify({"error": f"Stored procedure error: {str(e)}"}), 500
+    
+    
+@main.route("/commodities", methods=["GET"])
+def commodities_list():
+    try:
+        data = fetch_commodities()
+        return jsonify(data)
+    except Exception as e:
+        return jsonify({"error": f"DB error: {str(e)}"}), 500
+
+@main.route("/commodities/<int:security_id>", methods=["GET"])
+def commodities_detail(security_id):
+    try:
+        data = fetch_commodity_priced_in_gold(security_id)
+        return jsonify(data)
+    except Exception as e:
+        return jsonify({"error": f"Stored procedure error: {str(e)}"}), 500
+
     
 @main.route('/api/crypto-prices', methods=['GET'])
 def get_crypto_prices():
