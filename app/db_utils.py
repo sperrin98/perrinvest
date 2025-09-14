@@ -729,7 +729,7 @@ def get_equity_market_data(security_id: int):
 def fetch_commodities():
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
-    cursor.execute("SELECT * FROM securities WHERE asset_class_id = 4")
+    cursor.execute("SELECT * FROM securities WHERE investment_type_id = 5")
     rows = cursor.fetchall()
     cursor.close()
     conn.close()
