@@ -725,3 +725,23 @@ def get_equity_market_data(security_id: int):
     finally:
         cursor.close()
         conn.close()
+
+def fetch_commodities():
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+    cursor.execute("SELECT * FROM securities WHERE asset_class_id = 4")
+    rows = cursor.fetchall()
+    cursor.close()
+    conn.close()
+    return rows
+
+def fetch_commodity_priced_in_gold(security_id):
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+    cursor.callproc("get_commodity_priced_in_gold", [security_id])
+    rows = []
+    for result in cursor.stored_results():
+        rows.extend(result.fetchall())
+    cursor.close()
+    conn.close()
+    return rows

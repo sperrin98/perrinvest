@@ -27,6 +27,7 @@ import MarketLeagues from './components/MarketLeagues';
 import PreciousMetals from './components/PreciousMetals';
 import MonthlyReturns from './components/MonthlyReturns';
 import EquityMarkets from './components/EquityMarkets';
+import Commodities from './components/Commodities';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -69,6 +70,7 @@ function App() {
         <Route path="/precious-metals" element={<PreciousMetals />} />
         <Route path="/monthly-returns" element={<MonthlyReturns />} />
         <Route path="/equity-markets" element={<EquityMarkets />} />
+        <Route path="/commodities" element={<Commodities />} />
       </Routes>
     </Router>
   );
