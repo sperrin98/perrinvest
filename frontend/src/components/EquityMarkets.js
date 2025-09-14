@@ -109,6 +109,7 @@ export default function EquityMarkets() {
                     dataKey="price"
                     stroke="#8884d8"
                     dot={false}
+                    name="Price"
                   />
                   <Line
                     yAxisId="right"
@@ -116,6 +117,7 @@ export default function EquityMarkets() {
                     dataKey="price_in_gold"
                     stroke="#00796b"
                     dot={false}
+                    name="Price in Gold"
                   />
                 </LineChart>
               </ResponsiveContainer>
