@@ -26,7 +26,7 @@ body {
   left: 0;
   width: 100%;
   height: 100%;
-  background-image: url('../assets/images/candlestickchart.png');
+  /* background-image: url('../assets/images/candlestickchart.png'); */
   background-attachment: fixed;
   background-position: center;
   background-repeat: no-repeat;
@@ -70,8 +70,102 @@ body {
   font-weight: 500;
   position: absolute;
   top: 20%;
-  left: 20%;
+  left: 15%;
   margin-bottom: 20px;
+}
+
+/* Summary Data Table Container */
+.summary-data {
+  display: flex;               /* Flex container */
+  justify-content: center;     /* Center horizontally */
+  align-items: flex-start;
+  gap: 40px;                   /* Space between tables */
+  padding: 40px 20px;
+  width: 100%;
+  overflow-x: auto;            /* Allow horizontal scroll if screen is too small */
+}
+
+/* Tables container inside summary-data */
+.summary-tables-container {
+  display: flex;               /* Display tables side by side */
+  gap: 40px;                   /* Space between tables */
+  flex-wrap: nowrap;            /* Do NOT wrap tables */
+  align-items: flex-start;
+}
+
+/* Table Wrapper */
+.summary-table-wrapper {
+  border-collapse: collapse;
+  width: auto;
+  table-layout: auto;
+  background-color: #1e1e1e; /* Dark background */
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+  margin-top: 20px;
+  flex: 0 0 auto;             /* Do not shrink or grow */
+}
+
+/* Header Row */
+.summary-table-row-header {
+  background-color: #1e1e1e !important;
+}
+
+/* Header Cells */
+.summary-table-header-security,
+.summary-table-header-date,
+.summary-table-header-value {
+  padding: 10px 15px;
+  border: 1px solid #00FFB3;
+  text-align: center;
+  background-color: #1e1e1e !important;
+  color: #00FFB3 !important;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+/* Data Row */
+.summary-table-row-data {
+  background-color: #1e1e1e !important;
+}
+
+/* Data Cells */
+.summary-table-data-security,
+.summary-table-data-date,
+.summary-table-data-value {
+  padding: 10px 15px;
+  border: 1px solid #00FFB3;
+  text-align: center;
+  background-color: #1e1e1e !important;
+  color: #00FFB3 !important;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+/* Positive / Negative numeric values */
+.summary-table-data-value.positive {
+  color: #28a745 !important;
+}
+
+.summary-table-data-value.negative {
+  color: #dc3545 !important;
+}
+
+/* Row hover effect */
+.summary-table-row-data:hover {
+  background-color: rgba(0, 255, 179, 0.05);
+}
+
+/* Responsive adjustments */
+@media (max-width: 1200px) {
+  .summary-data {
+    flex-direction: column;    /* Stack vertically on smaller screens */
+    align-items: center;
+  }
+  
+  .summary-tables-container {
+    flex-direction: column;
+    gap: 20px;
+  }
 }
 
 /* Section 2 header */
@@ -543,7 +637,7 @@ body {
   .home-header {
     font-size: 50px;
     top: 20%;
-    left: 20%;
+    left: 15%;
     right: auto;
   }
 

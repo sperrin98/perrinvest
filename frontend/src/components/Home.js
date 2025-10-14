@@ -1,132 +1,138 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import './Home.css';
 import StockDock from './StockDock';
-import ChartCarousel from './ChartCarousel';
-import coinImage from '../assets/images/coin.jpg';
-import marketImage from '../assets/images/market-ratio.jpg';
+import { Sparklines, SparklinesLine } from 'react-sparklines';
+import axios from 'axios';
+import './Home.css';
 
 const Home = () => {
-  const [commodities, setCommodities] = useState([]);
-  const [currencies, setCurrencies] = useState([]);
-  const [stockMarkets, setStockMarkets] = useState([]);
-  const [activeIndex, setActiveIndex] = useState(0);
+  const [securities, setSecurities] = useState([]);
+
+  // ONLY the IDs you care about
+  const relevantIds = [
+    36, 37, 38, 149, 81, 153, 154, 155, 156, // Precious Metals
+    1, 2, 3, 4, 6, 7, 8, 11, 12,            // Stock Markets
+    16, 17, 18, 19, 20, 21, 22, 24, 29      // Currencies
+  ];
 
   useEffect(() => {
-    const fetchTrendingSecurities = async () => {
+    const fetchSecurities = async () => {
       try {
-        const apiUrl = process.env.REACT_APP_API_URL;
-        const response = await fetch(`${apiUrl}/trending-securities`);
-        const data = await response.json();
+        // Fetch all securities
+        const response = await axios.get(`${process.env.REACT_APP_API_URL}/securities`);
+        const allSecurities = response.data;
 
-        setCommodities([
-          { name: 'Gold', performance: data['Gold']?.percent_change ?? "No Data" },
-          { name: 'Cocoa', performance: data['Cocoa']?.percent_change ?? "No Data" },
-          { name: 'Platinum', performance: data['Platinum']?.percent_change ?? "No Data" },
-          { name: 'Natural Gas', performance: data['Natural Gas']?.percent_change ?? "No Data" },
-          { name: 'Silver', performance: data['Silver']?.percent_change ?? "No Data" }
-        ]);
+        // Filter only the securities we care about
+        const filteredSecurities = allSecurities.filter((sec) =>
+          relevantIds.includes(sec.security_id)
+        );
 
-        setCurrencies([
-          { name: 'US Dollar', performance: data['US Dollar']?.percent_change ?? "No Data" },
-          { name: 'British Pound', performance: data['British Pound']?.percent_change ?? "No Data" },
-          { name: 'Bitcoin', performance: data['Bitcoin']?.percent_change ?? "No Data" },
-          { name: 'Euro', performance: data['Euro']?.percent_change ?? "No Data" },
-          { name: 'Australian Dollar', performance: data['Australian Dollar']?.percent_change ?? "No Data" }
-        ]);
+        // Fetch last 5 prices for relevant securities
+        const pricePromises = filteredSecurities.map(async (sec) => {
+          try {
+            const priceResponse = await axios.get(
+              `${process.env.REACT_APP_API_URL}/securities/${sec.security_id}/price-histories`
+            );
+            const rawData = priceResponse.data;
 
-        setStockMarkets([
-          { name: 'Dow Jones', performance: data['Dow Jones']?.percent_change ?? "No Data" },
-          { name: 'Hang Seng', performance: data['Hang Seng']?.percent_change ?? "No Data" },
-          { name: 'FTSE100', performance: data['FTSE100']?.percent_change ?? "No Data" },
-          { name: 'DAX', performance: data['DAX']?.percent_change ?? "No Data" },
-          { name: 'Shanghai Composite', performance: data['Shanghai Composite']?.percent_change ?? "No Data" }
-        ]);
-      } catch (error) {
-        console.error('Error fetching trending securities:', error);
+            // Sort by date ascending
+            const sorted = Array.isArray(rawData)
+              ? rawData.sort((a, b) => new Date(a[1]) - new Date(b[1]))
+              : [];
+
+            // Take last 5 valid prices
+            const last5Prices = sorted
+              .map((p) => p[2])
+              .filter((p) => p != null)
+              .slice(-5);
+
+            console.log(`Security: ${sec.security_long_name}`);
+            console.log(last5Prices);
+
+            return { ...sec, last5Prices };
+          } catch (err) {
+            console.error(`Error fetching prices for ${sec.security_long_name}:`, err);
+            return { ...sec, last5Prices: [] };
+          }
+        });
+
+        const securitiesWithPrices = await Promise.all(pricePromises);
+        setSecurities(securitiesWithPrices);
+      } catch (err) {
+        console.error('Error fetching securities:', err);
       }
     };
 
-    fetchTrendingSecurities();
+    fetchSecurities();
   }, []);
 
-  const sections = [commodities, currencies, stockMarkets];
-  const sectionTitles = ['Commodities', 'Currencies', 'Stock Markets'];
+  const renderTable = (ids, title) => {
+    const filtered = securities.filter((sec) => ids.includes(sec.security_id));
 
-  const handleNext = () => setActiveIndex((prev) => (prev + 1) % sections.length);
-  const handlePrev = () => setActiveIndex((prev) => (prev - 1 + sections.length) % sections.length);
+    return (
+      <div className="summary-table-block">
+        <h3 className="summary-table-title">{title}</h3>
+        <table className="summary-table-wrapper">
+          <thead>
+            <tr className="summary-table-row-header">
+              <th className="summary-table-header-security">Security</th>
+              <th className="summary-table-header-value">Most Recent Price</th>
+              <th className="summary-table-header-value">Trend (Last 5)</th>
+            </tr>
+          </thead>
+          <tbody>
+            {filtered.map((sec, idx) => {
+              const prices = sec.last5Prices || [];
+              const price = prices.length ? prices[prices.length - 1].toFixed(2) : 'N/A';
+
+              // Determine sparkline color based on trend (older → newer)
+              let sparkColor = '#00FFB3'; // green by default
+              if (prices.length >= 2) {
+                const first = prices[0];
+                const last = prices[prices.length - 1];
+                sparkColor = last > first ? '#00FFB3' : last < first ? '#FF4C4C' : '#CCCCCC';
+              }
+
+              return (
+                <tr key={idx} className="summary-table-row-data">
+                  <td className="summary-table-data-security">{sec.security_long_name}</td>
+                  <td
+                    className="summary-table-data-value"
+                    style={{ color: sparkColor }} // match sparkline color
+                  >
+                    {price}
+                  </td>
+                  <td className="summary-table-data-value">
+                    {prices.length > 0 ? (
+                      <Sparklines data={prices} width={100} height={20}>
+                        <SparklinesLine color={sparkColor} />
+                      </Sparklines>
+                    ) : (
+                      'N/A'
+                    )}
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+    );
+  };
 
   return (
     <div>
-      {/* Section 1 */}
       <div className="section section1">
-        <h1 className="home-header">Perrinvest</h1>
         <StockDock />
-      </div>
-
-      {/* Section 2 */}
-      <div className="section section2">
-        <h2 className='section2-header'>Trending Markets</h2>
-        <ChartCarousel />
-      </div>
-
-      {/* Section Securities */}
-      <div className="section section-securities">
-        <div className="securities-right">
-          <h1 className="securities-header">Securities</h1>
-          <div className="sec-button-container">
-            <Link to="/securities" className="security-btn">Securities</Link>
-            <Link to="/correlations" className="correlation-btn">Correlate Securities</Link>
-          </div>
-        </div>
-
-        <div className="trending-container">
-          <h1 className="trending-title">Trending Tickers</h1>
-          <div className="carousel-wrapper">
-            <button className="carousel-arrow carousel-arrow-left" onClick={handlePrev}>‹</button>
-            <div className="trending-carousel">
-              <div className="carousel-content">
-                <h3 className="carousel-title">{sectionTitles[activeIndex]}</h3>
-                <ul className="trending-securities">
-                  {sections[activeIndex].map((item, index) => (
-                    <li key={index}>
-                      <span className="item-name">{item.name}</span>
-                      <span className={`item-performance ${item.performance >= 0 ? 'positive' : 'negative'}`}>
-                        {item.performance}%
-                      </span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-            <button className="carousel-arrow carousel-arrow-right" onClick={handleNext}>›</button>
-          </div>
-        </div>
-      </div>
-
-      {/* Section 3 */}
-      <div className="section section3">
-        <h1 className="home-header">Currencies</h1>
-        <div className="button-container">
-          <Link to="/currencies" className="currency-btn">Currencies</Link>
-          <Link to="/currencies/divide" className="compare-btn">Compare Currencies</Link>
-          <Link to="/currencies/crypto" className="crypto-btn">Cryptocurrencies</Link>
-        </div>
-        <div className="image-container">
-          <img src={coinImage} alt="Coin" />
-        </div>
-      </div>
-
-      {/* Section 4 */}
-      <div className="section section4">
-        <h1 className="market-ratio-home-header">Leagues & Ratios</h1>
-        <div className="button2-container">
-          <Link to="/market-ratios" className="market-ratio-button">Market Ratios</Link>
-          <Link to="/market-ratios/divide" className="compare-btn">Compare Securities</Link>
-          <Link to="/market-leagues" className="league-btn">Market Leagues</Link>
-        </div>
-        <div className="image-container2">
-          <img src={marketImage} alt="Market" />
+        <div className="summary-data">
+          {securities.length > 0 ? (
+            <>
+              {renderTable([36, 37, 38, 149, 81, 153, 154, 155, 156], 'Precious Metals')}
+              {renderTable([1, 2, 3, 4, 6, 7, 8, 11, 12], 'Stock Markets')}
+              {renderTable([16, 17, 18, 19, 20, 21, 22, 24, 29], 'Currencies')}
+            </>
+          ) : (
+            <p>Loading summary data...</p>
+          )}
         </div>
       </div>
     </div>
