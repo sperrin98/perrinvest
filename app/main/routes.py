@@ -39,7 +39,8 @@ from app.db_utils import (
     get_gold_priced_securities, 
     get_equity_market_data,
     fetch_commodities, 
-    fetch_commodity_priced_in_gold
+    fetch_commodity_priced_in_gold,
+    get_summary_data_period_end_returns
     )   
 import yfinance as yf
 from datetime import datetime, timedelta  # Include datetime and timedelta
@@ -99,6 +100,22 @@ def login():
         return jsonify({'message': 'Login successful', 'username': user['username']}), 200
     else:
         return jsonify({'message': 'Invalid email or password'}), 401
+
+@main.route("/summary-data", methods=["GET"])
+def summary_data():
+    date_str = request.args.get("date", "2025-09-18")
+    param = request.args.get("param", 1)
+
+    try:
+        data = get_summary_data_period_end_returns(date_str, int(param))
+
+        # If no results, return an empty array instead of None
+        if not data:
+            return jsonify([])
+
+        return jsonify(data)  
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 
 @main.route('/securities')
@@ -537,6 +554,8 @@ def commodities_detail(security_id):
         return jsonify(data)
     except Exception as e:
         return jsonify({"error": f"Stored procedure error: {str(e)}"}), 500
+
+
 
     
 @main.route('/api/crypto-prices', methods=['GET'])
