@@ -12,7 +12,7 @@ import {
 import axios from "axios";
 import "./Commodities.css";
 
-// Helper function to format date as DD/MM/YYYY
+// Format date as DD/MM/YYYY
 const formatDate = (dateStr) => {
   const d = new Date(dateStr);
   const day = String(d.getDate()).padStart(2, "0");
@@ -51,7 +51,7 @@ export default function Commodities() {
       }
     }
     fetchCommodities();
-  }, []);
+  }, [API_URL]);
 
   const fetchCommodityData = async (security_id, security_name) => {
     setSelectedCommodityId(security_id);
@@ -76,8 +76,9 @@ export default function Commodities() {
     }
   };
 
+  // Corrected filtering using Date objects
   const filteredData = commodityData.filter(
-    (d) => d.price_date >= startDate
+    (d) => new Date(d.price_date) >= new Date(startDate)
   );
 
   return (
@@ -129,28 +130,18 @@ export default function Commodities() {
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis
                     dataKey="price_date"
-                    tickFormatter={formatDate} // Format X-axis
+                    tickFormatter={formatDate}
                   />
                   <YAxis
                     yAxisId="left"
-                    label={{
-                      value: "Price",
-                      angle: -90,
-                      position: "insideLeft",
-                    }}
+                    label={{ value: "Price", angle: -90, position: "insideLeft" }}
                   />
                   <YAxis
                     yAxisId="right"
                     orientation="right"
-                    label={{
-                      value: "Price in Gold",
-                      angle: 90,
-                      position: "insideRight",
-                    }}
+                    label={{ value: "Price in Gold", angle: 90, position: "insideRight" }}
                   />
-                  <Tooltip
-                    labelFormatter={formatDate} // Format tooltip dates
-                  />
+                  <Tooltip labelFormatter={formatDate} />
                   <Legend />
                   <Line
                     yAxisId="left"

@@ -19,6 +19,7 @@
     "react-router-dom": "^6.23.1",
     "react-scripts": "^5.0.1",
     "react-select": "^5.10.2",
+    "react-sparklines": "^1.7.0",
     "recharts": "^2.15.4",
     "web-vitals": "^4.1.1"
   },
