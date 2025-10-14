@@ -7,7 +7,6 @@ import './Home.css';
 const Home = () => {
   const [securities, setSecurities] = useState([]);
 
-  // ONLY the IDs you care about
   const relevantIds = [
     36, 37, 38, 149, 81, 153, 154, 155, 156, // Precious Metals
     1, 2, 3, 4, 6, 7, 8, 11, 12,            // Stock Markets

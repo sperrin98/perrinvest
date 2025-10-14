@@ -2,112 +2,91 @@ html, body {
   margin: 0;
   height: 100%;
   overflow: hidden;
-  font-family: "Montserrat", sans-serif;
+  font-family: 'Arial', sans-serif;
+  background-color: #F8F8F8;
+  color: #004d40;
 }
 
 body {
   overflow-y: auto;
 }
 
+/* SECTION WRAPPER */
 .section {
   position: relative;
   width: 100%;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  color: white;
+  align-items: center;
+  justify-content: flex-start;
+  background-color: #F8F8F8;
 }
 
-/* Background image handling */
-.section1::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
+/* Header (Optional if you use StockDock as your header) */
+.home-header {
+  font-size: 2.5rem;
+  color: #00796b;
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
+  font-weight: 600;
+  margin: 60px 0 20px 0;
+  letter-spacing: 1px;
+}
+
+/* Summary data section (contains all tables) */
+.summary-data {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 40px;
+  padding: 40px 20px;
   width: 100%;
-  height: 100%;
-  /* background-image: url('../assets/images/candlestickchart.png'); */
-  background-attachment: fixed;
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: cover;
-  filter: blur(1.5px);
-  z-index: -1;
+  overflow-x: auto;
+  box-sizing: border-box;
+  margin-top: 100px;
 }
 
-/* Section styling */
-.section2, .section3, .section4 {
-  background-color: #151213;
+/* Table block (each category like Precious Metals, etc.) */
+.summary-table-block {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  min-height: 100vh;
-  position: -webkit-sticky; /* For Safari */
-  position: sticky;
-  top: 0;
+  background: linear-gradient(135deg, #ffffff, #e8f5f3);
+  border: 1px solid #b2dfdb;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  min-width: 340px;
+  transition: transform 0.2s ease, box-shadow 0.3s ease;
 }
 
-.section2 {
-  z-index: 1;
+.summary-table-block:hover {
+  transform: scale(1.02);
+  box-shadow: 0 6px 14px rgba(0,0,0,0.15);
 }
 
-.section3 {
-  z-index: 2;
+/* Table title */
+.summary-table-title {
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: #004d40;
+  margin-bottom: 10px;
+  text-align: center;
 }
 
-.section4 {
-  z-index: 3;
-  position: relative;
-}
-
-/* Home header */
-.home-header {
-  font-size: 50px;
-  color: #00FFB3;
-  text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3),
-              5px 5px 70px rgba(255, 255, 255, 0.5);
-  font-weight: 500;
-  position: absolute;
-  top: 20%;
-  left: 15%;
-  margin-bottom: 20px;
-}
-
-/* Summary Data Table Container */
-.summary-data {
-  display: flex;               /* Flex container */
-  justify-content: center;     /* Center horizontally */
-  align-items: flex-start;
-  gap: 40px;                   /* Space between tables */
-  padding: 40px 20px;
-  width: 100%;
-  overflow-x: auto;            /* Allow horizontal scroll if screen is too small */
-}
-
-/* Tables container inside summary-data */
-.summary-tables-container {
-  display: flex;               /* Display tables side by side */
-  gap: 40px;                   /* Space between tables */
-  flex-wrap: nowrap;            /* Do NOT wrap tables */
-  align-items: flex-start;
-}
-
-/* Table Wrapper */
+/* Table styling */
 .summary-table-wrapper {
   border-collapse: collapse;
-  width: auto;
-  table-layout: auto;
-  background-color: #1e1e1e; /* Dark background */
+  width: 100%;
+  background-color: white;
   border-radius: 10px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
-  margin-top: 20px;
-  flex: 0 0 auto;             /* Do not shrink or grow */
+  overflow: hidden;
 }
 
 /* Header Row */
 .summary-table-row-header {
-  background-color: #1e1e1e !important;
+  background-color: #00796b !important;
+  color: white !important;
 }
 
 /* Header Cells */
@@ -115,17 +94,27 @@ body {
 .summary-table-header-date,
 .summary-table-header-value {
   padding: 10px 15px;
-  border: 1px solid #00FFB3;
+  border: none;
   text-align: center;
-  background-color: #1e1e1e !important;
-  color: #00FFB3 !important;
-  font-weight: 500;
+  background-color: #00796b !important;
+  color: white !important;
+  font-weight: 600;
   white-space: nowrap;
 }
 
 /* Data Row */
 .summary-table-row-data {
-  background-color: #1e1e1e !important;
+  background-color: #f9f9f9;
+  transition: background-color 0.3s;
+}
+
+.summary-table-row-data:nth-child(even) {
+  background-color: #f1f1f1;
+}
+
+/* Hover effect */
+.summary-table-row-data:hover {
+  background-color: rgba(0, 121, 107, 0.1);
 }
 
 /* Data Cells */
@@ -133,571 +122,27 @@ body {
 .summary-table-data-date,
 .summary-table-data-value {
   padding: 10px 15px;
-  border: 1px solid #00FFB3;
+  border-bottom: 1px solid #cceae7;
   text-align: center;
-  background-color: #1e1e1e !important;
-  color: #00FFB3 !important;
+  color: #004d40;
   font-weight: 500;
   white-space: nowrap;
 }
 
-/* Positive / Negative numeric values */
-.summary-table-data-value.positive {
-  color: #28a745 !important;
+/* Price color matching sparkline */
+.summary-table-data-value {
+  transition: color 0.3s ease;
 }
 
-.summary-table-data-value.negative {
-  color: #dc3545 !important;
-}
-
-/* Row hover effect */
-.summary-table-row-data:hover {
-  background-color: rgba(0, 255, 179, 0.05);
-}
-
-/* Responsive adjustments */
+/* Responsive */
 @media (max-width: 1200px) {
   .summary-data {
-    flex-direction: column;    /* Stack vertically on smaller screens */
-    align-items: center;
-  }
-  
-  .summary-tables-container {
     flex-direction: column;
-    gap: 20px;
-  }
-}
-
-/* Section 2 header */
-.section2-header {
-  text-align: center;
-  color: #00FFB3;
-  padding: 20px;
-}
-
-/* Chart carousel */
-.chart-carousel {
-  width: 100%;
-  height: 700px;
-}
-
-.carousel-item {
-  height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.carousel-item .chart-container {
-  width: 100%;
-  height: 100%;
-}
-
-.chart-container canvas {
-  width: 100% !important;
-  height: 100% !important;
-}
-
-.carousel-header {
-  text-align: center;
-  color: #00FFB3;
-  font-size: 24px;
-}
-
-/* Button containers */
-.button-container, .button2-container, .sec-button-container {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  margin-top: 100px;
-  position: absolute;
-}
-
-.button-container {
-  left: 20%;
-  top: calc(20% + 70px);
-}
-
-.button2-container, .sec-button-container {
-  right: 20%;
-  top: calc(20% + 70px);
-}
-
-/* Buttons */
-.currency-btn, .compare-btn, .crypto-btn, .market-ratio-button,  .security-btn, .correlation-btn, .league-btn {
-  display: block;
-  padding: 10px 25px;
-  border: 1px solid #00FFB3;
-  border-radius: 20px;
-  text-align: center;
-  width: 200px;
-  margin: 10px 0;
-  background-color: transparent;
-  color: #00FFB3;
-  text-decoration: none;
-}
-
-.currency-btn:hover, .compare-btn:hover, .crypto-btn:hover, .market-ratio-button:hover, .security-btn:hover, .correlation-btn:hover, .league-btn:hover {
-  background-color: #00FFB3;
-  color: #151213;
-  border: 1px solid #151213;
-  transition: 0.5s ease;
-}
-
-/* Image containers */
-.image-container, .image-container2 {
-  position: absolute;
-  top: 0;
-  height: 100%;
-  width: 50%;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.image-container {
-  right: 0;
-}
-
-.image-container2 {
-  left: 0;
-}
-
-.image-container img, .image-container2 img {
-  height: 100%;
-  width: 100%;
-  object-fit: cover;
-}
-
-/* Market ratio header */
-.market-ratio-home-header {
-  font-size: 50px;
-  color: #00FFB3;
-  text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3),
-              5px 5px 70px rgba(255, 255, 255, 0.5);
-  font-weight: 500;
-  position: absolute;
-  top: 25%;
-  right: 20%;
-  margin-bottom: 20px;
-}
-
-.securities-header {
-  font-size: 50px;
-  color: #00FFB3;
-  text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3),
-              5px 5px 70px rgba(255, 255, 255, 0.5);
-  font-weight: 500;
-  position: absolute;
-  top: 25%;
-  right: 20%;
-  margin-bottom: 20px;
-}
-
-.trending-title {
-  font-size: 50px;
-  color: #00FFB3 !important;
-  text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3),
-              5px 5px 70px rgba(255, 255, 255, 0.5);
-  font-weight: 500;
-  position: absolute;
-  top: 25%;
-  color: #00FFB3;
-}
-
-.trending-container {
-  margin-top: 100px;
-  margin-right: 675px;
-  background-color: #1e1e1e;
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
-  height: auto;
-  width: 350px;
-}
-
-.trending-securities {
-  list-style-type: none;
-  padding: 0;
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  width: 120%;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: revert;
-  max-width: 230px;
-}
-
-.trending-securities li {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-  box-sizing: border-box;
-}
-
-.item-name {
-  font-size: 18px;
-  color: #00FFB3 !important;
-  background-color: #3a3a3a;
-  padding: 10px;
-  border-radius: 5px;
-  flex-grow: 1;
-  text-align: left;
-  margin-right: 15px;
-  font-weight: bold;
-  white-space: nowrap; /* Prevents wrapping */
-  overflow: auto; /* Allows horizontal scrolling if the text is too long */
-  text-overflow: clip; /* Ensures no ellipsis are shown */
-  max-width: 230px; /* Restrict the width of the item */
-}
-
-
-.item-performance {
-  font-size: 16px;
-  font-weight: bold;
-  background-color: transparent;
-  padding: 10px;
-  border-radius: 5px;
-  min-width: 80px;
-  text-align: center;
-  color: white !important;
-}
-
-.positive {
-  background-color: #28a745;
-  color: white !important;
-}
-
-.negative {
-  background-color: #dc3545;
-  color: white !important;
-}
-
-.trending-securities li span {
-  font-size: 14px;
-  color: #FF6347;
-}
-
-.loading-message {
-  font-size: 18px;
-  color: #fff;
-  text-align: center;
-}
-
-.trending-carousel {
-  position: relative; /* Positioning for arrows */
-  display: flex;
-  overflow-x: auto;
-  gap: 20px;
-  padding: 20px;
-  scroll-behavior: smooth;
-  width: 100%;
-  align-items: center;
-  justify-content: center;
-}
-
-.carousel-content {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.trending-card {
-  flex: 0 0 auto;
-  width: 100%;
-  height: 220px;
-  padding: 20px;
-  background: #f8f9fa;
-  border-radius: 12px;
-  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-  text-align: center;
-  font-size: 1.5rem;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-}
-
-.carousel-title {
-  text-align: center;
-  font-size: 24px;
-  font-weight: bold;
-  margin-bottom: 15px;
-  width: 100%;
-}
-
-.carousel-arrow {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  background-color: rgba(0, 0, 0, 0.5);
-  color: #fff;
-  border: none;
-  padding: 10px;
-  font-size: 2rem;
-  cursor: pointer;
-  z-index: 20; /* Increased z-index for visibility */
-  width: 40px;
-  height: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-  opacity: 0.8;
-  transition: opacity 0.3s ease; /* Add transition for hover effect */
-}
-
-.carousel-arrow:hover {
-  opacity: 1; /* Make arrows more visible when hovered */
-}
-
-/* Position arrows next to the trending-carousel */
-.carousel-arrow-left {
-  left: -110px; /* Adjust left arrow's position */
-}
-
-.carousel-arrow-right {
-  right: -110px; /* Adjust right arrow's position */
-}
-
-.carousel-wrapper {
-  position: relative;
-  overflow: visible; /* Ensure arrows are not hidden */
-}
-
-
-/* Base styles for mobile devices (small screens) */
-@media (max-width: 600px) {
-  /* Adjust the chart-carousel for mobile */
-  .chart-carousel {
-    width: 100vw; /* Full viewport width */
-    height: 70vh; /* Adjust height of the carousel itself */
-    overflow: hidden; /* Hide overflow */
-    position: relative; /* Relative positioning for proper layout */
-  }
-
-  /* Ensure carousel items fill the chart-carousel correctly */
-  .carousel-item {
-    width: 100%; /* Full width of the carousel container */
-    height: 100%; /* Full height of the carousel container */
-    display: flex;
-    justify-content: center;
     align-items: center;
-    position: relative; /* Ensure proper positioning of the child elements */
   }
 
-  .carousel-item .chart-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    /* No width or height adjustments here */
+  .summary-table-block {
+    width: 90%;
+    max-width: 500px;
   }
-
-  /* Increase the height of the canvas for mobile devices */
-  .chart-container canvas {
-    width: 100% !important; /* Full width for the canvas */
-    height: 120% !important; /* Increase height of the canvas to make Y-axis longer */
-    object-fit: contain; /* Ensure the canvas maintains aspect ratio */
-  }
-
-  /* Adjust the carousel header size */
-  .carousel-header {
-    font-size: 14px; /* Slightly larger font size for readability */
-  }
-
-  /* Ensure the section2-header is still smaller */
-  .section2-header {
-    font-size: 18px; /* Maintain smaller font size for mobile */
-    padding: 10px; /* Adjust padding */
-  }
-
-  /* Center the headers and buttons on mobile */
-  .home-header {
-    font-size: 24px; /* Smaller font size for mobile */
-    top: 40%; /* Adjust top position */
-    left: 0;
-    right: 0;
-    text-align: center; /* Center align text */
-    position: absolute; /* Absolute positioning to ensure it is on top of images */
-    z-index: 2; /* Ensure header is above the image */
-    margin: 0 auto; /* Center horizontally */
-  }
-
-  .market-ratio-home-header {
-    font-size: 24px; /* Smaller font size for mobile */
-    top: 25%;
-    left: 0;
-    right: 0;
-    text-align: center; /* Center align text */
-    position: absolute; /* Absolute positioning to ensure it is on top of images */
-    z-index: 2; /* Ensure header is above the image */
-    margin: 0 auto; /* Center horizontally */
-  }
-
-  /* Ensure button containers are centered */
-  .button-container, .button2-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center; /* Center align buttons */
-    position: absolute; /* Ensure proper overlap */
-    width: 100%; /* Full width for mobile */
-    top: 50%; /* Center vertically */
-    transform: translateY(-50%); /* Adjust for vertical centering */
-    z-index: 2; /* Ensure buttons are above the image */
-  }
-
-  .button-container {
-    left: 0;
-  }
-
-  .button2-container {
-    right: 0;
-  }
-
-  .currency-btn, .compare-btn, .crypto-btn, .market-ratio-button {
-    width: 80%; /* Adjust width for mobile */
-    margin: 5px 0; /* Adjust margin */
-  }
-
-  /* Image containers full screen */
-  .image-container, .image-container2 {
-    position: absolute;
-    top: 0;
-    height: 100vh; /* Full height on mobile */
-    width: 100vw; /* Full width on mobile */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: -1; /* Ensure image is behind text and buttons */
-  }
-
-  .image-container img, .image-container2 img {
-    height: 100vh; /* Full height on mobile */
-    width: 100vw; /* Full width on mobile */
-    object-fit: cover;
-    filter: blur(1.5px); /* Apply blur effect */
-  }
-}
-
-
-/* Adjust layout for tablets and larger devices */
-@media (min-width: 768px) and (max-width: 1024px) {
-  body {
-    font-size: 16px;
-  }
-
-  .home-header {
-    font-size: 36px;
-    top: 15%;
-    left: 15%;
-    right: auto;
-    text-align: center; /* Center align text for tablets */
-  }
-
-  .market-ratio-home-header {
-    font-size: 36px;
-    top: 20%;
-    right: 10%;
-    text-align: center; /* Center align text for tablets */
-  }
-
-  .button-container, .button2-container {
-    position: static; /* Remove absolute positioning for tablets */
-    margin-top: 30px;
-    width: 100%;
-    align-items: center; /* Center align buttons */
-  }
-
-  .currency-btn, .compare-btn, .crypto-btn, .market-ratio-button {
-    width: 90%; /* Full width for buttons on tablets */
-    margin: 10px 0; /* Adjust margin */
-  }
-
-  .image-container, .image-container2 {
-    width: 100%; /* Full width on tablets */
-  }
-}
-
-/* Adjust layout for desktop */
-
-@media (min-width: 1024px) {
-  body {
-    font-size: 18px;
-  }
-
-  .home-header {
-    font-size: 50px;
-    top: 20%;
-    left: 15%;
-    right: auto;
-  }
-
-  .market-ratio-home-header {
-    font-size: 50px;
-    top: 25%;
-    right: 16%;
-  }
-
-  .button-container, .button2-container {
-    flex-direction: column; /* Keep vertical alignment on desktop */
-    align-items: flex-start; /* Align buttons to the start */
-    justify-content: flex-start; /* Align buttons to the start */
-  }
-
-  .currency-btn, .compare-btn, .crypto-btn, .market-ratio-button, .securities-btn, .league-btn {
-    width: 200px; /* Fixed width for buttons */
-    margin: 10px; /* Adjust margin */
-  }
-
-  .image-container, .image-container2 {
-    width: 50%; /* Adjust width for larger screens */
-  }
-}
-
-/* Securities Section */
-.section-securities {
-  position: relative;
-  width: 100%;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  background-color: #151213;
-  z-index: 2;
-}
-
-/* Background Parallax Effect */
-.section-securities::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-attachment: fixed;
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: cover;
-  filter: blur(1.5px);
-  z-index: -1;
-}
-
-/* Securities Header */
-.securities-header {
-  font-size: 50px;
-  color: #00FFB3;
-  text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3),
-              5px 5px 70px rgba(255, 255, 255, 0.5);
-  font-weight: 500;
-  text-align: center;
 }
