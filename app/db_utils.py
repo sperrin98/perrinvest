@@ -745,3 +745,16 @@ def fetch_commodity_priced_in_gold(security_id):
     cursor.close()
     conn.close()
     return rows
+
+def get_summary_data_period_end_returns(date_str, param):
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)  
+    cursor.callproc("get_summary_data_period_end_returns", [date_str, param])
+
+    results = []
+    for result in cursor.stored_results():
+        results.extend(result.fetchall()) 
+
+    cursor.close()
+    conn.close()
+    return results
