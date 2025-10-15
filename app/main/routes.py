@@ -40,50 +40,48 @@ from app.db_utils import (
     get_equity_market_data,
     fetch_commodities, 
     fetch_commodity_priced_in_gold,
-    get_summary_data_period_end_returns
-    )   
+    get_summary_data_period_end_returns,
+    insert_blog_post,
+    fetch_all_blog_posts,
+    fetch_blog_post_by_id
+)   
 import yfinance as yf
-from datetime import datetime, timedelta  # Include datetime and timedelta
+from datetime import datetime, timedelta
 from werkzeug.security import generate_password_hash, check_password_hash
+from werkzeug.utils import secure_filename
 import logging
-import traceback
-import sys
+import os
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-@main.route('/')
-def home():
-    return jsonify({"message": "Welcome to Perrinvest"})
+UPLOAD_FOLDER = 'app/static/uploads'
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
+
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 @main.route('/register', methods=['POST'])
 def register():
     data = request.get_json()
-    logger.info(f"Received registration data: {data}")
-    
     username = data.get('username')
     email = data.get('email')
     password = data.get('password')
 
     if not username or not email or not password:
-        logger.warning("All fields are required.")
         return jsonify({'error': 'All fields are required.'}), 400
 
     try:
         if check_email_exists(email):
-            logger.warning(f"Email already exists: {email}")
             return jsonify({'error': 'Email already exists.'}), 400
 
         hashed_password = generate_password_hash(password)
-        logger.info(f"Hashed password: {hashed_password}")  # Log the hashed password
-        
         insert_new_user(username, email, hashed_password)
-        logger.info(f"User registered successfully: {username}")
         return jsonify({'message': 'User registered successfully', 'username': username}), 201
 
     except Exception as e:
-        logger.error(f"Error registering user: {str(e)}")  # Log the actual error
+        logger.error(f"Error registering user: {str(e)}")
         return jsonify({'error': 'Failed to register user.'}), 500
 
 
@@ -95,11 +93,74 @@ def login():
 
     user = get_user_by_email(email)
 
-    # Ensure user is not None and check password
     if user and check_password_hash(user['password'], password):
-        return jsonify({'message': 'Login successful', 'username': user['username']}), 200
+        return jsonify({
+            'message': 'Login successful',
+            'username': user['username'],
+            'user_id': user['user_id'],
+            'is_admin': user.get('is_admin', False)
+        }), 200
     else:
         return jsonify({'message': 'Invalid email or password'}), 401
+
+
+@main.route('/blog', methods=['GET'])
+def get_blog_posts():
+    try:
+        posts = fetch_all_blog_posts()
+        return jsonify(posts), 200
+    except Exception as e:
+        logger.error(f"Error fetching blog posts: {str(e)}")
+        return jsonify({'error': 'Failed to fetch blog posts'}), 500
+
+
+@main.route('/blog/<int:post_id>', methods=['GET'])
+def get_blog_post(post_id):
+    try:
+        post = fetch_blog_post_by_id(post_id)
+        if not post:
+            return jsonify({'error': 'Post not found'}), 404
+        return jsonify(post), 200
+    except Exception as e:
+        logger.error(f"Error fetching blog post {post_id}: {str(e)}")
+        return jsonify({'error': 'Failed to fetch blog post'}), 500
+
+
+@main.route('/blog', methods=['POST'])
+def create_blog_post_route():
+    """
+    Create a new blog post.
+    Supports optional image upload.
+    Expects multipart/form-data with fields:
+    - title
+    - content
+    - author_id
+    - image (optional)
+    """
+    title = request.form.get('title')
+    content = request.form.get('content')
+    author_id = request.form.get('author_id')
+
+    if not title or not content or not author_id:
+        return jsonify({'error': 'Missing required fields'}), 400
+
+    image_file = request.files.get('image')
+    image_filename = None
+
+    if image_file and allowed_file(image_file.filename):
+        os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+        image_filename = secure_filename(image_file.filename)
+        image_path = os.path.join(UPLOAD_FOLDER, image_filename)
+        image_file.save(image_path)
+
+    try:
+        insert_blog_post(title, content, author_id, image_filename)
+        return jsonify({'message': 'Blog post created successfully', 'image': image_filename}), 201
+    except Exception as e:
+        logger.error(f"Error creating blog post: {str(e)}")
+        return jsonify({'error': 'Failed to create blog post', 'details': str(e)}), 500
+
+    
 
 @main.route("/summary-data", methods=["GET"])
 def summary_data():
