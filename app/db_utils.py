@@ -405,19 +405,61 @@ def insert_new_user(username, email, password_hash):
 def get_user_by_email(email):
     connection = get_db_connection()
     cursor = connection.cursor()
-    cursor.execute('SELECT * FROM users WHERE email = %s', (email,))
+    cursor.execute('SELECT user_id, username, email, password, is_admin FROM users WHERE email = %s', (email,))
     user = cursor.fetchone()
     cursor.close()
     connection.close()
     if user:
-        # Convert the tuple to a dictionary for easier access
         return {
-            'user_id': user[0],  
-            'username': user[1],  
-            'email': user[2],    
-            'password': user[3]   
+            'user_id': user[0],
+            'username': user[1],
+            'email': user[2],
+            'password': user[3],
+            'is_admin': bool(user[4])
         }
     return None
+
+
+def insert_blog_post(title, content, author_id, image_filename=None):
+    connection = get_db_connection()
+    cursor = connection.cursor()
+    cursor.execute(
+        'INSERT INTO blog_posts (title, content, author_id, image) VALUES (%s, %s, %s, %s)',
+        (title, content, author_id, image_filename)
+    )
+    connection.commit()
+    cursor.close()
+    connection.close()
+
+
+def fetch_all_blog_posts():
+    connection = get_db_connection()
+    cursor = connection.cursor(dictionary=True)
+    cursor.execute('''
+        SELECT bp.post_id, bp.title, bp.content, bp.created_at, u.username AS author
+        FROM blog_posts bp
+        JOIN users u ON bp.author_id = u.user_id
+        ORDER BY bp.created_at DESC
+    ''')
+    posts = cursor.fetchall()
+    cursor.close()
+    connection.close()
+    return posts
+
+
+def fetch_blog_post_by_id(post_id):
+    connection = get_db_connection()
+    cursor = connection.cursor(dictionary=True)
+    cursor.execute('''
+        SELECT bp.post_id, bp.title, bp.content, bp.created_at, u.username AS author
+        FROM blog_posts bp
+        JOIN users u ON bp.author_id = u.user_id
+        WHERE bp.post_id = %s
+    ''', (post_id,))
+    post = cursor.fetchone()
+    cursor.close()
+    connection.close()
+    return post
 
 def fetch_gld_currency_returns():
     conn = get_db_connection()  # Ensure this function works
