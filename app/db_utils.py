@@ -5,26 +5,25 @@ import yfinance as yf
 import logging
 from dotenv import load_dotenv
 import os
-
+import base64
 
 load_dotenv()
 
+# ---------------- Database Connection ---------------- #
 def get_db_connection():
     db_host = os.getenv('DB_HOST')
     db_user = os.getenv('DB_USER')
     db_name = os.getenv('DB_NAME')
     db_password = os.getenv('DB_PASSWORD')
-    
-    print(f"Connecting to DB: {db_name} at {db_host} using {db_user}")  # Debugging line
-    print(f"DB_PASSWORD: {db_password}")  # Check password loading
 
-    config = {
-        'host': db_host,
-        'user': db_user,
-        'password': db_password,
-        'database': db_name
-    }
-    return mysql.connector.connect(**config)
+    print(f"Connecting to DB: {db_name} at {db_host} using {db_user}")  # Debugging
+    return mysql.connector.connect(
+        host=db_host,
+        user=db_user,
+        password=db_password,
+        database=db_name
+    )
+
 
 
 def fetch_securities():
@@ -420,45 +419,62 @@ def get_user_by_email(email):
     return None
 
 
-def insert_blog_post(title, content, author_id, image_filename=None):
-    connection = get_db_connection()
-    cursor = connection.cursor()
-    cursor.execute(
-        'INSERT INTO blog_posts (title, content, author_id, image) VALUES (%s, %s, %s, %s)',
-        (title, content, author_id, image_filename)
-    )
-    connection.commit()
+def insert_blog_post(title, content, author_id, image_filename=None, image_data=None):
+    query = """
+        INSERT INTO blog_posts (title, content, author_id, image_filename, image)
+        VALUES (%s, %s, %s, %s, %s)
+    """
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute(query, (title, content, author_id, image_filename, image_data))
+    conn.commit()
     cursor.close()
-    connection.close()
+    conn.close()
 
-
+# Fetch all blog posts
 def fetch_all_blog_posts():
-    connection = get_db_connection()
-    cursor = connection.cursor(dictionary=True)
-    cursor.execute('''
-        SELECT bp.post_id, bp.title, bp.content, bp.created_at, u.username AS author
-        FROM blog_posts bp
-        JOIN users u ON bp.author_id = u.user_id
-        ORDER BY bp.created_at DESC
-    ''')
+    query = """
+        SELECT 
+            p.post_id,
+            p.title,
+            p.content,
+            p.created_at,
+            u.username AS author,
+            p.image,
+            p.image_filename
+        FROM blog_posts p
+        JOIN users u ON p.author_id = u.user_id
+        ORDER BY p.created_at DESC
+    """
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+    cursor.execute(query)
     posts = cursor.fetchall()
     cursor.close()
-    connection.close()
+    conn.close()
     return posts
 
-
+# Fetch single blog post by ID
 def fetch_blog_post_by_id(post_id):
-    connection = get_db_connection()
-    cursor = connection.cursor(dictionary=True)
-    cursor.execute('''
-        SELECT bp.post_id, bp.title, bp.content, bp.created_at, u.username AS author
-        FROM blog_posts bp
-        JOIN users u ON bp.author_id = u.user_id
-        WHERE bp.post_id = %s
-    ''', (post_id,))
+    query = """
+        SELECT 
+            p.post_id,
+            p.title,
+            p.content,
+            p.created_at,
+            u.username AS author,
+            p.image,
+            p.image_filename
+        FROM blog_posts p
+        JOIN users u ON p.author_id = u.user_id
+        WHERE p.post_id = %s
+    """
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+    cursor.execute(query, (post_id,))
     post = cursor.fetchone()
     cursor.close()
-    connection.close()
+    conn.close()
     return post
 
 def fetch_gld_currency_returns():

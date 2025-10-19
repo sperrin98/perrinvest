@@ -1,0 +1,73 @@
+.blog-container {
+  max-width: 800px;
+  margin: 120px auto 40px; /* push down from navbar */
+  padding: 30px;
+  background-color: #ffffff; /* light form background */
+  border-radius: 10px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+  color: #004d40; /* dark text for readability */
+  font-family: 'Montserrat', sans-serif;
+}
+
+.blog-header {
+  font-size: 2rem;
+  font-weight: 600;
+  margin-bottom: 20px;
+  text-align: center;
+  color: #00796b; /* teal header to match aesthetic */
+}
+
+.blog-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.blog-input,
+.blog-textarea,
+.blog-file-input {
+  padding: 12px 15px;
+  border: 1px solid #00ffb3; /* teal border */
+  border-radius: 8px;
+  background-color: #ffffff; /* white inputs */
+  color: #004d40; /* dark text */
+  font-family: 'Montserrat', sans-serif;
+  font-size: 1rem;
+  outline: none;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.blog-input:focus,
+.blog-textarea:focus,
+.blog-file-input:focus {
+  border-color: #00796b;
+  box-shadow: 0 0 8px rgba(0, 255, 179, 0.3); /* subtle teal glow */
+}
+
+.blog-textarea {
+  min-height: 150px;
+  resize: vertical;
+}
+
+.blog-submit-btn {
+  padding: 12px 20px;
+  background-color: #00ffb3;
+  color: #004d40;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+.blog-submit-btn:hover {
+  background-color: #33ffcc;
+  transform: translateY(-2px);
+}
+
+.blog-message {
+  margin-top: 15px;
+  font-size: 1rem;
+  text-align: center;
+  color: #00796b;
+}

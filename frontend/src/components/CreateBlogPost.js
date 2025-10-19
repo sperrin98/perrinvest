@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import './CreateBlogPost.css';
 
 const CreateBlogPost = ({ authorId }) => {
   const [title, setTitle] = useState('');
@@ -13,9 +14,7 @@ const CreateBlogPost = ({ authorId }) => {
     formData.append('title', title);
     formData.append('content', content);
     formData.append('author_id', authorId);
-    if (image) {
-      formData.append('image', image);
-    }
+    if (image) formData.append('image', image);
 
     try {
       const response = await fetch('http://localhost:5000/blog', {
@@ -38,30 +37,33 @@ const CreateBlogPost = ({ authorId }) => {
   };
 
   return (
-    <div>
-      <h2>Create Blog Post</h2>
-      <form onSubmit={handleSubmit}>
+    <div className="blog-container">
+      <h2 className="blog-header">Create Blog Post</h2>
+      <form className="blog-form" onSubmit={handleSubmit}>
         <input
           type="text"
           placeholder="Title"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           required
+          className="blog-input"
         />
         <textarea
           placeholder="Content"
           value={content}
           onChange={(e) => setContent(e.target.value)}
           required
+          className="blog-textarea"
         />
         <input
           type="file"
-          onChange={(e) => setImage(e.target.files[0])}
           accept="image/*"
+          onChange={(e) => setImage(e.target.files[0])}
+          className="blog-file-input"
         />
-        <button type="submit">Publish</button>
+        <button type="submit" className="blog-submit-btn">Publish</button>
       </form>
-      {message && <p>{message}</p>}
+      {message && <p className="blog-message">{message}</p>}
     </div>
   );
 };
