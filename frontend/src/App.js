@@ -48,13 +48,11 @@ function App() {
     const loggedIn = localStorage.getItem('isLoggedIn') === 'true';
     const storedUserId = localStorage.getItem('userId');
     const storedIsAdmin = localStorage.getItem('isAdmin') === 'true';
-
     if (loggedIn) {
       setIsLoggedIn(true);
       setUserId(storedUserId);
       setIsAdmin(storedIsAdmin);
     }
-
     setLoading(false);
   }, []);
 
@@ -62,7 +60,6 @@ function App() {
     setIsLoggedIn(true);
     setUserId(userData.user_id);
     setIsAdmin(userData.is_admin);
-
     localStorage.setItem('isLoggedIn', 'true');
     localStorage.setItem('userId', userData.user_id);
     localStorage.setItem('isAdmin', userData.is_admin);
@@ -72,7 +69,6 @@ function App() {
     setIsLoggedIn(false);
     setUserId(null);
     setIsAdmin(false);
-
     localStorage.removeItem('isLoggedIn');
     localStorage.removeItem('userId');
     localStorage.removeItem('isAdmin');
