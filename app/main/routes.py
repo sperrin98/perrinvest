@@ -1,4 +1,4 @@
-from flask import jsonify, request, make_response, render_template
+from flask import jsonify, request, make_response, render_template, send_file
 from . import main
 from app.db_utils import (
     fetch_securities, 
@@ -51,16 +51,13 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
 import logging
 import os
+import base64
+import io
 
-# Set up logging
+# Logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-UPLOAD_FOLDER = 'app/static/uploads'
-ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
-
-def allowed_file(filename):
-    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 @main.route('/register', methods=['POST'])
 def register():
@@ -70,20 +67,18 @@ def register():
     password = data.get('password')
 
     if not username or not email or not password:
-        return jsonify({'error': 'All fields are required.'}), 400
+        return jsonify({'error': 'All fields are required'}), 400
 
     try:
         if check_email_exists(email):
-            return jsonify({'error': 'Email already exists.'}), 400
+            return jsonify({'error': 'Email already exists'}), 400
 
         hashed_password = generate_password_hash(password)
         insert_new_user(username, email, hashed_password)
         return jsonify({'message': 'User registered successfully', 'username': username}), 201
-
     except Exception as e:
-        logger.error(f"Error registering user: {str(e)}")
-        return jsonify({'error': 'Failed to register user.'}), 500
-
+        logger.error(f"Error registering user: {e}")
+        return jsonify({'error': 'Failed to register user'}), 500
 
 @main.route('/login', methods=['POST'])
 def login():
@@ -92,7 +87,6 @@ def login():
     password = data['password']
 
     user = get_user_by_email(email)
-
     if user and check_password_hash(user['password'], password):
         return jsonify({
             'message': 'Login successful',
@@ -103,40 +97,8 @@ def login():
     else:
         return jsonify({'message': 'Invalid email or password'}), 401
 
-
-@main.route('/blog', methods=['GET'])
-def get_blog_posts():
-    try:
-        posts = fetch_all_blog_posts()
-        return jsonify(posts), 200
-    except Exception as e:
-        logger.error(f"Error fetching blog posts: {str(e)}")
-        return jsonify({'error': 'Failed to fetch blog posts'}), 500
-
-
-@main.route('/blog/<int:post_id>', methods=['GET'])
-def get_blog_post(post_id):
-    try:
-        post = fetch_blog_post_by_id(post_id)
-        if not post:
-            return jsonify({'error': 'Post not found'}), 404
-        return jsonify(post), 200
-    except Exception as e:
-        logger.error(f"Error fetching blog post {post_id}: {str(e)}")
-        return jsonify({'error': 'Failed to fetch blog post'}), 500
-
-
 @main.route('/blog', methods=['POST'])
-def create_blog_post_route():
-    """
-    Create a new blog post.
-    Supports optional image upload.
-    Expects multipart/form-data with fields:
-    - title
-    - content
-    - author_id
-    - image (optional)
-    """
+def create_blog_post():
     title = request.form.get('title')
     content = request.form.get('content')
     author_id = request.form.get('author_id')
@@ -145,22 +107,63 @@ def create_blog_post_route():
         return jsonify({'error': 'Missing required fields'}), 400
 
     image_file = request.files.get('image')
+    image_data = None
     image_filename = None
-
-    if image_file and allowed_file(image_file.filename):
-        os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+    if image_file:
         image_filename = secure_filename(image_file.filename)
-        image_path = os.path.join(UPLOAD_FOLDER, image_filename)
-        image_file.save(image_path)
+        image_data = image_file.read()
 
     try:
-        insert_blog_post(title, content, author_id, image_filename)
-        return jsonify({'message': 'Blog post created successfully', 'image': image_filename}), 201
+        insert_blog_post(title, content, author_id, image_filename, image_data)
+        return jsonify({'message': 'Blog post created successfully'}), 201
     except Exception as e:
-        logger.error(f"Error creating blog post: {str(e)}")
+        logger.error(f"Error creating blog post: {e}")
         return jsonify({'error': 'Failed to create blog post', 'details': str(e)}), 500
 
-    
+# Get all blog posts as JSON (Base64-encoded images)
+@main.route('/blog', methods=['GET'])
+def get_all_blog_posts_json():
+    try:
+        posts = fetch_all_blog_posts()
+        for post in posts:
+            if post.get("image"):
+                post["image"] = "data:image/jpeg;base64," + base64.b64encode(post["image"]).decode("utf-8")
+        return jsonify(posts), 200
+    except Exception as e:
+        logger.error(f"Error fetching all blog posts: {e}")
+        return jsonify({"error": "Failed to fetch blog posts"}), 500
+
+# Get single blog post as JSON (Base64-encoded image)
+@main.route('/blog/<int:post_id>', methods=['GET'])
+def get_blog_post_json(post_id):
+    try:
+        post = fetch_blog_post_by_id(post_id)
+        if not post:
+            return jsonify({"error": "Post not found"}), 404
+        if post.get("image"):
+            post["image"] = "data:image/jpeg;base64," + base64.b64encode(post["image"]).decode("utf-8")
+        return jsonify(post), 200
+    except Exception as e:
+        logger.error(f"Error fetching blog post {post_id}: {e}")
+        return jsonify({'error': 'Failed to fetch blog post'}), 500
+
+# Serve blog post image as file (optional, if needed)
+@main.route('/blog/<int:post_id>/image', methods=['GET'])
+def get_blog_image(post_id):
+    try:
+        post = fetch_blog_post_by_id(post_id)
+        if not post or not post.get('image'):
+            return jsonify({'error': 'Image not found'}), 404
+
+        return send_file(
+            io.BytesIO(post['image']),
+            mimetype='image/jpeg',
+            as_attachment=False,
+            download_name=post.get('image_filename', 'image.jpg')
+        )
+    except Exception as e:
+        logger.error(f"Error fetching image for post {post_id}: {e}")
+        return jsonify({'error': 'Failed to fetch image'}), 500
 
 @main.route("/summary-data", methods=["GET"])
 def summary_data():
