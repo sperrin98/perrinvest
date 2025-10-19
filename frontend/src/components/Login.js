@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import './Login.css'; // Import any necessary CSS
+import './Login.css';
 
 const Login = ({ onLogin }) => {
   const [email, setEmail] = useState('');
@@ -12,26 +12,26 @@ const Login = ({ onLogin }) => {
     e.preventDefault();
 
     try {
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/login`, {
+      const response = await fetch('http://localhost:5000/login', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
       });
 
-      if (!response.ok) {
-        throw new Error('Login failed');
-      }
-
       const data = await response.json();
 
-      // Assuming login is successful, call the onLogin function
-      onLogin();
+      if (!response.ok) {
+        setError(data.message || 'Login failed');
+        return;
+      }
 
-      // Redirect to home page or any desired page after successful login
+      onLogin({
+        user_id: data.user_id,
+        is_admin: data.is_admin
+      });
+
       navigate('/');
-    } catch (error) {
+    } catch (err) {
       setError('Login failed. Please check your credentials.');
     }
   };
