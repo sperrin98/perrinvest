@@ -10,7 +10,6 @@ const Header = ({ isLoggedIn, onLogout }) => {
   };
 
   const handleLogout = () => {
-    // Call the logout handler
     onLogout();
   };
 
@@ -25,17 +24,15 @@ const Header = ({ isLoggedIn, onLogout }) => {
         </button>
         <ul className={`nav-links ${menuOpen ? 'show' : ''}`}>
 
-        <li className="dropdown">
-          <Link to="#">Precious Metals</Link>
-          <div className="dropdown-content">
-            <Link to="/precious-metals">Annual Returns</Link>
-            <Link to="/monthly-returns">Monthly Returns</Link>
-            <Link to="/equity-markets">Equity Markets</Link>
-            <Link to="/commodities">Commodities</Link>
-          </div>
-        </li>
-
-
+          <li className="dropdown">
+            <Link to="#">Precious Metals</Link>
+            <div className="dropdown-content">
+              <Link to="/precious-metals">Annual Returns</Link>
+              <Link to="/monthly-returns">Monthly Returns</Link>
+              <Link to="/equity-markets">Equity Markets</Link>
+              <Link to="/commodities">Commodities</Link>
+            </div>
+          </li>
 
           {/* Dropdown for Securities */}
           <li className="dropdown">
@@ -75,6 +72,15 @@ const Header = ({ isLoggedIn, onLogout }) => {
             </div>
           </li>
 
+          {/* Dropdown for Blogs */}
+          <li className="dropdown">
+            <Link to="#" className="dropbtn">Blogs</Link>
+            <div className="dropdown-content">
+              <Link to="/blog">View Blogs</Link>
+              {isLoggedIn && <Link to="/blog/create">Create Blog</Link>}
+            </div>
+          </li>
+
           {/* Login / Logout Logic */}
           {isLoggedIn ? (
             <li>
@@ -90,7 +96,6 @@ const Header = ({ isLoggedIn, onLogout }) => {
             </li>
           )}
         </ul>
-
       </nav>
     </header>
   );
