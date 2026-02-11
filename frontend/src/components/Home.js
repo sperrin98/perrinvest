@@ -7,48 +7,37 @@ import './Home.css';
 
 const Home = () => {
   const [securities, setSecurities] = useState([]);
-  const [blogs, setBlogs] = useState([]); // state for blog posts
+  const [blogs, setBlogs] = useState([]);
+  const [news, setNews] = useState([]); // state for news articles
 
   const relevantIds = [
-    36, 37, 38, 149, 81, 153, 154, 155, 156, // Precious Metals
-    1, 2, 3, 4, 6, 7, 8, 11, 12,            // Stock Markets
-    16, 17, 18, 19, 20, 21, 22, 24, 29      // Currencies
+    36, 37, 38, 149, 81, 153, 154, 155, 156,
+    1, 2, 3, 4, 6, 7, 8, 11, 12,
+    16, 17, 18, 19, 20, 21, 22, 24, 29
   ];
 
   useEffect(() => {
     const fetchSecurities = async () => {
       try {
-        // Fetch all securities
         const response = await axios.get(`${process.env.REACT_APP_API_URL}/securities`);
         const allSecurities = response.data;
 
-        // Filter only the securities we care about
         const filteredSecurities = allSecurities.filter((sec) =>
           relevantIds.includes(sec.security_id)
         );
 
-        // Fetch last 5 prices for relevant securities
         const pricePromises = filteredSecurities.map(async (sec) => {
           try {
             const priceResponse = await axios.get(
               `${process.env.REACT_APP_API_URL}/securities/${sec.security_id}/price-histories`
             );
             const rawData = priceResponse.data;
-
-            // Sort by date ascending
             const sorted = Array.isArray(rawData)
               ? rawData.sort((a, b) => new Date(a[1]) - new Date(b[1]))
               : [];
-
-            // Take last 5 valid prices
-            const last5Prices = sorted
-              .map((p) => p[2])
-              .filter((p) => p != null)
-              .slice(-5);
-
+            const last5Prices = sorted.map(p => p[2]).filter(p => p != null).slice(-5);
             return { ...sec, last5Prices };
           } catch (err) {
-            console.error(`Error fetching prices for ${sec.security_long_name}:`, err);
             return { ...sec, last5Prices: [] };
           }
         });
@@ -65,19 +54,31 @@ const Home = () => {
         const res = await fetch(`${process.env.REACT_APP_API_URL}/blog`);
         if (!res.ok) throw new Error(`Failed to fetch blogs: ${res.status}`);
         const data = await res.json();
-        setBlogs(data.slice(0, 3)); // show latest 3 blog posts
+        setBlogs(data.slice(0, 3));
       } catch (err) {
         console.error('Error fetching blogs:', err);
       }
     };
 
+    const fetchNews = async () => {
+      try {
+        // Pointing directly to local Flask backend
+        const res = await fetch(`http://127.0.0.1:5000/news`);
+        if (!res.ok) throw new Error(`Failed to fetch news: ${res.status}`);
+        const data = await res.json();
+        setNews(data.slice(0, 15)); // latest 5 news articles
+      } catch (err) {
+        console.error('Error fetching news:', err);
+      }
+    };
+
     fetchSecurities();
     fetchBlogs();
+    fetchNews();
   }, []);
 
   const renderTable = (ids, title) => {
-    const filtered = securities.filter((sec) => ids.includes(sec.security_id));
-
+    const filtered = securities.filter(sec => ids.includes(sec.security_id));
     return (
       <div className="summary-table-block">
         <h3 className="summary-table-title">{title}</h3>
@@ -93,32 +94,22 @@ const Home = () => {
             {filtered.map((sec, idx) => {
               const prices = sec.last5Prices || [];
               const price = prices.length ? prices[prices.length - 1].toFixed(2) : 'N/A';
-
-              // Determine sparkline color based on trend
               let sparkColor = '#00FFB3';
               if (prices.length >= 2) {
                 const first = prices[0];
                 const last = prices[prices.length - 1];
                 sparkColor = last > first ? '#00FFB3' : last < first ? '#FF4C4C' : '#CCCCCC';
               }
-
               return (
                 <tr key={idx} className="summary-table-row-data">
                   <td className="summary-table-data-security">{sec.security_long_name}</td>
-                  <td
-                    className="summary-table-data-value"
-                    style={{ color: sparkColor }}
-                  >
-                    {price}
-                  </td>
+                  <td className="summary-table-data-value" style={{ color: sparkColor }}>{price}</td>
                   <td className="summary-table-data-value">
                     {prices.length > 0 ? (
                       <Sparklines data={prices} width={80} height={20}>
                         <SparklinesLine color={sparkColor} />
                       </Sparklines>
-                    ) : (
-                      'N/A'
-                    )}
+                    ) : 'N/A'}
                   </td>
                 </tr>
               );
@@ -132,42 +123,50 @@ const Home = () => {
   return (
     <div>
       <div className="section section1">
-        <StockDock />
 
-        <div className="home-content-wrapper">
-          {/* Sidebar with tables */}
-          <div className="home-left-panel">
-            {securities.length > 0 ? (
-              <>
-                {renderTable([36, 37, 38, 149, 81, 153, 154, 155, 156], 'Precious Metals')}
-                {renderTable([1, 2, 3, 4, 6, 7, 8, 11, 12], 'Stock Markets')}
-                {renderTable([16, 17, 18, 19, 20, 21, 22, 24, 29], 'Currencies')}
-              </>
-            ) : (
-              <p>Loading summary data...</p>
-            )}
-          </div>
-
-          {/* Main area for blogs */}
-          <div className="home-main-area">
-            <h2>Latest Feed</h2>
-            {blogs.length > 0 ? (
-              blogs.map(blog => (
-                <div key={blog.post_id} className="home-blog-entry">
-                  <h3>{blog.title}</h3>
-                  <p className="home-blog-meta">
-                    <i>by {blog.author} on {new Date(blog.created_at).toLocaleDateString()}</i>
-                  </p>
-                  {blog.image && <img src={blog.image} alt={blog.title} />}
-                  <p className="home-blog-excerpt">{blog.content.substring(0, 100)}...</p>
-                  <Link to={`/blog/${blog.post_id}`} className="home-blog-readmore">Read more</Link>
-                </div>
-              ))
-            ) : (
-              <p>Loading blogs...</p>
-            )}
-          </div>
+      <div className="home-content-wrapper">
+        {/* Left tables with Latest Markets header */}
+        <div className="home-left-panel">
+          <h2 className="section-header">Latest Markets</h2>
+          {securities.length > 0 ? (
+            <>
+              {renderTable([36, 37, 38, 149, 81, 153, 154, 155, 156], 'Precious Metals')}
+              {renderTable([1, 2, 3, 4, 6, 7, 8, 11, 12], 'Stock Markets')}
+              {renderTable([16, 17, 18, 19, 20, 21, 22, 24, 29], 'Currencies')}
+            </>
+          ) : (
+            <p>Loading summary data...</p>
+          )}
         </div>
+
+        {/* Middle blogs */}
+        <div className="home-main-area">
+          <h2 className="section-header">Latest Feed</h2>
+          {blogs.length > 0 ? blogs.map(blog => (
+            <div key={blog.post_id} className="home-blog-entry">
+              <h3>{blog.title}</h3>
+              <p className="home-blog-meta">
+                <i>by {blog.author} on {new Date(blog.created_at).toLocaleDateString()}</i>
+              </p>
+              {blog.image && <img src={blog.image} alt={blog.title} />}
+              <p className="home-blog-excerpt">{blog.content.substring(0, 100)}...</p>
+              <Link to={`/blog/${blog.post_id}`} className="home-blog-readmore">Read more</Link>
+            </div>
+          )) : <p>Loading blogs...</p>}
+        </div>
+
+        {/* Right news sidebar */}
+        <div className="home-right-panel">
+          <h2 className="section-header">Latest News</h2>
+          {news.length > 0 ? news.map((item, idx) => (
+            <div key={idx} className="home-news-entry">
+              <a href={item.url} target="_blank" rel="noopener noreferrer">{item.title}</a>
+              <p className="home-news-source"><i>{item.source} - {new Date(item.publishedAt).toLocaleDateString()}</i></p>
+            </div>
+          )) : <p>Loading news...</p>}
+        </div>
+      </div>
+
       </div>
     </div>
   );

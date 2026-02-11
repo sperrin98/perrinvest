@@ -1,7 +1,7 @@
+/* GLOBAL */
 html, body {
   margin: 0;
   height: 100%;
-  overflow: hidden;
   font-family: 'Arial', sans-serif;
   background-color: #F8F8F8;
   color: #004d40;
@@ -33,43 +33,78 @@ body {
   letter-spacing: 1px;
 }
 
-/* Wrapper for left panel + main area */
-/* Wrapper for left panel + main area */
+/* WRAPPER FOR LEFT PANEL + MAIN AREA */
 .home-content-wrapper {
   display: flex;
   width: 100%;
-  margin-top: 100px; /* keeps same vertical spacing */
+  margin-top: 100px;
+  gap: 20px; /* space between left/main/right */
+  align-items: flex-start; /* align all columns to top */
 }
 
-/* Left panel containing all summary tables */
+/* LEFT PANEL */
 .home-left-panel {
-  width: 22%;           /* sidebar width as requested */
+  width: 22%;
   min-width: 380px;
   padding: 40px 20px;
   box-sizing: border-box;
-
   display: flex;
   flex-direction: column;
-  gap: 20px;            /* space between tables */
-  overflow-y: auto;     /* scroll if tables overflow vertically */
+  gap: 20px;
+  overflow-y: auto;
 }
 
-/* Main area on the right (empty for now) */
+/* MAIN AREA */
 .home-main-area {
   flex: 1;
+  padding: 40px 20px 20px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  box-sizing: border-box;
 }
 
-/* Table block (each category like Precious Metals, etc.) */
+/* --- HEADERS --- */
+/* All headers now exactly same height */
+.home-main-area h2,
+.home-right-panel h2,
+.summary-table-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #004d40;
+  margin: 0; /* remove default margins */
+  padding: 6px 0 6px 0; /* uniform padding */
+  border-bottom: 2px solid #b2dfdb;
+  line-height: 24px; /* fixes exact height */
+  height: 36px;      /* forces all headers to same height */
+  display: flex;
+  align-items: center; /* vertical centering */
+}
+
+.section-header {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #004d40;
+  margin: 0;
+  padding: 6px 0 6px 0;
+  border-bottom: 2px solid #b2dfdb;
+  line-height: 24px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+}
+
+/* TABLE BLOCK */
 .summary-table-block {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;   /* left align content */
+  align-items: flex-start;
   background: linear-gradient(135deg, #ffffff, #e8f5f3);
   border: 1px solid #b2dfdb;
   border-radius: 12px;
-  padding: 15px;             /* slightly smaller padding */
+  padding: 15px;
   box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-  width: 100%;               /* ensures it fits inside sidebar */
+  width: 100%;
   transition: transform 0.2s ease, box-shadow 0.3s ease;
 }
 
@@ -78,49 +113,36 @@ body {
   box-shadow: 0 6px 14px rgba(0,0,0,0.15);
 }
 
-/* Table title */
-.summary-table-title {
-  font-size: 1.2rem;         /* slightly smaller title */
-  font-weight: 600;
-  color: #004d40;
-  margin-bottom: 10px;
-  text-align: left;          /* left align title */
-  width: 100%;
-}
-
-/* Table styling */
+/* TABLE STYLING */
 .summary-table-wrapper {
   border-collapse: collapse;
-  width: 100%;               /* fits inside sidebar */
-  table-layout: fixed;       /* fixes cell width to fit inside table */
+  width: 100%;
+  table-layout: fixed;
   background-color: white;
   border-radius: 10px;
   overflow: hidden;
-  font-size: 0.85rem;        /* smaller font for fitting */
+  font-size: 0.85rem;
 }
 
-/* Header Row */
 .summary-table-row-header {
   background-color: #00796b !important;
   color: white !important;
 }
 
-/* Header Cells */
 .summary-table-header-security,
 .summary-table-header-date,
 .summary-table-header-value {
-  padding: 4px 6px;           /* smaller padding to shrink rows */
+  padding: 4px 6px;
   border: none;
-  text-align: left;           /* left align text */
+  text-align: left;
   background-color: #00796b !important;
   color: white !important;
   font-weight: 600;
   white-space: nowrap;
   overflow: hidden;
-  text-overflow: ellipsis;    /* adds ... for long text */
+  text-overflow: ellipsis;
 }
 
-/* Data Row */
 .summary-table-row-data {
   background-color: #f9f9f9;
   transition: background-color 0.3s;
@@ -130,56 +152,29 @@ body {
   background-color: #f1f1f1;
 }
 
-/* Hover effect */
 .summary-table-row-data:hover {
   background-color: rgba(0, 121, 107, 0.1);
 }
 
-/* Data Cells */
 .summary-table-data-security,
 .summary-table-data-date,
 .summary-table-data-value {
-  padding: 4px 6px;           /* smaller padding */
-  text-align: left;           /* left align for more space */
+  padding: 4px 6px;
+  text-align: left;
   border-bottom: 1px solid #cceae7;
   color: #004d40;
   font-weight: 500;
   white-space: nowrap;
   overflow: hidden;
-  text-overflow: ellipsis;    /* prevents overflow */
-  font-size: 0.85rem;         /* shrink font to fit */
+  text-overflow: ellipsis;
+  font-size: 0.85rem;
 }
 
-/* Price color transition */
 .summary-table-data-value {
   transition: color 0.3s ease;
 }
 
-/* Responsive adjustments */
-@media (max-width: 1200px) {
-  .home-left-panel {
-    width: 90%;
-    min-width: auto;
-    padding: 20px;
-  }
-
-  .summary-table-block {
-    width: 100%;
-  }
-}
-
-/* Blog section */
-/* Container for all blogs in the homepage main area */
-.home-main-area {
-  flex: 1;
-  padding: 20px 60px 20px 20px; /* more space on the right for future content */
-  display: flex;
-  flex-direction: column;
-  gap: 30px;
-  box-sizing: border-box;
-}
-
-/* Individual blog card */
+/* BLOG SECTION */
 .home-blog-entry {
   background: linear-gradient(135deg, #ffffff, #f0f8f5);
   border: 1px solid #b2dfdb;
@@ -194,7 +189,6 @@ body {
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.08);
 }
 
-/* Blog title */
 .home-blog-entry h3 {
   font-size: 1.3rem;
   font-weight: 600;
@@ -202,7 +196,6 @@ body {
   margin-bottom: 5px;
 }
 
-/* Blog meta info (author & date) */
 .home-blog-meta {
   font-size: 0.85rem;
   color: #00796b;
@@ -210,7 +203,6 @@ body {
   font-style: italic;
 }
 
-/* Blog image */
 .home-blog-entry img {
   width: 100%;
   max-height: 200px;
@@ -219,14 +211,12 @@ body {
   border-radius: 8px;
 }
 
-/* Blog excerpt */
 .home-blog-excerpt {
   font-size: 0.9rem;
   color: #004d40;
   margin-bottom: 10px;
 }
 
-/* Read more link */
 .home-blog-readmore {
   font-size: 0.85rem;
   color: #00796b;
@@ -237,4 +227,76 @@ body {
 
 .home-blog-readmore:hover {
   color: #004d40;
+}
+
+/* NEWS SIDEBAR */
+.home-right-panel {
+  width: 280px;
+  min-width: 260px;
+  padding: 40px 30px 40px 20px;   
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  overflow-y: auto;
+}
+
+/* News entry cards */
+.home-news-entry {
+  background: linear-gradient(135deg, #ffffff, #f0f8f5);
+  border: 1px solid #b2dfdb;
+  border-radius: 10px;
+  padding: 12px 14px;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.05);
+  transition: transform 0.15s ease, box-shadow 0.2s ease;
+}
+
+.home-news-entry:hover {
+  transform: scale(1.02);
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.08);
+}
+
+.home-news-entry a {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #004d40;
+  text-decoration: none;
+  line-height: 1.4;
+  display: block;
+  transition: color 0.2s ease;
+}
+
+.home-news-entry a:hover {
+  color: #00796b;
+}
+
+.home-news-source {
+  font-size: 0.75rem;
+  color: #00796b;
+  margin-top: 6px;
+  font-style: italic;
+}
+
+.home-right-panel p {
+  font-size: 0.85rem;
+  color: #004d40;
+}
+
+/* RESPONSIVE */
+@media (max-width: 1200px) {
+  .home-left-panel {
+    width: 90%;
+    min-width: auto;
+    padding: 20px;
+  }
+
+  .summary-table-block {
+    width: 100%;
+  }
+
+  .home-right-panel {
+    width: 90%;
+    min-width: auto;
+    padding: 20px;
+  }
 }
