@@ -17,7 +17,7 @@ const CreateBlogPost = ({ authorId }) => {
     if (image) formData.append('image', image);
 
     try {
-      const response = await fetch('http://localhost:5000/blog', {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/blog`, {
         method: 'POST',
         body: formData,
       });

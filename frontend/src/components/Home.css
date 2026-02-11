@@ -33,30 +33,43 @@ body {
   letter-spacing: 1px;
 }
 
-/* Summary data section (contains all tables) */
-.summary-data {
+/* Wrapper for left panel + main area */
+/* Wrapper for left panel + main area */
+.home-content-wrapper {
   display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  gap: 40px;
-  padding: 40px 20px;
   width: 100%;
-  overflow-x: auto;
+  margin-top: 100px; /* keeps same vertical spacing */
+}
+
+/* Left panel containing all summary tables */
+.home-left-panel {
+  width: 22%;           /* sidebar width as requested */
+  min-width: 380px;
+  padding: 40px 20px;
   box-sizing: border-box;
-  margin-top: 100px;
+
+  display: flex;
+  flex-direction: column;
+  gap: 20px;            /* space between tables */
+  overflow-y: auto;     /* scroll if tables overflow vertically */
+}
+
+/* Main area on the right (empty for now) */
+.home-main-area {
+  flex: 1;
 }
 
 /* Table block (each category like Precious Metals, etc.) */
 .summary-table-block {
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: flex-start;   /* left align content */
   background: linear-gradient(135deg, #ffffff, #e8f5f3);
   border: 1px solid #b2dfdb;
   border-radius: 12px;
-  padding: 20px;
+  padding: 15px;             /* slightly smaller padding */
   box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-  min-width: 340px;
+  width: 100%;               /* ensures it fits inside sidebar */
   transition: transform 0.2s ease, box-shadow 0.3s ease;
 }
 
@@ -67,20 +80,23 @@ body {
 
 /* Table title */
 .summary-table-title {
-  font-size: 1.4rem;
+  font-size: 1.2rem;         /* slightly smaller title */
   font-weight: 600;
   color: #004d40;
   margin-bottom: 10px;
-  text-align: center;
+  text-align: left;          /* left align title */
+  width: 100%;
 }
 
 /* Table styling */
 .summary-table-wrapper {
   border-collapse: collapse;
-  width: 100%;
+  width: 100%;               /* fits inside sidebar */
+  table-layout: fixed;       /* fixes cell width to fit inside table */
   background-color: white;
   border-radius: 10px;
   overflow: hidden;
+  font-size: 0.85rem;        /* smaller font for fitting */
 }
 
 /* Header Row */
@@ -93,13 +109,15 @@ body {
 .summary-table-header-security,
 .summary-table-header-date,
 .summary-table-header-value {
-  padding: 10px 15px;
+  padding: 4px 6px;           /* smaller padding to shrink rows */
   border: none;
-  text-align: center;
+  text-align: left;           /* left align text */
   background-color: #00796b !important;
   color: white !important;
   font-weight: 600;
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;    /* adds ... for long text */
 }
 
 /* Data Row */
@@ -121,28 +139,31 @@ body {
 .summary-table-data-security,
 .summary-table-data-date,
 .summary-table-data-value {
-  padding: 10px 15px;
+  padding: 4px 6px;           /* smaller padding */
+  text-align: left;           /* left align for more space */
   border-bottom: 1px solid #cceae7;
-  text-align: center;
   color: #004d40;
   font-weight: 500;
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;    /* prevents overflow */
+  font-size: 0.85rem;         /* shrink font to fit */
 }
 
-/* Price color matching sparkline */
+/* Price color transition */
 .summary-table-data-value {
   transition: color 0.3s ease;
 }
 
-/* Responsive */
+/* Responsive adjustments */
 @media (max-width: 1200px) {
-  .summary-data {
-    flex-direction: column;
-    align-items: center;
+  .home-left-panel {
+    width: 90%;
+    min-width: auto;
+    padding: 20px;
   }
 
   .summary-table-block {
-    width: 90%;
-    max-width: 500px;
+    width: 100%;
   }
 }

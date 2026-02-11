@@ -102,7 +102,7 @@ const Home = () => {
                   </td>
                   <td className="summary-table-data-value">
                     {prices.length > 0 ? (
-                      <Sparklines data={prices} width={100} height={20}>
+                      <Sparklines data={prices} width={80} height={20}>
                         <SparklinesLine color={sparkColor} />
                       </Sparklines>
                     ) : (
@@ -118,11 +118,13 @@ const Home = () => {
     );
   };
 
-  return (
-    <div>
-      <div className="section section1">
-        <StockDock />
-        <div className="summary-data">
+return (
+  <div>
+    <div className="section section1">
+      <StockDock />
+
+      <div className="home-content-wrapper">
+        <div className="home-left-panel">
           {securities.length > 0 ? (
             <>
               {renderTable([36, 37, 38, 149, 81, 153, 154, 155, 156], 'Precious Metals')}
@@ -133,9 +135,15 @@ const Home = () => {
             <p>Loading summary data...</p>
           )}
         </div>
+
+        <div className="home-main-area">
+          {/* future right-side content */}
+        </div>
       </div>
     </div>
-  );
+  </div>
+);
+
 };
 
 export default Home;
