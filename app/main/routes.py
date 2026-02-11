@@ -53,6 +53,7 @@ import logging
 import os
 import base64
 import io
+import requests
 
 # Logging
 logging.basicConfig(level=logging.INFO)
@@ -836,3 +837,57 @@ def get_trending_securities():
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
+@main.route("/news", methods=["GET"])
+def get_financial_news():
+    """
+    Fetches recent financial and government news, including commodities and precious metals.
+    Uses NewsAPI.org.
+    """
+    NEWS_API_KEY = os.getenv("NEWS_API_KEY")
+    if not NEWS_API_KEY:
+        return jsonify({"error": "API key not configured"}), 500
+
+    url = "https://newsapi.org/v2/everything"
+    params = {
+        "q": (
+            "stock market OR S&P OR NASDAQ OR Dow OR gold OR silver OR platinum OR palladium "
+            "OR 'precious metals' OR oil OR crude OR commodities OR housing OR 'interest rates' "
+            "OR 'central bank' OR FED OR BoE OR treasury OR stimulus OR inflation OR 'government policy'"
+        ),
+        "domains": (
+            "yahoo.com,bloomberg.com,reuters.com,cnbc.com,financialpost.com,wsj.com,marketwatch.com,"
+            "federalreserve.gov,treasury.gov,ft.com,theguardian.com,bbc.co.uk,telegraph.co.uk,investing.com"
+        ),
+        "language": "en",
+        "sortBy": "publishedAt",
+        "pageSize": 30,  # fetch more articles
+        "apiKey": NEWS_API_KEY
+    }
+
+    try:
+        response = requests.get(url, params=params)
+        response.raise_for_status()
+        data = response.json()
+        articles = data.get("articles", [])
+
+        # Return top 10 for the sidebar
+        sidebar_articles = articles[:10]
+
+        simplified = [
+            {
+                "title": article.get("title"),
+                "url": article.get("url"),
+                "source": article.get("source", {}).get("name"),
+                "publishedAt": article.get("publishedAt")
+            }
+            for article in sidebar_articles
+        ]
+
+        return jsonify(simplified)
+    except requests.HTTPError as http_err:
+        return jsonify({"error": f"HTTP error: {http_err}"}), 500
+    except Exception as e:
+        return jsonify({"error": f"Unexpected error: {str(e)}"}), 500
+
+
