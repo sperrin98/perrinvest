@@ -43,7 +43,9 @@ from app.db_utils import (
     get_summary_data_period_end_returns,
     insert_blog_post,
     fetch_all_blog_posts,
-    fetch_blog_post_by_id
+    fetch_blog_post_by_id,
+    get_summary_data_groups,
+    get_summary_data_period_end_returns
 )   
 import yfinance as yf
 from datetime import datetime, timedelta
@@ -165,23 +167,6 @@ def get_blog_image(post_id):
     except Exception as e:
         logger.error(f"Error fetching image for post {post_id}: {e}")
         return jsonify({'error': 'Failed to fetch image'}), 500
-
-@main.route("/summary-data", methods=["GET"])
-def summary_data():
-    date_str = request.args.get("date", "2025-09-18")
-    param = request.args.get("param", 1)
-
-    try:
-        data = get_summary_data_period_end_returns(date_str, int(param))
-
-        # If no results, return an empty array instead of None
-        if not data:
-            return jsonify([])
-
-        return jsonify(data)  
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
-
 
 @main.route('/securities')
 def get_securities():
@@ -891,3 +876,35 @@ def get_financial_news():
         return jsonify({"error": f"Unexpected error: {str(e)}"}), 500
 
 
+@main.route('/summary-data-groups', methods=['GET'])
+def summary_data_groups_route():
+    try:
+        groups = get_summary_data_groups()  # returns list of dicts
+        # Only return first 4
+        return jsonify(groups[:4])
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@main.route('/summary-data', methods=['GET'])
+def summary_data_route():
+    try:
+        table_id_raw = request.args.get('table_id')
+        date = request.args.get('date')
+
+        print("RAW table_id:", table_id_raw)
+
+        if table_id_raw is None or date is None:
+            return jsonify({'error': 'table_id and date required'}), 400
+
+        # Force manual conversion
+        table_id = int(str(table_id_raw).strip())
+
+        print("Converted table_id:", table_id)
+
+        data = get_summary_data_period_end_returns(date, table_id)
+
+        return jsonify(data)
+
+    except Exception as e:
+        print("ERROR:", str(e))
+        return jsonify({'error': str(e)}), 500
