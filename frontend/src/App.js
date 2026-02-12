@@ -31,6 +31,7 @@ import Commodities from './components/Commodities';
 import BlogList from './components/BlogList';
 import BlogPost from './components/BlogPost';
 import CreateBlogPost from './components/CreateBlogPost';
+import SummaryData from './components/SummaryData';
 
 const AdminRoute = ({ isLoggedIn, isAdmin, children }) => {
   if (!isLoggedIn) return <Navigate to="/login" />;
@@ -109,6 +110,7 @@ function App() {
         <Route path="/commodities" element={<Commodities />} />
         <Route path="/blog" element={<BlogList />} />
         <Route path="/blog/:id" element={<BlogPost />} />
+        <Route path="/summary-data" element={<SummaryData />} />
         <Route
           path="/blog/create"
           element={
