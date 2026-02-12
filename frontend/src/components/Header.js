@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import './Header.css'; // Import the CSS file for styling
+import './Header.css';
 
 const Header = ({ isLoggedIn, onLogout }) => {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -29,10 +29,12 @@ const Header = ({ isLoggedIn, onLogout }) => {
             <div className="dropdown-content">
               <Link to="/precious-metals">Daily Returns</Link>
               <Link to="/monthly-returns">Monthly Returns</Link>
+              <Link to="/returns/1">Gold Returns in Currencies</Link>
+              <Link to="/returns/2">Silver Returns in Currencies</Link>
             </div>
 
           </li>
-                    <li className="dropdown">
+          <li className="dropdown">
             <Link to="#">Charts</Link>
             <div className="dropdown-content">
               <Link to="/equity-markets">Equity Markets v Gold</Link>
@@ -40,7 +42,6 @@ const Header = ({ isLoggedIn, onLogout }) => {
             </div>
           </li>
 
-          {/* Dropdown for Securities */}
           <li className="dropdown">
             <Link to="/securities" className="dropbtn">Markets</Link>
             <div className="dropdown-content">
@@ -49,7 +50,6 @@ const Header = ({ isLoggedIn, onLogout }) => {
             </div>
           </li>
 
-          {/* Dropdown for Leagues & Ratios */}
           <li className="dropdown">
             <Link to="/market-ratios" className="dropbtn">Leagues & Ratios</Link>
             <div className="dropdown-content">
@@ -59,7 +59,6 @@ const Header = ({ isLoggedIn, onLogout }) => {
             </div>
           </li>
 
-          {/* Dropdown for Economical Data */}
           <li className="dropdown">
             <Link to="/eco-data-points" className="dropbtn">Economic Data</Link>
             <div className="dropdown-content">
@@ -68,7 +67,6 @@ const Header = ({ isLoggedIn, onLogout }) => {
             </div>
           </li>
 
-          {/* Dropdown for Currencies */}
           <li className="dropdown">
             <Link to="/currencies" className="dropbtn">Currencies</Link>
             <div className="dropdown-content">
@@ -78,7 +76,6 @@ const Header = ({ isLoggedIn, onLogout }) => {
             </div>
           </li>
 
-          {/* Dropdown for Blogs */}
           <li className="dropdown">
             <Link to="#" className="dropbtn">Blogs</Link>
             <div className="dropdown-content">
