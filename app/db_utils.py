@@ -816,3 +816,31 @@ def get_summary_data_period_end_returns(date_str, param):
     cursor.close()
     conn.close()
     return results
+
+def get_summary_data_groups():
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+    try:
+        cursor.execute("SELECT summary_data_group_ID, summary_data_group_name FROM summary_data_groups WHERE summary_data_group_ID BETWEEN 1 AND 4")
+        return cursor.fetchall()
+    finally:
+        cursor.close()
+        conn.close()
+
+def get_summary_data_period_end_returns(pDate, summary_data_group_id):
+    print("PYTHON RECEIVED ID:", summary_data_group_id)
+
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+    try:
+        cursor.callproc('get_summary_data_period_end_returns', [pDate, summary_data_group_id])
+        results = []
+        for result in cursor.stored_results():
+            results.extend(result.fetchall())
+
+        print("FIRST ROW RETURNED:", results[0] if results else "NO DATA")
+
+        return results
+    finally:
+        cursor.close()
+        conn.close()
