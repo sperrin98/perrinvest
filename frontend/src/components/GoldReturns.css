@@ -1,0 +1,95 @@
+/* Full page container, no sidebar, centered */
+.gold-container {
+  width: 100%;
+  min-height: 100vh;
+  background-color: #f8f8f8;
+  box-sizing: border-box;
+  padding: 120px 20px 40px; /* top padding matches MonthlyReturns title spacing */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Title styling matches MonthlyReturns */
+.gold-title {
+  font-size: 32px;
+  font-weight: 600;
+  color: #00796b;
+  letter-spacing: 1px;
+  text-shadow: 2px 2px 5px rgba(0,0,0,0.1);
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+/* Table wrapper ensures table fills width and allows scroll if needed */
+.gold-table-wrapper {
+  width: 100%;
+  max-width: 1600px; /* optional: prevents table from stretching too much on huge screens */
+  overflow-x: auto;
+}
+
+/* Table styling same as MonthlyReturns */
+.gold-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+/* Header styling */
+.gold-table-header {
+  background-color: #00796b !important;
+  font-weight: bold;
+}
+
+.gold-table-header th {
+  color: white;
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: center;
+}
+
+/* Table cells identical */
+.gold-table th,
+.gold-table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: center;
+  width: 12.5%;
+  word-wrap: break-word;
+  background-color: transparent !important;
+  transition: none !important;
+}
+
+/* Hover effect same as MonthlyReturns */
+.gold-table tr:hover,
+.gold-table tr:hover td,
+.gold-table tr td:hover {
+  background-color: rgb(191, 228, 204) !important;
+  transition: background-color 0.2s ease !important;
+}
+
+/* Year column weight */
+.gold-year-column {
+  font-weight: 600;
+}
+
+/* Positive / Negative styling */
+.gold-positive {
+  color: green !important;
+  background-color: transparent !important;
+}
+
+.gold-negative {
+  color: red !important;
+  background-color: transparent !important;
+}
+
+/* Loading/Error styling */
+.gold-loading,
+.gold-error {
+  margin-top: 150px;
+  color: #00796b;
+  font-size: 20px;
+  font-weight: 600;
+  text-align: center;
+}
