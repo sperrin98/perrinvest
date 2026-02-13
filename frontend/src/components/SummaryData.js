@@ -9,9 +9,12 @@ function SummaryData() {
 
   useEffect(() => {
     const fetchGroups = async () => {
-      const res = await fetch('http://localhost:5000/summary-data-groups', {
-        cache: 'no-store'
-      });
+      const res = await fetch(
+        `${process.env.REACT_APP_API_URL}/summary-data-groups`,
+        {
+          cache: 'no-store'
+        }
+      );
       const json = await res.json();
       setGroups(json);
     };
@@ -22,7 +25,7 @@ function SummaryData() {
   const fetchTableData = async (groupId, selectedDate) => {
     try {
       const res = await fetch(
-        `http://localhost:5000/summary-data?table_id=${groupId}&date=${selectedDate}&_=${Date.now()}`,
+        `${process.env.REACT_APP_API_URL}/summary-data?table_id=${groupId}&date=${selectedDate}&_=${Date.now()}`,
         {
           cache: 'no-store',
           headers: { 'Cache-Control': 'no-cache' }
