@@ -1,1 +1,26 @@
-﻿node_modules
+﻿# Node
+node_modules
+frontend/node_modules
+
+# Python
+venv
+__pycache__
+*.pyc
+
+# Env files
+.env
+frontend/.env
+app/.env
+
+# Git
+.git
+.gitignore
+
+# Logs
+*.log
+
+# Build folders
+frontend/build
+
+# OS
+.DS_Store
