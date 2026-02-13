@@ -19,15 +19,13 @@ function SummaryData() {
     fetchGroups();
   }, []);
 
-  const fetchTableData = async (groupId) => {
+  const fetchTableData = async (groupId, selectedDate) => {
     try {
       const res = await fetch(
-        `http://localhost:5000/summary-data?table_id=${groupId}&date=${date}&_=${Date.now()}`,
+        `http://localhost:5000/summary-data?table_id=${groupId}&date=${selectedDate}&_=${Date.now()}`,
         {
           cache: 'no-store',
-          headers: {
-            'Cache-Control': 'no-cache'
-          }
+          headers: { 'Cache-Control': 'no-cache' }
         }
       );
 
@@ -72,7 +70,31 @@ function SummaryData() {
   return (
     <div className="sd-container">
       <div className="sd-sidebar">
+
+        {/* DATE PICKER AT TOP OF SIDEBAR */}
+        <div className="sd-date-section">
+          <h3>Select Date</h3>
+          <input
+            type="date"
+            value={date}
+            className="sd-date-picker"
+            onChange={(e) => {
+              const newDate = e.target.value;
+              setDate(newDate);
+
+              if (selectedGroup) {
+                setData([]);
+                fetchTableData(
+                  selectedGroup.summary_data_group_ID,
+                  newDate
+                );
+              }
+            }}
+          />
+        </div>
+
         <h2 className="sd-sidebar-title">Select Group</h2>
+
         <ul className="sd-group-list">
           {groups.map((group) => (
             <li
@@ -85,7 +107,7 @@ function SummaryData() {
               onClick={() => {
                 setSelectedGroup(group);
                 setData([]);
-                fetchTableData(group.summary_data_group_ID);
+                fetchTableData(group.summary_data_group_ID, date);
               }}
             >
               {group.summary_data_group_name}
@@ -149,7 +171,7 @@ function SummaryData() {
                 </tbody>
               </table>
             ) : (
-              <p className="sd-error">No data available for this group.</p>
+              <p className="sd-error">Loading...</p>
             )}
           </>
         )}
