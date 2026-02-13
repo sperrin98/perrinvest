@@ -31,6 +31,7 @@ const Header = ({ isLoggedIn, onLogout }) => {
               <Link to="/monthly-returns">Monthly Returns</Link>
               <Link to="/returns/1">Gold Returns in Currencies</Link>
               <Link to="/returns/2">Silver Returns in Currencies</Link>
+              <Link to="/summary-data">Summary Returns</Link>
             </div>
 
           </li>
