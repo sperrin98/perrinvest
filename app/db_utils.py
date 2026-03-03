@@ -844,3 +844,25 @@ def get_summary_data_period_end_returns(pDate, summary_data_group_id):
     finally:
         cursor.close()
         conn.close()
+
+def get_summary_data_period_end_returns_in_gold(pDate, summary_data_group_id):
+    print("PYTHON RECEIVED ID (GOLD):", summary_data_group_id)
+
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+    try:
+        cursor.callproc(
+            'get_summary_data_period_end_returns_in_gold',
+            [pDate, summary_data_group_id]
+        )
+
+        results = []
+        for result in cursor.stored_results():
+            results.extend(result.fetchall())
+
+        print("FIRST ROW RETURNED (GOLD):", results[0] if results else "NO DATA")
+
+        return results
+    finally:
+        cursor.close()
+        conn.close()

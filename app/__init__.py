@@ -7,10 +7,9 @@ import os
 db = SQLAlchemy()
 
 def create_app():
-    # Load .env variables explicitly
-    load_dotenv()
+    # Load backend env file explicitly
+    load_dotenv("app/.env")
 
-    # Debug log to ensure .env values are loaded
     print("Environment Variables Loaded:")
     print(f"DB_USER: {os.getenv('DB_USER')}")
     print(f"DB_HOST: {os.getenv('DB_HOST')}")
@@ -18,17 +17,14 @@ def create_app():
 
     app = Flask(__name__)
 
-    # Load configuration from config.py
-    app.config.from_object('config.Config')
+    # Load config
+    app.config.from_object("config.Config")
 
-    # Debug print the database URI to confirm it uses the correct values
-    print(f"Final SQLALCHEMY_DATABASE_URI: {app.config['SQLALCHEMY_DATABASE_URI']}")
+    print(f"Final SQLALCHEMY_DATABASE_URI: {app.config.get('SQLALCHEMY_DATABASE_URI')}")
 
-    # Initialize extensions
     db.init_app(app)
     CORS(app)
 
-    # Register blueprints
     from app.main import main as main_blueprint
     app.register_blueprint(main_blueprint)
 

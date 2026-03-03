@@ -45,7 +45,8 @@ from app.db_utils import (
     fetch_all_blog_posts,
     fetch_blog_post_by_id,
     get_summary_data_groups,
-    get_summary_data_period_end_returns
+    get_summary_data_period_end_returns,
+    get_summary_data_period_end_returns_in_gold
 )   
 import yfinance as yf
 from datetime import datetime, timedelta
@@ -907,4 +908,27 @@ def summary_data_route():
 
     except Exception as e:
         print("ERROR:", str(e))
+        return jsonify({'error': str(e)}), 500
+
+@main.route('/summary-data-in-gold', methods=['GET'])
+def summary_data_in_gold_route():
+    try:
+        table_id_raw = request.args.get('table_id')
+        date = request.args.get('date')
+
+        print("RAW table_id (GOLD):", table_id_raw)
+
+        if table_id_raw is None or date is None:
+            return jsonify({'error': 'table_id and date required'}), 400
+
+        table_id = int(str(table_id_raw).strip())
+
+        print("Converted table_id (GOLD):", table_id)
+
+        data = get_summary_data_period_end_returns_in_gold(date, table_id)
+
+        return jsonify(data)
+
+    except Exception as e:
+        print("ERROR (GOLD):", str(e))
         return jsonify({'error': str(e)}), 500
