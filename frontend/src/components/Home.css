@@ -1,7 +1,7 @@
+/* GLOBAL */
 html, body {
   margin: 0;
   height: 100%;
-  overflow: hidden;
   font-family: 'Arial', sans-serif;
   background-color: #F8F8F8;
   color: #004d40;
@@ -33,30 +33,78 @@ body {
   letter-spacing: 1px;
 }
 
-/* Summary data section (contains all tables) */
-.summary-data {
+/* WRAPPER FOR LEFT PANEL + MAIN AREA */
+.home-content-wrapper {
   display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  gap: 40px;
-  padding: 40px 20px;
   width: 100%;
-  overflow-x: auto;
-  box-sizing: border-box;
   margin-top: 100px;
+  gap: 20px; /* space between left/main/right */
+  align-items: flex-start; /* align all columns to top */
 }
 
-/* Table block (each category like Precious Metals, etc.) */
+/* LEFT PANEL */
+.home-left-panel {
+  width: 22%;
+  min-width: 380px;
+  padding: 40px 20px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  overflow-y: auto;
+}
+
+/* MAIN AREA */
+.home-main-area {
+  flex: 1;
+  padding: 40px 20px 20px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  box-sizing: border-box;
+}
+
+/* --- HEADERS --- */
+/* All headers now exactly same height */
+.home-main-area h2,
+.home-right-panel h2,
+.summary-table-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #004d40;
+  margin: 0; /* remove default margins */
+  padding: 6px 0 6px 0; /* uniform padding */
+  border-bottom: 2px solid #b2dfdb;
+  line-height: 24px; /* fixes exact height */
+  height: 36px;      /* forces all headers to same height */
+  display: flex;
+  align-items: center; /* vertical centering */
+}
+
+.section-header {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #004d40;
+  margin: 0;
+  padding: 6px 0 6px 0;
+  border-bottom: 2px solid #b2dfdb;
+  line-height: 24px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+}
+
+/* TABLE BLOCK */
 .summary-table-block {
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: flex-start;
   background: linear-gradient(135deg, #ffffff, #e8f5f3);
   border: 1px solid #b2dfdb;
   border-radius: 12px;
-  padding: 20px;
+  padding: 15px;
   box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-  min-width: 340px;
+  width: 100%;
   transition: transform 0.2s ease, box-shadow 0.3s ease;
 }
 
@@ -65,44 +113,36 @@ body {
   box-shadow: 0 6px 14px rgba(0,0,0,0.15);
 }
 
-/* Table title */
-.summary-table-title {
-  font-size: 1.4rem;
-  font-weight: 600;
-  color: #004d40;
-  margin-bottom: 10px;
-  text-align: center;
-}
-
-/* Table styling */
+/* TABLE STYLING */
 .summary-table-wrapper {
   border-collapse: collapse;
   width: 100%;
+  table-layout: fixed;
   background-color: white;
   border-radius: 10px;
   overflow: hidden;
+  font-size: 0.85rem;
 }
 
-/* Header Row */
 .summary-table-row-header {
   background-color: #00796b !important;
   color: white !important;
 }
 
-/* Header Cells */
 .summary-table-header-security,
 .summary-table-header-date,
 .summary-table-header-value {
-  padding: 10px 15px;
+  padding: 4px 6px;
   border: none;
-  text-align: center;
+  text-align: left;
   background-color: #00796b !important;
   color: white !important;
   font-weight: 600;
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-/* Data Row */
 .summary-table-row-data {
   background-color: #f9f9f9;
   transition: background-color 0.3s;
@@ -112,37 +152,151 @@ body {
   background-color: #f1f1f1;
 }
 
-/* Hover effect */
 .summary-table-row-data:hover {
   background-color: rgba(0, 121, 107, 0.1);
 }
 
-/* Data Cells */
 .summary-table-data-security,
 .summary-table-data-date,
 .summary-table-data-value {
-  padding: 10px 15px;
+  padding: 4px 6px;
+  text-align: left;
   border-bottom: 1px solid #cceae7;
-  text-align: center;
   color: #004d40;
   font-weight: 500;
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 0.85rem;
 }
 
-/* Price color matching sparkline */
 .summary-table-data-value {
   transition: color 0.3s ease;
 }
 
-/* Responsive */
+/* BLOG SECTION */
+.home-blog-entry {
+  background: linear-gradient(135deg, #ffffff, #f0f8f5);
+  border: 1px solid #b2dfdb;
+  border-radius: 12px;
+  padding: 15px 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s ease, box-shadow 0.3s ease;
+}
+
+.home-blog-entry:hover {
+  transform: scale(1.01);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.08);
+}
+
+.home-blog-entry h3 {
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: #004d40;
+  margin-bottom: 5px;
+}
+
+.home-blog-meta {
+  font-size: 0.85rem;
+  color: #00796b;
+  margin-bottom: 10px;
+  font-style: italic;
+}
+
+.home-blog-entry img {
+  width: 100%;
+  max-height: 200px;
+  object-fit: cover;
+  margin-bottom: 10px;
+  border-radius: 8px;
+}
+
+.home-blog-excerpt {
+  font-size: 0.9rem;
+  color: #004d40;
+  margin-bottom: 10px;
+}
+
+.home-blog-readmore {
+  font-size: 0.85rem;
+  color: #00796b;
+  font-weight: 600;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.home-blog-readmore:hover {
+  color: #004d40;
+}
+
+/* NEWS SIDEBAR */
+.home-right-panel {
+  width: 280px;
+  min-width: 260px;
+  padding: 40px 30px 40px 20px;   
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  overflow-y: auto;
+}
+
+/* News entry cards */
+.home-news-entry {
+  background: linear-gradient(135deg, #ffffff, #f0f8f5);
+  border: 1px solid #b2dfdb;
+  border-radius: 10px;
+  padding: 12px 14px;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.05);
+  transition: transform 0.15s ease, box-shadow 0.2s ease;
+}
+
+.home-news-entry:hover {
+  transform: scale(1.02);
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.08);
+}
+
+.home-news-entry a {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #004d40;
+  text-decoration: none;
+  line-height: 1.4;
+  display: block;
+  transition: color 0.2s ease;
+}
+
+.home-news-entry a:hover {
+  color: #00796b;
+}
+
+.home-news-source {
+  font-size: 0.75rem;
+  color: #00796b;
+  margin-top: 6px;
+  font-style: italic;
+}
+
+.home-right-panel p {
+  font-size: 0.85rem;
+  color: #004d40;
+}
+
+/* RESPONSIVE */
 @media (max-width: 1200px) {
-  .summary-data {
-    flex-direction: column;
-    align-items: center;
+  .home-left-panel {
+    width: 90%;
+    min-width: auto;
+    padding: 20px;
   }
 
   .summary-table-block {
+    width: 100%;
+  }
+
+  .home-right-panel {
     width: 90%;
-    max-width: 500px;
+    min-width: auto;
+    padding: 20px;
   }
 }

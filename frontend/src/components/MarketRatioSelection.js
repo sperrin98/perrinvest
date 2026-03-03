@@ -15,7 +15,8 @@ function MarketRatioSelection() {
   useEffect(() => {
     async function fetchSecurities() {
       try {
-        const response = await fetch('http://localhost:5000/securities');
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/securities`);
+
         const data = await response.json();
         if (Array.isArray(data)) {
           setSecurities(data);

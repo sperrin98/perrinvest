@@ -11,7 +11,7 @@ const BlogList = () => {
     const fetchPosts = async () => {
       console.log('Fetching all blog posts...');
       try {
-        const res = await fetch('http://localhost:5000/blog');
+        const res = await fetch(`${process.env.REACT_APP_API_URL}/blog`);
         if (!res.ok) {
           throw new Error(`Failed to fetch posts: ${res.status}`);
         }
