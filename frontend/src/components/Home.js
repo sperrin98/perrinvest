@@ -63,7 +63,8 @@ const Home = () => {
     const fetchNews = async () => {
       try {
         // Pointing directly to local Flask backend
-        const res = await fetch(`http://127.0.0.1:5000/news`);
+        const res = await fetch(`${process.env.REACT_APP_API_URL}/news`);
+
         if (!res.ok) throw new Error(`Failed to fetch news: ${res.status}`);
         const data = await res.json();
         setNews(data.slice(0, 15)); // latest 5 news articles
