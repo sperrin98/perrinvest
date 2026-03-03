@@ -180,10 +180,10 @@ securities_with_tickers = {
 
 # Establish a database connection
 conn = mysql.connector.connect(
-    host='localhost',
-    user='root',
-    password='REDACTED',
-    database='perrinvest'
+    host=os.environ.get("DB_HOST"),
+    user=os.environ.get("DB_USER"),
+    password=os.environ.get("DB_PASSWORD"),
+    database=os.environ.get("DB_NAME"),
 )
 
 cursor = conn.cursor()
@@ -197,7 +197,6 @@ for security_long_name, ticker_symbol in securities_with_tickers.items():
     """
     cursor.execute(query, (ticker_symbol, security_long_name))
 
-# Commit changes and close the connection
 conn.commit()
 cursor.close()
 conn.close()

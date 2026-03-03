@@ -4,11 +4,17 @@ from datetime import datetime, timedelta
 
 # Database connection
 def get_db_connection():
+    db_host = os.getenv('DB_HOST')
+    db_user = os.getenv('DB_USER')
+    db_name = os.getenv('DB_NAME')
+    db_password = os.getenv('DB_PASSWORD')
+
+    print(f"Connecting to DB: {db_name} at {db_host} using {db_user}")  # Debugging
     return mysql.connector.connect(
-        host='localhost',
-        user='root',
-        password='REDACTED',
-        database='perrinvest'
+        host=db_host,
+        user=db_user,
+        password=db_password,
+        database=db_name
     )
 
 def update_price_histories():
