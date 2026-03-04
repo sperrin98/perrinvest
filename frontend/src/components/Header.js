@@ -17,13 +17,16 @@ const Header = ({ isLoggedIn, onLogout }) => {
     <header className="header">
       <nav className="navbar">
         <div className="brand">
-          <Link to="/" className="logo">Perrinvest</Link>
+          <Link to="/" className="logo-link" aria-label="Perrinvest home">
+            <img src="/logo101.png" alt="Perrinvest Logo" className="logo-img" />
+          </Link>
         </div>
+
         <button className="menu-toggle" onClick={toggleMenu}>
           ☰ Menu
         </button>
-        <ul className={`nav-links ${menuOpen ? 'show' : ''}`}>
 
+        <ul className={`nav-links ${menuOpen ? 'show' : ''}`}>
           <li className="dropdown">
             <Link to="#">Returns</Link>
             <div className="dropdown-content">
@@ -33,8 +36,8 @@ const Header = ({ isLoggedIn, onLogout }) => {
               <Link to="/returns/2">Silver Returns in Currencies</Link>
               <Link to="/summary-data">Summary Returns</Link>
             </div>
-
           </li>
+
           <li className="dropdown">
             <Link to="#">Charts</Link>
             <div className="dropdown-content">
@@ -85,7 +88,6 @@ const Header = ({ isLoggedIn, onLogout }) => {
             </div>
           </li>
 
-          {/* Login / Logout Logic */}
           {isLoggedIn ? (
             <li>
               <Link to="#" className="dropbtn" onClick={handleLogout}>Sign Out</Link>
