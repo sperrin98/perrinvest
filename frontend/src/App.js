@@ -5,7 +5,6 @@ import Home from './components/Home';
 import Securities from './components/Securities';
 import Security from './components/Security';
 import MarketRatios from './components/MarketRatios';
-import MarketRatio from './components/MarketRatio';
 import EcoDataPoints from './components/EcoDataPoints';
 import EcoDataPoint from './components/EcoDataPoint';
 import Currencies from './components/Currencies';
@@ -85,7 +84,6 @@ function App() {
         <Route path="/securities" element={<Securities />} />
         <Route path="/securities/:id" element={<Security />} />
         <Route path="/market-ratios" element={<MarketRatios />} />
-        <Route path="/market-ratios/:id" element={<MarketRatio />} />
         <Route path="/eco-data-points" element={<EcoDataPoints />} />
         <Route path="/eco-data-points/:id" element={<EcoDataPoint />} />
         <Route path="/currencies" element={<Currencies />} />
