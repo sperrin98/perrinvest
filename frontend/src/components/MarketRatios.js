@@ -96,7 +96,7 @@ function MarketRatios() {
   const [loadingChart, setLoadingChart] = useState(false);
   const [chartError, setChartError] = useState("");
 
-  // timeframe rail: D/W/M/Q (no ALL)
+  // timeframe rail: D/W/M/Q/ALL
   const [timeframe, setTimeframe] = useState("M");
 
   // Put your "best" ratios here if you want to pin them
@@ -201,18 +201,24 @@ function MarketRatios() {
     const now = new Date();
 
     let start = null;
+
     if (timeframe === "D") start = addYears(now, -1);
     if (timeframe === "W") start = addYears(now, -5);
     if (timeframe === "M") start = addYears(now, -10);
-    if (timeframe === "Q") start = null; // inception
+
+    // Q and ALL are inception -> today
+    if (timeframe === "Q") start = null;
+    if (timeframe === "ALL") start = null;
 
     const filtered = start
       ? ratioData.filter((r) => new Date(r.date) >= start)
       : ratioData;
 
-    // Aggregate for W/M/Q. For D keep daily.
-    if (timeframe === "D") return filtered;
-    return aggregateSeries(filtered, timeframe);
+    // Daily views (no aggregation)
+    if (timeframe === "D" || timeframe === "ALL") return filtered;
+
+    // Aggregated views
+    return aggregateSeries(filtered, timeframe); // W / M / Q
   }, [ratioData, timeframe]);
 
   // Y-axis dynamic scaling (based on displayed series)
@@ -342,6 +348,16 @@ function MarketRatios() {
             title="Quarterly (Inception)"
           >
             Q
+          </button>
+          <button
+            className={`mrp-chip ${
+              timeframe === "ALL" ? "mrp-chip-active" : ""
+            }`}
+            onClick={() => setTimeframe("ALL")}
+            type="button"
+            title="All data (Inception)"
+          >
+            ALL
           </button>
         </div>
 
