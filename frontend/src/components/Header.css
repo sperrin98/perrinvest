@@ -35,6 +35,7 @@
   align-items: center;
 }
 
+/* Old text logo styles (kept in case you ever revert) */
 .logo {
   background-image: linear-gradient(to right, #00ffb3, #00796b);
   -webkit-background-clip: text;
@@ -42,7 +43,7 @@
   color: transparent;
   text-decoration: none;
   font-size: 1.7rem;
-  font-family: "Montserrat", sans-serif; 
+  font-family: "Montserrat", sans-serif;
   font-weight: 700;
   margin-left: 15%;
   letter-spacing: 1px;
@@ -51,6 +52,27 @@
 
 .logo:hover {
   background-image: linear-gradient(to right, #00ffb3, #00cc99);
+}
+
+.logo-link{
+  display: inline-flex;
+  align-items: center;
+  height: 34px;        /* this is the layout box height (navbar won’t change) */
+  overflow: visible;   /* allow scaled logo to render without pushing layout */
+  line-height: 0;
+}
+
+/* Logo: scale visually without changing layout */
+.logo-img{
+  height: 100%;
+  width: auto;
+  display: block;
+  object-fit: contain;
+
+  transform: scale(4.6) translateY(1px); /* move down slightly */
+  transform-origin: left center;
+
+  filter: drop-shadow(0 1px 2px rgba(0,0,0,0.35));
 }
 
 /* Navigation links */
@@ -74,7 +96,7 @@
   color: transparent;
   text-decoration: none;
   font-size: 1rem;
-  font-family: "Montserrat", sans-serif; 
+  font-family: "Montserrat", sans-serif;
   font-weight: 500;
   transition: color 0.3s ease, transform 0.2s ease;
 }
@@ -96,11 +118,11 @@
   position: absolute;
   top: 100%;
   left: 0;
-  background-color: #ffffff; 
+  background-color: #ffffff;
   min-width: 160px;
   border-radius: 6px;
   overflow: hidden;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1); 
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
   z-index: 1;
   opacity: 0;
   transform: translateY(5px);
@@ -115,7 +137,7 @@
 }
 
 .nav-links .dropdown-content a {
-  color: #004d40; 
+  color: #004d40;
   padding: 10px 16px;
   text-decoration: none;
   display: block;
@@ -151,7 +173,7 @@
     display: none;
     flex-direction: column;
     width: 100%;
-    background: linear-gradient(135deg, #00796b, #004d40); 
+    background: linear-gradient(135deg, #00796b, #004d40);
     position: absolute;
     top: 60px;
     left: 0;
