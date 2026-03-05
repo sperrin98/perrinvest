@@ -866,3 +866,19 @@ def get_summary_data_period_end_returns_in_gold(pDate, summary_data_group_id):
     finally:
         cursor.close()
         conn.close()
+
+def get_long_only_watchlist_period_end_returns(pDate):
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+    try:
+        cursor.callproc('get_long_only_watchlist_period_end_returns', [pDate])
+
+        results = []
+        for result in cursor.stored_results():
+            results.extend(result.fetchall())
+
+        print("FIRST ROW RETURNED (WATCHLIST):", results[0] if results else "NO DATA")
+        return results
+    finally:
+        cursor.close()
+        conn.close()
