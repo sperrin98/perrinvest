@@ -46,7 +46,8 @@ from app.db_utils import (
     fetch_blog_post_by_id,
     get_summary_data_groups,
     get_summary_data_period_end_returns,
-    get_summary_data_period_end_returns_in_gold
+    get_summary_data_period_end_returns_in_gold,
+    get_long_only_watchlist_period_end_returns
 )   
 import yfinance as yf
 from datetime import datetime, timedelta
@@ -931,4 +932,19 @@ def summary_data_in_gold_route():
 
     except Exception as e:
         print("ERROR (GOLD):", str(e))
+        return jsonify({'error': str(e)}), 500
+
+@main.route('/long-only-watchlist', methods=['GET'])
+def long_only_watchlist_route():
+    try:
+        date = request.args.get('date')
+
+        if date is None:
+            return jsonify({'error': 'date required'}), 400
+
+        data = get_long_only_watchlist_period_end_returns(date)
+        return jsonify(data)
+
+    except Exception as e:
+        print("ERROR (LONG ONLY WATCHLIST):", str(e))
         return jsonify({'error': str(e)}), 500

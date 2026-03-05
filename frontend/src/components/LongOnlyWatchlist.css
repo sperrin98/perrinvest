@@ -1,0 +1,138 @@
+/* Layout */
+.lw-container {
+  display: flex;
+  width: 100vw;
+  height: 100vh;
+  background-color: #f8f8f8;
+  box-sizing: border-box;
+}
+
+/* Sidebar */
+.lw-sidebar {
+  width: 22%;
+  background: linear-gradient(135deg, #00796b, #004d40);
+  padding: 25px;
+  padding-top: 120px;
+  box-sizing: border-box;
+  color: white;
+  font-family: Arial, sans-serif;
+  border-right: 3px solid #00332c;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.lw-sidebar-title {
+  font-size: 1.3rem;
+  margin-bottom: 15px;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.3);
+  padding-bottom: 5px;
+}
+
+.lw-hint {
+  margin-top: 10px;
+  font-size: 0.95rem;
+  opacity: 0.9;
+  line-height: 1.25rem;
+}
+
+/* Main Content */
+.lw-main {
+  width: 78%;
+  padding: 20px;
+  overflow-x: auto;
+}
+
+.lw-title {
+  margin-top: 110px;
+  color: #00796b;
+  font-size: 32px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+}
+
+/* Table */
+.lw-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.lw-table th,
+.lw-table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: center;
+  word-wrap: break-word;
+  background-color: transparent;
+}
+
+.lw-table-header {
+  background-color: #00796b;
+  font-weight: bold;
+}
+
+.lw-table-header th {
+  color: white;
+}
+
+.lw-error {
+  color: red;
+  font-weight: bold;
+}
+
+/* Positive / Negative */
+td.lw-positive {
+  color: green !important;
+  background-color: transparent !important;
+}
+
+td.lw-negative {
+  color: red !important;
+  background-color: transparent !important;
+}
+
+/* Hover */
+.lw-table tr:hover,
+.lw-table tr:hover td,
+.lw-table tr td:hover {
+  background-color: rgb(191, 228, 204) !important;
+  transition: background-color 0.2s ease !important;
+}
+
+/* Date Section - matches the SummaryData sidebar vibe */
+.lw-date-section {
+  margin-bottom: 30px;
+}
+
+.lw-date-section h3 {
+  font-size: 1.3rem;
+  margin-bottom: 10px;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.3);
+  padding-bottom: 5px;
+}
+
+.lw-date-picker {
+  width: 100%;
+  padding: 10px;
+  font-size: 14px;
+  color: white;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 5px;
+  transition: 0.3s ease;
+  cursor: pointer;
+}
+
+.lw-date-picker:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: scale(1.03);
+}
+
+.lw-date-picker:focus {
+  outline: none;
+  border: 1px solid rgba(0, 255, 179, 0.9);
+  box-shadow: 0 0 6px rgba(0, 255, 179, 0.6);
+}

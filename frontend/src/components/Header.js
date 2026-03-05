@@ -35,6 +35,7 @@ const Header = ({ isLoggedIn, onLogout }) => {
               <Link to="/returns/1">Gold Returns in Currencies</Link>
               <Link to="/returns/2">Silver Returns in Currencies</Link>
               <Link to="/summary-data">Summary Returns</Link>
+              <Link to="/long-only-watchlist">UK Shares and ETF Watchlist</Link>
             </div>
           </li>
 
