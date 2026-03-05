@@ -1,22 +1,16 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import './LongOnlyWatchlist.css';
 
 function LongOnlyWatchlist() {
-  const [data, setData] = useState([]);
+  const [originalData, setOriginalData] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [sortConfig, setSortConfig] = useState({ key: null, direction: null }); // 'desc' | 'asc' | null
 
-  // Default date: yesterday, unless Sunday/Monday -> previous Friday
   const getDefaultDate = () => {
     const d = new Date();
-    const day = d.getDay(); // 0=Sun, 1=Mon, 2=Tue, ... 6=Sat
-
-    // Start from yesterday
+    const day = d.getDay();
     d.setDate(d.getDate() - 1);
-
-    // If today is Sunday, yesterday is Saturday -> use previous Friday
     if (day === 0) d.setDate(d.getDate() - 1);
-
-    // If today is Monday, yesterday is Sunday -> use previous Friday
     if (day === 1) d.setDate(d.getDate() - 2);
 
     const yyyy = d.getFullYear();
@@ -36,10 +30,13 @@ function LongOnlyWatchlist() {
       );
 
       const json = await res.json();
-      setData(Array.isArray(json) ? json : []);
+      const rows = Array.isArray(json) ? json : [];
+      setOriginalData(rows);
+      setSortConfig({ key: null, direction: null }); // always default on load
     } catch (err) {
       console.error('Fetch long-only watchlist error:', err);
-      setData([]);
+      setOriginalData([]);
+      setSortConfig({ key: null, direction: null });
     } finally {
       setLoading(false);
     }
@@ -53,8 +50,7 @@ function LongOnlyWatchlist() {
   const formatValue = (val, colName) => {
     if (val === null || val === undefined) return '';
 
-    if (colName === 'security_long_name' || colName === 'investment_type_name')
-      return val;
+    if (colName === 'security_long_name' || colName === 'investment_type_name') return val;
 
     if (colName.toLowerCase().includes('date')) {
       const d = new Date(val);
@@ -84,30 +80,87 @@ function LongOnlyWatchlist() {
     'CTD_RETURN',
   ];
 
+  const headerLabel = (key) => {
+    if (key === 'security_long_name') return 'NAME';
+    if (key === 'investment_type_name') return 'TYPE';
+    if (key === 'price_date') return 'Date';
+    return key.replace('_RETURN', '').toUpperCase();
+  };
+
+  const isSortable = (key) =>
+    key !== 'security_long_name' && key !== 'investment_type_name' && key !== 'price_date';
+
+  const cycleSort = (key) => {
+    if (!isSortable(key)) return;
+
+    setSortConfig((prev) => {
+      if (prev.key !== key) return { key, direction: 'desc' };
+      if (prev.direction === 'desc') return { key, direction: 'asc' };
+      if (prev.direction === 'asc') return { key: null, direction: null }; // reset to default
+      return { key, direction: 'desc' };
+    });
+  };
+
+  const sortIndicator = (key) => {
+    if (sortConfig.key !== key) return '';
+    if (sortConfig.direction === 'desc') return ' ▼';
+    if (sortConfig.direction === 'asc') return ' ▲';
+    return '';
+  };
+
+  const displayedData = useMemo(() => {
+    if (!sortConfig.key || !sortConfig.direction) return originalData;
+
+    const key = sortConfig.key;
+    const dir = sortConfig.direction;
+
+    const withIndex = originalData.map((row, idx) => ({ row, idx }));
+
+    withIndex.sort((a, b) => {
+      const av = a.row?.[key];
+      const bv = b.row?.[key];
+
+      const aNum = typeof av === 'number' ? av : av == null ? null : Number(av);
+      const bNum = typeof bv === 'number' ? bv : bv == null ? null : Number(bv);
+
+      const aMissing = aNum === null || Number.isNaN(aNum);
+      const bMissing = bNum === null || Number.isNaN(bNum);
+
+      if (aMissing && bMissing) return a.idx - b.idx;
+      if (aMissing) return 1;
+      if (bMissing) return -1;
+
+      if (aNum === bNum) return a.idx - b.idx;
+      return dir === 'desc' ? bNum - aNum : aNum - bNum;
+    });
+
+    return withIndex.map((x) => x.row);
+  }, [originalData, sortConfig]);
+
   const renderTable = () => {
     if (loading) return <p className="lw-error">Loading...</p>;
-    if (!data || data.length === 0) return <p className="lw-error">No data.</p>;
+    if (!displayedData || displayedData.length === 0) return <p className="lw-error">No data.</p>;
 
     return (
       <table className="lw-table">
         <thead>
           <tr className="lw-table-header">
             {columnKeys.map((key) => (
-              <th key={key}>
-                {key === 'security_long_name'
-                  ? 'NAME'
-                  : key === 'investment_type_name'
-                  ? 'TYPE'
-                  : key === 'price_date'
-                  ? 'Date'
-                  : key.replace('_RETURN', '').toUpperCase()}
+              <th
+                key={key}
+                onClick={() => cycleSort(key)}
+                style={{ cursor: isSortable(key) ? 'pointer' : 'default', userSelect: 'none' }}
+                title={isSortable(key) ? 'Click to sort: best→worst, worst→best, reset' : undefined}
+              >
+                {headerLabel(key)}
+                {sortIndicator(key)}
               </th>
             ))}
           </tr>
         </thead>
 
         <tbody>
-          {data.map((row, idx) => (
+          {displayedData.map((row, idx) => (
             <tr key={idx}>
               {columnKeys.map((key) => {
                 const raw = row?.[key];
@@ -162,9 +215,7 @@ function LongOnlyWatchlist() {
 
         <h2 className="lw-sidebar-title">Long Only Watchlist</h2>
 
-        <div className="lw-hint">
-          Pick a date to load the watchlist period-end returns.
-        </div>
+        <div className="lw-hint">Pick a date to load the watchlist period-end returns.</div>
       </div>
 
       <div className="lw-main">
