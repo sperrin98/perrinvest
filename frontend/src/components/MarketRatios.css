@@ -201,6 +201,7 @@
   letter-spacing: 1px;
   text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
   margin-bottom: 14px;
+  text-align: center !important;
 }
 
 .mrp-chart-wrapper {
