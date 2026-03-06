@@ -1,107 +1,267 @@
-.correlation-container {
-    max-width: 75%;
-    margin: 100px auto;
-    padding: 25px;
-    background: #ffffff;
-    border-radius: 10px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    font-family: 'Inter', sans-serif;
+/* PAGE WRAP */
+.crl-page {
+  padding-top: 82px;
+  box-sizing: border-box;
 }
 
-.correlation-title {
-    text-align: center;
-    font-size: 1.8rem;
-    font-weight: bold;
-    color: #003366;
-    margin-bottom: 20px;
+/* MAIN LAYOUT */
+.crl-container {
+  display: flex;
+  width: 100vw;
+  height: calc(100vh - 82px);
+  background-color: #f8f8f8;
+  box-sizing: border-box;
 }
 
-.correlation-form {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
+/* SIDEBAR */
+.crl-sidebar {
+  width: 22%;
+  background: linear-gradient(135deg, #00796b, #004d40);
+  padding: 25px;
+  box-sizing: border-box;
+  color: white;
+  font-family: Arial, sans-serif;
+  border-right: 3px solid #00332c;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
 }
 
-.form-group {
-    display: flex;
-    flex-direction: column;
+.crl-sidebar-top {
+  margin-bottom: 6px;
 }
 
-.form-group label {
-    font-size: 1rem;
-    font-weight: bold;
-    margin-bottom: 5px;
+.crl-sidebar-title {
+  font-size: 1.4rem;
+  margin: 0 0 6px 0;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.3);
+  padding-bottom: 8px;
 }
 
-.form-group input,
-.form-group select {
-    padding: 12px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    font-size: 1rem;
-    background: #f8f9fa;
-    transition: border 0.3s ease-in-out;
+.crl-sidebar-subtitle {
+  font-size: 13px;
+  opacity: 0.9;
 }
 
-.form-group input:focus,
-.form-group select:focus {
-    border-color: #00796b;
-    outline: none;
+/* CONTROLS */
+.crl-control {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 }
 
-.correlation-button {
-    padding: 12px;
-    background-color: rgb(0, 255, 179);
-    color: rgb(0, 0, 0);
-    border: none;
-    border-radius: 5px;
-    font-size: 1rem;
-    font-weight: bold;
-    cursor: pointer;
-    transition: background-color 0.3s, transform 0.1s;
+.crl-control label {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.92);
 }
 
-.correlation-button:hover {
-    background-color: #00cc99;
-    transform: scale(1.03);
-    color: black;
+.crl-input {
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  font-size: 14px;
+  outline: none;
+  transition: 0.3s ease;
+  box-sizing: border-box;
+  width: 100%;
 }
 
-.error {
-    color: red;
-    text-align: center;
-    margin-top: 10px;
+.crl-input::placeholder {
+  color: rgba(255, 255, 255, 0.7);
 }
 
-.loading {
-    text-align: center;
-    font-size: 1.2rem;
-    color: #555;
+.crl-input:hover {
+  background: rgba(255, 255, 255, 0.2);
 }
 
-.correlation-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
+.crl-input:focus {
+  background: rgba(255, 255, 255, 0.25);
+  border-color: #00ffb3;
 }
 
-.correlation-table th,
-.correlation-table td {
-    border: 1px solid #ddd;
-    padding: 10px;
-    text-align: left;
+/* dropdown input wrapper + arrow */
+.crl-dd-inputWrap {
+  position: relative;
+  width: 100%;
 }
 
-.correlation-table th {
-    background-color: rgb(0, 255, 179);
-    color: rgb(0, 0, 0);
+.crl-dd-input {
+  padding-right: 38px;
 }
 
-.correlation-table tr:nth-child(even) {
-    background-color: #f9f9f9;
+.crl-dd-toggle {
+  position: absolute;
+  right: 6px;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 30px;
+  width: 30px;
+  border: 0;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 900;
+  color: #004d40;
+  background: rgba(255, 255, 255, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: 0.2s ease;
 }
 
-/* Adding subtle hover effect for table rows */
-.correlation-table tbody tr:hover {
-    background-color: rgba(0, 255, 179, 0.2);
+.crl-dd-toggle:hover {
+  background: rgba(255, 255, 255, 1);
+  transform: translateY(-50%) scale(1.05);
+}
+
+.crl-btn {
+  margin-top: 4px;
+  padding: 12px;
+  border-radius: 10px;
+  border: 0;
+  cursor: pointer;
+  font-weight: 700;
+  transition: 0.3s ease;
+}
+
+.crl-btn:hover {
+  transform: scale(1.02);
+}
+
+.crl-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.crl-hint {
+  font-size: 12px;
+  opacity: 0.85;
+}
+
+.crl-footnote {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid rgba(255, 255, 255, 0.25);
+}
+
+.crl-error {
+  color: #ffb4b4;
+  font-weight: 700;
+  background: rgba(0, 0, 0, 0.18);
+  padding: 10px;
+  border-radius: 8px;
+}
+
+/* DROPDOWN */
+.crl-dd {
+  position: absolute;
+  top: 78px;
+  left: 0;
+  right: 0;
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  border-radius: 10px;
+  overflow: hidden;
+  z-index: 9999;
+  max-height: 320px; /* more room since you want all securities available */
+  overflow-y: auto;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.18);
+}
+
+.crl-dd-empty {
+  padding: 12px;
+  font-size: 14px;
+  opacity: 0.75;
+  color: #004d40;
+}
+
+.crl-dd-item {
+  width: 100%;
+  text-align: left;
+  padding: 10px 12px;
+  border: 0;
+  background: white;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.crl-dd-item:hover {
+  background: #f3f3f3;
+}
+
+.crl-dd-main {
+  font-weight: 700;
+  color: #004d40;
+}
+
+.crl-dd-sub {
+  font-size: 12px;
+  opacity: 0.7;
+  margin-top: 3px;
+  color: #004d40;
+}
+
+/* MAIN */
+.crl-main {
+  width: 78%;
+  padding: 20px;
+  overflow-x: auto;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+
+.crl-title {
+  margin: 0 0 14px 0;
+  color: #00796b;
+  font-size: 32px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+/* CHART centered but can fill width */
+.crl-chart-wrapper {
+  flex: 1;
+  width: 100%;
+  padding: 10px 20px;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ✅ Fill container width */
+.crl-chart-inner {
+  width: 100%;
+  height: 100%;
+  max-width: none; /* important: remove the previous constraint */
+}
+
+.crl-empty {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  opacity: 0.75;
+}
+
+/* RECHARTS tweaks (scoped) */
+.crl-chart-wrapper .recharts-cartesian-axis-ticks text {
+  font-size: 12px;
+}
+
+.crl-chart-wrapper .recharts-tooltip-wrapper {
+  font-size: 14px;
+}
+
+.crl-chart-wrapper .recharts-line:hover {
+  stroke-width: 3;
 }
