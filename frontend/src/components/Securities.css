@@ -1,220 +1,378 @@
-/* General Container */
+/* Securities.css */
+
+/* ===== Page container ===== */
 .securities-container {
-  background-color: #f4f4f4; /* Light gray background */
-  padding: 0 15%; /* Keep the existing padding */
-  padding-bottom: 10px;
+  background-color: #f4f4f4;
+  padding: 0 15%;
+  padding-bottom: 20px;
   font-family: "Montserrat", sans-serif;
-  margin-top: 70px; /* Ensure content is pushed below the navbar */
-  background-color: #f4f4f4; /* Ensure background matches */
-  position: relative; /* Ensures proper layout of child elements */
+  margin-top: 70px;
+  position: relative;
+  box-sizing: border-box;
 }
 
-/* Search and Filter Container (Side by side) */
+/* add a bit more breathing room above the controls/table
+   (fixes the “top badge touching the top” feeling) */
 .search-filter-container {
-  margin-bottom: 20px;
-  padding-top: 30px;
-  display: flex; /* Flexbox layout for side by side */
-  justify-content: space-between; /* Spread items apart */
-  width: 100%; /* Full container width */
+  margin-bottom: 18px;
+  padding-top: 34px; /* was 24px */
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
-.sec-search-container {
-  width: 48%; /* Adjust search bar width */
-}
-
+/* ===== Search + Filter cards ===== */
+.sec-search-container,
 .filter-container {
-  width: 48%;
+  width: 50%;
+  background: #ffffff;
+  border-radius: 14px;
+  padding: 12px;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.06);
+  box-sizing: border-box;
+  position: relative; /* needed for pseudo icons */
+}
+
+/* Filter container layout */
+.filter-container {
   display: flex;
   align-items: center;
+  gap: 10px;
   justify-content: space-between;
 }
 
 .filter-container label {
-  margin-right: 8px; /* Slight margin between label and dropdown */
-  font-size: 13px; /* Smaller font for label */
-  white-space: nowrap; /* Prevent text wrapping */
+  margin: 0;
+  font-size: 12px;
+  font-weight: 800;
+  color: rgba(0, 77, 64, 0.85);
+  white-space: nowrap;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
 }
 
-/* Search bar input */
-.sec-search-input {
-  width: 100%; /* Make the input take full width of its container */
-  padding: 10px;
-  border: 1px solid #00ffb3;
-  background-color: #f9f9f9;
-  border-radius: 4px;
-  font-size: 16px;
-  color: #333;
+/* ===== Search icon inside input (pure CSS) ===== */
+.sec-search-container::before {
+  content: "🔍";
+  position: absolute;
+  left: 22px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 14px;
+  opacity: 0.55;
+  pointer-events: none;
 }
 
-/* Asset Class Dropdown */
+/* ===== Input + Select ===== */
+.sec-search-input,
 #asset-class-filter {
-  width: 100%; /* Make dropdown take full width of its container */
-  padding: 10px;
-  font-size: 16px;
-  border: 1px solid #00ffb3;
-  border-radius: 4px;
-  max-width: 100%; /* Prevent overflow */
-}
-
-/* Table Styling */
-table {
   width: 100%;
-  border-collapse: collapse;
-  margin: 0 auto; /* Center the table */
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1); /* Light shadow for depth */
-  background-color: #fff; /* White background for the table */
-  border-radius: 8px; /* Rounded corners for a more modern look */
+  padding: 12px 12px;
+  border: 1px solid rgba(0, 121, 107, 0.35);
+  background-color: #fbfbfb;
+  border-radius: 12px;
+  font-size: 14px;
+  color: #1f1f1f;
+  outline: none;
+  transition: 0.18s ease-in-out;
+  box-sizing: border-box;
 }
 
-th, td {
-  padding: 12px 15px; /* Same padding for th and td */
-  text-align: left;
-  font-size: 14px; /* Slightly smaller font size for a more professional look */
-  border-bottom: 1px solid #e0e0e0; /* Lighter border for subtle separation */
-  color: #333; /* Darker text for readability */
+/* extra left padding so text doesn't overlap the search icon */
+.sec-search-input {
+  padding-left: 40px;
 }
 
-th {
-  font-weight: 600;
-  background-color: #f9f9f9;
-  padding-left: 20px;
+.sec-search-input::placeholder {
+  color: rgba(0, 0, 0, 0.45);
 }
 
-tbody tr {
-  transition: background-color 0.3s ease;
-  background-color: #ffffff; /* Light background color */
+.sec-search-input:focus,
+#asset-class-filter:focus {
+  border-color: rgba(0, 121, 107, 0.9);
+  background-color: #ffffff;
+  box-shadow: 0 0 0 4px rgba(0, 255, 179, 0.18);
 }
 
-tbody tr:nth-child(even) {
-  background-color: #f9f9f9; /* Subtle alternating row colors */
+/* ===== Custom dropdown chevron (pure CSS) ===== */
+.filter-container {
+  position: relative;
 }
 
-tbody tr:hover {
-  background-color: #f0f0f0; /* Subtle hover effect */
+.filter-container::after {
+  content: "▾";
+  position: absolute;
+  right: 22px;
+  top: 50%;
+  transform: translateY(-35%);
+  font-size: 16px;
+  color: rgba(0, 77, 64, 0.7);
+  pointer-events: none;
+}
+
+/* Remove native arrow for consistent look */
+#asset-class-filter {
   cursor: pointer;
-  transition: background-color 0.2s ease;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  padding-right: 40px; /* space for chevron */
 }
 
-/* Hover Effect: Security Long Name, Security Short Name, and Latest Price change to green */
-tbody tr:hover td.security-long-name,
-tbody tr:hover td.security-short-name,
-tbody tr:hover td.latest-price {
-  color: #00ffb3; /* Green color */
+/* ===== Table ===== */
+.securities-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  margin: 0 auto;
+  background-color: #ffffff;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.08);
+  border: 1px solid rgba(0, 0, 0, 0.06);
 }
 
-/* No hover effect for percentage change column */
-tbody tr:hover td.percent-change {
-  color: inherit; /* Do not change color */
+/* Header */
+.securities-table thead th {
+  padding: 14px 16px;
+  text-align: left;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  color: rgba(0, 0, 0, 0.6);
+  background: linear-gradient(180deg, #ffffff, #f6f7f7);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
 }
 
-/* Styling for the percentage change column */
+/* Body */
+.securities-table tbody td {
+  padding: 14px 16px;
+  font-size: 14px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  color: #1f1f1f;
+  vertical-align: middle;
+}
+
+.securities-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.securities-table tbody tr:nth-child(even) {
+  background-color: #fbfbfb;
+}
+
+.securities-table tbody tr {
+  transition: transform 0.12s ease, background-color 0.12s ease;
+}
+
+.securities-table tbody tr:hover {
+  background-color: rgba(0, 255, 179, 0.08);
+  cursor: pointer;
+  transform: translateY(-1px);
+}
+
+.securities-table tbody tr:hover td.security-long-name,
+.securities-table tbody tr:hover td.security-short-name,
+.securities-table tbody tr:hover td.latest-price {
+  color: #00796b;
+}
+
+/* Column emphasis */
+.security-long-name {
+  font-weight: 700;
+  color: #0f2f2a;
+}
+
+.security-short-name {
+  color: rgba(0, 0, 0, 0.7);
+}
+
+.latest-price {
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+}
+
+/* ===== % Change badges ===== */
+.positive-change,
+.negative-change {
+  font-variant-numeric: tabular-nums;
+  font-weight: 800;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 14px;
+  border-radius: 999px;
+  font-size: 13px;
+  letter-spacing: 0.2px;
+  min-width: 88px;
+  line-height: 1;
+  text-align: center;
+  white-space: nowrap;
+}
+
 .positive-change {
-  color: #1d9e4f; /* Positive green */
+  color: #0b5d2a;
+  background: rgba(29, 158, 79, 0.18);
+  border: 1px solid rgba(29, 158, 79, 0.45);
 }
 
 .negative-change {
-  color: #e74c3c; /* Negative red */
+  color: #8f1f15;
+  background: rgba(231, 76, 60, 0.18);
+  border: 1px solid rgba(231, 76, 60, 0.45);
 }
 
-/* Specific column classes for alignment */
-.security-long-name, .security-short-name, .latest-price, .percent-change {
-  width: 25%; /* Adjust column widths */
-}
-
-/* Adjust widths for columns */
+/* widths */
 .long-name-header {
-  width: 40%; /* Long name column should be the widest */
+  width: 45%;
 }
 
-th, td {
-  width: 20%; /* Security Short Name, Latest Price, and Percent Change columns should all be the same width */
+.securities-table thead th:nth-child(2),
+.securities-table tbody td:nth-child(2) {
+  width: 20%;
 }
 
-/* Back Button Styling */
+.securities-table thead th:nth-child(3),
+.securities-table tbody td:nth-child(3) {
+  width: 18%;
+}
+
+.securities-table thead th:nth-child(4),
+.securities-table tbody td:nth-child(4) {
+  width: 17%;
+}
+
+/* error / empty rows */
+.securities-table tbody td[colspan="4"] {
+  text-align: center;
+  padding: 18px;
+  color: rgba(0, 0, 0, 0.6);
+}
+
+/* ===== Back button ===== */
 .back-button-container {
   display: flex;
-  justify-content: center; /* Center the button horizontally */
-  margin-top: 20px; /* Add some space above the button */
+  justify-content: center;
+  margin-top: 18px;
   width: 100%;
-  margin-bottom: 20px;
+  margin-bottom: 16px;
 }
 
 .back-button {
-  background-color: #00ffb3;
-  color: #151213 !important;
-  padding: 10px 20px;
-  border-radius: 4px;
-  text-decoration: none;
-  display: block;
-  width: 100%; /* Make it the same width as the table */
-  text-align: center; /* Center the text inside the button */
+  background: linear-gradient(135deg, #00796b, #004d40);
+  color: #ffffff !important;
+  padding: 12px 18px;
+  border-radius: 14px;
+  border: none;
+  width: 100%;
+  max-width: 520px;
+  text-align: center;
+  font-weight: 800;
+  letter-spacing: 0.3px;
+  cursor: pointer;
+  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.12);
+  transition: transform 0.14s ease, box-shadow 0.14s ease, filter 0.14s ease;
 }
 
-.back-button a {
-  color: #151213 !important;
-  text-decoration: none;
-  font-family: "Montserrat", sans-serif;
-  font-size: 1rem;
+.back-button:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.05);
+  box-shadow: 0 0 0 4px rgba(0, 255, 179, 0.16), 0 18px 38px rgba(0, 0, 0, 0.16);
 }
 
-/* Responsive Layout for Mobile Screens */
-@media (max-width: 600px) {
+.back-button:active {
+  transform: translateY(0px);
+  filter: brightness(1);
+  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.12);
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 900px) {
   .securities-container {
-    padding: 0 5%; /* Reduce padding for smaller screens */
-    padding-bottom: 10px;
-  }
-
-  .security-header {
-    font-size: 24px; /* Reduce font size */
-    padding: 5px; /* Reduce padding */
-  }
-
-  table {
-    width: 100%;
-    font-size: 12px; /* Reduce font size */
-  }
-
-  th, td {
-    padding: 5px; /* Reduce padding */
-    font-size: 12px; /* Reduce font size */
-    text-align: center !important;
+    padding: 0 8%;
   }
 
   .search-filter-container {
-    margin-bottom: 10px; /* Reduce margin */
-    padding-top: 10px; /* Reduce padding */
-    flex-direction: column; /* Stack elements vertically on small screens */
-    align-items: stretch; /* Make them stretch to the container width */
+    flex-direction: column;
+    align-items: stretch;
+    padding-top: 22px;
+  }
+
+  .sec-search-container,
+  .filter-container {
+    width: 100%;
+  }
+
+  .filter-container {
+    justify-content: flex-start;
+  }
+
+  /* reposition the chevron slightly for smaller width */
+  .filter-container::after {
+    right: 18px;
+  }
+}
+
+@media (max-width: 600px) {
+  .securities-container {
+    padding: 0 5%;
+    padding-bottom: 14px;
+  }
+
+  .search-filter-container {
+    margin-bottom: 12px;
+    padding-top: 14px;
+  }
+
+  .sec-search-input,
+  #asset-class-filter {
+    font-size: 14px;
+    padding: 10px;
+    border-radius: 12px;
   }
 
   .sec-search-input {
-    font-size: 14px; /* Adjust font size */
-    padding: 5px; /* Adjust padding */
-    width: 100%; /* Full width */
+    padding-left: 38px;
   }
 
-  #asset-class-filter {
-    font-size: 14px; /* Adjust font size */
-    width: 100%; /* Full width */
+  .sec-search-container::before {
+    left: 18px;
+    font-size: 13px;
   }
 
-  .back-button-container {
-    margin-top: 10px; /* Adjust margin */
-    margin-bottom: 10px; /* Adjust margin */
+  .securities-table thead th {
+    font-size: 11px;
+    padding: 12px 12px;
+  }
+
+  .securities-table tbody td {
+    padding: 12px 12px;
+    font-size: 13px;
+  }
+
+  /* hide a couple columns on mobile (keep name + price) */
+  .securities-table thead th:nth-child(2),
+  .securities-table tbody td:nth-child(2),
+  .securities-table thead th:nth-child(4),
+  .securities-table tbody td:nth-child(4) {
+    display: none;
+  }
+
+  .positive-change,
+  .negative-change {
+    min-width: 72px;
+    padding: 7px 10px;
+    font-size: 12px;
   }
 
   .back-button {
-    font-size: 14px; /* Adjust font size */
-    padding: 5px 10px; /* Adjust padding */
-  }
-
-  .back-button a {
-    font-size: 14px; /* Adjust font size */
-  }
-
-  /* Hide unnecessary columns on phone screens */
-  th.id-header, th:nth-child(4),
-  td:nth-child(1), td:nth-child(4) {
-    display: none;
+    max-width: 100%;
+    padding: 11px 14px;
+    border-radius: 14px;
+    font-size: 14px;
   }
 }

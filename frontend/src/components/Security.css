@@ -1,9 +1,11 @@
+/* Security.css */
+
 .security-container {
-  height: 100vh; /* Full viewport height */
-  width: 100vw; /* Full viewport width */
-  background-color: #F8F8F8; /* Background color */
-  display: flex; /* Flex layout */
-  flex-direction: row; /* Sidebar and chart in row layout */
+  height: 100vh;
+  width: 100vw;
+  background-color: #F8F8F8;
+  display: flex;
+  flex-direction: row;
   box-sizing: border-box;
 }
 
@@ -11,7 +13,7 @@
   width: 22%;
   background: linear-gradient(135deg, #00796b, #004d40);
   padding: 25px;
-  padding-top: 120px; /* Add space to push content down */
+  padding-top: 120px;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
@@ -19,92 +21,61 @@
   color: white;
   font-family: 'Arial', sans-serif;
   border-right: 3px solid #00332c;
-  
-  overflow-y: auto;  /* <-- Add this line for vertical scrolling */
+  overflow-y: auto;
 }
 
 .main-content {
-  width: 80%; /* Main content takes up the remaining space */
+  width: 80%;
   padding: 20px;
   display: flex;
   flex-direction: column;
-  justify-content: flex-start; /* Align content to the top */
-  align-items: center; /* Horizontally center the chart */
+  justify-content: flex-start;
+  align-items: center;
+  box-sizing: border-box;
+
+  /* IMPORTANT: ensure we can size the chart area within the screen */
+  height: 100vh;
+  overflow: hidden;
 }
 
 .main-content h2 {
   font-size: 2rem;
-  margin-bottom: 20px; /* Just below the title */
-}
-
-.chart-wrapper {
-  height: 100%; /* Ensure chart wrapper takes up remaining space */
-  width: 100%; /* Ensure chart takes up full width */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.toggle-button-container {
-  display: flex;
-  justify-content: center;
   margin-bottom: 20px;
-}
-
-.toggle-button-container button {
-  padding: 10px 15px;
-  background-color: #00796b;
-  border: none;
-  border-radius: 5px;
-  color: white;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
-
-.toggle-button-container button:hover {
-  background-color: rgba(0, 255, 179, 0.8);
-}
-
-.moving-averages-section {
-  text-align: left;
-  margin-bottom: 20px;
-}
-
-.moving-averages-title {
-  font-size: 1.5rem;
-  margin-bottom: 10px;
-}
-
-.moving-average-dropdown {
-  padding: 10px;
-  font-size: 1rem;
-}
-
-.time-period-section {
-  margin-top: 20px;
-  text-align: left;
-}
-
-.time-period-section h3 {
-  font-size: 1.2rem;
-  margin-bottom: 10px;
-}
-
-.time-period-section select {
-  padding: 5px;
-  font-size: 1rem;
 }
 
 .security-hdr {
   margin-top: 110px;
   color: #00796b;
-  font-size: 32px;  
-  font-weight: 600;  
-  letter-spacing: 1px; 
-  text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1); 
+  font-size: 32px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
 }
 
+/* Chart wrapper: fill remaining space under header */
+.chart-wrapper {
+  width: 100%;
+  flex: 1;                /* key: take remaining height */
+  min-height: 0;          /* key: allow children to size properly */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 14px;
+  box-sizing: border-box;
+}
 
+/* Chart area: takes most height, leaves space for scroller */
+.chart-canvas {
+  width: 100%;
+  flex: 1;                /* key: chart fills remaining height */
+  min-height: 0;          /* key: prevents pushing scroller off-screen */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Sidebar headings/buttons */
 .sidebar h3 {
   font-size: 1.3rem;
   margin-bottom: 15px;
@@ -147,8 +118,78 @@
 .scale-buttons {
   display: flex;
   justify-content: space-between;
+  gap: 10px;
 }
 
 .scale-buttons button {
   width: 48%;
+}
+
+/* =========================
+   Scroller under the chart
+   ========================= */
+
+.chart-scrollbar {
+  width: 100%;
+  max-width: 1100px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  box-sizing: border-box;
+
+  /* IMPORTANT: never shrink away / never get pushed off-screen */
+  flex-shrink: 0;
+}
+
+.chart-scrollbar-meta {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  margin-bottom: 8px;
+  color: #00796b;
+  font-weight: 600;
+}
+
+.chart-scrollbar-range {
+  width: 100%;
+  height: 6px;
+  appearance: none;
+  background: rgba(0, 121, 107, 0.2);
+  border-radius: 999px;
+  outline: none;
+}
+
+/* Webkit thumb */
+.chart-scrollbar-range::-webkit-slider-thumb {
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #00796b;
+  border: 3px solid #ffffff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  cursor: pointer;
+}
+
+/* Firefox thumb */
+.chart-scrollbar-range::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #00796b;
+  border: 3px solid #ffffff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  cursor: pointer;
+}
+
+.chart-scrollbar-range:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.chart-scrollbar-range:disabled::-webkit-slider-thumb,
+.chart-scrollbar-range:disabled::-moz-range-thumb {
+  cursor: not-allowed;
 }
