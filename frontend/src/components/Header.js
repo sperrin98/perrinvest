@@ -68,7 +68,6 @@ const Header = ({ isLoggedIn, onLogout }) => {
             <Link to="/eco-data-points" className="dropbtn">Economic Data</Link>
             <div className="dropdown-content">
               <Link to="/eco-data-points">Data Points</Link>
-              <Link to="/returns">Returns</Link>
             </div>
           </li>
 
