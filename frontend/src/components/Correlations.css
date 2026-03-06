@@ -83,7 +83,6 @@
   border-color: #00ffb3;
 }
 
-/* dropdown input wrapper + arrow */
 .crl-dd-inputWrap {
   position: relative;
   width: 100%;
@@ -167,7 +166,7 @@
   border-radius: 10px;
   overflow: hidden;
   z-index: 9999;
-  max-height: 320px; /* more room since you want all securities available */
+  max-height: 320px;
   overflow-y: auto;
   box-shadow: 0 10px 24px rgba(0, 0, 0, 0.18);
 }
@@ -218,29 +217,45 @@
 .crl-title {
   margin: 0 0 14px 0;
   color: #00796b;
-  font-size: 32px;
+  font-size: 28px;
   font-weight: 600;
   letter-spacing: 1px;
   text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
   text-align: center;
 }
 
-/* CHART centered but can fill width */
-.crl-chart-wrapper {
+/* CHART STACK */
+.crl-charts {
   flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
   width: 100%;
-  padding: 10px 20px;
+  box-sizing: border-box;
+}
+
+.crl-chart-block {
+  background: #ffffff;
+  border-radius: 10px;
+  padding: 10px 12px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
   box-sizing: border-box;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-/* ✅ Fill container width */
+.crl-chart-block--price {
+  flex: 1.35;
+}
+
+.crl-chart-block--corr {
+  flex: 0.75;
+}
+
 .crl-chart-inner {
   width: 100%;
   height: 100%;
-  max-width: none; /* important: remove the previous constraint */
 }
 
 .crl-empty {
@@ -253,15 +268,15 @@
   opacity: 0.75;
 }
 
-/* RECHARTS tweaks (scoped) */
-.crl-chart-wrapper .recharts-cartesian-axis-ticks text {
+/* Recharts scoped tweaks */
+.crl-charts .recharts-cartesian-axis-ticks text {
   font-size: 12px;
 }
 
-.crl-chart-wrapper .recharts-tooltip-wrapper {
+.crl-charts .recharts-tooltip-wrapper {
   font-size: 14px;
 }
 
-.crl-chart-wrapper .recharts-line:hover {
-  stroke-width: 3;
+.crl-charts .recharts-legend-wrapper {
+  font-size: 13px;
 }
