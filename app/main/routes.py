@@ -48,7 +48,8 @@ from app.db_utils import (
     get_summary_data_period_end_returns,
     get_summary_data_period_end_returns_in_gold,
     get_long_only_watchlist_period_end_returns,
-    get_rolling_corr
+    get_rolling_corr,
+    get_hpi_and_priced_in_gold_rebased_to_100
 )   
 import yfinance as yf
 from datetime import datetime, timedelta
@@ -966,4 +967,19 @@ def rolling_corr_route():
 
     except Exception as e:
         print("ERROR (ROLLING CORR):", str(e))
+        return jsonify({'error': str(e)}), 500
+
+@main.route('/hpi-and-priced-in-gold-rebased-to-100', methods=['GET'])
+def hpi_and_priced_in_gold_rebased_to_100_route():
+    try:
+        data_point_id = request.args.get('data_point_id', type=int)
+
+        if data_point_id is None:
+            return jsonify({'error': 'data_point_id required'}), 400
+
+        data = get_hpi_and_priced_in_gold_rebased_to_100(data_point_id)
+        return jsonify(data)
+
+    except Exception as e:
+        print("ERROR (HPI GOLD REBASED):", str(e))
         return jsonify({'error': str(e)}), 500

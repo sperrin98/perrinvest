@@ -903,3 +903,29 @@ def get_rolling_corr(p_security_id_1, p_security_id_2, p_frequency, p_history_le
     finally:
         cursor.close()
         conn.close()
+
+def get_hpi_and_priced_in_gold_rebased_to_100(p_data_point_id):
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+    try:
+        cursor.callproc('NW_HPI_AND_PRICED_IN_GOLD_REBASED_TO_100', [
+            p_data_point_id
+        ])
+
+        results = []
+        for result in cursor.stored_results():
+            results.extend(result.fetchall())
+
+        for row in results:
+            if row.get('price_date'):
+                row['price_date'] = row['price_date'].strftime('%Y-%m-%d')
+            if row.get('HPI_index') is not None:
+                row['HPI_index'] = float(row['HPI_index'])
+            if row.get('HPI_gold_index') is not None:
+                row['HPI_gold_index'] = float(row['HPI_gold_index'])
+
+        print("FIRST ROW RETURNED (HPI GOLD REBASED):", results[0] if results else "NO DATA")
+        return results
+    finally:
+        cursor.close()
+        conn.close()
