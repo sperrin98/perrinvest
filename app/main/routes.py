@@ -47,7 +47,8 @@ from app.db_utils import (
     get_summary_data_groups,
     get_summary_data_period_end_returns,
     get_summary_data_period_end_returns_in_gold,
-    get_long_only_watchlist_period_end_returns
+    get_long_only_watchlist_period_end_returns,
+    get_rolling_corr
 )   
 import yfinance as yf
 from datetime import datetime, timedelta
@@ -947,4 +948,22 @@ def long_only_watchlist_route():
 
     except Exception as e:
         print("ERROR (LONG ONLY WATCHLIST):", str(e))
+        return jsonify({'error': str(e)}), 500
+
+@main.route('/rolling-corr', methods=['GET'])
+def rolling_corr_route():
+    try:
+        security_id_1 = request.args.get('security_id_1', type=int)
+        security_id_2 = request.args.get('security_id_2', type=int)
+        frequency = request.args.get('frequency', default='WEEKLY', type=str)
+        history_length = request.args.get('history_length', default=600, type=int)
+
+        if security_id_1 is None or security_id_2 is None:
+            return jsonify({'error': 'security_id_1 and security_id_2 required'}), 400
+
+        data = get_rolling_corr(security_id_1, security_id_2, frequency, history_length)
+        return jsonify(data)
+
+    except Exception as e:
+        print("ERROR (ROLLING CORR):", str(e))
         return jsonify({'error': str(e)}), 500
