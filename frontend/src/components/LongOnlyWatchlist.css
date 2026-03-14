@@ -60,6 +60,10 @@
   table-layout: fixed;
 }
 
+.lw-col-name {
+  width: 350px;
+}
+
 .lw-table th,
 .lw-table td {
   border: 1px solid #ddd;

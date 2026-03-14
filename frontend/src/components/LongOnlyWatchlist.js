@@ -96,7 +96,7 @@ function LongOnlyWatchlist() {
     setSortConfig((prev) => {
       if (prev.key !== key) return { key, direction: 'desc' };
       if (prev.direction === 'desc') return { key, direction: 'asc' };
-      if (prev.direction === 'asc') return { key: null, direction: null }; // reset to default
+      if (prev.direction === 'asc') return { key: null, direction: null };
       return { key, direction: 'desc' };
     });
   };
@@ -143,6 +143,20 @@ function LongOnlyWatchlist() {
 
     return (
       <table className="lw-table">
+        <colgroup>
+          <col className="lw-col-name" />
+          <col />
+          <col />
+          <col />
+          <col />
+          <col />
+          <col />
+          <col />
+          <col />
+          <col />
+          <col />
+        </colgroup>
+
         <thead>
           <tr className="lw-table-header">
             {columnKeys.map((key) => (
