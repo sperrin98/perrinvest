@@ -1,90 +1,190 @@
-/* Container and header */
+.bl-page {
+  width: 100%;
+  min-height: 100vh;
+  background-color: #f8f8f8;
+}
+
 .bl-container {
-  max-width: 1200px;
-  margin: 120px auto 40px; /* below fixed navbar */
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  font-family: 'Montserrat', sans-serif;
+  max-width: 1320px;
+  margin: 0 auto;
+  padding: 110px 20px 20px 20px;
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+}
+
+.bl-page-header {
+  margin-bottom: 22px;
 }
 
 .bl-title {
-  font-size: 2rem;
-  font-weight: 600;
+  margin: 0;
   color: #00796b;
-  text-align: center;
-  margin-bottom: 30px;
+  font-size: 32px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
 }
 
-/* Posts wrapper */
+.bl-subtitle {
+  margin: 8px 0 0 0;
+  font-size: 0.95rem;
+  color: #5f726d;
+}
+
 .bl-posts-wrapper {
   display: flex;
   flex-direction: column;
-  gap: 25px; /* space between cards */
+  gap: 18px;
 }
 
-/* Individual post card */
+.bl-post-card,
+.bl-message-card {
+  background: white;
+  border-radius: 12px;
+  padding: 16px 18px;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.07);
+}
+
 .bl-post-card {
-  background-color: #ffffff;
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.05);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  display: grid;
+  grid-template-columns: 220px minmax(0, 1fr);
+  gap: 18px;
+  align-items: start;
+  transition: box-shadow 0.18s ease, transform 0.18s ease;
 }
 
 .bl-post-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
 }
 
-/* Post title and meta */
+.bl-message-card {
+  color: #5b6d68;
+  font-weight: 600;
+}
+
+.bl-post-image-side {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+}
+
+.bl-post-image-frame {
+  width: 220px;
+  height: 150px;
+  background: #f5f8f7;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  border-radius: 10px;
+  padding: 8px;
+  box-sizing: border-box;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.bl-post-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+  border-radius: 8px;
+}
+
+.bl-post-content {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
 .bl-post-title {
-  font-size: 1.5rem;
-  margin-bottom: 5px;
+  font-size: 1.28rem;
+  font-weight: 700;
+  line-height: 1.3;
+  margin: 0 0 6px 0;
+  color: #004d40;
+}
+
+.bl-post-title a {
+  color: #004d40;
+  text-decoration: none;
+}
+
+.bl-post-title a:hover {
   color: #00796b;
 }
 
-/* Force any links inside title to green */
-.bl-post-card a {
-  color: #00796b !important;
-  text-decoration: none;
-}
-
-.bl-post-card a:hover {
-  text-decoration: underline;
-}
-
 .bl-post-meta {
-  font-size: 0.9rem;
-  margin-bottom: 15px;
-  color: #004d40;
+  font-size: 0.85rem;
+  color: #00796b;
+  margin: 0 0 12px 0;
 }
 
-/* Post image */
-.bl-post-image {
-  max-width: 100%;
-  border-radius: 8px;
-  margin-bottom: 15px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-}
-
-/* Post excerpt */
 .bl-post-excerpt {
-  font-size: 1rem;
+  font-size: 0.95rem;
   color: #004d40;
-  line-height: 1.5;
-  margin-bottom: 15px;
+  line-height: 1.55;
+  margin-bottom: 12px;
 }
 
-/* Read more link - subtle green */
 .bl-post-readmore {
   text-decoration: none;
   font-weight: 600;
-  color: #00796b; /* subdued green */
-  transition: color 0.3s ease, transform 0.2s ease;
+  font-size: 0.9rem;
+  color: #00796b;
+  transition: color 0.18s ease;
 }
 
 .bl-post-readmore:hover {
-  color: #00ffb3; /* brighter accent on hover */
-  transform: translateX(2px);
+  color: #004d40;
+}
+
+@media (max-width: 850px) {
+  .bl-post-card {
+    grid-template-columns: 1fr;
+  }
+
+  .bl-post-image-side {
+    justify-content: flex-start;
+  }
+
+  .bl-post-image-frame {
+    width: 220px;
+    height: 150px;
+  }
+}
+
+@media (max-width: 650px) {
+  .bl-container {
+    padding: 90px 14px 18px 14px;
+  }
+
+  .bl-title {
+    font-size: 26px;
+  }
+
+  .bl-subtitle {
+    font-size: 0.9rem;
+  }
+
+  .bl-post-card,
+  .bl-message-card {
+    padding: 14px;
+  }
+
+  .bl-post-title {
+    font-size: 1.08rem;
+  }
+
+  .bl-post-excerpt {
+    font-size: 0.9rem;
+  }
+
+  .bl-post-image-frame {
+    width: 100%;
+    max-width: 220px;
+    height: 140px;
+  }
 }
