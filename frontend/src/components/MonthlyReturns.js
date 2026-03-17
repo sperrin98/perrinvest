@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import axios from "axios";
 import "./MonthlyReturns.css";
 
@@ -8,30 +8,45 @@ export default function MonthlyReturns() {
   const [monthlyData, setMonthlyData] = useState([]);
   const [error, setError] = useState(null);
 
-  // Use the API URL from the environment variable
   const API_URL = process.env.REACT_APP_API_URL;
 
-  const MONTH_ORDER = [
-    "JANUARY", "FEBRUARY", "MARCH", "APRIL", "MAY", "JUNE",
-    "JULY", "AUGUST", "SEPTEMBER", "OCTOBER", "NOVEMBER", "DECEMBER"
-  ];
+  const MONTH_ORDER = useMemo(
+    () => [
+      "JANUARY",
+      "FEBRUARY",
+      "MARCH",
+      "APRIL",
+      "MAY",
+      "JUNE",
+      "JULY",
+      "AUGUST",
+      "SEPTEMBER",
+      "OCTOBER",
+      "NOVEMBER",
+      "DECEMBER",
+    ],
+    []
+  );
 
-  // Fetch metals for the sidebar
   useEffect(() => {
     async function fetchMetals() {
       try {
         const response = await axios.get(`${API_URL}/precious-metals`);
-        setMetals(response.data.data);
-        if (response.data.data.length > 0) setSelectedMetal(response.data.data[0]);
+        const data = response.data.data || [];
+        setMetals(data);
+        if (data.length > 0) {
+          setSelectedMetal(data[0]);
+        }
+        setError(null);
       } catch (err) {
         console.error("Error fetching metals:", err);
         setError("Failed to load metals.");
       }
     }
+
     fetchMetals();
   }, [API_URL]);
 
-  // Fetch monthly returns for selected metal
   useEffect(() => {
     if (!selectedMetal) return;
 
@@ -43,8 +58,10 @@ export default function MonthlyReturns() {
         );
         const data = response.data.data || [];
         setMonthlyData(data);
+        setError(null);
       } catch (err) {
         console.error("Error fetching monthly returns:", err);
+        setMonthlyData([]);
         setError("Failed to load monthly returns.");
       }
     }
@@ -52,16 +69,31 @@ export default function MonthlyReturns() {
     fetchMonthlyReturns();
   }, [selectedMetal, API_URL]);
 
+  const formatPercent = (value) => {
+    if (value === null || value === undefined) return "";
+    return `${(value * 100).toFixed(2)}%`;
+  };
+
+  const toneClass = (value) => {
+    if (value > 0) return "monthly-positive";
+    if (value < 0) return "monthly-negative";
+    if (value === 0) return "monthly-neutral";
+    return "";
+  };
+
   return (
     <div className="monthly-container">
-      <div className="monthly-sidebar">
+      <aside className="monthly-sidebar">
         <h2 className="monthly-sidebar-title">Select Metal</h2>
+
         <ul className="monthly-metal-list">
           {metals.map((metal) => (
             <li
               key={metal.security_id}
               className={`monthly-metal-item ${
-                selectedMetal?.security_id === metal.security_id ? "monthly-selected-metal" : ""
+                selectedMetal?.security_id === metal.security_id
+                  ? "monthly-selected-metal"
+                  : ""
               }`}
               onClick={() => setSelectedMetal(metal)}
             >
@@ -69,50 +101,64 @@ export default function MonthlyReturns() {
             </li>
           ))}
         </ul>
-      </div>
+      </aside>
 
-      <div className="monthly-main">
-        {error && <p className="monthly-error">{error}</p>}
-        {selectedMetal && (
-          <>
-            <h1 className="monthly-title">{selectedMetal.security_long_name} - Monthly Returns</h1>
-            <table className="monthly-table">
-              <thead>
-                <tr className="monthly-table-header">
-                  <th>YEAR</th>
-                  {MONTH_ORDER.map((month) => (
-                    <th key={month}>{month}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {monthlyData.map((row, idx) => (
-                  <tr key={idx}>
-                    {/* YEAR column */}
-                    <td>{row.YR ?? row.yr ?? row.year}</td>
+      <main className="monthly-main">
+        <div className="monthly-main-inner">
+          {error && <p className="monthly-error">{error}</p>}
 
-                    {/* Months columns */}
-                    {MONTH_ORDER.map((month) => (
-                      <td
-                        key={month}
-                        className={
-                          row[month] != null
-                            ? row[month] < 0
-                              ? "negative"
-                              : "positive"
-                            : ""
-                        }
-                      >
-                        {row[month] != null ? (row[month] * 100).toFixed(2) + "%" : ""}
-                      </td>
-                    ))}
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </>
-        )}
-      </div>
+          {selectedMetal && (
+            <>
+              <h1 className="monthly-title">
+                {selectedMetal.security_long_name} - Monthly Returns
+              </h1>
+
+              <section className="monthly-table-card">
+                <div className="monthly-table-card-header">
+                  <div className="monthly-table-heading">Monthly Returns</div>
+                  <div className="monthly-table-meta">
+                    {monthlyData.length} {monthlyData.length === 1 ? "year" : "years"}
+                  </div>
+                </div>
+
+                <div className="monthly-table-wrapper">
+                  <table className="monthly-table">
+                    <thead>
+                      <tr>
+                        <th>Year</th>
+                        {MONTH_ORDER.map((month) => (
+                          <th key={month}>{month}</th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {monthlyData.length > 0 ? (
+                        monthlyData.map((row, idx) => (
+                          <tr key={idx} className="monthly-row">
+                            <td>{row.YR ?? row.yr ?? row.year}</td>
+
+                            {MONTH_ORDER.map((month) => (
+                              <td key={month} className={toneClass(row[month])}>
+                                {formatPercent(row[month])}
+                              </td>
+                            ))}
+                          </tr>
+                        ))
+                      ) : (
+                        <tr className="monthly-row">
+                          <td colSpan={13} className="monthly-no-data">
+                            {error || "No data available"}
+                          </td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              </section>
+            </>
+          )}
+        </div>
+      </main>
     </div>
   );
 }
