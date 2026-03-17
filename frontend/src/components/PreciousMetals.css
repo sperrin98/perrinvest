@@ -1,9 +1,10 @@
 .pm-container {
   display: flex;
   width: 100vw;
-  height: 100vh;
+  min-height: 100vh;
   background-color: #f8f8f8;
   box-sizing: border-box;
+  font-family: Arial, sans-serif;
 }
 
 .pm-sidebar {
@@ -13,7 +14,6 @@
   padding-top: 120px;
   box-sizing: border-box;
   color: white;
-  font-family: Arial, sans-serif;
   border-right: 3px solid #00332c;
   overflow-y: auto;
   display: flex;
@@ -30,68 +30,96 @@
 .pm-metal-list {
   list-style: none;
   padding: 0;
-  margin: 0;
+  margin: 0 0 18px 0;
 }
 
 .pm-metal-item {
   cursor: pointer;
   margin-bottom: 10px;
-  padding: 10px;
+  padding: 12px;
   background: rgba(255, 255, 255, 0.1);
   border: 1px solid rgba(255, 255, 255, 0.3);
-  border-radius: 5px;
-  transition: 0.3s ease;
+  border-radius: 6px;
+  transition: 0.2s ease;
+  color: rgba(255, 255, 255, 0.95);
 }
 
 .pm-metal-item:hover {
-  background: rgba(255, 255, 255, 0.2);
-  transform: scale(1.05);
+  background: rgba(255, 255, 255, 0.18);
+  transform: scale(1.03);
 }
 
 .pm-selected-metal {
   font-weight: bold;
-  color: #004d40;
-  background: rgba(0, 255, 179, 0.9);
+  background: rgba(255, 255, 255, 0.24);
+  border-color: rgba(255, 255, 255, 0.55);
+  color: #ffffff;
 }
 
-/* React Select styling to match sidebar */
 .pm-year-select .pm-year-select__control {
+  min-height: 44px;
   background-color: rgba(255, 255, 255, 0.1);
   border: 1px solid rgba(255, 255, 255, 0.3);
-  border-radius: 5px;
-  color: white;
-  font-size: 1rem;
-  padding: 5px;
+  border-radius: 8px;
+  box-shadow: none;
+}
+
+.pm-year-select .pm-year-select__control:hover {
+  border-color: rgba(255, 255, 255, 0.45);
 }
 
 .pm-year-select .pm-year-select__single-value {
   color: white;
 }
 
+.pm-year-select .pm-year-select__input-container,
+.pm-year-select .pm-year-select__placeholder {
+  color: white;
+}
+
+.pm-year-select .pm-year-select__indicator-separator {
+  background-color: rgba(255, 255, 255, 0.25);
+}
+
+.pm-year-select .pm-year-select__dropdown-indicator {
+  color: white;
+}
+
 .pm-year-select .pm-year-select__menu {
-  background-color: rgba(255, 255, 255, 0.95);
+  background-color: rgba(255, 255, 255, 0.98);
   color: #004d40;
-  z-index: 9999; /* ensure dropdown is above other content */
+  z-index: 9999;
+  border-radius: 8px;
+  overflow: hidden;
 }
 
 .pm-year-select .pm-year-select__option {
   color: #004d40;
-  background: none;
 }
 
 .pm-year-select .pm-year-select__option--is-focused {
-  background-color: rgba(0, 255, 179, 0.3);
+  background-color: rgba(0, 121, 107, 0.12);
 }
 
 .pm-year-select .pm-year-select__option--is-selected {
-  background-color: rgba(0, 255, 179, 0.9);
-  color: #004d40;
+  background-color: rgba(0, 121, 107, 0.9);
+  color: white;
 }
 
 .pm-main {
   width: 78%;
-  padding: 20px;
-  overflow-x: auto;
+  padding: 20px 28px 60px 28px;
+  box-sizing: border-box;
+  display: flex;
+  justify-content: center;
+}
+
+.pm-main-inner {
+  width: 100%;
+  max-width: 1180px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .pm-title {
@@ -101,72 +129,164 @@
   font-weight: 600;
   letter-spacing: 1px;
   text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
-  margin-bottom: 20px;
-}
-
-.pm-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-.pm-table th,
-.pm-table td {
-  border: 1px solid #ddd;
-  padding: 8px;
+  margin-bottom: 18px;
   text-align: center;
-}
-
-.pm-table-header {
-  background-color:#00796b;
-  font-weight: bold;
-}
-
-.pm-table-header th {
-  color: white;
-}
-
-
-.pm-week-total {
-  font-weight: 600;
+  width: 100%;
 }
 
 .pm-error {
   color: red;
   font-weight: bold;
+  margin: 0 0 12px 0;
+  width: 100%;
+  text-align: center;
+}
+
+.pm-table-card {
+  width: 100%;
+  background: white;
+  border-radius: 12px;
+  padding: 14px 16px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.07);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.pm-table-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.pm-table-heading {
+  color: #004d40;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.pm-table-meta {
+  font-size: 12px;
+  color: #6a7a76;
+}
+
+.pm-table-wrapper {
+  width: 100%;
+  max-height: 680px;
+  overflow: auto;
+  border-radius: 10px;
 }
 
 .pm-table {
-  table-layout: fixed;
   width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
 }
 
-/* Override all inherited hover effects */
-.pm-table tr:hover,
-.pm-table tr:hover td,
-.pm-table tr td:hover {
-  background-color: rgb(191, 228, 204) !important; /* your hover color */
-  transition: background-color 0.2s ease !important; /* only hover color changes */
-}
-
-/* Reset all td and th to transparent so no global hover leaks through */
 .pm-table th,
 .pm-table td {
+  padding: 10px 10px;
   text-align: center;
-  width: 12.5%;
-  word-wrap: break-word;
-  background-color: transparent !important;
-  transition: none !important; /* cancel any inherited transitions */
+  font-size: 12.5px;
+  line-height: 1.2;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  white-space: nowrap;
+  background: transparent;
 }
 
-/* Positive/negative text color, keep text only */
-td.positive {
-  color: green !important;
-  background-color: transparent !important;
+.pm-table th {
+  color: #004d40;
+  font-weight: 800;
+  background: #f3f7f6;
+  position: sticky;
+  top: 0;
+  z-index: 2;
 }
 
-td.negative {
-  color: red !important;
-  background-color: transparent !important;
+.pm-row {
+  transition: 0.15s ease;
+  height: 40px;
 }
 
+.pm-row:nth-child(even) {
+  background: rgba(0, 0, 0, 0.02);
+}
 
+.pm-row:hover {
+  background: rgba(0, 77, 64, 0.08);
+}
+
+.pm-positive {
+  color: #1b8f53;
+  font-weight: 700;
+}
+
+.pm-negative {
+  color: #d64545;
+  font-weight: 700;
+}
+
+.pm-neutral {
+  color: #5f6d69;
+  font-weight: 700;
+}
+
+.pm-week-total {
+  font-weight: 800;
+}
+
+.pm-no-data {
+  color: #5b6d68;
+  padding: 18px 12px;
+}
+
+@media (max-width: 1200px) {
+  .pm-main-inner {
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 900px) {
+  .pm-sidebar {
+    width: 35%;
+  }
+
+  .pm-main {
+    width: 65%;
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+}
+
+@media (max-width: 650px) {
+  .pm-container {
+    flex-direction: column;
+  }
+
+  .pm-sidebar {
+    width: 100%;
+    padding-top: 90px;
+    border-right: none;
+    border-bottom: 3px solid #00332c;
+  }
+
+  .pm-main {
+    width: 100%;
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+
+  .pm-title {
+    margin-top: 30px;
+    font-size: 26px;
+  }
+
+  .pm-table-wrapper {
+    max-height: 500px;
+  }
+
+  .pm-table th,
+  .pm-table td {
+    font-size: 11.5px;
+    padding: 9px 8px;
+  }
+}

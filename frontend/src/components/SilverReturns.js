@@ -1,77 +1,118 @@
-import React, { useEffect, useState } from 'react';
-import './SilverReturns.css';
+import React, { useEffect, useMemo, useState } from "react";
+import "./SilverReturns.css";
 
 const SilverReturns = () => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  const currencies = useMemo(
+    () => [
+      "EUR",
+      "GBP",
+      "NOK",
+      "JPY",
+      "CAD",
+      "AUD",
+      "NZD",
+      "CHF",
+      "BRL",
+      "MXN",
+      "ZAR",
+      "CNY",
+      "IDR",
+      "INR",
+      "KRW",
+      "MYR",
+      "SGD",
+      "CZK",
+      "PLN",
+      "HUF",
+    ],
+    []
+  );
+
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await fetch(`${process.env.REACT_APP_API_URL}/returns/2`);
-        if (!response.ok) throw new Error(`Error: ${response.statusText}`);
+        if (!response.ok) {
+          throw new Error(`Error: ${response.statusText}`);
+        }
         const result = await response.json();
-        setData(result);
+        setData(result || []);
+        setError(null);
       } catch (err) {
         setError(err.message);
+        setData([]);
       } finally {
         setLoading(false);
       }
     };
+
     fetchData();
   }, []);
+
+  const toneClass = (value) => {
+    if (value > 0) return "silver-positive";
+    if (value < 0) return "silver-negative";
+    return "silver-neutral";
+  };
+
+  const formatPercent = (value) => {
+    if (value === null || value === undefined || value === "") return "";
+    return `${value}%`;
+  };
 
   if (loading) return <div className="silver-loading">Loading...</div>;
   if (error) return <div className="silver-error">{`Error: ${error}`}</div>;
 
   return (
     <div className="silver-container">
-      <h1 className="silver-title">Annual Silver Price Returns in World Currencies</h1>
-      <div className="silver-table-wrapper">
-        <table className="silver-table">
-          <thead>
-            <tr className="silver-table-header">
-              <th className="silver-year-column">Year</th>
-              <th>EUR</th>
-              <th>GBP</th>
-              <th>NOK</th>
-              <th>JPY</th>
-              <th>CAD</th>
-              <th>AUD</th>
-              <th>NZD</th>
-              <th>CHF</th>
-              <th>BRL</th>
-              <th>MXN</th>
-              <th>ZAR</th>
-              <th>CNY</th>
-              <th>IDR</th>
-              <th>INR</th>
-              <th>KRW</th>
-              <th>MYR</th>
-              <th>SGD</th>
-              <th>CZK</th>
-              <th>PLN</th>
-              <th>HUF</th>
-            </tr>
-          </thead>
-          <tbody>
-            {data.map((row, index) => (
-              <tr key={index}>
-                <td className="silver-year-column">{row.yr}</td>
-                {['EUR','GBP','NOK','JPY','CAD','AUD','NZD','CHF','BRL','MXN','ZAR','CNY','IDR','INR','KRW','MYR','SGD','CZK','PLN','HUF']
-                  .map((curr) => (
-                    <td
-                      key={curr}
-                      className={row[curr] < 0 ? 'silver-negative' : 'silver-positive'}
-                    >
-                      {row[curr] != null ? `${row[curr]}%` : ''}
-                    </td>
+      <div className="silver-inner">
+        <h1 className="silver-title">Annual Silver Price Returns in World Currencies</h1>
+
+        <section className="silver-table-card">
+          <div className="silver-table-card-header">
+            <div className="silver-table-heading">Annual Returns</div>
+            <div className="silver-table-meta">
+              {data.length} {data.length === 1 ? "year" : "years"}
+            </div>
+          </div>
+
+          <div className="silver-table-wrapper">
+            <table className="silver-table">
+              <thead>
+                <tr>
+                  <th className="silver-year-column">Year</th>
+                  {currencies.map((curr) => (
+                    <th key={curr}>{curr}</th>
                   ))}
-              </tr>
-            ))}
-          </tbody>
-        </table>
+                </tr>
+              </thead>
+              <tbody>
+                {data.length > 0 ? (
+                  data.map((row, index) => (
+                    <tr key={index} className="silver-row">
+                      <td className="silver-year-column">{row.yr}</td>
+                      {currencies.map((curr) => (
+                        <td key={curr} className={toneClass(row[curr])}>
+                          {formatPercent(row[curr])}
+                        </td>
+                      ))}
+                    </tr>
+                  ))
+                ) : (
+                  <tr className="silver-row">
+                    <td colSpan={currencies.length + 1} className="silver-no-data">
+                      No data available
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </section>
       </div>
     </div>
   );

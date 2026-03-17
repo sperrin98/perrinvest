@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import axios from "axios";
 import Select from "react-select";
 import "./PreciousMetals.css";
@@ -10,24 +10,27 @@ export default function PreciousMetals() {
   const [dailyMoves, setDailyMoves] = useState([]);
   const [error, setError] = useState(null);
 
-  const API_URL = process.env.REACT_APP_API_URL; // <- Use environment variable
+  const API_URL = process.env.REACT_APP_API_URL;
 
-  // Fetch metals
   useEffect(() => {
     async function fetchMetals() {
       try {
         const response = await axios.get(`${API_URL}/precious-metals`);
-        setMetals(response.data.data);
-        if (response.data.data.length > 0) setSelectedMetal(response.data.data[0]);
+        const data = response.data.data || [];
+        setMetals(data);
+        if (data.length > 0) {
+          setSelectedMetal(data[0]);
+        }
+        setError(null);
       } catch (err) {
         console.error("Error fetching metals:", err);
         setError("Failed to load metals.");
       }
     }
+
     fetchMetals();
   }, [API_URL]);
 
-  // Fetch daily moves
   useEffect(() => {
     if (!selectedMetal) return;
 
@@ -37,8 +40,10 @@ export default function PreciousMetals() {
           params: { id: selectedMetal.security_id, year: selectedYear },
         });
         setDailyMoves(response.data.data || []);
+        setError(null);
       } catch (err) {
         console.error("Error fetching daily moves:", err);
+        setDailyMoves([]);
         setError("Failed to load daily moves.");
       }
     }
@@ -46,26 +51,40 @@ export default function PreciousMetals() {
     fetchDailyMoves();
   }, [selectedMetal, selectedYear, API_URL]);
 
-  // Years from current down to 1971
   const years = Array.from(
     { length: new Date().getFullYear() - 1970 },
     (_, i) => new Date().getFullYear() - i
   );
 
-  // Helper to format numbers as percentages
-  const formatPercent = (num) =>
-    num !== null && num !== undefined ? (num * 100).toFixed(2) + "%" : "-";
+  const yearOptions = useMemo(
+    () => years.map((y) => ({ label: y, value: y })),
+    [years]
+  );
+
+  const formatPercent = (num) => {
+    if (num === null || num === undefined) return "-";
+    return `${(num * 100).toFixed(2)}%`;
+  };
+
+  const toneClass = (value) => {
+    if (value > 0) return "pm-positive";
+    if (value < 0) return "pm-negative";
+    return "pm-neutral";
+  };
 
   return (
     <div className="pm-container">
-      <div className="pm-sidebar">
+      <aside className="pm-sidebar">
         <h2 className="pm-sidebar-title">Select Metal</h2>
+
         <ul className="pm-metal-list">
           {metals.map((metal) => (
             <li
               key={metal.security_id}
               className={`pm-metal-item ${
-                selectedMetal?.security_id === metal.security_id ? "pm-selected-metal" : ""
+                selectedMetal?.security_id === metal.security_id
+                  ? "pm-selected-metal"
+                  : ""
               }`}
               onClick={() => setSelectedMetal(metal)}
             >
@@ -75,67 +94,91 @@ export default function PreciousMetals() {
         </ul>
 
         <h2 className="pm-sidebar-title">Select Year</h2>
+
         <Select
           value={{ label: selectedYear, value: selectedYear }}
           onChange={(option) => setSelectedYear(option.value)}
-          options={years.map((y) => ({ label: y, value: y }))}
+          options={yearOptions}
           menuPlacement="bottom"
           className="pm-year-select"
           classNamePrefix="pm-year-select"
+          isSearchable={false}
         />
-      </div>
+      </aside>
 
-      <div className="pm-main">
-        {error && <p className="pm-error">{error}</p>}
-        {selectedMetal && (
-          <>
-            <h1 className="pm-title">
-              {selectedMetal.security_long_name} - {selectedYear}
-            </h1>
-            <table className="pm-table">
-              <thead>
-                <tr className="pm-table-header">
-                  <th>YEAR</th>
-                  <th>WEEK</th>
-                  <th>MONDAY</th>
-                  <th>TUESDAY</th>
-                  <th>WEDNESDAY</th>
-                  <th>THURSDAY</th>
-                  <th>FRIDAY</th>
-                  <th>WEEK</th>
-                </tr>
-              </thead>
-              <tbody>
-                {dailyMoves.map((row, idx) => (
-                  <tr key={idx}>
-                    <td>{row.year}</td>
-                    <td>{row.week}</td>
-                    <td className={row.monday < 0 ? "negative" : "positive"}>
-                      {(row.monday * 100).toFixed(2)}%
-                    </td>
-                    <td className={row.tuesday < 0 ? "negative" : "positive"}>
-                      {(row.tuesday * 100).toFixed(2)}%
-                    </td>
-                    <td className={row.wednesday < 0 ? "negative" : "positive"}>
-                      {(row.wednesday * 100).toFixed(2)}%
-                    </td>
-                    <td className={row.thursday < 0 ? "negative" : "positive"}>
-                      {(row.thursday * 100).toFixed(2)}%
-                    </td>
-                    <td className={row.friday < 0 ? "negative" : "positive"}>
-                      {(row.friday * 100).toFixed(2)}%
-                    </td>
-                    <td className={`pm-week-total ${row.week_total < 0 ? "negative" : "positive"}`}>
-                      {(row.week_total * 100).toFixed(2)}%
-                    </td>
+      <main className="pm-main">
+        <div className="pm-main-inner">
+          {error && <p className="pm-error">{error}</p>}
 
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </>
-        )}
-      </div>
+          {selectedMetal && (
+            <>
+              <h1 className="pm-title">
+                {selectedMetal.security_long_name} - {selectedYear}
+              </h1>
+
+              <section className="pm-table-card">
+                <div className="pm-table-card-header">
+                  <div className="pm-table-heading">Daily Moves</div>
+                  <div className="pm-table-meta">
+                    {dailyMoves.length} {dailyMoves.length === 1 ? "week" : "weeks"}
+                  </div>
+                </div>
+
+                <div className="pm-table-wrapper">
+                  <table className="pm-table">
+                    <thead>
+                      <tr>
+                        <th>Year</th>
+                        <th>Week</th>
+                        <th>Monday</th>
+                        <th>Tuesday</th>
+                        <th>Wednesday</th>
+                        <th>Thursday</th>
+                        <th>Friday</th>
+                        <th>Week</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {dailyMoves.length > 0 ? (
+                        dailyMoves.map((row, idx) => (
+                          <tr key={idx} className="pm-row">
+                            <td>{row.year}</td>
+                            <td>{row.week}</td>
+                            <td className={toneClass(row.monday)}>
+                              {formatPercent(row.monday)}
+                            </td>
+                            <td className={toneClass(row.tuesday)}>
+                              {formatPercent(row.tuesday)}
+                            </td>
+                            <td className={toneClass(row.wednesday)}>
+                              {formatPercent(row.wednesday)}
+                            </td>
+                            <td className={toneClass(row.thursday)}>
+                              {formatPercent(row.thursday)}
+                            </td>
+                            <td className={toneClass(row.friday)}>
+                              {formatPercent(row.friday)}
+                            </td>
+                            <td className={`pm-week-total ${toneClass(row.week_total)}`}>
+                              {formatPercent(row.week_total)}
+                            </td>
+                          </tr>
+                        ))
+                      ) : (
+                        <tr className="pm-row">
+                          <td colSpan="8" className="pm-no-data">
+                            {error || "No data available"}
+                          </td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              </section>
+            </>
+          )}
+        </div>
+      </main>
     </div>
   );
 }

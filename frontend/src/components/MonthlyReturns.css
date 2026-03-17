@@ -1,9 +1,10 @@
 .monthly-container {
   display: flex;
   width: 100vw;
-  height: 100vh;
+  min-height: 100vh;
   background-color: #f8f8f8;
   box-sizing: border-box;
+  font-family: Arial, sans-serif;
 }
 
 .monthly-sidebar {
@@ -13,7 +14,6 @@
   padding-top: 120px;
   box-sizing: border-box;
   color: white;
-  font-family: Arial, sans-serif;
   border-right: 3px solid #00332c;
   overflow-y: auto;
   display: flex;
@@ -36,62 +36,41 @@
 .monthly-metal-item {
   cursor: pointer;
   margin-bottom: 10px;
-  padding: 10px;
+  padding: 12px;
   background: rgba(255, 255, 255, 0.1);
   border: 1px solid rgba(255, 255, 255, 0.3);
-  border-radius: 5px;
-  transition: 0.3s ease;
+  border-radius: 6px;
+  transition: 0.2s ease;
+  color: rgba(255, 255, 255, 0.95);
 }
 
 .monthly-metal-item:hover {
-  background: rgba(255, 255, 255, 0.2);
-  transform: scale(1.05);
+  background: rgba(255, 255, 255, 0.18);
+  transform: scale(1.03);
 }
 
 .monthly-selected-metal {
   font-weight: bold;
-  color: #004d40;
-  background: rgba(0, 255, 179, 0.9);
-}
-
-/* React Select styling to match sidebar */
-.monthly-year-select .monthly-year-select__control {
-  background-color: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  border-radius: 5px;
-  color: white;
-  font-size: 1rem;
-  padding: 5px;
-}
-
-.monthly-year-select .monthly-year-select__single-value {
-  color: white;
-}
-
-.monthly-year-select .monthly-year-select__menu {
-  background-color: rgba(255, 255, 255, 0.95);
-  color: #004d40;
-  z-index: 9999; /* ensure dropdown is above other content */
-}
-
-.monthly-year-select .monthly-year-select__option {
-  color: #004d40;
-  background: none;
-}
-
-.monthly-year-select .monthly-year-select__option--is-focused {
-  background-color: rgba(0, 255, 179, 0.3);
-}
-
-.monthly-year-select .monthly-year-select__option--is-selected {
-  background-color: rgba(0, 255, 179, 0.9);
-  color: #004d40;
+  background: rgba(255, 255, 255, 0.24);
+  border-color: rgba(255, 255, 255, 0.55);
+  color: #ffffff;
 }
 
 .monthly-main {
   width: 78%;
-  padding: 20px;
+  padding: 20px 28px 60px 28px;
+  box-sizing: border-box;
+  display: flex;
+  justify-content: center;
   overflow-x: auto;
+}
+
+.monthly-main-inner {
+  width: 100%;
+  max-width: 1320px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .monthly-title {
@@ -101,69 +80,165 @@
   font-weight: 600;
   letter-spacing: 1px;
   text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
-  margin-bottom: 20px;
-}
-
-.monthly-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-.monthly-table th,
-.monthly-table td {
-  border: 1px solid #ddd;
-  padding: 8px;
+  margin-bottom: 18px;
   text-align: center;
-}
-
-.monthly-table-header {
-  background-color:#00796b !important;
-  font-weight: bold;
-}
-
-.monthly-table-header th {
-  color: white;
-}
-
-.monthly-week-total {
-  font-weight: 600;
+  width: 100%;
 }
 
 .monthly-error {
   color: red;
   font-weight: bold;
+  margin: 0 0 12px 0;
+  width: 100%;
+  text-align: center;
+}
+
+.monthly-table-card {
+  width: 100%;
+  background: white;
+  border-radius: 12px;
+  padding: 14px 16px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.07);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.monthly-table-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.monthly-table-heading {
+  color: #004d40;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.monthly-table-meta {
+  font-size: 12px;
+  color: #6a7a76;
+}
+
+.monthly-table-wrapper {
+  width: 100%;
+  max-height: 700px;
+  overflow: auto;
+  border-radius: 10px;
 }
 
 .monthly-table {
-  table-layout: fixed;
   width: 100%;
+  min-width: 1180px;
+  border-collapse: collapse;
+  table-layout: fixed;
 }
 
-/* Override all inherited hover effects */
-.monthly-table tr:hover,
-.monthly-table tr:hover td,
-.monthly-table tr td:hover {
-  background-color: rgb(191, 228, 204) !important; /* your hover color */
-  transition: background-color 0.2s ease !important; /* only hover color changes */
-}
-
-/* Reset all td and th to transparent so no global hover leaks through */
 .monthly-table th,
 .monthly-table td {
+  padding: 10px 8px;
   text-align: center;
-  width: 12.5%;
-  word-wrap: break-word;
-  background-color: transparent !important;
-  transition: none !important; /* cancel any inherited transitions */
+  font-size: 12.5px;
+  line-height: 1.2;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  white-space: nowrap;
+  background: transparent;
 }
 
-/* Positive/negative text color, keep text only */
-td.positive {
-  color: green !important;
-  background-color: transparent !important;
+.monthly-table th {
+  color: #004d40;
+  font-weight: 800;
+  background: #f3f7f6;
+  position: sticky;
+  top: 0;
+  z-index: 2;
 }
 
-td.negative {
-  color: red !important;
-  background-color: transparent !important;
+.monthly-row {
+  transition: 0.15s ease;
+  height: 40px;
+}
+
+.monthly-row:nth-child(even) {
+  background: rgba(0, 0, 0, 0.02);
+}
+
+.monthly-row:hover {
+  background: rgba(0, 77, 64, 0.08);
+}
+
+.monthly-positive {
+  color: #1b8f53;
+  font-weight: 700;
+}
+
+.monthly-negative {
+  color: #d64545;
+  font-weight: 700;
+}
+
+.monthly-neutral {
+  color: #5f6d69;
+  font-weight: 700;
+}
+
+.monthly-no-data {
+  color: #5b6d68;
+  padding: 18px 12px;
+}
+
+@media (max-width: 1200px) {
+  .monthly-main-inner {
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 900px) {
+  .monthly-sidebar {
+    width: 35%;
+  }
+
+  .monthly-main {
+    width: 65%;
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+}
+
+@media (max-width: 650px) {
+  .monthly-container {
+    flex-direction: column;
+  }
+
+  .monthly-sidebar {
+    width: 100%;
+    padding-top: 90px;
+    border-right: none;
+    border-bottom: 3px solid #00332c;
+  }
+
+  .monthly-main {
+    width: 100%;
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+
+  .monthly-title {
+    margin-top: 30px;
+    font-size: 26px;
+  }
+
+  .monthly-table-wrapper {
+    max-height: 500px;
+  }
+
+  .monthly-table {
+    min-width: 980px;
+  }
+
+  .monthly-table th,
+  .monthly-table td {
+    font-size: 11.5px;
+    padding: 9px 8px;
+  }
 }
