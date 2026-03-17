@@ -729,6 +729,38 @@ def fetch_daily_moves_by_year_and_security(year, security_id):
         print(f"Error fetching daily moves: {e}")
         return []
 
+def fetch_daily_moves_by_year_and_security_summary_data(year, security_id):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    try:
+        cursor.callproc(
+            "get_daily_moves_by_year_and_security_summary_data",
+            [int(year), int(security_id)]
+        )
+
+        results = []
+        for result in cursor.stored_results():
+            results = result.fetchall()
+
+        cursor.close()
+        conn.close()
+
+        return [
+            {
+                "day_name": row[0],
+                "average": row[1],
+                "max": row[2],
+                "min": row[3],
+                "stdev": row[4]
+            }
+            for row in results
+        ]
+    except Exception as e:
+        cursor.close()
+        conn.close()
+        print(f"Error fetching daily moves summary data: {e}")
+        return []
+
 def fetch_monthly_returns_by_year(security_id):
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)

@@ -34,6 +34,7 @@ from app.db_utils import (
     fetch_market_league_constituents,
     fetch_asset_classes,
     fetch_daily_moves_by_year_and_security,
+    fetch_daily_moves_by_year_and_security_summary_data,
     fetch_precious_metals,
     fetch_monthly_returns_by_year,
     get_gold_priced_securities, 
@@ -559,6 +560,20 @@ def get_daily_moves_route():
 
     try:
         data = fetch_daily_moves_by_year_and_security(year, security_id)
+        return jsonify({"data": data})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@main.route("/precious-metals/daily-moves-summary", methods=["GET"])
+def get_daily_moves_summary_route():
+    security_id = request.args.get("id")
+    year = request.args.get("year", datetime.now().year)
+
+    if not security_id:
+        return jsonify({"error": "Missing id parameter"}), 400
+
+    try:
+        data = fetch_daily_moves_by_year_and_security_summary_data(year, security_id)
         return jsonify({"data": data})
     except Exception as e:
         return jsonify({"error": str(e)}), 500
