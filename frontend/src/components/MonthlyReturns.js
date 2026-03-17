@@ -70,7 +70,7 @@ export default function MonthlyReturns() {
   }, [selectedMetal, API_URL]);
 
   const formatPercent = (value) => {
-    if (value === null || value === undefined) return "";
+    if (value === null || value === undefined || Number.isNaN(value)) return "";
     return `${(value * 100).toFixed(2)}%`;
   };
 
@@ -79,6 +79,21 @@ export default function MonthlyReturns() {
     if (value < 0) return "monthly-negative";
     if (value === 0) return "monthly-neutral";
     return "";
+  };
+
+  const calculateAnnualReturn = (row) => {
+    const monthlyValues = MONTH_ORDER.map((month) => row[month]).filter(
+      (value) => value !== null && value !== undefined && !Number.isNaN(value)
+    );
+
+    if (monthlyValues.length === 0) return null;
+
+    const compounded = monthlyValues.reduce(
+      (acc, value) => acc * (1 + value),
+      1
+    );
+
+    return compounded - 1;
   };
 
   return (
@@ -129,24 +144,33 @@ export default function MonthlyReturns() {
                         {MONTH_ORDER.map((month) => (
                           <th key={month}>{month}</th>
                         ))}
+                        <th>ANNUAL</th>
                       </tr>
                     </thead>
                     <tbody>
                       {monthlyData.length > 0 ? (
-                        monthlyData.map((row, idx) => (
-                          <tr key={idx} className="monthly-row">
-                            <td>{row.YR ?? row.yr ?? row.year}</td>
+                        monthlyData.map((row, idx) => {
+                          const annualReturn = calculateAnnualReturn(row);
 
-                            {MONTH_ORDER.map((month) => (
-                              <td key={month} className={toneClass(row[month])}>
-                                {formatPercent(row[month])}
+                          return (
+                            <tr key={idx} className="monthly-row">
+                              <td>{row.YR ?? row.yr ?? row.year}</td>
+
+                              {MONTH_ORDER.map((month) => (
+                                <td key={month} className={toneClass(row[month])}>
+                                  {formatPercent(row[month])}
+                                </td>
+                              ))}
+
+                              <td className={toneClass(annualReturn)}>
+                                {formatPercent(annualReturn)}
                               </td>
-                            ))}
-                          </tr>
-                        ))
+                            </tr>
+                          );
+                        })
                       ) : (
                         <tr className="monthly-row">
-                          <td colSpan={13} className="monthly-no-data">
+                          <td colSpan={14} className="monthly-no-data">
                             {error || "No data available"}
                           </td>
                         </tr>
