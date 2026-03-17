@@ -1,10 +1,10 @@
-/* Layout */
 .sd-container {
   display: flex;
   width: 100vw;
-  height: 100vh;
+  min-height: 100vh;
   background-color: #f8f8f8;
   box-sizing: border-box;
+  font-family: Arial, sans-serif;
 }
 
 .sd-sidebar {
@@ -14,11 +14,46 @@
   padding-top: 120px;
   box-sizing: border-box;
   color: white;
-  font-family: Arial, sans-serif;
   border-right: 3px solid #00332c;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
+}
+
+.sd-date-section {
+  margin-bottom: 24px;
+  display: flex;
+  flex-direction: column;
+}
+
+.sd-date-label {
+  margin-bottom: 6px;
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.sd-date-picker {
+  width: 100%;
+  padding: 10px 12px;
+  height: 44px;
+  font-size: 14px;
+  color: white;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 8px;
+  transition: 0.2s ease;
+  cursor: pointer;
+  box-sizing: border-box;
+}
+
+.sd-date-picker:hover {
+  background: rgba(255, 255, 255, 0.18);
+}
+
+.sd-date-picker:focus {
+  outline: none;
+  background: rgba(255, 255, 255, 0.25);
+  border-color: rgba(255, 255, 255, 0.55);
 }
 
 .sd-sidebar-title {
@@ -37,29 +72,41 @@
 .sd-group-item {
   cursor: pointer;
   margin-bottom: 10px;
-  padding: 10px;
+  padding: 12px;
   background: rgba(255, 255, 255, 0.1);
   border: 1px solid rgba(255, 255, 255, 0.3);
-  border-radius: 5px;
-  transition: 0.3s ease;
+  border-radius: 6px;
+  transition: 0.2s ease;
+  color: rgba(255, 255, 255, 0.95);
 }
 
 .sd-group-item:hover {
-  background: rgba(255, 255, 255, 0.2);
-  transform: scale(1.05);
+  background: rgba(255, 255, 255, 0.18);
+  transform: scale(1.03);
 }
 
 .sd-selected-group {
   font-weight: bold;
-  color: #004d40;
-  background: rgba(0, 255, 179, 0.9);
+  background: rgba(255, 255, 255, 0.24);
+  border-color: rgba(255, 255, 255, 0.55);
+  color: #ffffff;
 }
 
-/* Main Content */
 .sd-main {
   width: 78%;
-  padding: 20px;
+  padding: 20px 28px 60px 28px;
+  box-sizing: border-box;
+  display: flex;
+  justify-content: center;
   overflow-x: auto;
+}
+
+.sd-main-inner {
+  width: 100%;
+  max-width: 1380px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .sd-title {
@@ -69,89 +116,180 @@
   font-weight: 600;
   letter-spacing: 1px;
   text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
-  margin-bottom: 20px;
+  margin-bottom: 18px;
+  text-align: center;
+  width: 100%;
+}
+
+.sd-second-title {
+  margin-top: 10px;
+}
+
+.sd-table-card {
+  width: 100%;
+  background: white;
+  border-radius: 12px;
+  padding: 14px 16px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.07);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  margin-bottom: 22px;
+}
+
+.sd-table-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  margin-bottom: 10px;
+}
+
+.sd-table-meta {
+  font-size: 12px;
+  color: #6a7a76;
+}
+
+.sd-table-wrapper {
+  width: 100%;
+  max-height: 640px;
+  overflow: auto;
+  border-radius: 10px;
 }
 
 .sd-table {
   width: 100%;
+  min-width: 980px;
   border-collapse: collapse;
   table-layout: fixed;
 }
 
 .sd-table th,
 .sd-table td {
-  border: 1px solid #ddd;
-  padding: 8px;
+  padding: 10px 10px;
   text-align: center;
-  word-wrap: break-word;
-  background-color: transparent;
+  font-size: 12.5px;
+  line-height: 1.2;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  white-space: nowrap;
+  background: transparent;
 }
 
-.sd-table-header {
-  background-color: #00796b;
-  font-weight: bold;
+.sd-table th {
+  color: #004d40;
+  font-weight: 800;
+  background: #f3f7f6;
+  position: sticky;
+  top: 0;
+  z-index: 2;
 }
 
-.sd-table-header th {
-  color: white;
+.sd-table th:first-child,
+.sd-table td:first-child {
+  text-align: left;
+  min-width: 220px;
 }
 
-.sd-error {
-  color: red;
-  font-weight: bold;
+.sd-row {
+  transition: 0.15s ease;
+  height: 40px;
 }
 
-td.positive {
-  color: green !important;
-  background-color: transparent !important;
+.sd-row:nth-child(even) {
+  background: rgba(0, 0, 0, 0.02);
 }
 
-td.negative {
-  color: red !important;
-  background-color: transparent !important;
+.sd-row:hover {
+  background: rgba(0, 77, 64, 0.08);
 }
 
-.sd-table tr:hover,
-.sd-table tr:hover td,
-.sd-table tr td:hover {
-  background-color: rgb(191, 228, 204) !important;
-  transition: background-color 0.2s ease !important;
+.sd-positive {
+  color: #1b8f53;
+  font-weight: 700;
 }
 
-/* Date Section - matches group button styling */
-.sd-date-section {
-  margin-bottom: 30px;
+.sd-negative {
+  color: #d64545;
+  font-weight: 700;
 }
 
-.sd-date-section h3 {
-  font-size: 1.3rem;
-  margin-bottom: 10px;
-  border-bottom: 2px solid rgba(255, 255, 255, 0.3);
-  padding-bottom: 5px;
+.sd-neutral {
+  color: #5f6d69;
+  font-weight: 700;
 }
 
-/* Date picker styled like group items */
-.sd-date-picker {
+.sd-message {
+  color: #5b6d68;
+  font-weight: 600;
+  padding: 8px 2px;
+  margin: 0;
+}
+
+.sd-empty-state {
+  min-height: 720px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #5b6d68;
+  font-size: 15px;
+  text-align: center;
+  padding: 20px;
   width: 100%;
-  padding: 10px;
-  font-size: 14px;
-  color: white;
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  border-radius: 5px;
-  transition: 0.3s ease;
-  cursor: pointer;
 }
 
-/* Hover effect like group items */
-.sd-date-picker:hover {
-  background: rgba(255, 255, 255, 0.2);
-  transform: scale(1.03);
+@media (max-width: 1200px) {
+  .sd-main-inner {
+    max-width: 100%;
+  }
 }
 
-/* Focus state */
-.sd-date-picker:focus {
-  outline: none;
-  border: 1px solid rgba(0, 255, 179, 0.9);
-  box-shadow: 0 0 6px rgba(0, 255, 179, 0.6);
+@media (max-width: 900px) {
+  .sd-sidebar {
+    width: 35%;
+  }
+
+  .sd-main {
+    width: 65%;
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+}
+
+@media (max-width: 650px) {
+  .sd-container {
+    flex-direction: column;
+  }
+
+  .sd-sidebar {
+    width: 100%;
+    padding-top: 90px;
+    border-right: none;
+    border-bottom: 3px solid #00332c;
+  }
+
+  .sd-main {
+    width: 100%;
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+
+  .sd-title {
+    margin-top: 30px;
+    font-size: 26px;
+  }
+
+  .sd-table {
+    min-width: 900px;
+  }
+
+  .sd-table th,
+  .sd-table td {
+    font-size: 11.5px;
+    padding: 9px 8px;
+  }
+
+  .sd-table-wrapper {
+    max-height: 500px;
+  }
+
+  .sd-empty-state {
+    min-height: 320px;
+  }
 }

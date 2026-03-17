@@ -1,35 +1,28 @@
-import React, { useState, useEffect } from 'react';
-import './SummaryData.css';
+import React, { useEffect, useState } from "react";
+import "./SummaryData.css";
 
 function SummaryData() {
   const [groups, setGroups] = useState([]);
   const [selectedGroup, setSelectedGroup] = useState(null);
 
-  // Table 1 (existing stored procedure)
   const [data1, setData1] = useState([]);
   const [loading1, setLoading1] = useState(false);
 
-  // Table 2 (gold stored procedure)
   const [data2, setData2] = useState([]);
   const [loading2, setLoading2] = useState(false);
 
-  // Default date: yesterday, unless Sunday/Monday -> previous Friday
   const getDefaultDate = () => {
     const d = new Date();
-    const day = d.getDay(); // 0=Sun, 1=Mon, 2=Tue, ... 6=Sat
+    const day = d.getDay();
 
-    // Start from yesterday
     d.setDate(d.getDate() - 1);
 
-    // If today is Sunday, yesterday is Saturday -> use previous Friday
     if (day === 0) d.setDate(d.getDate() - 1);
-
-    // If today is Monday, yesterday is Sunday -> use previous Friday
     if (day === 1) d.setDate(d.getDate() - 2);
 
     const yyyy = d.getFullYear();
-    const mm = String(d.getMonth() + 1).padStart(2, '0');
-    const dd = String(d.getDate()).padStart(2, '0');
+    const mm = String(d.getMonth() + 1).padStart(2, "0");
+    const dd = String(d.getDate()).padStart(2, "0");
     return `${yyyy}-${mm}-${dd}`;
   };
 
@@ -40,12 +33,12 @@ function SummaryData() {
       try {
         const res = await fetch(
           `${process.env.REACT_APP_API_URL}/summary-data-groups`,
-          { cache: 'no-store', headers: { 'Cache-Control': 'no-cache' } }
+          { cache: "no-store", headers: { "Cache-Control": "no-cache" } }
         );
         const json = await res.json();
-        setGroups(json);
+        setGroups(Array.isArray(json) ? json : []);
       } catch (err) {
-        console.error('Fetch groups error:', err);
+        console.error("Fetch groups error:", err);
         setGroups([]);
       }
     };
@@ -58,12 +51,12 @@ function SummaryData() {
     try {
       const res = await fetch(
         `${process.env.REACT_APP_API_URL}/summary-data?table_id=${groupId}&date=${selectedDate}&_=${Date.now()}`,
-        { cache: 'no-store', headers: { 'Cache-Control': 'no-cache' } }
+        { cache: "no-store", headers: { "Cache-Control": "no-cache" } }
       );
       const json = await res.json();
       setData1(Array.isArray(json) ? json : []);
     } catch (err) {
-      console.error('Fetch table 1 error:', err);
+      console.error("Fetch table 1 error:", err);
       setData1([]);
     } finally {
       setLoading1(false);
@@ -75,12 +68,12 @@ function SummaryData() {
     try {
       const res = await fetch(
         `${process.env.REACT_APP_API_URL}/summary-data-in-gold?table_id=${groupId}&date=${selectedDate}&_=${Date.now()}`,
-        { cache: 'no-store', headers: { 'Cache-Control': 'no-cache' } }
+        { cache: "no-store", headers: { "Cache-Control": "no-cache" } }
       );
       const json = await res.json();
       setData2(Array.isArray(json) ? json : []);
     } catch (err) {
-      console.error('Fetch table 2 error:', err);
+      console.error("Fetch table 2 error:", err);
       setData2([]);
     } finally {
       setLoading2(false);
@@ -95,124 +88,127 @@ function SummaryData() {
   };
 
   const formatValue = (val, colName) => {
-    if (val === null || val === undefined) return '';
+    if (val === null || val === undefined) return "";
 
-    if (colName === 'security_long_name') return val;
+    if (colName === "security_long_name") return val;
 
-    if (colName.toLowerCase().includes('date')) {
+    if (colName.toLowerCase().includes("date")) {
       const d = new Date(val);
       if (Number.isNaN(d.getTime())) return String(val);
-      const dd = String(d.getDate()).padStart(2, '0');
-      const mm = String(d.getMonth() + 1).padStart(2, '0');
+      const dd = String(d.getDate()).padStart(2, "0");
+      const mm = String(d.getMonth() + 1).padStart(2, "0");
       const yyyy = d.getFullYear();
       return `${dd}/${mm}/${yyyy}`;
     }
 
-    if (typeof val === 'number') return (val * 100).toFixed(1) + '%';
+    if (typeof val === "number") return `${(val * 100).toFixed(1)}%`;
 
     return val;
   };
 
+  const toneClass = (raw, key) => {
+    if (key === "security_long_name" || key === "price_date") return "";
+    if (typeof raw !== "number") return "";
+    if (raw > 0) return "sd-positive";
+    if (raw < 0) return "sd-negative";
+    return "sd-neutral";
+  };
+
   const columnKeys1 = [
-    'security_long_name',
-    'price_date',
-    'DAY_RETURN',
-    'MTD_RETURN',
-    'QTD_RETURN',
-    'YTD_RETURN',
-    '3YR_RETURN',
-    '5YR_RETURN',
-    '10YR_RETURN',
-    'CTD_RETURN',
+    "security_long_name",
+    "price_date",
+    "DAY_RETURN",
+    "MTD_RETURN",
+    "QTD_RETURN",
+    "YTD_RETURN",
+    "3YR_RETURN",
+    "5YR_RETURN",
+    "10YR_RETURN",
+    "CTD_RETURN",
   ];
 
   const columnKeys2 = [
-    'security_long_name',
-    'price_date',
-    'DAY_RETURN',
-    'MTD_RETURN',
-    'QTD_RETURN',
-    'YTD_RETURN',
-    '3YR_RETURN',
-    '5YR_RETURN',
-    '10YR_RETURN',
+    "security_long_name",
+    "price_date",
+    "DAY_RETURN",
+    "MTD_RETURN",
+    "QTD_RETURN",
+    "YTD_RETURN",
+    "3YR_RETURN",
+    "5YR_RETURN",
+    "10YR_RETURN",
   ];
 
-  const renderTable = ({
+  const headerLabelForKey = (key, titleOverride) => {
+    if (key === "security_long_name") {
+      return titleOverride ? titleOverride.toUpperCase() : "NAME";
+    }
+    if (key === "price_date") return "Date";
+    return key.replace("_RETURN", "").toUpperCase();
+  };
+
+  const renderTableCard = ({
     data,
     loading,
     columnKeys,
     titleOverride,
-    formatter,
-    headerLabelForKey,
+    metaLabel,
   }) => {
-    if (loading) return <p className="sd-error">Loading...</p>;
-    if (!data || data.length === 0) return <p className="sd-error">No data.</p>;
-    if (!columnKeys || columnKeys.length === 0) {
-      return <p className="sd-error">No columns configured.</p>;
-    }
-
     return (
-      <table className="sd-table">
-        <thead>
-          <tr className="sd-table-header">
-            {columnKeys.map((key) => (
-              <th key={key}>
-                {headerLabelForKey
-                  ? headerLabelForKey(key)
-                  : key === 'security_long_name'
-                  ? titleOverride
-                    ? titleOverride.toUpperCase()
-                    : 'NAME'
-                  : key === 'price_date'
-                  ? 'Date'
-                  : key.replace('_RETURN', '').toUpperCase()}
-              </th>
-            ))}
-          </tr>
-        </thead>
+      <section className="sd-table-card">
+        <div className="sd-table-card-header">
+          <div className="sd-table-meta">
+            {loading ? "Loading..." : `${data.length} ${metaLabel}`}
+          </div>
+        </div>
 
-        <tbody>
-          {data.map((row, idx) => (
-            <tr key={idx}>
-              {columnKeys.map((key) => {
-                const raw = row?.[key];
-                const val = formatter(raw, key);
+        {loading ? (
+          <p className="sd-message">Loading...</p>
+        ) : !data || data.length === 0 ? (
+          <p className="sd-message">No data.</p>
+        ) : (
+          <div className="sd-table-wrapper">
+            <table className="sd-table">
+              <thead>
+                <tr>
+                  {columnKeys.map((key) => (
+                    <th key={key}>{headerLabelForKey(key, titleOverride)}</th>
+                  ))}
+                </tr>
+              </thead>
 
-                const isNumeric = typeof raw === 'number';
-                const isNegative = isNumeric && raw < 0;
-                const isPositive = isNumeric && raw >= 0;
+              <tbody>
+                {data.map((row, idx) => (
+                  <tr key={idx} className="sd-row">
+                    {columnKeys.map((key) => {
+                      const raw = row?.[key];
+                      const val = formatValue(raw, key);
 
-                return (
-                  <td
-                    key={key}
-                    className={
-                      key !== 'security_long_name' && key !== 'price_date'
-                        ? isNegative
-                          ? 'negative'
-                          : isPositive
-                          ? 'positive'
-                          : ''
-                        : ''
-                    }
-                  >
-                    {val}
-                  </td>
-                );
-              })}
-            </tr>
-          ))}
-        </tbody>
-      </table>
+                      return (
+                        <td key={key} className={toneClass(raw, key)}>
+                          {val}
+                        </td>
+                      );
+                    })}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </section>
     );
   };
 
   return (
     <div className="sd-container">
-      <div className="sd-sidebar">
+      <aside className="sd-sidebar">
         <div className="sd-date-section">
-          <h3>Select Date</h3>
+          <label className="sd-date-label" htmlFor="sd-date-picker">
+            Select Date
+          </label>
           <input
+            id="sd-date-picker"
             type="date"
             value={date}
             className="sd-date-picker"
@@ -236,8 +232,8 @@ function SummaryData() {
               className={`sd-group-item ${
                 selectedGroup?.summary_data_group_ID ===
                 group.summary_data_group_ID
-                  ? 'sd-selected-group'
-                  : ''
+                  ? "sd-selected-group"
+                  : ""
               }`}
               onClick={() => {
                 setSelectedGroup(group);
@@ -248,40 +244,39 @@ function SummaryData() {
             </li>
           ))}
         </ul>
-      </div>
+      </aside>
 
-      <div className="sd-main">
-        {selectedGroup && (
-          <>
-            <h1 className="sd-title" style={{ textAlign: 'center' }}>
-              Returns in Local Fiat Currency
-            </h1>
+      <main className="sd-main">
+        <div className="sd-main-inner">
+          {selectedGroup ? (
+            <>
+              <h1 className="sd-title">Returns in Local Fiat Currency</h1>
 
-            {renderTable({
-              data: data1,
-              loading: loading1,
-              columnKeys: columnKeys1,
-              titleOverride: selectedGroup.summary_data_group_name,
-              formatter: formatValue,
-            })}
+              {renderTableCard({
+                data: data1,
+                loading: loading1,
+                columnKeys: columnKeys1,
+                titleOverride: selectedGroup.summary_data_group_name,
+                metaLabel: data1.length === 1 ? "row" : "rows",
+              })}
 
-            <h2
-              className="sd-title"
-              style={{ marginTop: '24px', textAlign: 'center' }}
-            >
-              Returns in Gold
-            </h2>
+              <h1 className="sd-title sd-second-title">Returns in Gold</h1>
 
-            {renderTable({
-              data: data2,
-              loading: loading2,
-              columnKeys: columnKeys2,
-              titleOverride: selectedGroup.summary_data_group_name,
-              formatter: formatValue,
-            })}
-          </>
-        )}
-      </div>
+              {renderTableCard({
+                data: data2,
+                loading: loading2,
+                columnKeys: columnKeys2,
+                titleOverride: selectedGroup.summary_data_group_name,
+                metaLabel: data2.length === 1 ? "row" : "rows",
+              })}
+            </>
+          ) : (
+            <div className="sd-empty-state">
+              Select a group from the sidebar to view summary data.
+            </div>
+          )}
+        </div>
+      </main>
     </div>
   );
 }
