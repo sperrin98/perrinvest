@@ -63,7 +63,7 @@
 
 .gold-table {
   width: 100%;
-  min-width: 1500px;
+  min-width: 1560px;
   border-collapse: collapse;
   table-layout: fixed;
 }
@@ -156,7 +156,7 @@
   }
 
   .gold-table {
-    min-width: 1220px;
+    min-width: 1280px;
   }
 
   .gold-table th,

@@ -8,6 +8,7 @@ const SilverReturns = () => {
 
   const currencies = useMemo(
     () => [
+      "USD",
       "EUR",
       "GBP",
       "NOK",
@@ -39,8 +40,18 @@ const SilverReturns = () => {
         if (!response.ok) {
           throw new Error(`Error: ${response.statusText}`);
         }
+
         const result = await response.json();
-        setData(result || []);
+
+        const sortedData = Array.isArray(result)
+          ? [...result].sort((a, b) => {
+              const yearA = Number(a.yr ?? a.YR ?? a.year ?? 0);
+              const yearB = Number(b.yr ?? b.YR ?? b.year ?? 0);
+              return yearB - yearA;
+            })
+          : [];
+
+        setData(sortedData);
         setError(null);
       } catch (err) {
         setError(err.message);
@@ -94,7 +105,9 @@ const SilverReturns = () => {
                 {data.length > 0 ? (
                   data.map((row, index) => (
                     <tr key={index} className="silver-row">
-                      <td className="silver-year-column">{row.yr}</td>
+                      <td className="silver-year-column">
+                        {row.yr ?? row.YR ?? row.year}
+                      </td>
                       {currencies.map((curr) => (
                         <td key={curr} className={toneClass(row[curr])}>
                           {formatPercent(row[curr])}

@@ -8,6 +8,7 @@ export default function PreciousMetals() {
   const [selectedMetal, setSelectedMetal] = useState(null);
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   const [dailyMoves, setDailyMoves] = useState([]);
+  const [dailyMovesSummary, setDailyMovesSummary] = useState([]);
   const [error, setError] = useState(null);
 
   const API_URL = process.env.REACT_APP_API_URL;
@@ -34,21 +35,29 @@ export default function PreciousMetals() {
   useEffect(() => {
     if (!selectedMetal) return;
 
-    async function fetchDailyMoves() {
+    async function fetchTables() {
       try {
-        const response = await axios.get(`${API_URL}/precious-metals/daily-moves`, {
-          params: { id: selectedMetal.security_id, year: selectedYear },
-        });
-        setDailyMoves(response.data.data || []);
+        const [dailyMovesResponse, summaryResponse] = await Promise.all([
+          axios.get(`${API_URL}/precious-metals/daily-moves`, {
+            params: { id: selectedMetal.security_id, year: selectedYear },
+          }),
+          axios.get(`${API_URL}/precious-metals/daily-moves-summary`, {
+            params: { id: selectedMetal.security_id, year: selectedYear },
+          }),
+        ]);
+
+        setDailyMoves(dailyMovesResponse.data.data || []);
+        setDailyMovesSummary(summaryResponse.data.data || []);
         setError(null);
       } catch (err) {
-        console.error("Error fetching daily moves:", err);
+        console.error("Error fetching precious metals tables:", err);
         setDailyMoves([]);
-        setError("Failed to load daily moves.");
+        setDailyMovesSummary([]);
+        setError("Failed to load daily moves data.");
       }
     }
 
-    fetchDailyMoves();
+    fetchTables();
   }, [selectedMetal, selectedYear, API_URL]);
 
   const years = Array.from(
@@ -168,6 +177,57 @@ export default function PreciousMetals() {
                         <tr className="pm-row">
                           <td colSpan="8" className="pm-no-data">
                             {error || "No data available"}
+                          </td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              </section>
+
+              <section className="pm-table-card pm-summary-card">
+                <div className="pm-table-card-header">
+                  <div className="pm-table-heading">Average / Min / Max / STDEV</div>
+                  <div className="pm-table-meta">
+                    {dailyMovesSummary.length}{" "}
+                    {dailyMovesSummary.length === 1 ? "day" : "days"}
+                  </div>
+                </div>
+
+                <div className="pm-table-wrapper pm-summary-wrapper">
+                  <table className="pm-table">
+                    <thead>
+                      <tr>
+                        <th>Day</th>
+                        <th>Average</th>
+                        <th>Max</th>
+                        <th>Min</th>
+                        <th>STDEV</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {dailyMovesSummary.length > 0 ? (
+                        dailyMovesSummary.map((row, idx) => (
+                          <tr key={idx} className="pm-row">
+                            <td>{row.day_name}</td>
+                            <td className={toneClass(row.average)}>
+                              {formatPercent(row.average)}
+                            </td>
+                            <td className={toneClass(row.max)}>
+                              {formatPercent(row.max)}
+                            </td>
+                            <td className={toneClass(row.min)}>
+                              {formatPercent(row.min)}
+                            </td>
+                            <td className={toneClass(row.stdev)}>
+                              {formatPercent(row.stdev)}
+                            </td>
+                          </tr>
+                        ))
+                      ) : (
+                        <tr className="pm-row">
+                          <td colSpan="5" className="pm-no-data">
+                            {error || "No summary data available"}
                           </td>
                         </tr>
                       )}

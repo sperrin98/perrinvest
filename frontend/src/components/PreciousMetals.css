@@ -149,6 +149,11 @@
   padding: 14px 16px;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.07);
   border: 1px solid rgba(0, 0, 0, 0.06);
+  margin-bottom: 20px;
+}
+
+.pm-summary-card {
+  margin-top: 8px;
 }
 
 .pm-table-card-header {
@@ -174,6 +179,10 @@
   max-height: 680px;
   overflow: auto;
   border-radius: 10px;
+}
+
+.pm-summary-wrapper {
+  max-height: 340px;
 }
 
 .pm-table {
@@ -282,6 +291,10 @@
 
   .pm-table-wrapper {
     max-height: 500px;
+  }
+
+  .pm-summary-wrapper {
+    max-height: 300px;
   }
 
   .pm-table th,

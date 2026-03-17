@@ -129,7 +129,7 @@
 
 .monthly-table {
   width: 100%;
-  min-width: 1180px;
+  min-width: 1260px;
   border-collapse: collapse;
   table-layout: fixed;
 }
@@ -233,7 +233,7 @@
   }
 
   .monthly-table {
-    min-width: 980px;
+    min-width: 1080px;
   }
 
   .monthly-table th,

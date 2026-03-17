@@ -39,7 +39,16 @@ const MiniAreaSparkline = ({ data = [], color = "#5f6d69" }) => {
         d={linePath}
         fill="none"
         stroke={color}
-        strokeWidth="7"
+        strokeWidth="4.2"
+        strokeLinejoin="round"
+        strokeLinecap="round"
+        opacity="0.07"
+      />
+      <path
+        d={linePath}
+        fill="none"
+        stroke={color}
+        strokeWidth="2.8"
         strokeLinejoin="round"
         strokeLinecap="round"
         opacity="0.12"
@@ -48,19 +57,10 @@ const MiniAreaSparkline = ({ data = [], color = "#5f6d69" }) => {
         d={linePath}
         fill="none"
         stroke={color}
-        strokeWidth="4.5"
+        strokeWidth="1.7"
         strokeLinejoin="round"
         strokeLinecap="round"
-        opacity="0.2"
-      />
-      <path
-        d={linePath}
-        fill="none"
-        stroke={color}
-        strokeWidth="2.4"
-        strokeLinejoin="round"
-        strokeLinecap="round"
-        opacity="0.95"
+        opacity="0.92"
       />
     </svg>
   );
