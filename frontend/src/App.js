@@ -32,6 +32,7 @@ import BlogPost from './components/BlogPost';
 import CreateBlogPost from './components/CreateBlogPost';
 import SummaryData from './components/SummaryData';
 import LongOnlyWatchlist from './components/LongOnlyWatchlist';
+import BondYields from './components/BondYields';
 
 const AdminRoute = ({ isLoggedIn, isAdmin, children }) => {
   if (!isLoggedIn) return <Navigate to="/login" />;
@@ -111,6 +112,7 @@ function App() {
         <Route path="/blog/:id" element={<BlogPost />} />
         <Route path="/summary-data" element={<SummaryData />} />
         <Route path="/long-only-watchlist" element={<LongOnlyWatchlist />} />
+        <Route path="/bond-yields" element={<BondYields />} />
         <Route
           path="/blog/create"
           element={
