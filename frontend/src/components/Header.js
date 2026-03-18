@@ -103,6 +103,9 @@ const Header = ({ isLoggedIn, onLogout }) => {
               <Link to="/bond-yields" onClick={closeMenu}>
                 Bond Yields
               </Link>
+              <Link to="/eco-data-points" onClick={closeMenu}>
+                House Price Index
+              </Link>
               <Link to="/equity-markets" onClick={closeMenu}>
                 Equity Markets v Gold
               </Link>
@@ -132,21 +135,6 @@ const Header = ({ isLoggedIn, onLogout }) => {
               </Link>
               <Link to="/market-ratios/divide" onClick={closeMenu}>
                 Compare Securities
-              </Link>
-            </div>
-          </li>
-
-          <li className="dropdown">
-            <Link
-              to="/eco-data-points"
-              className="nav-item-link"
-              onClick={closeMenu}
-            >
-              Economic Data
-            </Link>
-            <div className={`dropdown-content ${mobileDropdown === "eco" ? "show-mobile" : ""}`}>
-              <Link to="/eco-data-points" onClick={closeMenu}>
-                Data Points
               </Link>
             </div>
           </li>
