@@ -4,18 +4,30 @@ import "./Header.css";
 
 const Header = ({ isLoggedIn, onLogout }) => {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [mobileDropdown, setMobileDropdown] = useState(null);
 
   const toggleMenu = () => {
     setMenuOpen((prev) => !prev);
+    if (menuOpen) {
+      setMobileDropdown(null);
+    }
   };
 
   const handleLogout = () => {
     onLogout();
     setMenuOpen(false);
+    setMobileDropdown(null);
   };
 
   const closeMenu = () => {
     setMenuOpen(false);
+    setMobileDropdown(null);
+  };
+
+  const toggleMobileDropdown = (name) => {
+    if (window.innerWidth <= 780) {
+      setMobileDropdown((prev) => (prev === name ? null : name));
+    }
   };
 
   return (
@@ -47,10 +59,14 @@ const Header = ({ isLoggedIn, onLogout }) => {
 
         <ul className={`nav-links ${menuOpen ? "show" : ""}`}>
           <li className="dropdown">
-            <button className="nav-item-button" type="button">
+            <button
+              className="nav-item-button"
+              type="button"
+              onClick={() => toggleMobileDropdown("returns")}
+            >
               Returns
             </button>
-            <div className="dropdown-content">
+            <div className={`dropdown-content ${mobileDropdown === "returns" ? "show-mobile" : ""}`}>
               <Link to="/precious-metals" onClick={closeMenu}>
                 Daily Returns
               </Link>
@@ -73,18 +89,28 @@ const Header = ({ isLoggedIn, onLogout }) => {
           </li>
 
           <li className="dropdown">
-            <button className="nav-item-button" type="button">
+            <button
+              className="nav-item-button"
+              type="button"
+              onClick={() => toggleMobileDropdown("charts")}
+            >
               Charts
             </button>
-            <div className="dropdown-content">
+            <div className={`dropdown-content ${mobileDropdown === "charts" ? "show-mobile" : ""}`}>
+              <Link to="/securities" onClick={closeMenu}>
+                All Securities
+              </Link>
+              <Link to="/bond-yields" onClick={closeMenu}>
+                Bond Yields
+              </Link>
+              <Link to="/eco-data-points" onClick={closeMenu}>
+                House Price Index
+              </Link>
               <Link to="/equity-markets" onClick={closeMenu}>
                 Equity Markets v Gold
               </Link>
               <Link to="/commodities" onClick={closeMenu}>
                 Commodities v Gold
-              </Link>
-              <Link to="/securities" onClick={closeMenu}>
-                All Securities
               </Link>
               <Link to="/correlations" onClick={closeMenu}>
                 Correlations
@@ -100,7 +126,7 @@ const Header = ({ isLoggedIn, onLogout }) => {
             >
               Leagues & Ratios
             </Link>
-            <div className="dropdown-content">
+            <div className={`dropdown-content ${mobileDropdown === "ratios" ? "show-mobile" : ""}`}>
               <Link to="/market-ratios" onClick={closeMenu}>
                 Market Ratios
               </Link>
@@ -114,25 +140,14 @@ const Header = ({ isLoggedIn, onLogout }) => {
           </li>
 
           <li className="dropdown">
-            <Link
-              to="/eco-data-points"
-              className="nav-item-link"
-              onClick={closeMenu}
+            <button
+              className="nav-item-button"
+              type="button"
+              onClick={() => toggleMobileDropdown("blogs")}
             >
-              Economic Data
-            </Link>
-            <div className="dropdown-content">
-              <Link to="/eco-data-points" onClick={closeMenu}>
-                Data Points
-              </Link>
-            </div>
-          </li>
-
-          <li className="dropdown">
-            <button className="nav-item-button" type="button">
               Blogs
             </button>
-            <div className="dropdown-content">
+            <div className={`dropdown-content ${mobileDropdown === "blogs" ? "show-mobile" : ""}`}>
               <Link to="/blog" onClick={closeMenu}>
                 View Blogs
               </Link>
@@ -156,10 +171,14 @@ const Header = ({ isLoggedIn, onLogout }) => {
             </li>
           ) : (
             <li className="dropdown">
-              <button className="nav-item-button" type="button">
+              <button
+                className="nav-item-button"
+                type="button"
+                onClick={() => toggleMobileDropdown("login")}
+              >
                 Login
               </button>
-              <div className="dropdown-content dropdown-content-right">
+              <div className={`dropdown-content dropdown-content-right ${mobileDropdown === "login" ? "show-mobile" : ""}`}>
                 <Link to="/login" onClick={closeMenu}>
                   Login
                 </Link>

@@ -961,3 +961,25 @@ def get_hpi_and_priced_in_gold_rebased_to_100(p_data_point_id):
     finally:
         cursor.close()
         conn.close()
+
+def fetch_long_term_interest_rate_histories(eco_id):
+    allowed_ids = {15, 16, 17, 18}
+
+    if eco_id not in allowed_ids:
+        raise ValueError("Invalid eco_id. Allowed IDs are 15, 16, 17, 18.")
+
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+
+    try:
+        cursor.callproc("get_long_term_interest_rate_histories", [eco_id])
+
+        results = []
+        for result in cursor.stored_results():
+            results = result.fetchall()
+
+        return results
+
+    finally:
+        cursor.close()
+        conn.close()

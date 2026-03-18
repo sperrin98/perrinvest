@@ -50,7 +50,8 @@ from app.db_utils import (
     get_summary_data_period_end_returns_in_gold,
     get_long_only_watchlist_period_end_returns,
     get_rolling_corr,
-    get_hpi_and_priced_in_gold_rebased_to_100
+    get_hpi_and_priced_in_gold_rebased_to_100,
+    fetch_long_term_interest_rate_histories
 )   
 import yfinance as yf
 from datetime import datetime, timedelta
@@ -998,3 +999,14 @@ def hpi_and_priced_in_gold_rebased_to_100_route():
     except Exception as e:
         print("ERROR (HPI GOLD REBASED):", str(e))
         return jsonify({'error': str(e)}), 500
+
+@main.route('/long-term-interest-rates/<int:eco_id>', methods=['GET'])
+def get_long_term_interest_rate_histories_route(eco_id):
+    try:
+        data = fetch_long_term_interest_rate_histories(eco_id)
+        return jsonify(data), 200
+    except ValueError as e:
+        return jsonify({"error": str(e)}), 400
+    except Exception as e:
+        logger.exception("Error fetching long term interest rate histories")
+        return jsonify({"error": str(e)}), 500

@@ -1,0 +1,131 @@
+.bond-yields-container {
+  height: 100vh;
+  width: 100vw;
+  background: #f4f6f8;
+  display: flex;
+  flex-direction: row;
+  box-sizing: border-box;
+}
+
+.bond-yields-sidebar {
+  width: 21%;
+  min-width: 240px;
+  background: linear-gradient(160deg, #00796b 0%, #00584d 55%, #00463d 100%);
+  padding: 28px 22px;
+  padding-top: 118px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  color: white;
+  font-family: Arial, sans-serif;
+  border-right: 1px solid rgba(0, 0, 0, 0.12);
+  overflow-y: auto;
+}
+
+.bond-yields-sidebar h3 {
+  font-size: 1.28rem;
+  margin-bottom: 22px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.22);
+  letter-spacing: 0.4px;
+}
+
+.bond-yield-card-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.bond-yield-card {
+  width: 100%;
+  padding: 16px 16px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 14px;
+  color: white;
+  cursor: pointer;
+  transition: 0.22s ease;
+  text-align: left;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+  backdrop-filter: blur(4px);
+}
+
+.bond-yield-card:hover {
+  background: rgba(255, 255, 255, 0.14);
+  transform: translateY(-1px);
+}
+
+.bond-yield-card.selected {
+  background: linear-gradient(135deg, rgba(0, 255, 179, 0.95), rgba(117, 255, 209, 0.92));
+  color: #033b34;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  font-weight: 700;
+  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.15);
+}
+
+.bond-yield-card-title {
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+}
+
+.bond-yields-main-content {
+  width: 79%;
+  padding: 22px 28px 28px 28px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  box-sizing: border-box;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.bond-yields-hdr {
+  margin-top: 108px;
+  margin-bottom: 20px;
+  color: #0f5c52;
+  font-size: 32px;
+  font-weight: 700;
+  letter-spacing: 0.6px;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.bond-yields-chart-wrapper {
+  width: 100%;
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  box-sizing: border-box;
+}
+
+.bond-yields-chart-card {
+  width: 100%;
+  max-width: none;
+  background: linear-gradient(180deg, #ffffff 0%, #fbfcfc 100%);
+  border-radius: 18px;
+  padding: 22px 24px 18px 24px;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.07);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+
+.bond-yields-chart-canvas {
+  width: 100%;
+  height: 530px;
+}
+
+.bond-yields-error {
+  margin-top: 30px;
+  color: #b00020;
+  font-size: 16px;
+  font-weight: 600;
+}
