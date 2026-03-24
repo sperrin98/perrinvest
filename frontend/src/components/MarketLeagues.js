@@ -139,10 +139,12 @@ const MarketLeagues = () => {
     return styles.mlgNeutral;
   };
 
+  const chartLabels = constituentData.map((row) =>
+    new Date(row[0]).toISOString().split("T")[0]
+  );
+
   const lineChartData = {
-    labels: constituentData.map((row) =>
-      new Date(row[0]).toISOString().split("T")[0]
-    ),
+    labels: chartLabels,
     datasets: [
       {
         label: "Relative Index",
@@ -194,6 +196,57 @@ const MarketLeagues = () => {
       y: {
         title: { display: true, text: "Values", color: "#004d40" },
         ticks: { color: "#00796b" },
+        grid: { color: "rgba(0,0,0,0.06)" },
+      },
+    },
+  };
+
+  const scoreChartData = {
+    labels: chartLabels,
+    datasets: [
+      {
+        label: "Score",
+        data: constituentData.map((row) => row[5]),
+        borderColor: "#e70707",
+        backgroundColor: "transparent",
+        borderWidth: 2,
+        pointRadius: 0,
+        pointHitRadius: 10,
+        tension: 0.25,
+      },
+    ],
+  };
+
+  const scoreChartOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { position: "top", labels: { color: "#004d40" } },
+      tooltip: {
+        intersect: false,
+        mode: "index",
+        callbacks: {
+          label: function (context) {
+            return `Score: ${formatPercentage(context.raw)}`;
+          },
+        },
+      },
+    },
+    interaction: { intersect: false, mode: "index" },
+    scales: {
+      x: {
+        title: { display: true, text: "Date", color: "#004d40" },
+        ticks: { color: "#00796b", maxTicksLimit: 10 },
+        grid: { color: "rgba(0,0,0,0.06)" },
+      },
+      y: {
+        title: { display: true, text: "Score", color: "#004d40" },
+        ticks: {
+          color: "#00796b",
+          callback: function (value) {
+            return `${(value * 100).toFixed(0)}%`;
+          },
+        },
         grid: { color: "rgba(0,0,0,0.06)" },
       },
     },
@@ -322,6 +375,19 @@ const MarketLeagues = () => {
 
                 <div className={styles.mlgChartWrapper}>
                   <Line data={lineChartData} options={lineChartOptions} />
+                </div>
+
+                <div className={styles.mlgChartHeaderSecondary}>
+                  <div>
+                    <div className={styles.mlgSecondaryTitle}>Score</div>
+                    <div className={styles.mlgChartHint}>
+                      Score history by date
+                    </div>
+                  </div>
+                </div>
+
+                <div className={styles.mlgScoreChartWrapper}>
+                  <Line data={scoreChartData} options={scoreChartOptions} />
                 </div>
 
                 {selectedConstituentRow && (

@@ -9,9 +9,6 @@ import EcoDataPoints from './components/EcoDataPoints';
 import EcoDataPoint from './components/EcoDataPoint';
 import Currencies from './components/Currencies';
 import Currency from './components/Currency';
-import CurrencySelection from './components/CurrencySelection';
-import CryptoCurrencies from './components/CryptoCurrencies';
-import CryptoCurrency from './components/CryptoCurrency';
 import Correlations from './components/Correlations';
 import Login from './components/Login';
 import Register from './components/Register';
@@ -89,9 +86,6 @@ function App() {
         <Route path="/eco-data-points/:id" element={<EcoDataPoint />} />
         <Route path="/currencies" element={<Currencies />} />
         <Route path="/currencies/:id" element={<Currency />} />
-        <Route path="/currencies/divide" element={<CurrencySelection />} />
-        <Route path="/currencies/crypto" element={<CryptoCurrencies />} />
-        <Route path="/currencies/crypto/:ticker" element={<CryptoCurrency />} />
         <Route path="/correlations" element={<Correlations />} />
         <Route path="/login" element={<Login onLogin={handleLogin} />} />
         <Route path="/register" element={<Register onLogin={handleLogin} />} />
