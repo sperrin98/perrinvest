@@ -153,6 +153,9 @@ const Header = ({ isLoggedIn, onLogout }) => {
               <Link to="/commodities" onClick={closeMenu}>
                 Commodities v Gold
               </Link>
+              <Link to="/charts/us-federal-debt-priced-in-gold" onClick={closeMenu}>
+                US Federal Debt v Gold
+              </Link>
               <Link to="/correlations" onClick={closeMenu}>
                 Correlations
               </Link>
