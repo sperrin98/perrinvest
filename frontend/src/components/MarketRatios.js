@@ -230,11 +230,53 @@ function MarketRatios() {
   const maxValue = values.length ? Math.max(...values) : 0;
   const minValue = values.length ? Math.min(...values) : 0;
 
-  const yAxisPadding = 0.1;
-  const maxYAxisValue = Math.max(0, Math.ceil(maxValue * (1 + yAxisPadding)));
-  const stepSize = isMobile
-    ? Math.max(1, Math.ceil(maxYAxisValue / 6))
-    : Math.max(1, Math.ceil(maxYAxisValue / 5));
+  const yAxisConfig = useMemo(() => {
+    if (!values.length) {
+      return {
+        min: 0,
+        max: 1,
+        stepSize: 1,
+      };
+    }
+
+    const range = maxValue - minValue;
+
+    // Special handling for compressed series, especially ratios between 0 and 1
+    if (maxValue <= 1 && minValue >= 0) {
+      const padding = Math.max(range * 0.12, 0.01);
+      const min = Math.max(0, minValue - padding);
+      const max = Math.min(1, maxValue + padding);
+      const stepSize = Math.max(
+        0.01,
+        Number(((max - min) / (isMobile ? 6 : 5)).toFixed(3))
+      );
+
+      return { min, max, stepSize };
+    }
+
+    // General compressed-range handling
+    if (range > 0 && range < 2) {
+      const padding = Math.max(range * 0.15, 0.02);
+      const min = minValue - padding;
+      const max = maxValue + padding;
+      const stepSize = Math.max(
+        0.01,
+        Number(((max - min) / (isMobile ? 6 : 5)).toFixed(3))
+      );
+
+      return { min, max, stepSize };
+    }
+
+    // Original broader-range behaviour
+    const yAxisPadding = 0.1;
+    const max = Math.max(0, Math.ceil(maxValue * (1 + yAxisPadding)));
+    const min = Math.min(0, minValue);
+    const stepSize = isMobile
+      ? Math.max(1, Math.ceil(max / 6))
+      : Math.max(1, Math.ceil(max / 5));
+
+    return { min, max, stepSize };
+  }, [values, maxValue, minValue, isMobile]);
 
   const chartData = useMemo(() => {
     return {
@@ -276,7 +318,7 @@ function MarketRatios() {
         y: {
           ticks: {
             color: "#00796b",
-            stepSize: stepSize,
+            stepSize: yAxisConfig.stepSize,
           },
           grid: {
             color: "rgba(0,0,0,0.08)",
@@ -286,8 +328,8 @@ function MarketRatios() {
             text: "Value",
             color: "#00796b",
           },
-          min: Math.min(0, minValue),
-          max: maxYAxisValue,
+          min: yAxisConfig.min,
+          max: yAxisConfig.max,
         },
       },
       plugins: {
@@ -305,7 +347,7 @@ function MarketRatios() {
         },
       },
     };
-  }, [isMobile, maxYAxisValue, minValue, stepSize]);
+  }, [isMobile, yAxisConfig]);
 
   const handleRatioClick = (id) => {
     setSelectedRatioId(id);
