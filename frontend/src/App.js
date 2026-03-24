@@ -10,7 +10,6 @@ import EcoDataPoint from './components/EcoDataPoint';
 import Currencies from './components/Currencies';
 import Currency from './components/Currency';
 import CurrencySelection from './components/CurrencySelection';
-import MarketRatioSelection from './components/MarketRatioSelection';
 import CryptoCurrencies from './components/CryptoCurrencies';
 import CryptoCurrency from './components/CryptoCurrency';
 import Correlations from './components/Correlations';
@@ -91,7 +90,6 @@ function App() {
         <Route path="/currencies" element={<Currencies />} />
         <Route path="/currencies/:id" element={<Currency />} />
         <Route path="/currencies/divide" element={<CurrencySelection />} />
-        <Route path="/market-ratios/divide" element={<MarketRatioSelection />} />
         <Route path="/currencies/crypto" element={<CryptoCurrencies />} />
         <Route path="/currencies/crypto/:ticker" element={<CryptoCurrency />} />
         <Route path="/correlations" element={<Correlations />} />

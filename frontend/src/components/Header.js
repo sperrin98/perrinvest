@@ -133,9 +133,6 @@ const Header = ({ isLoggedIn, onLogout }) => {
               <Link to="/market-leagues" onClick={closeMenu}>
                 Market Leagues
               </Link>
-              <Link to="/market-ratios/divide" onClick={closeMenu}>
-                Compare Securities
-              </Link>
             </div>
           </li>
 
