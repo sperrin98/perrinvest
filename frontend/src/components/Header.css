@@ -133,8 +133,7 @@
   right: 0;
 }
 
-.dropdown:hover > .dropdown-content,
-.dropdown:focus-within > .dropdown-content {
+.show-dropdown {
   opacity: 1;
   visibility: visible;
   pointer-events: auto;
@@ -284,15 +283,7 @@
     transition: max-height 0.18s ease, opacity 0.14s ease;
   }
 
-  .dropdown:hover > .dropdown-content,
-  .dropdown:focus-within > .dropdown-content {
-    opacity: 0;
-    visibility: hidden;
-    pointer-events: none;
-  }
-
-  .dropdown-content.show-mobile,
-  .dropdown-content-right.show-mobile {
+  .show-dropdown {
     opacity: 1;
     visibility: visible;
     pointer-events: auto;

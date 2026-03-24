@@ -212,7 +212,7 @@
 }
 
 .mlgRow:hover {
-  background: rgba(0, 77, 64, 0.08);
+  background: inherit;
 }
 
 .mlgRowSelected {
@@ -241,9 +241,24 @@
   margin-bottom: 10px;
 }
 
+.mlgChartHeaderSecondary {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 20px;
+  margin-bottom: 10px;
+}
+
 .mlgSubtitle {
   color: #00796b;
   font-size: 22px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.mlgSecondaryTitle {
+  color: #00796b;
+  font-size: 20px;
   font-weight: 700;
   line-height: 1.2;
 }
@@ -257,6 +272,13 @@
 .mlgChartWrapper {
   width: 100%;
   height: 600px;
+  padding: 8px 6px 0 6px;
+  box-sizing: border-box;
+}
+
+.mlgScoreChartWrapper {
+  width: 100%;
+  height: 320px;
   padding: 8px 6px 0 6px;
   box-sizing: border-box;
 }
@@ -311,6 +333,10 @@
     height: 520px;
   }
 
+  .mlgScoreChartWrapper {
+    height: 280px;
+  }
+
   .mlgScorePanel {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -350,6 +376,10 @@
 
   .mlgChartWrapper {
     height: 380px;
+  }
+
+  .mlgScoreChartWrapper {
+    height: 240px;
   }
 
   .mlgScorePanel {
