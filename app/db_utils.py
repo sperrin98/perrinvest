@@ -983,3 +983,32 @@ def fetch_long_term_interest_rate_histories(eco_id):
     finally:
         cursor.close()
         conn.close()
+
+def get_us_federal_debt_and_priced_in_gold():
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    try:
+        cursor.callproc("US_FEDERAL_DEBT_AND_PRICED_IN_GOLD")
+        results = []
+
+        for result in cursor.stored_results():
+            results = result.fetchall()
+
+        cursor.close()
+        conn.close()
+
+        return [
+            {
+                "price_date": row[0].strftime("%Y-%m-%d") if row[0] else None,
+                "us_federal_debt": float(row[1]) if row[1] is not None else None,
+                "us_federal_debt_priced_in_gold": float(row[2]) if row[2] is not None else None
+            }
+            for row in results
+        ]
+
+    except Exception as e:
+        cursor.close()
+        conn.close()
+        print(f"Error fetching US federal debt priced in gold: {e}")
+        return []

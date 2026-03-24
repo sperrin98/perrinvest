@@ -51,7 +51,8 @@ from app.db_utils import (
     get_long_only_watchlist_period_end_returns,
     get_rolling_corr,
     get_hpi_and_priced_in_gold_rebased_to_100,
-    fetch_long_term_interest_rate_histories
+    fetch_long_term_interest_rate_histories,
+    get_us_federal_debt_and_priced_in_gold
 )   
 import yfinance as yf
 from datetime import datetime, timedelta
@@ -1009,4 +1010,12 @@ def get_long_term_interest_rate_histories_route(eco_id):
         return jsonify({"error": str(e)}), 400
     except Exception as e:
         logger.exception("Error fetching long term interest rate histories")
+        return jsonify({"error": str(e)}), 500
+
+@main.route("/charts/us-federal-debt-priced-in-gold", methods=["GET"])
+def get_us_federal_debt_priced_in_gold_route():
+    try:
+        data = get_us_federal_debt_and_priced_in_gold()
+        return jsonify({"data": data})
+    except Exception as e:
         return jsonify({"error": str(e)}), 500
