@@ -5,6 +5,7 @@ import "./Header.css";
 const Header = ({ isLoggedIn, onLogout }) => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [mobileDropdown, setMobileDropdown] = useState(null);
+  const [desktopDropdown, setDesktopDropdown] = useState(null);
 
   const toggleMenu = () => {
     setMenuOpen((prev) => !prev);
@@ -17,16 +18,36 @@ const Header = ({ isLoggedIn, onLogout }) => {
     onLogout();
     setMenuOpen(false);
     setMobileDropdown(null);
+    setDesktopDropdown(null);
+    if (document.activeElement) {
+      document.activeElement.blur();
+    }
   };
 
   const closeMenu = () => {
     setMenuOpen(false);
     setMobileDropdown(null);
+    setDesktopDropdown(null);
+    if (document.activeElement) {
+      document.activeElement.blur();
+    }
   };
 
   const toggleMobileDropdown = (name) => {
     if (window.innerWidth <= 780) {
       setMobileDropdown((prev) => (prev === name ? null : name));
+    }
+  };
+
+  const handleDesktopEnter = (name) => {
+    if (window.innerWidth > 780) {
+      setDesktopDropdown(name);
+    }
+  };
+
+  const handleDesktopLeave = () => {
+    if (window.innerWidth > 780) {
+      setDesktopDropdown(null);
     }
   };
 
@@ -58,7 +79,11 @@ const Header = ({ isLoggedIn, onLogout }) => {
         </button>
 
         <ul className={`nav-links ${menuOpen ? "show" : ""}`}>
-          <li className="dropdown">
+          <li
+            className="dropdown"
+            onMouseEnter={() => handleDesktopEnter("returns")}
+            onMouseLeave={handleDesktopLeave}
+          >
             <button
               className="nav-item-button"
               type="button"
@@ -66,21 +91,27 @@ const Header = ({ isLoggedIn, onLogout }) => {
             >
               Returns
             </button>
-            <div className={`dropdown-content ${mobileDropdown === "returns" ? "show-mobile" : ""}`}>
+            <div
+              className={`dropdown-content ${
+                mobileDropdown === "returns" || desktopDropdown === "returns"
+                  ? "show-dropdown"
+                  : ""
+              }`}
+            >
               <Link to="/precious-metals" onClick={closeMenu}>
-                Daily Returns
+                Precious Metals Daily Returns
               </Link>
               <Link to="/monthly-returns" onClick={closeMenu}>
-                Monthly Returns
+                Precious Metals Monthly Returns
               </Link>
               <Link to="/returns/1" onClick={closeMenu}>
-                Gold Returns in Currencies
+                Gold Annual Returns by Currency
               </Link>
               <Link to="/returns/2" onClick={closeMenu}>
-                Silver Returns in Currencies
+                Silver Annual Returns by Currency
               </Link>
               <Link to="/summary-data" onClick={closeMenu}>
-                Summary Returns
+                Summary Returns by Asset Class
               </Link>
               <Link to="/long-only-watchlist" onClick={closeMenu}>
                 UK Shares and ETF Watchlist
@@ -88,7 +119,11 @@ const Header = ({ isLoggedIn, onLogout }) => {
             </div>
           </li>
 
-          <li className="dropdown">
+          <li
+            className="dropdown"
+            onMouseEnter={() => handleDesktopEnter("charts")}
+            onMouseLeave={handleDesktopLeave}
+          >
             <button
               className="nav-item-button"
               type="button"
@@ -96,7 +131,13 @@ const Header = ({ isLoggedIn, onLogout }) => {
             >
               Charts
             </button>
-            <div className={`dropdown-content ${mobileDropdown === "charts" ? "show-mobile" : ""}`}>
+            <div
+              className={`dropdown-content ${
+                mobileDropdown === "charts" || desktopDropdown === "charts"
+                  ? "show-dropdown"
+                  : ""
+              }`}
+            >
               <Link to="/securities" onClick={closeMenu}>
                 All Securities
               </Link>
@@ -118,15 +159,25 @@ const Header = ({ isLoggedIn, onLogout }) => {
             </div>
           </li>
 
-          <li className="dropdown">
-            <Link
-              to="/market-ratios"
-              className="nav-item-link"
-              onClick={closeMenu}
+          <li
+            className="dropdown"
+            onMouseEnter={() => handleDesktopEnter("ratios")}
+            onMouseLeave={handleDesktopLeave}
+          >
+            <button
+              className="nav-item-button"
+              type="button"
+              onClick={() => toggleMobileDropdown("ratios")}
             >
               Leagues & Ratios
-            </Link>
-            <div className={`dropdown-content ${mobileDropdown === "ratios" ? "show-mobile" : ""}`}>
+            </button>
+            <div
+              className={`dropdown-content ${
+                mobileDropdown === "ratios" || desktopDropdown === "ratios"
+                  ? "show-dropdown"
+                  : ""
+              }`}
+            >
               <Link to="/market-ratios" onClick={closeMenu}>
                 Market Ratios
               </Link>
@@ -136,7 +187,11 @@ const Header = ({ isLoggedIn, onLogout }) => {
             </div>
           </li>
 
-          <li className="dropdown">
+          <li
+            className="dropdown"
+            onMouseEnter={() => handleDesktopEnter("blogs")}
+            onMouseLeave={handleDesktopLeave}
+          >
             <button
               className="nav-item-button"
               type="button"
@@ -144,7 +199,13 @@ const Header = ({ isLoggedIn, onLogout }) => {
             >
               Blogs
             </button>
-            <div className={`dropdown-content ${mobileDropdown === "blogs" ? "show-mobile" : ""}`}>
+            <div
+              className={`dropdown-content ${
+                mobileDropdown === "blogs" || desktopDropdown === "blogs"
+                  ? "show-dropdown"
+                  : ""
+              }`}
+            >
               <Link to="/blog" onClick={closeMenu}>
                 View Blogs
               </Link>
@@ -167,7 +228,11 @@ const Header = ({ isLoggedIn, onLogout }) => {
               </button>
             </li>
           ) : (
-            <li className="dropdown">
+            <li
+              className="dropdown"
+              onMouseEnter={() => handleDesktopEnter("login")}
+              onMouseLeave={handleDesktopLeave}
+            >
               <button
                 className="nav-item-button"
                 type="button"
@@ -175,7 +240,13 @@ const Header = ({ isLoggedIn, onLogout }) => {
               >
                 Login
               </button>
-              <div className={`dropdown-content dropdown-content-right ${mobileDropdown === "login" ? "show-mobile" : ""}`}>
+              <div
+                className={`dropdown-content dropdown-content-right ${
+                  mobileDropdown === "login" || desktopDropdown === "login"
+                    ? "show-dropdown"
+                    : ""
+                }`}
+              >
                 <Link to="/login" onClick={closeMenu}>
                   Login
                 </Link>
