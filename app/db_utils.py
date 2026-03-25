@@ -915,22 +915,23 @@ def get_long_only_watchlist_period_end_returns(pDate):
         cursor.close()
         conn.close()
 
-def get_rolling_corr(p_security_id_1, p_security_id_2, p_frequency, p_history_length):
+def get_rolling_corr_new(p_security_id_1, p_security_id_2, p_frequency, p_range, p_end_date):
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
     try:
-        cursor.callproc('get_rolling_corr', [
+        cursor.callproc('get_rolling_corr_new', [
             p_security_id_1,
             p_security_id_2,
             p_frequency,
-            p_history_length
+            p_range,
+            p_end_date
         ])
 
         results = []
         for result in cursor.stored_results():
             results.extend(result.fetchall())
 
-        print("FIRST ROW RETURNED (ROLLING CORR):", results[0] if results else "NO DATA")
+        print("FIRST ROW RETURNED (ROLLING CORR NEW):", results[0] if results else "NO DATA")
         return results
     finally:
         cursor.close()

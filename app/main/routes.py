@@ -976,16 +976,26 @@ def rolling_corr_route():
         security_id_1 = request.args.get('security_id_1', type=int)
         security_id_2 = request.args.get('security_id_2', type=int)
         frequency = request.args.get('frequency', default='WEEKLY', type=str)
-        history_length = request.args.get('history_length', default=600, type=int)
+        range_value = request.args.get('range', default='3Y', type=str)
+        end_date = request.args.get('end_date', type=str)
 
         if security_id_1 is None or security_id_2 is None:
             return jsonify({'error': 'security_id_1 and security_id_2 required'}), 400
 
-        data = get_rolling_corr(security_id_1, security_id_2, frequency, history_length)
+        if not end_date:
+            return jsonify({'error': 'end_date required'}), 400
+
+        data = get_rolling_corr_new(
+            security_id_1,
+            security_id_2,
+            frequency,
+            range_value,
+            end_date
+        )
         return jsonify(data)
 
     except Exception as e:
-        print("ERROR (ROLLING CORR):", str(e))
+        print("ERROR (ROLLING CORR NEW):", str(e))
         return jsonify({'error': str(e)}), 500
 
 @main.route('/hpi-and-priced-in-gold-rebased-to-100', methods=['GET'])

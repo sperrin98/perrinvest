@@ -1,10 +1,8 @@
-/* PAGE WRAP */
 .crl-page {
   padding-top: 82px;
   box-sizing: border-box;
 }
 
-/* MAIN LAYOUT */
 .crl-container {
   display: flex;
   width: 100vw;
@@ -13,7 +11,6 @@
   box-sizing: border-box;
 }
 
-/* SIDEBAR */
 .crl-sidebar {
   width: 22%;
   background: linear-gradient(135deg, #00796b, #004d40);
@@ -44,7 +41,6 @@
   opacity: 0.9;
 }
 
-/* CONTROLS */
 .crl-control {
   position: relative;
   display: flex;
@@ -155,7 +151,6 @@
   border-radius: 8px;
 }
 
-/* DROPDOWN */
 .crl-dd {
   position: absolute;
   top: 78px;
@@ -204,7 +199,6 @@
   color: #004d40;
 }
 
-/* MAIN */
 .crl-main {
   width: 78%;
   padding: 20px;
@@ -224,7 +218,6 @@
   text-align: center;
 }
 
-/* CHART STACK */
 .crl-charts {
   flex: 1;
   display: flex;
@@ -268,7 +261,6 @@
   opacity: 0.75;
 }
 
-/* Recharts scoped tweaks */
 .crl-charts .recharts-cartesian-axis-ticks text {
   font-size: 12px;
 }
