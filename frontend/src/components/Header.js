@@ -156,8 +156,34 @@ const Header = ({ isLoggedIn, onLogout }) => {
               <Link to="/charts/us-federal-debt-priced-in-gold" onClick={closeMenu}>
                 US Federal Debt v Gold
               </Link>
+            </div>
+          </li>
+
+          <li
+            className="dropdown"
+            onMouseEnter={() => handleDesktopEnter("correlations")}
+            onMouseLeave={handleDesktopLeave}
+          >
+            <button
+              className="nav-item-button"
+              type="button"
+              onClick={() => toggleMobileDropdown("correlations")}
+            >
+              Correlations
+            </button>
+            <div
+              className={`dropdown-content ${
+                mobileDropdown === "correlations" ||
+                desktopDropdown === "correlations"
+                  ? "show-dropdown"
+                  : ""
+              }`}
+            >
               <Link to="/correlations" onClick={closeMenu}>
-                Correlations
+                Comparing Securities
+              </Link>
+              <Link to="/correlation-matrix" onClick={closeMenu}>
+                Correlation Matrix
               </Link>
             </div>
           </li>

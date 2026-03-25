@@ -52,7 +52,9 @@ from app.db_utils import (
     get_rolling_corr,
     get_hpi_and_priced_in_gold_rebased_to_100,
     fetch_long_term_interest_rate_histories,
-    get_us_federal_debt_and_priced_in_gold
+    get_us_federal_debt_and_priced_in_gold,
+    fetch_correlation_matrices,
+    fetch_corr_matrix_square_for_date,
 )   
 import yfinance as yf
 from datetime import datetime, timedelta
@@ -1016,6 +1018,32 @@ def get_long_term_interest_rate_histories_route(eco_id):
 def get_us_federal_debt_priced_in_gold_route():
     try:
         data = get_us_federal_debt_and_priced_in_gold()
+        return jsonify({"data": data})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@main.route("/correlation-matrices", methods=["GET"])
+def get_correlation_matrices_route():
+    try:
+        data = fetch_correlation_matrices()
+        return jsonify({"data": data})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@main.route("/correlation-matrices/square", methods=["GET"])
+def get_correlation_matrix_square_route():
+    matrix_id = request.args.get("matrix_id")
+    as_of_date = request.args.get("as_of_date")
+
+    if not matrix_id:
+        return jsonify({"error": "Missing matrix_id parameter"}), 400
+
+    if not as_of_date:
+        return jsonify({"error": "Missing as_of_date parameter"}), 400
+
+    try:
+        data = fetch_corr_matrix_square_for_date(matrix_id, as_of_date)
         return jsonify({"data": data})
     except Exception as e:
         return jsonify({"error": str(e)}), 500

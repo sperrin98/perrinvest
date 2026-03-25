@@ -10,6 +10,7 @@ import EcoDataPoint from './components/EcoDataPoint';
 import Currencies from './components/Currencies';
 import Currency from './components/Currency';
 import Correlations from './components/Correlations';
+import CorrelationMatrix from './components/CorrelationMatrix';
 import Login from './components/Login';
 import Register from './components/Register';
 import Returns from './components/Returns';
@@ -47,11 +48,13 @@ function App() {
     const loggedIn = localStorage.getItem('isLoggedIn') === 'true';
     const storedUserId = localStorage.getItem('userId');
     const storedIsAdmin = localStorage.getItem('isAdmin') === 'true';
+
     if (loggedIn) {
       setIsLoggedIn(true);
       setUserId(storedUserId);
       setIsAdmin(storedIsAdmin);
     }
+
     setLoading(false);
   }, []);
 
@@ -88,6 +91,7 @@ function App() {
         <Route path="/currencies" element={<Currencies />} />
         <Route path="/currencies/:id" element={<Currency />} />
         <Route path="/correlations" element={<Correlations />} />
+        <Route path="/correlation-matrix" element={<CorrelationMatrix />} />
         <Route path="/login" element={<Login onLogin={handleLogin} />} />
         <Route path="/register" element={<Register onLogin={handleLogin} />} />
         <Route path="/returns" element={<Returns />} />
@@ -101,12 +105,17 @@ function App() {
         <Route path="/monthly-returns" element={<MonthlyReturns />} />
         <Route path="/equity-markets" element={<EquityMarkets />} />
         <Route path="/commodities" element={<Commodities />} />
+        <Route path="/bond-yields" element={<BondYields />} />
+        <Route
+          path="/charts/us-federal-debt-priced-in-gold"
+          element={<FederalDebtGold />}
+        />
+
         <Route path="/blog" element={<BlogList />} />
         <Route path="/blog/:id" element={<BlogPost />} />
         <Route path="/summary-data" element={<SummaryData />} />
         <Route path="/long-only-watchlist" element={<LongOnlyWatchlist />} />
-        <Route path="/bond-yields" element={<BondYields />} />
-        <Route path="/charts/us-federal-debt-priced-in-gold" element={<FederalDebtGold />} />
+
         <Route
           path="/blog/create"
           element={
