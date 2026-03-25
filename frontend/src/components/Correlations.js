@@ -11,7 +11,6 @@ import {
   Legend
 } from 'recharts';
 
-// Format date as YYYY-MM-DD
 const formatDateYYYYMMDD = (dateStr) => {
   const d = new Date(dateStr);
   if (Number.isNaN(d.getTime())) return String(dateStr);
@@ -74,17 +73,32 @@ function Correlations() {
     []
   );
 
+  const ranges = useMemo(
+    () => [
+      { value: '1Y', label: '1Y' },
+      { value: '3Y', label: '3Y' },
+      { value: '5Y', label: '5Y' },
+      { value: '10Y', label: '10Y' },
+      { value: 'MAX', label: 'MAX' }
+    ],
+    []
+  );
+
   const [freqQuery, setFreqQuery] = useState('');
   const [freqOpen, setFreqOpen] = useState(false);
   const [frequency, setFrequency] = useState('');
   const [freqTyping, setFreqTyping] = useState(false);
 
-  const [historyLength, setHistoryLength] = useState(600);
+  const [rangeQuery, setRangeQuery] = useState('');
+  const [rangeOpen, setRangeOpen] = useState(false);
+  const [rangeValue, setRangeValue] = useState('');
+  const [rangeTyping, setRangeTyping] = useState(false);
+
+  const [endDate, setEndDate] = useState(new Date().toISOString().split('T')[0]);
 
   const [priceSeries, setPriceSeries] = useState([]);
   const [corrSeries, setCorrSeries] = useState([]);
 
-  // ✅ nothing in main area until click
   const [hasLoaded, setHasLoaded] = useState(false);
 
   const [loading, setLoading] = useState(false);
@@ -93,12 +107,14 @@ function Correlations() {
   const sec1Ref = useRef(null);
   const sec2Ref = useRef(null);
   const freqRef = useRef(null);
+  const rangeRef = useRef(null);
 
   useEffect(() => {
     const onClick = (e) => {
       if (sec1Ref.current && !sec1Ref.current.contains(e.target)) setSec1Open(false);
       if (sec2Ref.current && !sec2Ref.current.contains(e.target)) setSec2Open(false);
       if (freqRef.current && !freqRef.current.contains(e.target)) setFreqOpen(false);
+      if (rangeRef.current && !rangeRef.current.contains(e.target)) setRangeOpen(false);
     };
     document.addEventListener('mousedown', onClick);
     return () => document.removeEventListener('mousedown', onClick);
@@ -175,6 +191,13 @@ function Correlations() {
     return frequencies.filter((f) => f.label.includes(q));
   }, [frequencies, freqQuery, freqTyping]);
 
+  const filteredRange = useMemo(() => {
+    if (!rangeTyping) return ranges;
+    const q = (rangeQuery || '').trim().toUpperCase();
+    if (!q) return ranges;
+    return ranges.filter((r) => r.label.includes(q));
+  }, [ranges, rangeQuery, rangeTyping]);
+
   const pickSecurity1 = (s) => {
     setSecurity1(s);
     setSec1Query(formatSecurityLabel(s));
@@ -192,6 +215,13 @@ function Correlations() {
     setFreqQuery(f.label);
     setFreqTyping(false);
     setFreqOpen(false);
+  };
+
+  const pickRange = (r) => {
+    setRangeValue(r.value);
+    setRangeQuery(r.label);
+    setRangeTyping(false);
+    setRangeOpen(false);
   };
 
   const fetchAll = async () => {
@@ -213,6 +243,14 @@ function Correlations() {
       setError('Pick a frequency (DAILY / WEEKLY / MONTHLY / QUARTERLY).');
       return;
     }
+    if (!rangeValue) {
+      setError('Pick a range (1Y / 3Y / 5Y / 10Y / MAX).');
+      return;
+    }
+    if (!endDate) {
+      setError('Pick an end date.');
+      return;
+    }
 
     setLoading(true);
 
@@ -227,26 +265,28 @@ function Correlations() {
         security_id_1: String(id1),
         security_id_2: String(id2),
         frequency,
-        history_length: String(historyLength)
+        range: rangeValue,
+        end_date: endDate
       });
+
       const corrUrl = `${apiBase}/rolling-corr?${corrParams.toString()}&_=${Date.now()}`;
 
       const [resP1, resP2, resC] = await Promise.all([
         fetch(priceUrl1, { cache: 'no-store', headers: { 'Cache-Control': 'no-cache' } }),
         fetch(priceUrl2, { cache: 'no-store', headers: { 'Cache-Control': 'no-cache' } }),
-        fetch(corrUrl,  { cache: 'no-store', headers: { 'Cache-Control': 'no-cache' } })
+        fetch(corrUrl, { cache: 'no-store', headers: { 'Cache-Control': 'no-cache' } })
       ]);
 
       const [txtP1, txtP2, txtC] = await Promise.all([resP1.text(), resP2.text(), resC.text()]);
 
       let jsonP1, jsonP2, jsonC;
-      try { jsonP1 = JSON.parse(txtP1); } catch { throw new Error(`Price A not JSON. First 200: ${txtP1.slice(0,200)}`); }
-      try { jsonP2 = JSON.parse(txtP2); } catch { throw new Error(`Price B not JSON. First 200: ${txtP2.slice(0,200)}`); }
-      try { jsonC  = JSON.parse(txtC);  } catch { throw new Error(`Corr not JSON. First 200: ${txtC.slice(0,200)}`); }
+      try { jsonP1 = JSON.parse(txtP1); } catch { throw new Error(`Price A not JSON. First 200: ${txtP1.slice(0, 200)}`); }
+      try { jsonP2 = JSON.parse(txtP2); } catch { throw new Error(`Price B not JSON. First 200: ${txtP2.slice(0, 200)}`); }
+      try { jsonC = JSON.parse(txtC); } catch { throw new Error(`Corr not JSON. First 200: ${txtC.slice(0, 200)}`); }
 
       if (!resP1.ok) throw new Error(jsonP1?.error || `Price A failed (${resP1.status})`);
       if (!resP2.ok) throw new Error(jsonP2?.error || `Price B failed (${resP2.status})`);
-      if (!resC.ok)  throw new Error(jsonC?.error  || `Correlation failed (${resC.status})`);
+      if (!resC.ok) throw new Error(jsonC?.error || `Correlation failed (${resC.status})`);
 
       const s1 = normalizePriceHistory(jsonP1);
       const s2 = normalizePriceHistory(jsonP2);
@@ -254,19 +294,34 @@ function Correlations() {
       const map = new Map();
       for (const r of s1) map.set(r.date, { date: r.date, price1: r.price, price2: null });
       for (const r of s2) {
-        if (map.has(r.date)) map.get(r.date).price2 = r.price;
-        else map.set(r.date, { date: r.date, price1: null, price2: r.price });
+        if (map.has(r.date)) {
+          map.get(r.date).price2 = r.price;
+        } else {
+          map.set(r.date, { date: r.date, price1: null, price2: r.price });
+        }
       }
 
       const merged = Array.from(map.values()).sort((a, b) => new Date(a.date) - new Date(b.date));
-      setPriceSeries(merged);
 
       const corrRows = Array.isArray(jsonC) ? jsonC : [];
-      const corrClean = corrRows.map((r) => ({
-        date: r.price_date_1,
-        corr: r.rolling_90_correlation == null ? null : Number(r.rolling_90_correlation)
-      }));
+      const corrClean = corrRows
+        .map((r) => ({
+          date: formatDateYYYYMMDD(r.as_of_date),
+          corr: r.rolling_90_correlation == null ? null : Number(r.rolling_90_correlation)
+        }))
+        .filter((r) => r.date)
+        .sort((a, b) => new Date(a.date) - new Date(b.date));
+
       setCorrSeries(corrClean);
+
+      if (corrClean.length > 0) {
+        const corrDates = new Set(corrClean.map((r) => r.date));
+
+        const trimmedPriceSeries = merged.filter((row) => corrDates.has(row.date));
+        setPriceSeries(trimmedPriceSeries);
+      } else {
+        setPriceSeries([]);
+      }
     } catch (e) {
       setError(e.message || 'Fetch error');
     } finally {
@@ -278,9 +333,9 @@ function Correlations() {
   const secBName = security2 ? formatSecurityLabel(security2) : '';
 
   const title = useMemo(() => {
-    if (!security1 || !security2 || !frequency) return '';
-    return `${secAName} vs ${secBName} (${frequency})`;
-  }, [secAName, secBName, security1, security2, frequency]);
+    if (!security1 || !security2 || !frequency || !rangeValue) return '';
+    return `${secAName} vs ${secBName} (${frequency}, ${rangeValue})`;
+  }, [secAName, secBName, security1, security2, frequency, rangeValue]);
 
   const Dropdown = ({ open, items, onPick, emptyText, isSecurity }) => {
     if (!open) return null;
@@ -313,7 +368,7 @@ function Correlations() {
         <div className="crl-sidebar">
           <div className="crl-sidebar-top">
             <h2 className="crl-sidebar-title">Correlations</h2>
-            <div className="crl-sidebar-subtitle">Pick two securities, choose frequency, then load.</div>
+            <div className="crl-sidebar-subtitle">Pick two securities, frequency, range, and end date.</div>
           </div>
 
           {secLoading ? <div className="crl-hint">Loading securities…</div> : null}
@@ -421,17 +476,52 @@ function Correlations() {
             <Dropdown open={freqOpen} items={filteredFreq} onPick={pickFrequency} emptyText="No matches" />
           </div>
 
+          <div className="crl-control" ref={rangeRef}>
+            <label>Range</label>
+            <div className="crl-dd-inputWrap">
+              <input
+                className="crl-input crl-dd-input"
+                value={rangeQuery}
+                placeholder="Select range…"
+                onChange={(e) => {
+                  setRangeTyping(true);
+                  setRangeQuery(e.target.value.toUpperCase());
+                  setRangeOpen(true);
+                }}
+                onFocus={(e) => {
+                  e.target.select();
+                  setRangeTyping(false);
+                  setRangeOpen(true);
+                }}
+                onClick={(e) => {
+                  e.target.select();
+                  setRangeTyping(false);
+                  setRangeOpen(true);
+                }}
+              />
+              <button
+                type="button"
+                className="crl-dd-toggle"
+                onClick={() => {
+                  setRangeTyping(false);
+                  setRangeOpen((p) => !p);
+                }}
+                aria-label="Toggle Range dropdown"
+              >
+                ▾
+              </button>
+            </div>
+            <Dropdown open={rangeOpen} items={filteredRange} onPick={pickRange} emptyText="No matches" />
+          </div>
+
           <div className="crl-control">
-            <label>History Length</label>
+            <label>End Date</label>
             <input
               className="crl-input"
-              type="number"
-              min={91}
-              step={1}
-              value={historyLength}
-              onChange={(e) => setHistoryLength(Number(e.target.value))}
+              type="date"
+              value={endDate}
+              onChange={(e) => setEndDate(e.target.value)}
             />
-            <div className="crl-hint">Must be ≥ 91.</div>
           </div>
 
           <button className="crl-btn" onClick={fetchAll} disabled={loading} type="button">
@@ -440,11 +530,12 @@ function Correlations() {
 
           {error ? <div className="crl-error">{error}</div> : null}
 
-          <div className="crl-hint crl-footnote">Correlation is NULL until 90 periods exist.</div>
+          <div className="crl-hint crl-footnote">
+            Rolling correlation is shown only where the 90-period window exists.
+          </div>
         </div>
 
         <div className="crl-main">
-          {/* ✅ nothing shows here until click */}
           {!hasLoaded ? null : (
             <>
               {title ? <h1 className="crl-title">{title}</h1> : null}

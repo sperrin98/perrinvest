@@ -915,22 +915,23 @@ def get_long_only_watchlist_period_end_returns(pDate):
         cursor.close()
         conn.close()
 
-def get_rolling_corr(p_security_id_1, p_security_id_2, p_frequency, p_history_length):
+def get_rolling_corr_new(p_security_id_1, p_security_id_2, p_frequency, p_range, p_end_date):
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
     try:
-        cursor.callproc('get_rolling_corr', [
+        cursor.callproc('get_rolling_corr_new', [
             p_security_id_1,
             p_security_id_2,
             p_frequency,
-            p_history_length
+            p_range,
+            p_end_date
         ])
 
         results = []
         for result in cursor.stored_results():
             results.extend(result.fetchall())
 
-        print("FIRST ROW RETURNED (ROLLING CORR):", results[0] if results else "NO DATA")
+        print("FIRST ROW RETURNED (ROLLING CORR NEW):", results[0] if results else "NO DATA")
         return results
     finally:
         cursor.close()
@@ -1012,3 +1013,78 @@ def get_us_federal_debt_and_priced_in_gold():
         conn.close()
         print(f"Error fetching US federal debt priced in gold: {e}")
         return []
+
+def fetch_correlation_matrices():
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+
+    try:
+        cursor.execute("""
+            SELECT
+                id,
+                constituents,
+                name,
+                description,
+                created_at,
+                updated_at
+            FROM correlation_matrices
+            ORDER BY id
+        """)
+        results = cursor.fetchall()
+        cursor.close()
+        conn.close()
+        return results
+    except Exception as e:
+        cursor.close()
+        conn.close()
+        print(f"Error fetching correlation matrices: {e}")
+        return []
+
+
+def fetch_corr_matrix_square_for_date(matrix_id, as_of_date):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    try:
+        cursor.callproc("get_corr_matrix_square_for_date", [int(matrix_id), as_of_date])
+
+        results = []
+        columns = []
+
+        for result in cursor.stored_results():
+            columns = result.column_names
+            results = result.fetchall()
+
+        cursor.close()
+        conn.close()
+
+        if not columns or not results:
+            return {
+                "columns": [],
+                "rows": []
+            }
+
+        parsed_rows = []
+        for row in results:
+            row_obj = {}
+            for idx, col in enumerate(columns):
+                value = row[idx]
+                if col == "row_name":
+                    row_obj[col] = value
+                else:
+                    row_obj[col] = float(value) if value is not None else None
+            parsed_rows.append(row_obj)
+
+        return {
+            "columns": list(columns),
+            "rows": parsed_rows
+        }
+
+    except Exception as e:
+        cursor.close()
+        conn.close()
+        print(f"Error fetching correlation matrix square: {e}")
+        return {
+            "columns": [],
+            "rows": []
+        }
