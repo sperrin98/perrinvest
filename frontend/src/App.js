@@ -31,6 +31,7 @@ import SummaryData from './components/SummaryData';
 import LongOnlyWatchlist from './components/LongOnlyWatchlist';
 import BondYields from './components/BondYields';
 import FederalDebtGold from './components/FederalDebtGold';
+import RebasedComparison from './components/RebasedComparison';
 
 const AdminRoute = ({ isLoggedIn, isAdmin, children }) => {
   if (!isLoggedIn) return <Navigate to="/login" />;
@@ -48,13 +49,11 @@ function App() {
     const loggedIn = localStorage.getItem('isLoggedIn') === 'true';
     const storedUserId = localStorage.getItem('userId');
     const storedIsAdmin = localStorage.getItem('isAdmin') === 'true';
-
     if (loggedIn) {
       setIsLoggedIn(true);
       setUserId(storedUserId);
       setIsAdmin(storedIsAdmin);
     }
-
     setLoading(false);
   }, []);
 
@@ -92,6 +91,8 @@ function App() {
         <Route path="/currencies/:id" element={<Currency />} />
         <Route path="/correlations" element={<Correlations />} />
         <Route path="/correlation-matrix" element={<CorrelationMatrix />} />
+        <Route path="/rebased-comparison" element={<RebasedComparison />} />
+        <Route path="/charts/us-federal-debt-priced-in-gold" element={<FederalDebtGold />} />
         <Route path="/login" element={<Login onLogin={handleLogin} />} />
         <Route path="/register" element={<Register onLogin={handleLogin} />} />
         <Route path="/returns" element={<Returns />} />
@@ -105,17 +106,11 @@ function App() {
         <Route path="/monthly-returns" element={<MonthlyReturns />} />
         <Route path="/equity-markets" element={<EquityMarkets />} />
         <Route path="/commodities" element={<Commodities />} />
-        <Route path="/bond-yields" element={<BondYields />} />
-        <Route
-          path="/charts/us-federal-debt-priced-in-gold"
-          element={<FederalDebtGold />}
-        />
-
         <Route path="/blog" element={<BlogList />} />
         <Route path="/blog/:id" element={<BlogPost />} />
         <Route path="/summary-data" element={<SummaryData />} />
         <Route path="/long-only-watchlist" element={<LongOnlyWatchlist />} />
-
+        <Route path="/bond-yields" element={<BondYields />} />
         <Route
           path="/blog/create"
           element={
