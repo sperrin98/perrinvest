@@ -156,6 +156,9 @@ const Header = ({ isLoggedIn, onLogout }) => {
               <Link to="/charts/us-federal-debt-priced-in-gold" onClick={closeMenu}>
                 US Federal Debt v Gold
               </Link>
+              <Link to="/rebased-comparison" onClick={closeMenu}>
+                Rebased Comparison
+              </Link>
             </div>
           </li>
 
@@ -173,8 +176,7 @@ const Header = ({ isLoggedIn, onLogout }) => {
             </button>
             <div
               className={`dropdown-content ${
-                mobileDropdown === "correlations" ||
-                desktopDropdown === "correlations"
+                mobileDropdown === "correlations" || desktopDropdown === "correlations"
                   ? "show-dropdown"
                   : ""
               }`}
