@@ -1,0 +1,280 @@
+.ddContainer {
+  display: flex;
+  width: 100vw;
+  min-height: 100vh;
+  background-color: #f8f8f8;
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+}
+
+.ddSidebar {
+  width: 22%;
+  background: linear-gradient(135deg, #00796b, #004d40);
+  padding: 25px;
+  padding-top: 120px;
+  box-sizing: border-box;
+  color: white;
+  border-right: 3px solid #00332c;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.ddSidebarTitle {
+  font-size: 1.3rem;
+  margin-bottom: 18px;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.3);
+  padding-bottom: 6px;
+}
+
+.ddFilterBlock {
+  margin-bottom: 18px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.ddFilterLabel {
+  margin-bottom: 6px;
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.ddInput {
+  padding: 10px 12px;
+  min-height: 44px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  font-size: 14px;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.ddInput:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.ddInput:focus {
+  background: rgba(255, 255, 255, 0.25);
+  border-color: rgba(255, 255, 255, 0.55);
+}
+
+.ddInput option {
+  color: #004d40;
+}
+
+.ddDropdown {
+  position: absolute;
+  top: 78px;
+  left: 0;
+  right: 0;
+  max-height: 420px;
+  overflow-y: auto;
+  background: white;
+  border-radius: 8px;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  z-index: 999;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.16);
+}
+
+.ddDropdownItem {
+  width: 100%;
+  padding: 10px 12px;
+  border: none;
+  background: white;
+  text-align: left;
+  cursor: pointer;
+  color: #004d40;
+  font-size: 14px;
+}
+
+.ddDropdownItem:hover {
+  background: rgba(0, 121, 107, 0.08);
+}
+
+.ddDropdownEmpty {
+  padding: 10px 12px;
+  color: #004d40;
+  font-size: 14px;
+}
+
+.ddLoadButton {
+  margin-top: 6px;
+  padding: 12px;
+  border: none;
+  border-radius: 10px;
+  background: white;
+  color: #004d40;
+  font-weight: 700;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.ddLoadButton:hover {
+  transform: scale(1.02);
+}
+
+.ddLoadButton:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.ddError {
+  margin-top: 12px;
+  color: #ffcccc;
+  background: rgba(0, 0, 0, 0.18);
+  padding: 10px 12px;
+  border-radius: 8px;
+  font-weight: 700;
+}
+
+.ddMain {
+  width: 78%;
+  padding: 20px 28px 60px 28px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.ddTitle {
+  margin-top: 110px;
+  color: #00796b;
+  font-size: 32px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+  margin-bottom: 18px;
+  text-align: center;
+  width: 100%;
+}
+
+.ddChartCard,
+.ddTableCard {
+  width: 100%;
+  background: white;
+  border-radius: 12px;
+  padding: 14px 16px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.07);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  margin-bottom: 18px;
+}
+
+.ddChartWrapper {
+  width: 100%;
+  height: 560px;
+}
+
+.ddEmptyState {
+  min-height: 240px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #5b6d68;
+  font-size: 15px;
+  text-align: center;
+  padding: 20px;
+}
+
+.ddTableHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.ddTableTitle {
+  color: #004d40;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.ddTableMeta {
+  font-size: 12px;
+  color: #6a7a76;
+}
+
+.ddTableWrapper {
+  width: 100%;
+  overflow: auto;
+  border-radius: 10px;
+}
+
+.ddTable {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.ddTable th,
+.ddTable td {
+  padding: 10px 10px;
+  text-align: center;
+  font-size: 12.5px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  white-space: nowrap;
+}
+
+.ddTable th {
+  color: #004d40;
+  font-weight: 800;
+  background: #f3f7f6;
+  position: sticky;
+  top: 0;
+}
+
+.ddTable tbody tr:nth-child(even) {
+  background: rgba(0, 0, 0, 0.02);
+}
+
+.ddNegative {
+  color: #d64545;
+  font-weight: 700;
+}
+
+.ddNoData {
+  color: #5b6d68;
+  padding: 18px 12px;
+}
+
+@media (max-width: 900px) {
+  .ddSidebar {
+    width: 35%;
+  }
+
+  .ddMain {
+    width: 65%;
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+}
+
+@media (max-width: 650px) {
+  .ddContainer {
+    flex-direction: column;
+  }
+
+  .ddSidebar {
+    width: 100%;
+    padding-top: 90px;
+    border-right: none;
+    border-bottom: 3px solid #00332c;
+  }
+
+  .ddMain {
+    width: 100%;
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+
+  .ddTitle {
+    margin-top: 30px;
+    font-size: 26px;
+  }
+
+  .ddChartWrapper {
+    height: 380px;
+  }
+}
