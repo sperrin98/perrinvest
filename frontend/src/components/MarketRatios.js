@@ -35,8 +35,8 @@ const addYears = (date, years) => {
 
 const startOfWeekMonday = (date) => {
   const d = new Date(date);
-  const day = d.getDay(); // 0=Sun .. 6=Sat
-  const diff = (day === 0 ? -6 : 1) - day; // move to Monday
+  const day = d.getDay();
+  const diff = (day === 0 ? -6 : 1) - day;
   d.setDate(d.getDate() + diff);
   d.setHours(0, 0, 0, 0);
   return d;
@@ -51,15 +51,14 @@ const startOfMonth = (date) => {
 
 const startOfQuarter = (date) => {
   const d = new Date(date);
-  const q = Math.floor(d.getMonth() / 3); // 0..3
+  const q = Math.floor(d.getMonth() / 3);
   d.setMonth(q * 3, 1);
   d.setHours(0, 0, 0, 0);
   return d;
 };
 
-// For each bucket, keep the LAST value (so it looks like a price series)
+// For each bucket, keep the LAST value
 const aggregateSeries = (rows, mode) => {
-  // rows: [{ date: "YYYY-MM-DD", value: number }]
   const map = new Map();
 
   for (const r of rows) {
@@ -72,15 +71,36 @@ const aggregateSeries = (rows, mode) => {
     else keyDate = dt;
 
     const key = toISODate(keyDate);
-
-    // overwrite => keeps last value encountered in that bucket
     map.set(key, { date: key, value: r.value });
   }
 
-  // sort by date ascending
   return Array.from(map.values()).sort(
     (a, b) => new Date(a.date) - new Date(b.date)
   );
+};
+
+const mean = (arr) => {
+  if (!arr.length) return null;
+  return arr.reduce((sum, x) => sum + x, 0) / arr.length;
+};
+
+const stdDev = (arr) => {
+  if (arr.length < 2) return 0;
+  const avg = mean(arr);
+  const variance =
+    arr.reduce((sum, x) => sum + Math.pow(x - avg, 2), 0) / arr.length;
+  return Math.sqrt(variance);
+};
+
+const percentileRank = (arr, value) => {
+  if (!arr.length || value === null || value === undefined) return null;
+  const belowOrEqual = arr.filter((x) => x <= value).length;
+  return (belowOrEqual / arr.length) * 100;
+};
+
+const formatNumber = (value, decimals = 2) => {
+  if (value === null || value === undefined || Number.isNaN(value)) return "-";
+  return Number(value).toFixed(decimals);
 };
 
 function MarketRatios() {
@@ -92,17 +112,14 @@ function MarketRatios() {
 
   const [selectedRatioId, setSelectedRatioId] = useState(null);
   const [ratioName, setRatioName] = useState("");
-  const [ratioData, setRatioData] = useState([]); // full fetched series
+  const [ratioData, setRatioData] = useState([]);
   const [loadingChart, setLoadingChart] = useState(false);
   const [chartError, setChartError] = useState("");
 
-  // timeframe rail: D/W/M/Q/ALL
   const [timeframe, setTimeframe] = useState("M");
 
-  // Put your "best" ratios here if you want to pin them
   const BEST_RATIO_IDS = [];
 
-  // Fetch list
   useEffect(() => {
     axios
       .get(`${process.env.REACT_APP_API_URL}/market-ratios`)
@@ -121,26 +138,20 @@ function MarketRatios() {
       });
   }, []);
 
-  // Filter list (same logic as you had)
   useEffect(() => {
     if (Array.isArray(marketRatios)) {
       setFilteredMarketRatios(
         marketRatios.filter(
           (marketRatio) =>
             (marketRatio[1] &&
-              marketRatio[1]
-                .toLowerCase()
-                .includes(searchTerm.toLowerCase())) ||
+              marketRatio[1].toLowerCase().includes(searchTerm.toLowerCase())) ||
             (marketRatio[2] &&
-              marketRatio[2]
-                .toLowerCase()
-                .includes(searchTerm.toLowerCase()))
+              marketRatio[2].toLowerCase().includes(searchTerm.toLowerCase()))
         )
       );
     }
   }, [searchTerm, marketRatios]);
 
-  // Split best/all (optional)
   const bestRatios = useMemo(() => {
     if (!Array.isArray(filteredMarketRatios) || BEST_RATIO_IDS.length === 0)
       return [];
@@ -153,7 +164,6 @@ function MarketRatios() {
     return filteredMarketRatios.filter((r) => !BEST_RATIO_IDS.includes(r[0]));
   }, [filteredMarketRatios]);
 
-  // Fetch chart data for selected ratio
   useEffect(() => {
     const fetchMarketRatioData = async () => {
       if (!selectedRatioId) return;
@@ -175,7 +185,6 @@ function MarketRatios() {
           value: item[1],
         }));
 
-        // Ensure sorted
         formattedRatioData.sort(
           (a, b) => new Date(a.date) - new Date(b.date)
         );
@@ -194,19 +203,16 @@ function MarketRatios() {
     fetchMarketRatioData();
   }, [selectedRatioId]);
 
-  // Apply timeframe logic (range + aggregation)
   const displayedSeries = useMemo(() => {
     if (!ratioData || ratioData.length === 0) return [];
 
     const now = new Date();
-
     let start = null;
 
     if (timeframe === "D") start = addYears(now, -1);
     if (timeframe === "W") start = addYears(now, -5);
     if (timeframe === "M") start = addYears(now, -10);
 
-    // Q and ALL are inception -> today
     if (timeframe === "Q") start = null;
     if (timeframe === "ALL") start = null;
 
@@ -214,34 +220,83 @@ function MarketRatios() {
       ? ratioData.filter((r) => new Date(r.date) >= start)
       : ratioData;
 
-    // Daily views (no aggregation)
     if (timeframe === "D" || timeframe === "ALL") return filtered;
 
-    // Aggregated views
-    return aggregateSeries(filtered, timeframe); // W / M / Q
+    return aggregateSeries(filtered, timeframe);
   }, [ratioData, timeframe]);
 
-  // Y-axis dynamic scaling (based on displayed series)
+  const fullHistoryStats = useMemo(() => {
+    if (!ratioData.length) {
+      return {
+        currentRatio: null,
+        longRunMean: null,
+        std: null,
+        upperBand: null,
+        lowerBand: null,
+        percentile: null,
+        zScore: null,
+      };
+    }
+
+    const values = ratioData
+      .map((x) => Number(x.value))
+      .filter((x) => !Number.isNaN(x));
+
+    if (!values.length) {
+      return {
+        currentRatio: null,
+        longRunMean: null,
+        std: null,
+        upperBand: null,
+        lowerBand: null,
+        percentile: null,
+        zScore: null,
+      };
+    }
+
+    const currentRatio = values[values.length - 1];
+    const longRunMean = mean(values);
+    const std = stdDev(values);
+    const upperBand = longRunMean + std;
+    const lowerBand = longRunMean - std;
+    const percentile = percentileRank(values, currentRatio);
+    const zScore =
+      std && std !== 0 ? (currentRatio - longRunMean) / std : null;
+
+    return {
+      currentRatio,
+      longRunMean,
+      std,
+      upperBand,
+      lowerBand,
+      percentile,
+      zScore,
+    };
+  }, [ratioData]);
+
   const values = useMemo(
     () => displayedSeries.map((x) => x.value),
     [displayedSeries]
   );
 
-  const maxValue = values.length ? Math.max(...values) : 0;
-  const minValue = values.length ? Math.min(...values) : 0;
+  const chartBandValues = useMemo(() => {
+    const arr = [...values];
+    if (fullHistoryStats.longRunMean !== null) arr.push(fullHistoryStats.longRunMean);
+    if (fullHistoryStats.upperBand !== null) arr.push(fullHistoryStats.upperBand);
+    if (fullHistoryStats.lowerBand !== null) arr.push(fullHistoryStats.lowerBand);
+    return arr;
+  }, [values, fullHistoryStats]);
+
+  const maxValue = chartBandValues.length ? Math.max(...chartBandValues) : 0;
+  const minValue = chartBandValues.length ? Math.min(...chartBandValues) : 0;
 
   const yAxisConfig = useMemo(() => {
-    if (!values.length) {
-      return {
-        min: 0,
-        max: 1,
-        stepSize: 1,
-      };
+    if (!chartBandValues.length) {
+      return { min: 0, max: 1, stepSize: 1 };
     }
 
     const range = maxValue - minValue;
 
-    // Special handling for compressed series, especially ratios between 0 and 1
     if (maxValue <= 1 && minValue >= 0) {
       const padding = Math.max(range * 0.12, 0.01);
       const min = Math.max(0, minValue - padding);
@@ -254,7 +309,6 @@ function MarketRatios() {
       return { min, max, stepSize };
     }
 
-    // General compressed-range handling
     if (range > 0 && range < 2) {
       const padding = Math.max(range * 0.15, 0.02);
       const min = minValue - padding;
@@ -267,16 +321,16 @@ function MarketRatios() {
       return { min, max, stepSize };
     }
 
-    // Original broader-range behaviour
-    const yAxisPadding = 0.1;
-    const max = Math.max(0, Math.ceil(maxValue * (1 + yAxisPadding)));
-    const min = Math.min(0, minValue);
-    const stepSize = isMobile
-      ? Math.max(1, Math.ceil(max / 6))
-      : Math.max(1, Math.ceil(max / 5));
+    const padding = Math.max(range * 0.08, 0.1);
+    const min = minValue - padding;
+    const max = maxValue + padding;
+    const stepSize = Math.max(
+      0.01,
+      Number(((max - min) / (isMobile ? 6 : 5)).toFixed(2))
+    );
 
     return { min, max, stepSize };
-  }, [values, maxValue, minValue, isMobile]);
+  }, [chartBandValues, maxValue, minValue, isMobile]);
 
   const chartData = useMemo(() => {
     return {
@@ -287,14 +341,47 @@ function MarketRatios() {
           data: displayedSeries.map((item) => item.value),
           borderColor: "#00796b",
           backgroundColor: "#00796b",
-          borderWidth: 1.25,
+          borderWidth: 1.4,
           pointRadius: 0,
           tension: 0.25,
           fill: false,
         },
+        {
+          label: "Long-Run Mean",
+          data: displayedSeries.map(() => fullHistoryStats.longRunMean),
+          borderColor: "#5c6bc0",
+          backgroundColor: "#5c6bc0",
+          borderWidth: 1,
+          pointRadius: 0,
+          tension: 0,
+          fill: false,
+          borderDash: [6, 6],
+        },
+        {
+          label: "+1 Std Band",
+          data: displayedSeries.map(() => fullHistoryStats.upperBand),
+          borderColor: "#90a4ae",
+          backgroundColor: "#90a4ae",
+          borderWidth: 1,
+          pointRadius: 0,
+          tension: 0,
+          fill: false,
+          borderDash: [4, 4],
+        },
+        {
+          label: "-1 Std Band",
+          data: displayedSeries.map(() => fullHistoryStats.lowerBand),
+          borderColor: "#90a4ae",
+          backgroundColor: "#90a4ae",
+          borderWidth: 1,
+          pointRadius: 0,
+          tension: 0,
+          fill: false,
+          borderDash: [4, 4],
+        },
       ],
     };
-  }, [displayedSeries, ratioName, timeframe]);
+  }, [displayedSeries, ratioName, timeframe, fullHistoryStats]);
 
   const chartOptions = useMemo(() => {
     return {
@@ -341,7 +428,7 @@ function MarketRatios() {
         tooltip: {
           callbacks: {
             label: function (context) {
-              return `${context.dataset.label}: ${context.raw}`;
+              return `${context.dataset.label}: ${formatNumber(context.raw, 3)}`;
             },
           },
         },
@@ -355,9 +442,7 @@ function MarketRatios() {
 
   return (
     <div className="mrp-container">
-      {/* Sidebar */}
       <aside className="mrp-sidebar">
-        {/* Mini rail */}
         <div className="mrp-miniRail" aria-label="Timeframe selector">
           <button
             className={`mrp-chip ${timeframe === "D" ? "mrp-chip-active" : ""}`}
@@ -403,7 +488,6 @@ function MarketRatios() {
           </button>
         </div>
 
-        {/* Scroll content */}
         <div className="mrp-sidebarScroll">
           <div className="mrp-search">
             <label htmlFor="mrp-search-input">Search Ratios:</label>
@@ -459,7 +543,6 @@ function MarketRatios() {
         </div>
       </aside>
 
-      {/* Main chart area */}
       <main className="mrp-main">
         <h1 className="mrp-title">{ratioName || "Market Ratios"}</h1>
 
@@ -474,6 +557,50 @@ function MarketRatios() {
             <div className="mrp-emptyChart">No data for this ratio.</div>
           )}
         </div>
+
+        <section className="mrp-stats-grid">
+          <div className="mrp-stat-card">
+            <div className="mrp-stat-label">Current Ratio</div>
+            <div className="mrp-stat-value">
+              {formatNumber(fullHistoryStats.currentRatio, 3)}
+            </div>
+          </div>
+
+          <div className="mrp-stat-card">
+            <div className="mrp-stat-label">Long-Term Percentile</div>
+            <div className="mrp-stat-value">
+              {formatNumber(fullHistoryStats.percentile, 1)}%
+            </div>
+          </div>
+
+          <div className="mrp-stat-card">
+            <div className="mrp-stat-label">Z-Score</div>
+            <div className="mrp-stat-value">
+              {formatNumber(fullHistoryStats.zScore, 2)}
+            </div>
+          </div>
+
+          <div className="mrp-stat-card">
+            <div className="mrp-stat-label">Long-Run Mean</div>
+            <div className="mrp-stat-value">
+              {formatNumber(fullHistoryStats.longRunMean, 3)}
+            </div>
+          </div>
+
+          <div className="mrp-stat-card">
+            <div className="mrp-stat-label">Upper Band</div>
+            <div className="mrp-stat-value">
+              {formatNumber(fullHistoryStats.upperBand, 3)}
+            </div>
+          </div>
+
+          <div className="mrp-stat-card">
+            <div className="mrp-stat-label">Lower Band</div>
+            <div className="mrp-stat-value">
+              {formatNumber(fullHistoryStats.lowerBand, 3)}
+            </div>
+          </div>
+        </section>
       </main>
     </div>
   );
