@@ -9,6 +9,7 @@ import {
   YAxis,
   Tooltip,
   ReferenceLine,
+  ReferenceDot,
 } from "recharts";
 import "./Drawdowns.css";
 
@@ -146,6 +147,45 @@ const calculateDrawdowns = (rows) => {
   };
 };
 
+const getSevereDrawdownEpisodes = (underwaterSeries, threshold = -20) => {
+  const episodes = [];
+  let inEpisode = false;
+  let currentEpisode = null;
+
+  underwaterSeries.forEach((point) => {
+    const dd = point.drawdown;
+
+    if (!inEpisode && dd <= threshold) {
+      inEpisode = true;
+      currentEpisode = {
+        breachDate: point.date,
+        troughDate: point.date,
+        lowReached: dd,
+      };
+      return;
+    }
+
+    if (inEpisode) {
+      if (dd < currentEpisode.lowReached) {
+        currentEpisode.lowReached = dd;
+        currentEpisode.troughDate = point.date;
+      }
+
+      if (dd >= 0) {
+        episodes.push(currentEpisode);
+        inEpisode = false;
+        currentEpisode = null;
+      }
+    }
+  });
+
+  if (inEpisode && currentEpisode) {
+    episodes.push(currentEpisode);
+  }
+
+  return episodes;
+};
+
 function Drawdowns() {
   const API_URL = process.env.REACT_APP_API_URL;
 
@@ -160,6 +200,7 @@ function Drawdowns() {
 
   const [chartData, setChartData] = useState([]);
   const [summary, setSummary] = useState(null);
+  const [episodes, setEpisodes] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [hasLoaded, setHasLoaded] = useState(false);
@@ -214,6 +255,7 @@ function Drawdowns() {
     setError("");
     setChartData([]);
     setSummary(null);
+    setEpisodes([]);
 
     try {
       if (!selectedSecurity) {
@@ -229,8 +271,10 @@ function Drawdowns() {
       rows = resampleSeries(rows, frequency);
 
       const drawdownData = calculateDrawdowns(rows);
+      const severeEpisodes = getSevereDrawdownEpisodes(drawdownData.underwaterSeries, -20);
 
       setChartData(drawdownData.underwaterSeries);
+      setEpisodes(severeEpisodes);
       setSummary({
         currentDrawdown: drawdownData.currentDrawdown,
         maxDrawdown: drawdownData.maxDrawdown,
@@ -349,20 +393,42 @@ function Drawdowns() {
           {hasLoaded && chartData.length > 0 ? (
             <div className="ddChartWrapper">
               <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={chartData} margin={{ top: 20, right: 30, left: 20, bottom: 10 }}>
+                <LineChart
+                  data={chartData}
+                  margin={{ top: 20, right: 30, left: 20, bottom: 10 }}
+                >
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="date" />
                   <YAxis tickFormatter={(value) => `${value.toFixed(0)}%`} />
-                  <Tooltip formatter={(value) => value == null ? "-" : `${Number(value).toFixed(2)}%`} />
+                  <Tooltip
+                    formatter={(value, name) =>
+                      name === "Drawdown"
+                        ? [`${Number(value).toFixed(2)}%`, "Drawdown"]
+                        : [value, name]
+                    }
+                    labelFormatter={(label) => label}
+                  />
                   <ReferenceLine y={0} stroke="#666" strokeDasharray="4 4" />
+                  <ReferenceLine y={-20} stroke="#5c6bc0" strokeDasharray="4 4" />
                   <Line
                     type="monotone"
                     dataKey="drawdown"
+                    name="Drawdown"
                     stroke="#e53935"
                     dot={false}
                     strokeWidth={2}
                     connectNulls={true}
                   />
+                  {episodes.map((episode) => (
+                    <ReferenceDot
+                      key={episode.breachDate}
+                      x={episode.breachDate}
+                      y={-20}
+                      r={5}
+                      fill="#5c6bc0"
+                      stroke="#5c6bc0"
+                    />
+                  ))}
                 </LineChart>
               </ResponsiveContainer>
             </div>
@@ -422,6 +488,46 @@ function Drawdowns() {
                   <tr>
                     <td colSpan="2" className="ddNoData">
                       {hasLoaded ? "No summary data available" : "No data loaded yet"}
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section className="ddTableCard">
+          <div className="ddTableHeader">
+            <div className="ddTableTitle">Drawdowns Below 20%</div>
+            <div className="ddTableMeta">
+              {episodes.length} {episodes.length === 1 ? "episode" : "episodes"}
+            </div>
+          </div>
+
+          <div className="ddTableWrapper">
+            <table className="ddTable">
+              <thead>
+                <tr>
+                  <th>Breach Date</th>
+                  <th>Trough Date</th>
+                  <th>Low Reached</th>
+                </tr>
+              </thead>
+              <tbody>
+                {episodes.length > 0 ? (
+                  episodes.map((episode) => (
+                    <tr key={`${episode.breachDate}-${episode.troughDate}`}>
+                      <td>{episode.breachDate}</td>
+                      <td>{episode.troughDate}</td>
+                      <td className="ddNegative">{episode.lowReached.toFixed(2)}%</td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan="3" className="ddNoData">
+                      {hasLoaded
+                        ? "No drawdowns below 20% in the selected range"
+                        : "No data loaded yet"}
                     </td>
                   </tr>
                 )}

@@ -192,6 +192,11 @@
   font-weight: 700;
 }
 
+.ddTableMeta {
+  font-size: 12px;
+  color: #6a7a76;
+}
+
 .ddTableWrapper {
   width: 100%;
   overflow: auto;
