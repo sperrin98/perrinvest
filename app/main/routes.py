@@ -49,7 +49,7 @@ from app.db_utils import (
     get_summary_data_period_end_returns,
     get_summary_data_period_end_returns_in_gold,
     get_long_only_watchlist_period_end_returns,
-    get_rolling_corr,
+    get_rolling_corr_new,
     get_hpi_and_priced_in_gold_rebased_to_100,
     fetch_long_term_interest_rate_histories,
     get_us_federal_debt_and_priced_in_gold,

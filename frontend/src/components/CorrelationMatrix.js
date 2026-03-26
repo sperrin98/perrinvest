@@ -6,9 +6,7 @@ import "./CorrelationMatrix.css";
 function CorrelationMatrix() {
   const [matrices, setMatrices] = useState([]);
   const [selectedMatrix, setSelectedMatrix] = useState(null);
-  const [selectedDate, setSelectedDate] = useState(
-    new Date().toISOString().split("T")[0]
-  );
+  const [selectedDate, setSelectedDate] = useState("2026-03-23");
   const [matrixColumns, setMatrixColumns] = useState([]);
   const [matrixRows, setMatrixRows] = useState([]);
   const [loadingMatrix, setLoadingMatrix] = useState(false);
@@ -25,10 +23,18 @@ function CorrelationMatrix() {
         setMatrices(data);
 
         if (data.length > 0) {
+          const preciousMetalsMatrix =
+            data.find((matrix) => Number(matrix.id) === 2) ||
+            data.find(
+              (matrix) =>
+                String(matrix.name || "").trim().toLowerCase() === "precious metals"
+            ) ||
+            data[0];
+
           setSelectedMatrix({
-            value: data[0].id,
-            label: data[0].name,
-            description: data[0].description,
+            value: preciousMetalsMatrix.id,
+            label: preciousMetalsMatrix.name,
+            description: preciousMetalsMatrix.description,
           });
         }
 
@@ -103,8 +109,11 @@ function CorrelationMatrix() {
     <div className="cmxContainer">
       <aside className="cmxSidebar">
         <div className="cmxFilterBlock">
-          <label className="cmxFilterLabel">Select Date</label>
+          <label className="cmxFilterLabel" htmlFor="cmx-date-input">
+            Select Date
+          </label>
           <input
+            id="cmx-date-input"
             type="date"
             className="cmxDateInput"
             value={selectedDate}
@@ -113,8 +122,12 @@ function CorrelationMatrix() {
         </div>
 
         <div className="cmxFilterBlock">
-          <label className="cmxFilterLabel">Select Matrix</label>
+          <label className="cmxFilterLabel" htmlFor="cmx-matrix-select">
+            Select Matrix
+          </label>
           <Select
+            inputId="cmx-matrix-select"
+            instanceId="cmx-matrix-select-instance"
             value={selectedMatrix}
             onChange={setSelectedMatrix}
             options={matrixOptions}
@@ -161,7 +174,7 @@ function CorrelationMatrix() {
             <span className="cmxDetailValue">{selectedDate || "-"}</span>
           </div>
 
-          <div className="cmxDetailItem cmxDetailDescription">
+          <div className="cmxDetailItem">
             <span className="cmxDetailLabel">Description</span>
             <span className="cmxDetailValue">
               {selectedMatrix?.description || "-"}
@@ -194,9 +207,11 @@ function CorrelationMatrix() {
               <table className="cmxTable">
                 <thead>
                   <tr>
-                    <th className="cmxStickyCol cmxAssetHeader">Asset</th>
+                    <th className="cmxStickyCol cmxAssetHeader" title="Asset">
+                      Asset
+                    </th>
                     {displayColumns.map((col) => (
-                      <th key={col} className="cmxMatrixCell">
+                      <th key={col} className="cmxMatrixCell" title={col}>
                         {col}
                       </th>
                     ))}
@@ -205,11 +220,17 @@ function CorrelationMatrix() {
                 <tbody>
                   {matrixRows.map((row, rowIndex) => (
                     <tr key={`${row.row_name}-${rowIndex}`} className="cmxRow">
-                      <td className="cmxRowHeader cmxStickyCol">{row.row_name}</td>
+                      <td
+                        className="cmxRowHeader cmxStickyCol"
+                        title={row.row_name}
+                      >
+                        {row.row_name}
+                      </td>
                       {displayColumns.map((col) => (
                         <td
                           key={`${row.row_name}-${col}`}
                           className={`cmxMatrixCell ${corrToneClass(row[col])}`}
+                          title={formatCorr(row[col])}
                         >
                           {formatCorr(row[col])}
                         </td>

@@ -258,18 +258,15 @@
 
 .cmxTable th,
 .cmxTable td {
-  padding: 10px 10px;
+  padding: 10px 8px;
   text-align: center;
   font-size: 12.5px;
   line-height: 1.2;
   border-bottom: 1px solid rgba(0, 0, 0, 0.08);
   white-space: nowrap;
-}
-
-.cmxMatrixCell {
-  width: 92px;
-  min-width: 92px;
-  max-width: 92px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  box-sizing: border-box;
 }
 
 .cmxTable th {
@@ -281,18 +278,33 @@
   z-index: 2;
 }
 
-.cmxAssetHeader {
-  text-align: left !important;
-  width: 180px;
-  min-width: 180px;
-  max-width: 180px;
-}
-
 .cmxStickyCol {
   position: sticky;
   left: 0;
   z-index: 3;
   background: #f3f7f6 !important;
+}
+
+.cmxAssetHeader {
+  text-align: left !important;
+  width: 64px;
+  min-width: 64px;
+  max-width: 64px;
+}
+
+.cmxRowHeader {
+  text-align: left !important;
+  font-weight: 600;
+  color: #173c35;
+  width: 64px;
+  min-width: 64px;
+  max-width: 64px;
+}
+
+.cmxMatrixCell {
+  width: 88px;
+  min-width: 88px;
+  max-width: 88px;
 }
 
 .cmxRow {
@@ -306,15 +318,6 @@
 
 .cmxRow:hover {
   background: rgba(0, 77, 64, 0.08);
-}
-
-.cmxRowHeader {
-  text-align: left !important;
-  font-weight: 600;
-  color: #173c35;
-  width: 180px;
-  min-width: 180px;
-  max-width: 180px;
 }
 
 .cmxPositiveStrong {
@@ -393,19 +396,19 @@
   .cmxTable th,
   .cmxTable td {
     font-size: 11.5px;
-    padding: 9px 8px;
-  }
-
-  .cmxMatrixCell {
-    width: 78px;
-    min-width: 78px;
-    max-width: 78px;
+    padding: 9px 6px;
   }
 
   .cmxAssetHeader,
   .cmxRowHeader {
-    width: 140px;
-    min-width: 140px;
-    max-width: 140px;
+    width: 56px;
+    min-width: 56px;
+    max-width: 56px;
+  }
+
+  .cmxMatrixCell {
+    width: 76px;
+    min-width: 76px;
+    max-width: 76px;
   }
 }
