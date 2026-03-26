@@ -104,6 +104,9 @@ const Header = ({ isLoggedIn, onLogout }) => {
               <Link to="/monthly-returns" onClick={closeMenu}>
                 Precious Metals Monthly Returns
               </Link>
+              <Link to="/rolling-returns" onClick={closeMenu}>
+                Rolling Return / CAGR
+              </Link>
               <Link to="/returns/1" onClick={closeMenu}>
                 Gold Annual Returns by Currency
               </Link>
