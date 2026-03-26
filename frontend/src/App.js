@@ -32,6 +32,7 @@ import LongOnlyWatchlist from './components/LongOnlyWatchlist';
 import BondYields from './components/BondYields';
 import FederalDebtGold from './components/FederalDebtGold';
 import RebasedComparison from './components/RebasedComparison';
+import RollingReturns from './components/RollingReturns';
 
 const AdminRoute = ({ isLoggedIn, isAdmin, children }) => {
   if (!isLoggedIn) return <Navigate to="/login" />;
@@ -92,6 +93,7 @@ function App() {
         <Route path="/correlations" element={<Correlations />} />
         <Route path="/correlation-matrix" element={<CorrelationMatrix />} />
         <Route path="/rebased-comparison" element={<RebasedComparison />} />
+        <Route path="/rolling-returns" element={<RollingReturns />} />
         <Route path="/charts/us-federal-debt-priced-in-gold" element={<FederalDebtGold />} />
         <Route path="/login" element={<Login onLogin={handleLogin} />} />
         <Route path="/register" element={<Register onLogin={handleLogin} />} />
