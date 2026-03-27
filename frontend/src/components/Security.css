@@ -97,6 +97,19 @@
   width: 48%;
 }
 
+.overlay-toggle-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.overlay-note {
+  margin-top: 10px;
+  font-size: 0.85rem;
+  line-height: 1.4;
+  color: rgba(255, 255, 255, 0.85);
+}
+
 /* Toolbar */
 .chart-toolbar {
   width: 100%;

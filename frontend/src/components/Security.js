@@ -14,6 +14,7 @@ import {
   Legend
 } from 'chart.js';
 import zoomPlugin from 'chartjs-plugin-zoom';
+import annotationPlugin from 'chartjs-plugin-annotation';
 import './Security.css';
 
 ChartJS.register(
@@ -25,10 +26,86 @@ ChartJS.register(
   Title,
   Tooltip,
   Legend,
-  zoomPlugin
+  zoomPlugin,
+  annotationPlugin
 );
 
 const RANGE_PRESETS = ['1Y', '3Y', '5Y', '10Y', 'MAX'];
+
+const EVENT_MARKERS = [
+  { id: 'nixon', label: '1971 Nixon Shock', date: '1971-08-15' },
+  { id: 'blackmonday', label: '1987 Crash', date: '1987-10-19' },
+  { id: 'dotcom', label: '2000 Dot-Com Peak', date: '2000-03-10' },
+  { id: 'gfc', label: '2008 GFC', date: '2008-09-15' },
+  { id: 'covid', label: '2020 Covid Crash', date: '2020-03-16' },
+  { id: 'inflation', label: '2022 Inflation Shock', date: '2022-06-13' },
+];
+
+const MACRO_REGIMES = [
+  {
+    id: 'qe1',
+    label: 'QE1',
+    start: '2008-11-25',
+    end: '2010-03-31',
+    type: 'qe',
+  },
+  {
+    id: 'qe2',
+    label: 'QE2',
+    start: '2010-11-03',
+    end: '2011-06-30',
+    type: 'qe',
+  },
+  {
+    id: 'qe3',
+    label: 'QE3',
+    start: '2012-09-13',
+    end: '2014-10-29',
+    type: 'qe',
+  },
+  {
+    id: 'qe_pandemic',
+    label: 'Pandemic QE',
+    start: '2020-03-15',
+    end: '2022-03-15',
+    type: 'qe',
+  },
+  {
+    id: 'hike_1994',
+    label: 'Rate Hike Cycle',
+    start: '1994-02-04',
+    end: '1995-02-01',
+    type: 'hike',
+  },
+  {
+    id: 'hike_1999',
+    label: 'Rate Hike Cycle',
+    start: '1999-06-30',
+    end: '2000-05-16',
+    type: 'hike',
+  },
+  {
+    id: 'hike_2004',
+    label: 'Rate Hike Cycle',
+    start: '2004-06-30',
+    end: '2006-08-08',
+    type: 'hike',
+  },
+  {
+    id: 'hike_2015',
+    label: 'Rate Hike Cycle',
+    start: '2015-12-16',
+    end: '2018-12-19',
+    type: 'hike',
+  },
+  {
+    id: 'hike_2022',
+    label: 'Rate Hike Cycle',
+    start: '2022-03-16',
+    end: '2023-07-26',
+    type: 'hike',
+  },
+];
 
 const Security = () => {
   const { id } = useParams();
@@ -50,6 +127,9 @@ const Security = () => {
   const [customEndDate, setCustomEndDate] = useState('');
   const [activeStartDate, setActiveStartDate] = useState('');
   const [activeEndDate, setActiveEndDate] = useState('');
+
+  const [showEventMarkers, setShowEventMarkers] = useState(false);
+  const [showMacroRegimes, setShowMacroRegimes] = useState(false);
 
   useEffect(() => {
     const fetchSecurity = async () => {
@@ -339,6 +419,75 @@ const Security = () => {
     setCustomEndDate(end);
   };
 
+  const visibleDateSet = useMemo(() => new Set(chartSeries.map(point => point.date)), [chartSeries]);
+
+  const annotations = useMemo(() => {
+    const annotationConfig = {};
+
+    if (showMacroRegimes) {
+      MACRO_REGIMES.forEach((regime) => {
+        const startVisible = chartSeries.some(point => point.date >= regime.start);
+        const endVisible = chartSeries.some(point => point.date <= regime.end);
+
+        if (!startVisible || !endVisible) return;
+
+        const isQE = regime.type === 'qe';
+
+        annotationConfig[`box_${regime.id}`] = {
+          type: 'box',
+          xMin: regime.start,
+          xMax: regime.end,
+          backgroundColor: isQE ? 'rgba(0, 121, 107, 0.10)' : 'rgba(255, 159, 64, 0.12)',
+          borderColor: isQE ? 'rgba(0, 121, 107, 0.35)' : 'rgba(255, 159, 64, 0.4)',
+          borderWidth: 1,
+          label: {
+            display: true,
+            content: regime.label,
+            position: 'start',
+            color: isQE ? '#00796b' : '#d97706',
+            backgroundColor: 'rgba(255,255,255,0.85)',
+            padding: 4,
+            font: {
+              size: 10,
+              weight: '600'
+            }
+          }
+        };
+      });
+    }
+
+    if (showEventMarkers) {
+      EVENT_MARKERS.forEach((event) => {
+        if (!visibleDateSet.has(event.date)) return;
+
+        annotationConfig[`line_${event.id}`] = {
+          type: 'line',
+          xMin: event.date,
+          xMax: event.date,
+          borderColor: '#c62828',
+          borderWidth: 1.5,
+          borderDash: [6, 4],
+          label: {
+            display: true,
+            content: event.label,
+            rotation: -90,
+            position: 'start',
+            yAdjust: -10,
+            backgroundColor: 'rgba(198, 40, 40, 0.90)',
+            color: '#ffffff',
+            font: {
+              size: 10,
+              weight: '600'
+            },
+            padding: 4
+          }
+        };
+      });
+    }
+
+    return annotationConfig;
+  }, [showEventMarkers, showMacroRegimes, chartSeries, visibleDateSet]);
+
   if (!security) return <div>Loading...</div>;
 
   const labels = chartSeries.map(h => h.date);
@@ -412,6 +561,10 @@ const Security = () => {
     },
     plugins: {
       legend: { labels: { color: '#00796b' } },
+      annotation: {
+        clip: false,
+        annotations,
+      },
       zoom: {
         zoom: { wheel: { enabled: true }, pinch: { enabled: true }, mode: 'x' },
         pan: { enabled: true, mode: 'x' },
@@ -462,6 +615,26 @@ const Security = () => {
           >
             Logarithmic
           </button>
+        </div>
+
+        <h3>Overlays</h3>
+        <div className="overlay-toggle-group">
+          <button
+            onClick={() => setShowEventMarkers(prev => !prev)}
+            className={showEventMarkers ? 'selected' : ''}
+          >
+            Event Markers
+          </button>
+          <button
+            onClick={() => setShowMacroRegimes(prev => !prev)}
+            className={showMacroRegimes ? 'selected' : ''}
+          >
+            QE / Rate Cycles
+          </button>
+        </div>
+
+        <div className="overlay-note">
+          Toggle historical shocks and macro regimes on the chart.
         </div>
       </div>
 

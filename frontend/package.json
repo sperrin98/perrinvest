@@ -8,6 +8,7 @@
     "chart.js": "^4.4.7",
     "chartjs-adapter-date-fns": "^3.0.0",
     "chartjs-chart-financial": "^0.2.1",
+    "chartjs-plugin-annotation": "^3.1.0",
     "chartjs-plugin-zoom": "^2.0.1",
     "dayjs": "^1.11.13",
     "dotenv": "^10.0.0",
