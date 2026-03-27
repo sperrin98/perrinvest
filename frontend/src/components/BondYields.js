@@ -24,10 +24,10 @@ ChartJS.register(
 );
 
 const bondYieldOptions = [
-  { value: 15, label: 'UK Short' },
-  { value: 16, label: 'UK Long' },
-  { value: 17, label: 'US Short' },
-  { value: 18, label: 'US Long' }
+  { value: 15, label: 'US Long' },
+  { value: 16, label: 'US Short' },
+  { value: 17, label: 'UK Long' },
+  { value: 18, label: 'UK Short' }
 ];
 
 const BondYields = () => {
