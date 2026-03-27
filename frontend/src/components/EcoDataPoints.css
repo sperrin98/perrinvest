@@ -29,6 +29,17 @@
   padding-bottom: 5px;
 }
 
+.edp-sidebar-subtitle {
+  font-size: 1.05rem;
+  margin-bottom: 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.22);
+  padding-bottom: 4px;
+}
+
+.edp-sidebar-section {
+  margin-top: 18px;
+}
+
 .edp-point-list {
   list-style: none;
   padding: 0;
@@ -65,6 +76,57 @@
   color: rgba(255, 255, 255, 0.9);
 }
 
+.edp-toggle-group,
+.edp-toggle-stack {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.edp-toggle-stack {
+  flex-direction: column;
+}
+
+.edp-sidebar button {
+  width: 100%;
+  padding: 12px;
+  margin: 0;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 5px;
+  color: white;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: 0.3s ease-in-out;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.edp-sidebar button.selected {
+  background: rgba(0, 255, 179, 0.9);
+  color: #004d40;
+  font-weight: bold;
+}
+
+.edp-sidebar button:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: scale(1.03);
+}
+
+.edp-sidebar button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.edp-sidebar-note {
+  margin-top: 10px;
+  font-size: 0.84rem;
+  line-height: 1.4;
+  color: rgba(255, 255, 255, 0.88);
+}
+
 .edp-main {
   width: 78%;
   padding: 20px;
@@ -97,6 +159,84 @@
   flex-shrink: 0;
 }
 
+.edp-toolbar {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 18px;
+  margin-bottom: 18px;
+  flex-wrap: wrap;
+  flex-shrink: 0;
+}
+
+.edp-range-presets {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.edp-range-btn,
+.edp-apply-range-btn {
+  padding: 10px 16px;
+  border-radius: 8px;
+  border: 1px solid rgba(0, 121, 107, 0.22);
+  background: white;
+  color: #00796b;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.25s ease;
+}
+
+.edp-range-btn:hover,
+.edp-apply-range-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.edp-range-btn.selected {
+  background: #00796b;
+  color: white;
+  border-color: #00796b;
+}
+
+.edp-custom-date-controls {
+  display: flex;
+  align-items: end;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.edp-date-input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.edp-date-input-group label {
+  font-size: 0.85rem;
+  color: #00796b;
+  font-weight: 600;
+}
+
+.edp-date-input-group input {
+  padding: 10px 12px;
+  border: 1px solid rgba(0, 121, 107, 0.2);
+  border-radius: 8px;
+  background: white;
+  color: #004d40;
+  min-width: 160px;
+  font-size: 0.95rem;
+}
+
+.edp-apply-range-btn {
+  background: #00796b;
+  color: white;
+  border-color: #00796b;
+  min-width: 100px;
+}
+
 .edp-chart-card {
   width: 100%;
   background: #ffffff;
@@ -114,7 +254,8 @@
 .edp-chart-header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
+  gap: 14px;
   margin-bottom: 10px;
   flex-shrink: 0;
 }
@@ -134,6 +275,42 @@
   margin-top: 4px;
 }
 
+.edp-overlay-legend {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.edp-overlay-chip {
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  color: #34524d;
+}
+
+.edp-overlay-chip-event {
+  color: #c62828;
+  border-color: rgba(198, 40, 40, 0.28);
+  background: rgba(198, 40, 40, 0.06);
+}
+
+.edp-overlay-chip-qe {
+  color: #00796b;
+  border-color: rgba(0, 121, 107, 0.24);
+  background: rgba(0, 121, 107, 0.08);
+}
+
+.edp-overlay-chip-hike {
+  color: #d97706;
+  border-color: rgba(217, 119, 6, 0.24);
+  background: rgba(255, 159, 64, 0.10);
+}
+
 .edp-empty-state {
   margin-top: 30px;
   width: 100%;
@@ -151,27 +328,23 @@
   border: 1px solid rgba(0, 0, 0, 0.06);
 }
 
-.edp-chart-wrapper {
+.edp-chart-canvas {
   width: 100%;
   flex: 1;
   min-height: 0;
-  box-sizing: border-box;
 }
 
-.edp-chart-wrapper .recharts-cartesian-axis-ticks text {
+.edp-range-summary {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
   font-size: 12px;
-}
-
-.edp-chart-wrapper .recharts-tooltip-wrapper {
-  font-size: 14px;
-}
-
-.edp-chart-wrapper .recharts-legend-wrapper {
-  font-size: 14px;
-}
-
-.edp-chart-wrapper .recharts-line:hover {
-  stroke-width: 3;
+  margin-top: 10px;
+  color: #00796b;
+  font-weight: 600;
+  padding: 0 4px;
+  box-sizing: border-box;
+  flex-shrink: 0;
 }
 
 @media (max-width: 900px) {
@@ -211,7 +384,16 @@
     margin-top: 30px;
   }
 
-  .edp-chart-wrapper {
+  .edp-toolbar {
+    align-items: flex-start;
+  }
+
+  .edp-chart-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .edp-chart-canvas {
     height: 420px;
     min-height: 420px;
     flex: none;

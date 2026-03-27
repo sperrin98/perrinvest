@@ -952,10 +952,18 @@ def get_hpi_and_priced_in_gold_rebased_to_100(p_data_point_id):
         for row in results:
             if row.get('price_date'):
                 row['price_date'] = row['price_date'].strftime('%Y-%m-%d')
+
             if row.get('HPI_index') is not None:
                 row['HPI_index'] = float(row['HPI_index'])
+
             if row.get('HPI_gold_index') is not None:
                 row['HPI_gold_index'] = float(row['HPI_gold_index'])
+
+            if row.get('HPI_index_real') is not None:
+                row['HPI_index_real'] = float(row['HPI_index_real'])
+
+            if row.get('HPI_gold_index_real') is not None:
+                row['HPI_gold_index_real'] = float(row['HPI_gold_index_real'])
 
         print("FIRST ROW RETURNED (HPI GOLD REBASED):", results[0] if results else "NO DATA")
         return results
