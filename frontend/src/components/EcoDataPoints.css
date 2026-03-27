@@ -109,15 +109,15 @@
   font-weight: bold;
 }
 
+.edp-sidebar button:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: scale(1.03);
+}
+
 .edp-sidebar button:disabled {
   opacity: 0.45;
   cursor: not-allowed;
   transform: none;
-}
-
-.edp-sidebar button:hover {
-  background: rgba(255, 255, 255, 0.2);
-  transform: scale(1.03);
 }
 
 .edp-sidebar-note {
@@ -254,7 +254,8 @@
 .edp-chart-header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
+  gap: 14px;
   margin-bottom: 10px;
   flex-shrink: 0;
 }
@@ -274,6 +275,42 @@
   margin-top: 4px;
 }
 
+.edp-overlay-legend {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.edp-overlay-chip {
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  color: #34524d;
+}
+
+.edp-overlay-chip-event {
+  color: #c62828;
+  border-color: rgba(198, 40, 40, 0.28);
+  background: rgba(198, 40, 40, 0.06);
+}
+
+.edp-overlay-chip-qe {
+  color: #00796b;
+  border-color: rgba(0, 121, 107, 0.24);
+  background: rgba(0, 121, 107, 0.08);
+}
+
+.edp-overlay-chip-hike {
+  color: #d97706;
+  border-color: rgba(217, 119, 6, 0.24);
+  background: rgba(255, 159, 64, 0.10);
+}
+
 .edp-empty-state {
   margin-top: 30px;
   width: 100%;
@@ -291,11 +328,10 @@
   border: 1px solid rgba(0, 0, 0, 0.06);
 }
 
-.edp-chart-wrapper {
+.edp-chart-canvas {
   width: 100%;
   flex: 1;
   min-height: 0;
-  box-sizing: border-box;
 }
 
 .edp-range-summary {
@@ -309,22 +345,6 @@
   padding: 0 4px;
   box-sizing: border-box;
   flex-shrink: 0;
-}
-
-.edp-chart-wrapper .recharts-cartesian-axis-ticks text {
-  font-size: 12px;
-}
-
-.edp-chart-wrapper .recharts-tooltip-wrapper {
-  font-size: 14px;
-}
-
-.edp-chart-wrapper .recharts-legend-wrapper {
-  font-size: 14px;
-}
-
-.edp-chart-wrapper .recharts-line:hover {
-  stroke-width: 3;
 }
 
 @media (max-width: 900px) {
@@ -368,7 +388,12 @@
     align-items: flex-start;
   }
 
-  .edp-chart-wrapper {
+  .edp-chart-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .edp-chart-canvas {
     height: 420px;
     min-height: 420px;
     flex: none;

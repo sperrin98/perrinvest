@@ -1,21 +1,35 @@
 import React, { useState, useEffect, useMemo } from "react";
-import {
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-  ResponsiveContainer,
-  ReferenceLine,
-  ReferenceArea,
-} from "recharts";
 import axios from "axios";
+import { Line } from "react-chartjs-2";
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  LogarithmicScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend
+} from "chart.js";
+import zoomPlugin from "chartjs-plugin-zoom";
+import annotationPlugin from "chartjs-plugin-annotation";
 import "./EcoDataPoints.css";
 
-const NW_HPI_IDS = new Set([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]);
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  LogarithmicScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend,
+  zoomPlugin,
+  annotationPlugin
+);
 
+const NW_HPI_IDS = new Set([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]);
 const RANGE_PRESETS = ["1Y", "3Y", "5Y", "10Y", "MAX"];
 
 const EVENT_MARKERS = [
@@ -38,19 +52,6 @@ const MACRO_REGIMES = [
   { id: "hike_2015", label: "Rate Hike Cycle", start: "2015-12-16", end: "2018-12-19", type: "hike" },
   { id: "hike_2022", label: "Rate Hike Cycle", start: "2022-03-16", end: "2023-07-26", type: "hike" },
 ];
-
-const formatDate = (dateStr) => {
-  const d = new Date(dateStr);
-  const day = String(d.getDate()).padStart(2, "0");
-  const month = String(d.getMonth() + 1).padStart(2, "0");
-  const year = d.getFullYear();
-  return `${day}/${month}/${year}`;
-};
-
-const formatAxisDate = (dateStr) => {
-  const d = new Date(dateStr);
-  return `${d.getFullYear()}`;
-};
 
 const parseNumber = (value) => {
   const parsed = Number(value);
@@ -120,11 +121,9 @@ const clampDate = (date, minDate, maxDate) => {
 
 const getPresetStartDate = (preset, maxDate, minDate) => {
   if (preset === "MAX") return minDate;
-
   const map = { "1Y": 1, "3Y": 3, "5Y": 5, "10Y": 10 };
   const years = map[preset];
   if (!years) return minDate;
-
   return clampDate(shiftYears(maxDate, years), minDate, maxDate);
 };
 
@@ -147,7 +146,8 @@ const findNearestVisibleDate = (targetDate, visibleDates) => {
 };
 
 const findFirstVisibleOnOrAfter = (targetDate, visibleDates) => {
-  return visibleDates.find((date) => date >= targetDate) || null;
+  const found = visibleDates.find((date) => date >= targetDate);
+  return found || null;
 };
 
 const findLastVisibleOnOrBefore = (targetDate, visibleDates) => {
@@ -312,53 +312,207 @@ export default function EcoDataPoints() {
     setCustomEndDate(end);
   };
 
-  const visibleDates = useMemo(
-    () => chartData.map((row) => row.price_date),
-    [chartData]
-  );
+  const labels = useMemo(() => chartData.map((row) => row.price_date), [chartData]);
 
-  const visibleStart = visibleDates[0];
-  const visibleEnd = visibleDates[visibleDates.length - 1];
+  const annotations = useMemo(() => {
+    const annotationConfig = {};
+    if (!labels.length) return annotationConfig;
 
-  const snappedEvents = useMemo(() => {
-    if (!visibleStart || !visibleEnd || !visibleDates.length) return [];
+    const visibleStart = labels[0];
+    const visibleEnd = labels[labels.length - 1];
 
-    return EVENT_MARKERS
-      .filter((event) => event.date >= visibleStart && event.date <= visibleEnd)
-      .map((event) => ({
-        ...event,
-        snappedDate: findNearestVisibleDate(event.date, visibleDates),
-      }))
-      .filter((event) => event.snappedDate);
-  }, [visibleStart, visibleEnd, visibleDates]);
+    if (showMacroRegimes) {
+      MACRO_REGIMES.forEach((regime) => {
+        const overlapsRange = regime.end >= visibleStart && regime.start <= visibleEnd;
+        if (!overlapsRange) return;
 
-  const visibleRegimes = useMemo(() => {
-    if (!visibleStart || !visibleEnd || !visibleDates.length) return [];
+        const xMin = findFirstVisibleOnOrAfter(regime.start, labels) || visibleStart;
+        const xMax = findLastVisibleOnOrBefore(regime.end, labels) || visibleEnd;
+        if (!xMin || !xMax || xMin > xMax) return;
 
-    return MACRO_REGIMES
-      .filter((regime) => regime.end >= visibleStart && regime.start <= visibleEnd)
-      .map((regime) => {
-        const x1 =
-          findFirstVisibleOnOrAfter(regime.start, visibleDates) || visibleStart;
-        const x2 =
-          findLastVisibleOnOrBefore(regime.end, visibleDates) || visibleEnd;
+        const isQE = regime.type === "qe";
 
-        return { ...regime, x1, x2 };
-      })
-      .filter((regime) => regime.x1 && regime.x2 && regime.x1 <= regime.x2);
-  }, [visibleStart, visibleEnd, visibleDates]);
+        annotationConfig[`box_${regime.id}`] = {
+          type: "box",
+          xMin,
+          xMax,
+          backgroundColor: isQE ? "rgba(0, 121, 107, 0.10)" : "rgba(255, 159, 64, 0.12)",
+          borderColor: isQE ? "rgba(0, 121, 107, 0.35)" : "rgba(255, 159, 64, 0.4)",
+          borderWidth: 1,
+          label: {
+            display: true,
+            content: regime.label,
+            position: "start",
+            color: isQE ? "#00796b" : "#d97706",
+            backgroundColor: "rgba(255,255,255,0.85)",
+            padding: 4,
+            font: {
+              size: 10,
+              weight: "600",
+            },
+          },
+        };
+      });
+    }
 
-  const yAxisLeftLabel =
-    effectiveValueMode === "real"
-      ? "NW HPI Index (Real)"
-      : "NW HPI Index (Nominal)";
+    if (showEventMarkers) {
+      EVENT_MARKERS.forEach((event) => {
+        if (event.date < visibleStart || event.date > visibleEnd) return;
 
-  const yAxisRightLabel =
-    effectiveValueMode === "real"
-      ? "NW HPI Gold Index (Real)"
-      : "NW HPI Gold Index (Nominal)";
+        const snappedDate = findNearestVisibleDate(event.date, labels);
+        if (!snappedDate) return;
 
-  const tooltipLabel = effectiveValueMode === "real" ? "Real" : "Nominal";
+        annotationConfig[`line_${event.id}`] = {
+          type: "line",
+          xMin: snappedDate,
+          xMax: snappedDate,
+          borderColor: "#c62828",
+          borderWidth: 1.5,
+          borderDash: [6, 4],
+          label: {
+            display: true,
+            content: event.label,
+            rotation: -90,
+            position: "start",
+            yAdjust: -10,
+            backgroundColor: "rgba(198, 40, 40, 0.90)",
+            color: "#ffffff",
+            font: {
+              size: 10,
+              weight: "600",
+            },
+            padding: 4,
+          },
+        };
+      });
+    }
+
+    return annotationConfig;
+  }, [showEventMarkers, showMacroRegimes, labels]);
+
+  const data = {
+    labels,
+    datasets: [
+      {
+        label:
+          effectiveValueMode === "real"
+            ? "NW HPI Index (Real)"
+            : "NW HPI Index",
+        data: chartData.map((row) => row.HPI_index_display),
+        borderColor: "#e84d4d",
+        backgroundColor: "rgba(232, 77, 77, 0.08)",
+        borderWidth: 1.5,
+        pointRadius: 0,
+        fill: false,
+        tension: 0.15,
+        spanGaps: true,
+        yAxisID: "yLeft",
+      },
+      {
+        label:
+          effectiveValueMode === "real"
+            ? "NW HPI Gold Index (Real)"
+            : "NW HPI Gold Index",
+        data: chartData.map((row) => row.HPI_gold_index_display),
+        borderColor: "#00796b",
+        backgroundColor: "rgba(0, 121, 107, 0.08)",
+        borderWidth: 1.5,
+        pointRadius: 0,
+        fill: false,
+        tension: 0.15,
+        spanGaps: true,
+        yAxisID: "yRight",
+      },
+    ],
+  };
+
+  const chartOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    animation: {
+      duration: 220,
+      easing: "linear",
+    },
+    interaction: {
+      mode: "index",
+      intersect: false,
+    },
+    scales: {
+      x: {
+        type: "category",
+        title: { display: true, text: "Date", color: "#00796b" },
+        ticks: {
+          color: "#00796b",
+          maxTicksLimit: 10,
+          callback: function(value) {
+            const label = this.getLabelForValue(value);
+            return label ? new Date(label).getFullYear() : "";
+          },
+        },
+        grid: { color: "rgb(202, 202, 202)" },
+      },
+      yLeft: {
+        type: "linear",
+        position: "left",
+        title: {
+          display: true,
+          text:
+            effectiveValueMode === "real"
+              ? "NW HPI Index (Real)"
+              : "NW HPI Index (Nominal)",
+          color: "#00796b",
+        },
+        ticks: { color: "#00796b", beginAtZero: false },
+        grid: { color: "rgb(202, 202, 202)" },
+      },
+      yRight: {
+        type: "linear",
+        position: "right",
+        title: {
+          display: true,
+          text:
+            effectiveValueMode === "real"
+              ? "NW HPI Gold Index (Real)"
+              : "NW HPI Gold Index (Nominal)",
+          color: "#00796b",
+        },
+        ticks: { color: "#00796b", beginAtZero: false },
+        grid: { drawOnChartArea: false },
+      },
+    },
+    plugins: {
+      legend: {
+        labels: { color: "#00796b" },
+      },
+      tooltip: {
+        backgroundColor: "#ffffff",
+        titleColor: "#123c36",
+        bodyColor: "#123c36",
+        borderColor: "rgba(0, 121, 107, 0.18)",
+        borderWidth: 1,
+        padding: 12,
+        callbacks: {
+          title: (items) => {
+            if (!items.length) return "";
+            const date = items[0].label;
+            const d = new Date(date);
+            const day = String(d.getDate()).padStart(2, "0");
+            const month = String(d.getMonth() + 1).padStart(2, "0");
+            const year = d.getFullYear();
+            return `${day}/${month}/${year}`;
+          },
+        },
+      },
+      annotation: {
+        clip: false,
+        annotations,
+      },
+      zoom: {
+        zoom: { wheel: { enabled: true }, pinch: { enabled: true }, mode: "x" },
+        pan: { enabled: true, mode: "x" },
+      },
+    },
+  };
 
   return (
     <div className="edp-container">
@@ -492,116 +646,31 @@ export default function EcoDataPoints() {
                 </div>
                 <div className="edp-chart-name">{selectedEcoDataPointName}</div>
               </div>
+
+              {(showEventMarkers || showMacroRegimes) && (
+                <div className="edp-overlay-legend">
+                  {showEventMarkers && (
+                    <div className="edp-overlay-chip edp-overlay-chip-event">
+                      Event marker
+                    </div>
+                  )}
+                  {showMacroRegimes && (
+                    <>
+                      <div className="edp-overlay-chip edp-overlay-chip-qe">QE</div>
+                      <div className="edp-overlay-chip edp-overlay-chip-hike">Rate cycle</div>
+                    </>
+                  )}
+                </div>
+              )}
             </div>
 
-            <div className="edp-chart-wrapper">
-              <ResponsiveContainer width="100%" height="100%">
-                <LineChart
-                  data={chartData}
-                  margin={{ top: 10, right: 28, left: 8, bottom: 10 }}
-                >
-                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.08)" />
-                  <XAxis
-                    dataKey="price_date"
-                    tickFormatter={formatAxisDate}
-                    minTickGap={24}
-                  />
-                  <YAxis
-                    yAxisId="left"
-                    label={{
-                      value: yAxisLeftLabel,
-                      angle: -90,
-                      position: "insideLeft",
-                    }}
-                  />
-                  <YAxis
-                    yAxisId="right"
-                    orientation="right"
-                    label={{
-                      value: yAxisRightLabel,
-                      angle: 90,
-                      position: "insideRight",
-                    }}
-                  />
-                  <Tooltip
-                    labelFormatter={formatDate}
-                    formatter={(value, name) => [
-                      value,
-                      name.includes("Gold")
-                        ? `${tooltipLabel} NW HPI Gold Index`
-                        : `${tooltipLabel} NW HPI Index`,
-                    ]}
-                  />
-                  <Legend />
-
-                  {showMacroRegimes &&
-                    visibleRegimes.map((regime) => (
-                      <ReferenceArea
-                        key={regime.id}
-                        x1={regime.x1}
-                        x2={regime.x2}
-                        yAxisId="left"
-                        stroke={regime.type === "qe" ? "#00796b" : "#d97706"}
-                        fill={regime.type === "qe" ? "#00796b" : "#f59e0b"}
-                        fillOpacity={0.08}
-                        ifOverflow="extendDomain"
-                      />
-                    ))}
-
-                  {showEventMarkers &&
-                    snappedEvents.map((event) => (
-                      <ReferenceLine
-                        key={event.id}
-                        x={event.snappedDate}
-                        yAxisId="left"
-                        stroke="#c62828"
-                        strokeDasharray="6 4"
-                        strokeWidth={1.5}
-                        label={{
-                          value: event.label,
-                          angle: -90,
-                          position: "insideTop",
-                          fill: "#c62828",
-                          fontSize: 10,
-                        }}
-                      />
-                    ))}
-
-                  <Line
-                    yAxisId="left"
-                    type="monotone"
-                    dataKey="HPI_index_display"
-                    stroke="#e84d4d"
-                    strokeWidth={1.5}
-                    dot={false}
-                    name={
-                      effectiveValueMode === "real"
-                        ? "NW HPI Index (Real)"
-                        : "NW HPI Index"
-                    }
-                    connectNulls
-                  />
-                  <Line
-                    yAxisId="right"
-                    type="monotone"
-                    dataKey="HPI_gold_index_display"
-                    stroke="#00796b"
-                    strokeWidth={1.5}
-                    dot={false}
-                    name={
-                      effectiveValueMode === "real"
-                        ? "NW HPI Gold Index (Real)"
-                        : "NW HPI Gold Index"
-                    }
-                    connectNulls
-                  />
-                </LineChart>
-              </ResponsiveContainer>
+            <div className="edp-chart-canvas">
+              <Line data={data} options={chartOptions} />
             </div>
 
             <div className="edp-range-summary">
-              <span>{activeStartDate ? formatDate(activeStartDate) : "-"}</span>
-              <span>{activeEndDate ? formatDate(activeEndDate) : "-"}</span>
+              <span>{activeStartDate || "-"}</span>
+              <span>{activeEndDate || "-"}</span>
             </div>
           </div>
         ) : (
