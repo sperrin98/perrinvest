@@ -131,6 +131,41 @@ const Security = () => {
   const [showEventMarkers, setShowEventMarkers] = useState(false);
   const [showMacroRegimes, setShowMacroRegimes] = useState(false);
 
+  const extractMovingAverageValue = (item, key) => {
+    const fallbackKeys = {
+      '5d': [
+        '5d_moving_average',
+        'moving_average_5d',
+        'five_day_moving_average',
+        'ma_5d',
+        'ma5d'
+      ],
+      '40d': [
+        '40d_moving_average',
+        'moving_average_40d',
+        'forty_day_moving_average',
+        'ma_40d',
+        'ma40d'
+      ],
+      '200d': [
+        '200d_moving_average',
+        'moving_average_200d',
+        'two_hundred_day_moving_average',
+        'ma_200d',
+        'ma200d'
+      ]
+    };
+
+    for (const candidate of fallbackKeys[key]) {
+      if (item[candidate] !== undefined && item[candidate] !== null && item[candidate] !== '') {
+        const parsed = Number(item[candidate]);
+        if (Number.isFinite(parsed)) return parsed;
+      }
+    }
+
+    return null;
+  };
+
   useEffect(() => {
     const fetchSecurity = async () => {
       try {
@@ -166,7 +201,7 @@ const Security = () => {
         movingAveragesData['5d'] = response5d.data
           .map(item => ({
             date: new Date(item.price_date).toISOString().split('T')[0],
-            movingAverage: Number(item['5d_moving_average']),
+            movingAverage: extractMovingAverageValue(item, '5d'),
           }))
           .filter(item => item.date && Number.isFinite(item.movingAverage));
 
@@ -174,7 +209,7 @@ const Security = () => {
         movingAveragesData['40d'] = response40d.data
           .map(item => ({
             date: new Date(item.price_date).toISOString().split('T')[0],
-            movingAverage: Number(item['40d_moving_average']),
+            movingAverage: extractMovingAverageValue(item, '40d'),
           }))
           .filter(item => item.date && Number.isFinite(item.movingAverage));
 
@@ -182,7 +217,7 @@ const Security = () => {
         movingAveragesData['200d'] = response200d.data
           .map(item => ({
             date: new Date(item.price_date).toISOString().split('T')[0],
-            movingAverage: Number(item['200d_moving_average']),
+            movingAverage: extractMovingAverageValue(item, '200d'),
           }))
           .filter(item => item.date && Number.isFinite(item.movingAverage));
 
@@ -251,14 +286,11 @@ const Security = () => {
     const minDate = priceHistories[0].date;
     const maxDate = priceHistories[priceHistories.length - 1].date;
 
-    const initialStart = minDate;
-    const initialEnd = maxDate;
-
     setSelectedRangePreset('MAX');
-    setActiveStartDate(initialStart);
-    setActiveEndDate(initialEnd);
-    setCustomStartDate(initialStart);
-    setCustomEndDate(initialEnd);
+    setActiveStartDate(minDate);
+    setActiveEndDate(maxDate);
+    setCustomStartDate(minDate);
+    setCustomEndDate(maxDate);
   }, [priceHistories]);
 
   const maMap = useMemo(() => {
@@ -419,24 +451,75 @@ const Security = () => {
     setCustomEndDate(end);
   };
 
-  const visibleDateSet = useMemo(() => new Set(chartSeries.map(point => point.date)), [chartSeries]);
+  const labels = chartSeries.map(h => h.date);
+
+  const findNearestVisibleDate = (targetDate, visibleDates) => {
+    if (!visibleDates.length) return null;
+
+    const target = new Date(targetDate).getTime();
+    let nearest = visibleDates[0];
+    let minDiff = Math.abs(new Date(visibleDates[0]).getTime() - target);
+
+    for (let i = 1; i < visibleDates.length; i += 1) {
+      const diff = Math.abs(new Date(visibleDates[i]).getTime() - target);
+      if (diff < minDiff) {
+        minDiff = diff;
+        nearest = visibleDates[i];
+      }
+    }
+
+    return nearest;
+  };
+
+  const findFirstVisibleOnOrAfter = (targetDate, visibleDates) => {
+    const found = visibleDates.find(date => date >= targetDate);
+    return found || null;
+  };
+
+  const findLastVisibleOnOrBefore = (targetDate, visibleDates) => {
+    for (let i = visibleDates.length - 1; i >= 0; i -= 1) {
+      if (visibleDates[i] <= targetDate) return visibleDates[i];
+    }
+    return null;
+  };
+
+  const buildAlignedMAData = (key) => {
+    return chartSeries.map(point => {
+      const exact = maMap[key].get(point.date);
+      if (exact !== undefined && exact !== null && Number.isFinite(exact)) return exact;
+
+      const fullHistoryMatch = movingAverages[key]?.find(item => item.date === point.date);
+      if (fullHistoryMatch && Number.isFinite(fullHistoryMatch.movingAverage)) {
+        return fullHistoryMatch.movingAverage;
+      }
+
+      return null;
+    });
+  };
 
   const annotations = useMemo(() => {
     const annotationConfig = {};
+    if (!labels.length) return annotationConfig;
+
+    const visibleStart = labels[0];
+    const visibleEnd = labels[labels.length - 1];
 
     if (showMacroRegimes) {
       MACRO_REGIMES.forEach((regime) => {
-        const startVisible = chartSeries.some(point => point.date >= regime.start);
-        const endVisible = chartSeries.some(point => point.date <= regime.end);
+        const overlapsRange = regime.end >= visibleStart && regime.start <= visibleEnd;
+        if (!overlapsRange) return;
 
-        if (!startVisible || !endVisible) return;
+        const xMin = findFirstVisibleOnOrAfter(regime.start, labels) || visibleStart;
+        const xMax = findLastVisibleOnOrBefore(regime.end, labels) || visibleEnd;
+
+        if (!xMin || !xMax || xMin > xMax) return;
 
         const isQE = regime.type === 'qe';
 
         annotationConfig[`box_${regime.id}`] = {
           type: 'box',
-          xMin: regime.start,
-          xMax: regime.end,
+          xMin,
+          xMax,
           backgroundColor: isQE ? 'rgba(0, 121, 107, 0.10)' : 'rgba(255, 159, 64, 0.12)',
           borderColor: isQE ? 'rgba(0, 121, 107, 0.35)' : 'rgba(255, 159, 64, 0.4)',
           borderWidth: 1,
@@ -458,12 +541,15 @@ const Security = () => {
 
     if (showEventMarkers) {
       EVENT_MARKERS.forEach((event) => {
-        if (!visibleDateSet.has(event.date)) return;
+        if (event.date < visibleStart || event.date > visibleEnd) return;
+
+        const snappedDate = findNearestVisibleDate(event.date, labels);
+        if (!snappedDate) return;
 
         annotationConfig[`line_${event.id}`] = {
           type: 'line',
-          xMin: event.date,
-          xMax: event.date,
+          xMin: snappedDate,
+          xMax: snappedDate,
           borderColor: '#c62828',
           borderWidth: 1.5,
           borderDash: [6, 4],
@@ -486,11 +572,9 @@ const Security = () => {
     }
 
     return annotationConfig;
-  }, [showEventMarkers, showMacroRegimes, chartSeries, visibleDateSet]);
+  }, [showEventMarkers, showMacroRegimes, labels]);
 
   if (!security) return <div>Loading...</div>;
-
-  const labels = chartSeries.map(h => h.date);
 
   const data = {
     labels,
@@ -504,36 +588,40 @@ const Security = () => {
         pointRadius: 0,
         fill: false,
         tension: 0.15,
+        spanGaps: true,
       },
       selectedAverage === '5d' && {
         label: '5-Day MA',
-        data: chartSeries.map(h => maMap['5d'].get(h.date) ?? null),
+        data: buildAlignedMAData('5d'),
         borderColor: 'rgb(255, 99, 132)',
         backgroundColor: 'rgba(255, 99, 132, 0.2)',
         borderWidth: 1,
         pointRadius: 0,
         fill: false,
         tension: 0.15,
+        spanGaps: true,
       },
       selectedAverage === '40d' && {
         label: '40-Day MA',
-        data: chartSeries.map(h => maMap['40d'].get(h.date) ?? null),
+        data: buildAlignedMAData('40d'),
         borderColor: 'rgb(255, 159, 64)',
         backgroundColor: 'rgba(255, 159, 64, 0.2)',
         borderWidth: 1,
         pointRadius: 0,
         fill: false,
         tension: 0.15,
+        spanGaps: true,
       },
       selectedAverage === '200d' && {
         label: '200-Day MA',
-        data: chartSeries.map(h => maMap['200d'].get(h.date) ?? null),
+        data: buildAlignedMAData('200d'),
         borderColor: 'rgb(153, 102, 255)',
         backgroundColor: 'rgba(153, 102, 255, 0.2)',
         borderWidth: 1,
         pointRadius: 0,
         fill: false,
         tension: 0.15,
+        spanGaps: true,
       },
     ].filter(Boolean),
   };
