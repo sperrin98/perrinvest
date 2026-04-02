@@ -34,6 +34,7 @@ import FederalDebtGold from './components/FederalDebtGold';
 import RebasedComparison from './components/RebasedComparison';
 import RollingReturns from './components/RollingReturns';
 import Drawdowns from './components/Drawdowns';
+import Petrol from "./Petrol";
 
 const AdminRoute = ({ isLoggedIn, isAdmin, children }) => {
   if (!isLoggedIn) return <Navigate to="/login" />;
@@ -115,6 +116,7 @@ function App() {
         <Route path="/summary-data" element={<SummaryData />} />
         <Route path="/long-only-watchlist" element={<LongOnlyWatchlist />} />
         <Route path="/bond-yields" element={<BondYields />} />
+        <Route path="/petrol" element={<Petrol />} />
         <Route
           path="/blog/create"
           element={
