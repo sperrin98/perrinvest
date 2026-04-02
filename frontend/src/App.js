@@ -34,7 +34,7 @@ import FederalDebtGold from './components/FederalDebtGold';
 import RebasedComparison from './components/RebasedComparison';
 import RollingReturns from './components/RollingReturns';
 import Drawdowns from './components/Drawdowns';
-import Petrol from "./Petrol";
+import Petrol from "./components/Petrol";
 
 const AdminRoute = ({ isLoggedIn, isAdmin, children }) => {
   if (!isLoggedIn) return <Navigate to="/login" />;
