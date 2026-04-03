@@ -165,6 +165,9 @@ const Header = ({ isLoggedIn, onLogout }) => {
               <Link to="/rebased-comparison" onClick={closeMenu}>
                 Rebased Comparison
               </Link>
+              <Link to="/petrol" onClick={closeMenu}>
+                Petrol Prices
+              </Link>
             </div>
           </li>
 
