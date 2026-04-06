@@ -28,6 +28,7 @@ ChartJS.register(
 );
 
 const PETROL_IDS = new Set([36, 37]);
+const CRUDE_SECURITY_ID = 44;
 const RANGE_PRESETS = ["1Y", "3Y", "5Y", "10Y", "MAX"];
 
 const EVENT_MARKERS = [
@@ -36,9 +37,7 @@ const EVENT_MARKERS = [
   { id: "arabspring", label: "2011 Arab Spring", date: "2011-01-25" },
   { id: "oilcrash", label: "2014 Oil Crash", date: "2014-11-27" },
   { id: "brexit", label: "2016 Brexit Vote", date: "2016-06-23" },
-  { id: "covid", label: "2020 Covid Crash", date: "2020-03-16" },
   { id: "ukraine", label: "2022 Ukraine Invasion", date: "2022-02-24" },
-  { id: "inflation", label: "2022 Inflation Shock", date: "2022-06-13" },
 ];
 
 const MACRO_REGIMES = [
@@ -58,20 +57,68 @@ const parseNumber = (value) => {
 
 const toISODate = (value) => {
   if (!value) return null;
+
+  const text = String(value);
+  if (/^\d{4}-\d{2}-\d{2}/.test(text)) {
+    return text.slice(0, 10);
+  }
+
   const d = new Date(value);
   if (Number.isNaN(d.getTime())) return null;
   return d.toISOString().split("T")[0];
 };
 
-const normalisePetrolSeries = (rows) => {
-  if (!Array.isArray(rows)) return [];
+const extractRows = (payload) => {
+  if (Array.isArray(payload)) return payload;
+  if (!payload || typeof payload !== "object") return [];
+
+  if (Array.isArray(payload.price_history)) return payload.price_history;
+  if (Array.isArray(payload.price_histories)) return payload.price_histories;
+  if (Array.isArray(payload.histories)) return payload.histories;
+  if (Array.isArray(payload.data)) return payload.data;
+  if (Array.isArray(payload.rows)) return payload.rows;
+
+  if (payload.data && Array.isArray(payload.data.price_history)) {
+    return payload.data.price_history;
+  }
+  if (payload.data && Array.isArray(payload.data.price_histories)) {
+    return payload.data.price_histories;
+  }
+
+  return [];
+};
+
+const getRowDate = (row) => {
+  if (Array.isArray(row)) return toISODate(row[1]);
+  return toISODate(row.price_date || row.date);
+};
+
+const getRowPrice = (row) => {
+  if (Array.isArray(row)) return parseNumber(row[2]);
+  return parseNumber(row.price);
+};
+
+const normalisePetrolSeries = (payload) => {
+  const rows = extractRows(payload);
 
   return rows
     .map((row) => ({
-      price_date: toISODate(row.price_date),
-      petrol_price: parseNumber(row.price),
+      price_date: getRowDate(row),
+      petrol_price: getRowPrice(row),
     }))
     .filter((row) => row.price_date && row.petrol_price !== null)
+    .sort((a, b) => new Date(a.price_date) - new Date(b.price_date));
+};
+
+const normaliseCrudeSeries = (payload) => {
+  const rows = extractRows(payload);
+
+  return rows
+    .map((row) => ({
+      price_date: getRowDate(row),
+      crude_price: getRowPrice(row),
+    }))
+    .filter((row) => row.price_date && row.crude_price !== null)
     .sort((a, b) => new Date(a.price_date) - new Date(b.price_date));
 };
 
@@ -110,18 +157,46 @@ const findLastVisibleOnOrBefore = (targetDate, visibleDates) => {
   return null;
 };
 
+const alignSeriesToLabelsUsingCarryForward = (labels, sourceRows, valueKey) => {
+  if (!labels.length || !sourceRows.length) return [];
+
+  const sortedRows = [...sourceRows].sort(
+    (a, b) => new Date(a.price_date) - new Date(b.price_date)
+  );
+
+  let sourceIndex = 0;
+  let lastKnownValue = null;
+
+  return labels.map((labelDate) => {
+    while (
+      sourceIndex < sortedRows.length &&
+      sortedRows[sourceIndex].price_date <= labelDate
+    ) {
+      lastKnownValue = sortedRows[sourceIndex][valueKey];
+      sourceIndex += 1;
+    }
+
+    return lastKnownValue;
+  });
+};
+
 export default function Petrol() {
   const [petrolDataPoints, setPetrolDataPoints] = useState([]);
   const [petrolChartData, setPetrolChartData] = useState([]);
+  const [crudeChartData, setCrudeChartData] = useState([]);
+
   const [selectedPetrolName, setSelectedPetrolName] = useState("");
   const [selectedPetrolId, setSelectedPetrolId] = useState(null);
   const [petrolError, setPetrolError] = useState("");
+  const [crudeError, setCrudeError] = useState("");
 
   const [selectedRangePreset, setSelectedRangePreset] = useState("MAX");
   const [activeStartDate, setActiveStartDate] = useState("");
   const [activeEndDate, setActiveEndDate] = useState("");
+
   const [showEventMarkers, setShowEventMarkers] = useState(true);
   const [showMacroRegimes, setShowMacroRegimes] = useState(true);
+  const [showCrudeOverlay, setShowCrudeOverlay] = useState(false);
 
   const API_URL = process.env.REACT_APP_API_URL;
 
@@ -149,6 +224,45 @@ export default function Petrol() {
     }
 
     fetchPetrolDataPoints();
+  }, [API_URL]);
+
+  useEffect(() => {
+    async function fetchCrudeChartData() {
+      setCrudeError("");
+
+      try {
+        let data = [];
+
+        try {
+          const response = await axios.get(
+            `${API_URL}/securities/${CRUDE_SECURITY_ID}/price-histories`,
+            { params: { timeframe: "all" } }
+          );
+          data = normaliseCrudeSeries(response.data);
+        } catch (innerErr) {
+          console.warn("Primary crude route failed:", innerErr);
+        }
+
+        if (!data.length) {
+          const fallbackResponse = await axios.get(
+            `${API_URL}/securities/${CRUDE_SECURITY_ID}`
+          );
+          data = normaliseCrudeSeries(fallbackResponse.data?.price_history || []);
+        }
+
+        setCrudeChartData(data);
+
+        if (!data.length) {
+          setCrudeError("No crude oil price history returned.");
+        }
+      } catch (err) {
+        console.error("Failed to load crude oil overlay:", err);
+        setCrudeChartData([]);
+        setCrudeError("Failed to load price history of crude oil.");
+      }
+    }
+
+    fetchCrudeChartData();
   }, [API_URL]);
 
   const fetchPetrolChartData = async (ecoDataPointId, ecoDataPointName) => {
@@ -215,6 +329,18 @@ export default function Petrol() {
     [rangeFilteredData]
   );
 
+  const alignedCrudeData = useMemo(() => {
+    if (!showCrudeOverlay || !labels.length || !crudeChartData.length) {
+      return [];
+    }
+
+    return alignSeriesToLabelsUsingCarryForward(
+      labels,
+      crudeChartData,
+      "crude_price"
+    );
+  }, [labels, crudeChartData, showCrudeOverlay]);
+
   const annotations = useMemo(() => {
     if (!labels.length) return {};
 
@@ -264,7 +390,7 @@ export default function Petrol() {
     }
 
     if (showEventMarkers) {
-      EVENT_MARKERS.forEach((event) => {
+      EVENT_MARKERS.forEach((event, index) => {
         const xValue = findFirstVisibleOnOrAfter(event.date, labels);
         if (!xValue) return;
 
@@ -281,7 +407,7 @@ export default function Petrol() {
             display: true,
             content: event.label,
             position: "start",
-            yAdjust: 8,
+            yAdjust: 10 + (index % 3) * 16,
             backgroundColor: "rgba(198, 40, 40, 0.92)",
             color: "#ffffff",
             padding: 4,
@@ -297,35 +423,63 @@ export default function Petrol() {
     return annotationConfig;
   }, [labels, showMacroRegimes, showEventMarkers]);
 
-  const data = useMemo(
-    () => ({
-      labels,
-      datasets: [
-        {
-          label: "UK Petrol Price",
-          data: rangeFilteredData.map((row) => row.petrol_price),
-          borderColor: "#00796b",
-          backgroundColor: "rgba(0, 121, 107, 0.08)",
-          borderWidth: 1.8,
-          pointRadius: 0,
-          fill: false,
-          tension: 0.15,
-          spanGaps: true,
-          yAxisID: "y",
-        },
-      ],
-    }),
-    [labels, rangeFilteredData]
-  );
+  const data = useMemo(() => {
+    const lineStyle = {
+      borderWidth: 2.2,
+      pointRadius: 0,
+      pointHoverRadius: 3,
+      fill: false,
+      tension: 0.15,
+      spanGaps: true,
+    };
 
-  const chartOptions = useMemo(
-    () => ({
+    const datasets = [
+      {
+        label: "UK Petrol Price",
+        data: rangeFilteredData.map((row) => row.petrol_price),
+        borderColor: "#00796b",
+        backgroundColor: "rgba(0, 121, 107, 0.08)",
+        yAxisID: "y",
+        ...lineStyle,
+      },
+    ];
+
+    if (showCrudeOverlay && alignedCrudeData.some((value) => value !== null)) {
+      datasets.push({
+        label: "Crude Oil Price",
+        data: alignedCrudeData,
+        borderColor: "#c62828",
+        backgroundColor: "rgba(198, 40, 40, 0.08)",
+        yAxisID: "y1",
+        ...lineStyle,
+      });
+    }
+
+    return {
+      labels,
+      datasets,
+    };
+  }, [rangeFilteredData, showCrudeOverlay, alignedCrudeData, labels]);
+
+  const chartOptions = useMemo(() => {
+    const crudeValues = alignedCrudeData.filter((value) => value !== null);
+    const hasCrudeValues = showCrudeOverlay && crudeValues.length > 0;
+
+    return {
       responsive: true,
       maintainAspectRatio: false,
-      animation: false,
+      animation: {
+        duration: 220,
+        easing: "easeOutQuart",
+      },
       interaction: {
         mode: "index",
         intersect: false,
+      },
+      elements: {
+        line: {
+          capBezierPoints: true,
+        },
       },
       scales: {
         x: {
@@ -348,7 +502,7 @@ export default function Petrol() {
           position: "left",
           title: {
             display: true,
-            text: "Price",
+            text: "Petrol Price",
             color: "#00796b",
           },
           ticks: {
@@ -357,10 +511,32 @@ export default function Petrol() {
           },
           grid: { color: "rgb(202, 202, 202)" },
         },
+        y1: {
+          type: "linear",
+          position: "right",
+          display: hasCrudeValues,
+          title: {
+            display: hasCrudeValues,
+            text: "Crude Oil Price",
+            color: "#c62828",
+          },
+          ticks: {
+            color: "#c62828",
+            beginAtZero: false,
+          },
+          grid: {
+            drawOnChartArea: false,
+          },
+        },
       },
       plugins: {
         legend: {
-          labels: { color: "#00796b" },
+          labels: {
+            color: "#00796b",
+            usePointStyle: true,
+            pointStyle: "line",
+            padding: 16,
+          },
         },
         tooltip: {
           backgroundColor: "#ffffff",
@@ -397,9 +573,8 @@ export default function Petrol() {
           },
         },
       },
-    }),
-    [annotations]
-  );
+    };
+  }, [annotations, showCrudeOverlay, alignedCrudeData]);
 
   return (
     <div className="petrol-container">
@@ -449,7 +624,21 @@ export default function Petrol() {
             >
               QE / Rate Cycles
             </button>
+
+            <button
+              type="button"
+              className={showCrudeOverlay ? "selected" : ""}
+              onClick={() => setShowCrudeOverlay((prev) => !prev)}
+            >
+              Crude Oil Overlay
+            </button>
           </div>
+
+          {crudeError && (
+            <p className="petrol-error" style={{ marginTop: "10px" }}>
+              {crudeError}
+            </p>
+          )}
         </div>
       </aside>
 
@@ -483,7 +672,7 @@ export default function Petrol() {
                 <div className="petrol-chart-name">{selectedPetrolName}</div>
               </div>
 
-              {(showEventMarkers || showMacroRegimes) && (
+              {(showEventMarkers || showMacroRegimes || showCrudeOverlay) && (
                 <div className="petrol-overlay-legend">
                   {showEventMarkers && (
                     <div className="petrol-overlay-chip petrol-overlay-chip-event">
@@ -500,13 +689,18 @@ export default function Petrol() {
                       </div>
                     </>
                   )}
+                  {showCrudeOverlay && (
+                    <div className="petrol-overlay-chip petrol-overlay-chip-crude">
+                      Crude oil
+                    </div>
+                  )}
                 </div>
               )}
             </div>
 
             <div className="petrol-chart-canvas">
               <Line
-                key={`${selectedPetrolId}-${activeStartDate}-${activeEndDate}-${showEventMarkers}-${showMacroRegimes}`}
+                key={`${selectedPetrolId}-${activeStartDate}-${activeEndDate}-${showEventMarkers}-${showMacroRegimes}-${showCrudeOverlay}`}
                 data={data}
                 options={chartOptions}
                 redraw

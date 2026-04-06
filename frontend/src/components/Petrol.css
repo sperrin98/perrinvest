@@ -258,6 +258,12 @@
   background: rgba(255, 159, 64, 0.1);
 }
 
+.petrol-overlay-chip-crude {
+  color: #1e3a8a;
+  border-color: rgba(30, 58, 138, 0.24);
+  background: rgba(30, 58, 138, 0.08);
+}
+
 .petrol-empty-state {
   margin-top: 30px;
   width: 100%;
