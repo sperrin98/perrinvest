@@ -171,6 +171,9 @@ const Header = ({ isLoggedIn, onLogout }) => {
               <Link to="/seasonality" onClick={closeMenu}>
                 Seasonality
               </Link>
+              <Link to="/volatility" onClick={closeMenu}>
+                Volatility
+              </Link>
             </div>
           </li>
 
