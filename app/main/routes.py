@@ -56,7 +56,8 @@ from app.db_utils import (
     fetch_correlation_matrices,
     fetch_corr_matrix_square_for_date,
     fetch_seasonality_chart_by_security_id,
-    fetch_seasonality_securities
+    fetch_seasonality_securities,
+    fetch_security_vols_for_comparison
 )   
 import yfinance as yf
 from datetime import datetime, timedelta
@@ -1094,3 +1095,28 @@ def get_seasonality_chart(security_id):
     except Exception as e:
         logger.error(f"Error fetching seasonality chart for security_id {security_id}: {e}")
         return jsonify({'error': 'Failed to fetch seasonality chart'}), 500
+
+@main.route('/volatility-comparison', methods=['GET'])
+def get_volatility_comparison():
+    sec_id1 = request.args.get('sec_id1', type=int)
+    sec_id2 = request.args.get('sec_id2', type=int)
+    sec_id3 = request.args.get('sec_id3', type=int)
+    sec_id4 = request.args.get('sec_id4', type=int)
+    start_date = request.args.get('start_date', '2010-01-01')
+
+    if not sec_id1 or not sec_id2 or not sec_id3 or not sec_id4:
+        return jsonify({'error': 'sec_id1, sec_id2, sec_id3 and sec_id4 are required'}), 400
+
+    try:
+        datetime.strptime(start_date, '%Y-%m-%d')
+    except ValueError:
+        return jsonify({'error': 'Invalid start_date format. Use YYYY-MM-DD'}), 400
+
+    try:
+        data = fetch_security_vols_for_comparison(
+            sec_id1, sec_id2, sec_id3, sec_id4, start_date
+        )
+        return jsonify(data), 200
+    except Exception as e:
+        logger.error(f"Error fetching volatility comparison: {e}")
+        return jsonify({'error': 'Failed to fetch volatility comparison'}), 500
