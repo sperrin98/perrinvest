@@ -55,6 +55,8 @@ from app.db_utils import (
     get_us_federal_debt_and_priced_in_gold,
     fetch_correlation_matrices,
     fetch_corr_matrix_square_for_date,
+    fetch_seasonality_chart_by_security_id,
+    fetch_seasonality_securities
 )   
 import yfinance as yf
 from datetime import datetime, timedelta
@@ -1057,3 +1059,38 @@ def get_correlation_matrix_square_route():
         return jsonify({"data": data})
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
+@main.route('/seasonality-securities', methods=['GET'])
+def get_seasonality_securities():
+    try:
+        securities = fetch_seasonality_securities()
+        return jsonify(securities), 200
+    except Exception as e:
+        logger.error(f"Error fetching seasonality securities: {e}")
+        return jsonify({'error': 'Failed to fetch seasonality securities'}), 500
+
+@main.route('/seasonality/<int:security_id>', methods=['GET'])
+def get_seasonality_chart(security_id):
+    start_date = request.args.get('start_date', '2010-01-01')
+
+    try:
+        datetime.strptime(start_date, '%Y-%m-%d')
+    except ValueError:
+        return jsonify({'error': 'Invalid start_date format. Use YYYY-MM-DD'}), 400
+
+    allowed_ids = {
+        1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,
+        16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,
+        36,37,38,44,80,81,82,83,84,85,86,87,88,90,149,153,154,155,156,
+        169,189,190,191,192,193,194,195,196,197,229,230,231,232
+    }
+
+    if security_id not in allowed_ids:
+        return jsonify({'error': 'Security not allowed for seasonality'}), 400
+
+    try:
+        data = fetch_seasonality_chart_by_security_id(security_id, start_date)
+        return jsonify(data), 200
+    except Exception as e:
+        logger.error(f"Error fetching seasonality chart for security_id {security_id}: {e}")
+        return jsonify({'error': 'Failed to fetch seasonality chart'}), 500

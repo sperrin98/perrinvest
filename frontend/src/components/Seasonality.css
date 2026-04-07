@@ -1,0 +1,368 @@
+/* Seasonality.css */
+
+.seasonality-page {
+  padding-top: 82px;
+  box-sizing: border-box;
+}
+
+.seasonality-container {
+  display: flex;
+  width: 100vw;
+  height: calc(100vh - 82px);
+  background-color: #f8f8f8;
+  box-sizing: border-box;
+}
+
+.seasonality-sidebar {
+  width: 22%;
+  background: linear-gradient(135deg, #00796b, #004d40);
+  padding: 25px;
+  box-sizing: border-box;
+  color: white;
+  font-family: Arial, sans-serif;
+  border-right: 3px solid #00332c;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.seasonality-sidebar-top {
+  margin-bottom: 6px;
+}
+
+.seasonality-sidebar-title {
+  font-size: 1.4rem;
+  margin: 0 0 6px 0;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.3);
+  padding-bottom: 8px;
+}
+
+.seasonality-sidebar-subtitle {
+  font-size: 13px;
+  opacity: 0.9;
+}
+
+.seasonality-sidebar-subtitle-spaced {
+  margin: 0 0 10px 0;
+}
+
+.seasonality-control {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.seasonality-control label {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.92);
+}
+
+.seasonality-input {
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  font-size: 14px;
+  outline: none;
+  transition: 0.3s ease;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.seasonality-input::placeholder {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.seasonality-input:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.seasonality-input:focus {
+  background: rgba(255, 255, 255, 0.25);
+  border-color: #00ffb3;
+}
+
+.seasonality-dd-inputWrap {
+  position: relative;
+  width: 100%;
+}
+
+.seasonality-dd-input {
+  padding-right: 38px;
+}
+
+.seasonality-dd-toggle {
+  position: absolute;
+  right: 6px;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 30px;
+  width: 30px;
+  border: 0;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 900;
+  color: #004d40;
+  background: rgba(255, 255, 255, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: 0.2s ease;
+}
+
+.seasonality-dd-toggle:hover {
+  background: rgba(255, 255, 255, 1);
+  transform: translateY(-50%) scale(1.05);
+}
+
+.seasonality-dd {
+  position: absolute;
+  top: 78px;
+  left: 0;
+  right: 0;
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  border-radius: 10px;
+  overflow: hidden;
+  z-index: 9999;
+  max-height: 320px;
+  overflow-y: auto;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.18);
+}
+
+.seasonality-dd-empty {
+  padding: 12px;
+  font-size: 14px;
+  opacity: 0.75;
+  color: #004d40;
+}
+
+.seasonality-dd-item {
+  width: 100%;
+  text-align: left;
+  padding: 10px 12px;
+  border: 0;
+  background: white;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.seasonality-dd-item:hover {
+  background: #f3f3f3;
+}
+
+.seasonality-dd-main {
+  font-weight: 700;
+  color: #004d40;
+}
+
+.seasonality-sidebar-section {
+  display: flex;
+  flex-direction: column;
+}
+
+.seasonality-point-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.seasonality-point-item {
+  cursor: pointer;
+  margin-bottom: 10px;
+  padding: 11px 12px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 7px;
+  transition: 0.25s ease;
+}
+
+.seasonality-point-item:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: translateX(3px);
+}
+
+.seasonality-selected-point {
+  font-weight: bold;
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.24);
+  border-color: rgba(255, 255, 255, 0.55);
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.08) inset;
+}
+
+.seasonality-point-name {
+  font-size: 0.95rem;
+  line-height: 1.35;
+}
+
+.seasonality-empty-item {
+  padding: 10px;
+  border-radius: 5px;
+  background: rgba(0, 0, 0, 0.18);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.seasonality-error-box {
+  color: #ffb4b4;
+  font-weight: 700;
+  background: rgba(0, 0, 0, 0.18);
+  padding: 10px;
+  border-radius: 8px;
+}
+
+.seasonality-main {
+  width: 78%;
+  padding: 20px;
+  overflow-x: auto;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+
+.seasonality-title {
+  margin: 0 0 14px 0;
+  color: #00796b;
+  font-size: 28px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.seasonality-stats-row {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+  margin-bottom: 16px;
+}
+
+.seasonality-stat-card {
+  background: #ffffff;
+  border-radius: 10px;
+  padding: 14px 16px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.seasonality-stat-label {
+  color: #6a7a76;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.seasonality-stat-value {
+  color: #0f766e;
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.seasonality-chart-card {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 16px 18px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  box-sizing: border-box;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.seasonality-chart-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 14px;
+  margin-bottom: 10px;
+  flex-shrink: 0;
+}
+
+.seasonality-chart-kicker {
+  color: #6a7a76;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.7px;
+  text-transform: uppercase;
+}
+
+.seasonality-chart-name {
+  color: #00796b;
+  font-size: 22px;
+  font-weight: 700;
+  margin-top: 4px;
+}
+
+.seasonality-chart-canvas {
+  width: 100%;
+  flex: 1;
+  min-height: 0;
+}
+
+.seasonality-empty-state {
+  width: 100%;
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #666;
+  font-size: 16px;
+  font-weight: 600;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+@media (max-width: 1100px) {
+  .seasonality-stats-row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 900px) {
+  .seasonality-sidebar {
+    width: 35%;
+  }
+
+  .seasonality-main {
+    width: 65%;
+  }
+}
+
+@media (max-width: 650px) {
+  .seasonality-container {
+    flex-direction: column;
+    height: auto;
+  }
+
+  .seasonality-sidebar {
+    width: 100%;
+    border-right: none;
+    border-bottom: 3px solid #00332c;
+  }
+
+  .seasonality-main {
+    width: 100%;
+    min-height: 70vh;
+  }
+
+  .seasonality-stats-row {
+    grid-template-columns: 1fr;
+  }
+
+  .seasonality-chart-canvas {
+    min-height: 420px;
+  }
+}

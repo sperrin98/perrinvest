@@ -1096,3 +1096,61 @@ def fetch_corr_matrix_square_for_date(matrix_id, as_of_date):
             "columns": [],
             "rows": []
         }
+
+def fetch_seasonality_chart_by_security_id(security_id, start_date):
+    connection = get_db_connection()
+    cursor = connection.cursor(dictionary=True)
+
+    try:
+        cursor.callproc("get_seasonality_chart_by_security_id", [security_id, start_date])
+
+        results = []
+        for result in cursor.stored_results():
+            results = result.fetchall()
+
+        return results
+
+    except Exception as e:
+        logging.error(f"Error fetching seasonality chart for security_id {security_id}: {e}")
+        raise
+
+    finally:
+        cursor.close()
+        connection.close()
+
+def fetch_seasonality_securities():
+    allowed_ids = [
+        1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,
+        16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,
+        36,37,38,44,80,81,82,83,84,85,86,87,88,90,149,153,154,155,156,
+        169,189,190,191,192,193,194,195,196,197,229,230,231,232
+    ]
+
+    connection = get_db_connection()
+    cursor = connection.cursor(dictionary=True)
+
+    try:
+        placeholders = ",".join(["%s"] * len(allowed_ids))
+        query = f"""
+            SELECT
+                s.security_id,
+                s.security_long_name,
+                s.security_short_name,
+                ac.asset_class_name
+            FROM securities s
+            LEFT JOIN asset_classes ac
+                ON s.asset_class_id = ac.asset_class_id
+            WHERE s.security_id IN ({placeholders})
+            ORDER BY ac.asset_class_name, s.security_long_name
+        """
+
+        cursor.execute(query, allowed_ids)
+        return cursor.fetchall()
+
+    except Exception as e:
+        logging.error(f"Error fetching seasonality securities: {e}")
+        raise
+
+    finally:
+        cursor.close()
+        connection.close()
