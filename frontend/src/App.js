@@ -36,6 +36,8 @@ import RollingReturns from './components/RollingReturns';
 import Drawdowns from './components/Drawdowns';
 import Petrol from "./components/Petrol";
 import Seasonality from "./components/Seasonality";
+import Volatility from "./components/Volatility";
+import VolatilityComparison from "./components/VolatilityComparison";
 
 const AdminRoute = ({ isLoggedIn, isAdmin, children }) => {
   if (!isLoggedIn) return <Navigate to="/login" />;
@@ -119,6 +121,8 @@ function App() {
         <Route path="/bond-yields" element={<BondYields />} />
         <Route path="/petrol" element={<Petrol />} />
         <Route path="/seasonality" element={<Seasonality />} />
+        <Route path="/volatility" element={<Volatility />} />
+        <Route path="/volatility-comparison" element={<VolatilityComparison />} />
         <Route
           path="/blog/create"
           element={
