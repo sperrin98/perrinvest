@@ -1,3 +1,5 @@
+// VolatilityComparison.js
+
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import axios from "axios";
 import {
@@ -67,7 +69,18 @@ const getPresetStartDate = (preset, maxDate, minDate) => {
 
 const securityLabel = (s) => {
   if (!s) return "";
-  return s.security_long_name || "";
+  return s.security_long_name || s.name || "";
+};
+
+const percentileRank = (values, currentValue) => {
+  if (!values.length || !Number.isFinite(currentValue)) return null;
+  const count = values.filter((v) => v <= currentValue).length;
+  return (count / values.length) * 100;
+};
+
+const formatPercentile = (value) => {
+  if (value === null || value === undefined || !Number.isFinite(value)) return "-";
+  return `${value.toFixed(1)}%`;
 };
 
 function SecurityDropdown({
@@ -83,9 +96,12 @@ function SecurityDropdown({
   const filtered = useMemo(() => {
     const q = (query || "").trim().toLowerCase();
     if (!q) return items;
-    return items.filter((item) =>
-      (item.security_long_name || "").toLowerCase().includes(q)
-    );
+
+    return items.filter((item) => {
+      const name = (item.security_long_name || item.name || "").toLowerCase();
+      const ticker = (item.ticker || "").toLowerCase();
+      return name.includes(q) || ticker.includes(q);
+    });
   }, [items, query]);
 
   return (
@@ -130,7 +146,10 @@ function SecurityDropdown({
                 type="button"
                 onClick={() => onPick(item)}
               >
-                <div className="vcomp-dd-main">{item.security_long_name}</div>
+                <div className="vcomp-dd-main">
+                  {item.security_long_name || item.name}
+                </div>
+                {item.ticker ? <div className="vcomp-dd-sub">{item.ticker}</div> : null}
               </button>
             ))
           )}
@@ -166,7 +185,7 @@ function VolatilityComparison() {
   const [selectedRangePreset, setSelectedRangePreset] = useState("MAX");
   const [customStartDate, setCustomStartDate] = useState("2010-01-01");
   const [customEndDate, setCustomEndDate] = useState("");
-  const [activeStartDate, setActiveStartDate] = useState("2010-01-01");
+  const [activeStartDate, setActiveStartDate] = useState("");
   const [activeEndDate, setActiveEndDate] = useState("");
 
   const sec1Ref = useRef(null);
@@ -192,21 +211,9 @@ function VolatilityComparison() {
         setLoadingSecurities(true);
         setError("");
 
-        const response = await axios.get(`${API_URL}/seasonality-securities`);
+        const response = await axios.get(`${API_URL}/securities`);
         const list = Array.isArray(response.data) ? response.data : [];
         setSecurities(list);
-
-        if (list.length >= 4) {
-          setSec1(list[0]);
-          setSec2(list[1]);
-          setSec3(list[2]);
-          setSec4(list[3]);
-
-          setSec1Query(securityLabel(list[0]));
-          setSec2Query(securityLabel(list[1]));
-          setSec3Query(securityLabel(list[2]));
-          setSec4Query(securityLabel(list[3]));
-        }
       } catch (err) {
         console.error(err);
         setError("Failed to load securities.");
@@ -266,11 +273,14 @@ function VolatilityComparison() {
     }
   };
 
-  useEffect(() => {
-    if (sec1 && sec2 && sec3 && sec4) {
-      fetchComparison(customStartDate || "2010-01-01");
+  const handleLoadComparison = () => {
+    if (!sec1 || !sec2 || !sec3 || !sec4) {
+      setError("Please select all 4 securities.");
+      return;
     }
-  }, [sec1, sec2, sec3, sec4]);
+
+    fetchComparison(customStartDate || "2010-01-01");
+  };
 
   const handlePresetRange = (preset) => {
     if (!rows.length) return;
@@ -318,6 +328,33 @@ function VolatilityComparison() {
     );
   }, [rows, activeStartDate, activeEndDate]);
 
+  const percentileCards = useMemo(() => {
+    if (!filteredRows.length) return [];
+
+    const seriesDefs = [
+      { key: "vol1", security: sec1, cls: "vcomp-percentile-card-red" },
+      { key: "vol2", security: sec2, cls: "vcomp-percentile-card-teal" },
+      { key: "vol3", security: sec3, cls: "vcomp-percentile-card-blue" },
+      { key: "vol4", security: sec4, cls: "vcomp-percentile-card-orange" },
+    ];
+
+    return seriesDefs.map(({ key, security, cls }) => {
+      const values = filteredRows
+        .map((row) => row[key])
+        .filter((v) => Number.isFinite(v));
+
+      const currentValue = values.length ? values[values.length - 1] : null;
+      const percentile = percentileRank(values, currentValue);
+
+      return {
+        name: securityLabel(security) || "Unselected",
+        currentValue,
+        percentile,
+        cls,
+      };
+    });
+  }, [filteredRows, sec1, sec2, sec3, sec4]);
+
   const chartData = useMemo(() => {
     return {
       labels: filteredRows.map((row) => row.price_date),
@@ -327,7 +364,7 @@ function VolatilityComparison() {
           data: filteredRows.map((row) => row.vol1),
           borderColor: "#e84d4d",
           backgroundColor: "rgba(232, 77, 77, 0.08)",
-          borderWidth: 1.3,
+          borderWidth: 1.2,
           pointRadius: 0,
           tension: 0.15,
           fill: false,
@@ -338,7 +375,7 @@ function VolatilityComparison() {
           data: filteredRows.map((row) => row.vol2),
           borderColor: "#0f766e",
           backgroundColor: "rgba(15, 118, 110, 0.08)",
-          borderWidth: 1.3,
+          borderWidth: 1.2,
           pointRadius: 0,
           tension: 0.15,
           fill: false,
@@ -349,7 +386,7 @@ function VolatilityComparison() {
           data: filteredRows.map((row) => row.vol3),
           borderColor: "#1d4ed8",
           backgroundColor: "rgba(29, 78, 216, 0.08)",
-          borderWidth: 1.3,
+          borderWidth: 1.2,
           pointRadius: 0,
           tension: 0.15,
           fill: false,
@@ -360,7 +397,7 @@ function VolatilityComparison() {
           data: filteredRows.map((row) => row.vol4),
           borderColor: "#d97706",
           backgroundColor: "rgba(217, 119, 6, 0.08)",
-          borderWidth: 1.3,
+          borderWidth: 1.2,
           pointRadius: 0,
           tension: 0.15,
           fill: false,
@@ -481,6 +518,10 @@ function VolatilityComparison() {
               setSec4Open(false);
             }}
           />
+
+          <button className="vcomp-load-btn" onClick={handleLoadComparison} type="button">
+            Load Comparison
+          </button>
         </aside>
 
         <div className="vcomp-main">
@@ -526,6 +567,25 @@ function VolatilityComparison() {
             </div>
           </div>
 
+          {percentileCards.length > 0 && (
+            <div className="vcomp-percentile-grid">
+              {percentileCards.map((card) => (
+                <div key={card.name} className={`vcomp-percentile-card ${card.cls}`}>
+                  <div className="vcomp-percentile-name">{card.name}</div>
+                  <div className="vcomp-percentile-label">Current Vol Percentile</div>
+                  <div className="vcomp-percentile-value">
+                    {formatPercentile(card.percentile)}
+                  </div>
+                  <div className="vcomp-percentile-sub">
+                    Current Vol: {card.currentValue !== null && Number.isFinite(card.currentValue)
+                      ? card.currentValue.toFixed(4)
+                      : "-"}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+
           {loadingChart ? (
             <div className="vcomp-empty-state">
               <p>Loading chart...</p>
@@ -538,7 +598,7 @@ function VolatilityComparison() {
             </div>
           ) : (
             <div className="vcomp-empty-state">
-              <p>Select four securities to view the comparison.</p>
+              <p>Select four securities and load the comparison.</p>
             </div>
           )}
         </div>

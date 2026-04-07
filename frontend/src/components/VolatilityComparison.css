@@ -1,3 +1,5 @@
+/* VolatilityComparison.css */
+
 .vcomp-page {
   padding-top: 82px;
   box-sizing: border-box;
@@ -153,6 +155,13 @@
   color: #004d40;
 }
 
+.vcomp-dd-sub {
+  font-size: 12px;
+  opacity: 0.7;
+  margin-top: 3px;
+  color: #004d40;
+}
+
 .vcomp-hint {
   font-size: 12px;
   opacity: 0.85;
@@ -166,6 +175,20 @@
   border-radius: 8px;
 }
 
+.vcomp-load-btn {
+  margin-top: 4px;
+  padding: 12px;
+  border-radius: 10px;
+  border: 0;
+  cursor: pointer;
+  font-weight: 700;
+  transition: 0.3s ease;
+}
+
+.vcomp-load-btn:hover {
+  transform: scale(1.02);
+}
+
 .vcomp-main {
   width: 78%;
   padding: 20px;
@@ -177,7 +200,7 @@
 }
 
 .vcomp-title {
-  margin: 0 0 14px 0;
+  margin: 0 0 12px 0;
   color: #00796b;
   font-size: 28px;
   font-weight: 600;
@@ -192,7 +215,7 @@
   justify-content: space-between;
   align-items: center;
   gap: 18px;
-  margin-bottom: 18px;
+  margin-bottom: 12px;
   flex-wrap: wrap;
 }
 
@@ -263,18 +286,80 @@
   min-width: 100px;
 }
 
+.vcomp-percentile-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.vcomp-percentile-card {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 10px 12px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.vcomp-percentile-card-red {
+  border-top: 4px solid #e84d4d;
+}
+
+.vcomp-percentile-card-teal {
+  border-top: 4px solid #0f766e;
+}
+
+.vcomp-percentile-card-blue {
+  border-top: 4px solid #1d4ed8;
+}
+
+.vcomp-percentile-card-orange {
+  border-top: 4px solid #d97706;
+}
+
+.vcomp-percentile-name {
+  color: #123c36;
+  font-size: 0.82rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.vcomp-percentile-label {
+  color: #6a7a76;
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.35px;
+}
+
+.vcomp-percentile-value {
+  color: #00796b;
+  font-size: 1.3rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.vcomp-percentile-sub {
+  color: #5d7e79;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
 .vcomp-chart-card {
   background: #ffffff;
   border-radius: 12px;
-  padding: 16px 18px;
+  padding: 14px 16px;
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
   border: 1px solid rgba(0, 0, 0, 0.05);
-  min-height: 620px;
+  min-height: 540px;
 }
 
 .vcomp-chart-canvas {
   width: 100%;
-  height: 560px;
+  height: 490px;
 }
 
 .vcomp-empty-state {
@@ -290,6 +375,12 @@
   border-radius: 12px;
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
   border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+@media (max-width: 1200px) {
+  .vcomp-percentile-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
 @media (max-width: 900px) {
@@ -316,6 +407,10 @@
 
   .vcomp-main {
     width: 100%;
+  }
+
+  .vcomp-percentile-grid {
+    grid-template-columns: 1fr;
   }
 
   .vcomp-chart-card {
