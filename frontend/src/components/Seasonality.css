@@ -1,0 +1,132 @@
+/* Seasonality.css */
+
+.seasonality-page {
+  padding: 24px;
+  color: #f5f5f5;
+}
+
+.seasonality-header {
+  margin-bottom: 24px;
+}
+
+.seasonality-header h1 {
+  margin: 0 0 8px 0;
+  font-size: 32px;
+}
+
+.seasonality-header p {
+  margin: 0;
+  color: #bdbdbd;
+}
+
+.seasonality-controls {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 24px;
+}
+
+.seasonality-control-group {
+  display: flex;
+  flex-direction: column;
+  min-width: 220px;
+}
+
+.seasonality-control-group label {
+  margin-bottom: 8px;
+  font-weight: 600;
+}
+
+.seasonality-control-group select,
+.seasonality-control-group input {
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #333;
+  background: #111;
+  color: #fff;
+}
+
+.seasonality-security-list {
+  margin-bottom: 24px;
+}
+
+.seasonality-security-list h2 {
+  margin-bottom: 12px;
+}
+
+.seasonality-security-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.seasonality-security-button {
+  padding: 10px 14px;
+  border: 1px solid #333;
+  border-radius: 999px;
+  background: #161616;
+  color: #fff;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.seasonality-security-button:hover {
+  background: #222;
+}
+
+.seasonality-security-button.active {
+  background: #fff;
+  color: #000;
+  border-color: #fff;
+}
+
+.seasonality-selected-card,
+.seasonality-chart-card {
+  background: #121212;
+  border: 1px solid #2a2a2a;
+  border-radius: 14px;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.seasonality-selected-card h3 {
+  margin-top: 0;
+  margin-bottom: 10px;
+}
+
+.seasonality-selected-card p {
+  margin: 6px 0;
+  color: #c7c7c7;
+}
+
+.seasonality-chart-wrapper {
+  height: 500px;
+}
+
+.seasonality-message {
+  color: #bdbdbd;
+}
+
+.seasonality-error {
+  margin-bottom: 16px;
+  color: #ff6b6b;
+  font-weight: 600;
+}
+
+@media (max-width: 768px) {
+  .seasonality-page {
+    padding: 16px;
+  }
+
+  .seasonality-controls {
+    flex-direction: column;
+  }
+
+  .seasonality-control-group {
+    min-width: 100%;
+  }
+
+  .seasonality-chart-wrapper {
+    height: 380px;
+  }
+}
