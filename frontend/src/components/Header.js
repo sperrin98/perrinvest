@@ -174,6 +174,9 @@ const Header = ({ isLoggedIn, onLogout }) => {
               <Link to="/volatility" onClick={closeMenu}>
                 Volatility
               </Link>
+              <Link to="/volatility-comparison" onClick={closeMenu}>
+                Volatility Comparison
+              </Link>
             </div>
           </li>
 
