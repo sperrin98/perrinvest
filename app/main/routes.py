@@ -1125,19 +1125,22 @@ def get_volatility_comparison():
 @main.route('/inflation-analysis', methods=['GET'])
 def get_inflation_analysis_route():
     eco_data_point_id = request.args.get('eco_data_point_id', type=int)
-    start_date = request.args.get('start_date', '2000-01-01')
+    start_date = request.args.get('start_date')
 
     if not eco_data_point_id:
         return jsonify({'error': 'eco_data_point_id is required'}), 400
 
-    try:
-        datetime.strptime(start_date, '%Y-%m-%d')
-    except ValueError:
-        return jsonify({'error': 'Invalid start_date format. Use YYYY-MM-DD'}), 400
+    if start_date:
+        try:
+            datetime.strptime(start_date, '%Y-%m-%d')
+        except ValueError:
+            return jsonify({'error': 'Invalid start_date format. Use YYYY-MM-DD'}), 400
+    else:
+        start_date = '0001-01-01'
 
     try:
         data = fetch_inflation_analysis(eco_data_point_id, start_date)
         return jsonify(data), 200
     except Exception as e:
         logger.error(f"Error fetching inflation analysis: {e}")
-        return jsonify({'error': 'Failed to fetch inflation analysis'}), 500
+        return jsonify({'error': str(e)}), 500

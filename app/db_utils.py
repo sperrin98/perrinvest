@@ -1193,6 +1193,7 @@ def fetch_inflation_analysis(eco_data_point_id, start_date):
         for result in cursor.stored_results():
             results = result.fetchall()
 
+        print("FIRST ROW RETURNED (INFLATION ANALYSIS):", results[0] if results else "NO ROWS")
         return results
 
     except Exception as e:
