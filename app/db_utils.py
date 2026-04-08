@@ -1178,3 +1178,27 @@ def fetch_security_vols_for_comparison(sec_id1, sec_id2, sec_id3, sec_id4, start
     finally:
         cursor.close()
         connection.close()
+
+def fetch_inflation_analysis(eco_data_point_id, start_date):
+    connection = get_db_connection()
+    cursor = connection.cursor(dictionary=True)
+
+    try:
+        cursor.callproc(
+            "get_inflation_analysis",
+            [eco_data_point_id, start_date]
+        )
+
+        results = []
+        for result in cursor.stored_results():
+            results = result.fetchall()
+
+        return results
+
+    except Exception as e:
+        logging.error(f"Error fetching inflation analysis: {e}")
+        raise
+
+    finally:
+        cursor.close()
+        connection.close()

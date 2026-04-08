@@ -57,7 +57,8 @@ from app.db_utils import (
     fetch_corr_matrix_square_for_date,
     fetch_seasonality_chart_by_security_id,
     fetch_seasonality_securities,
-    fetch_security_vols_for_comparison
+    fetch_security_vols_for_comparison,
+    fetch_inflation_analysis
 )   
 import yfinance as yf
 from datetime import datetime, timedelta
@@ -1120,3 +1121,23 @@ def get_volatility_comparison():
     except Exception as e:
         logger.error(f"Error fetching volatility comparison: {e}")
         return jsonify({'error': 'Failed to fetch volatility comparison'}), 500
+
+@main.route('/inflation-analysis', methods=['GET'])
+def get_inflation_analysis_route():
+    eco_data_point_id = request.args.get('eco_data_point_id', type=int)
+    start_date = request.args.get('start_date', '2000-01-01')
+
+    if not eco_data_point_id:
+        return jsonify({'error': 'eco_data_point_id is required'}), 400
+
+    try:
+        datetime.strptime(start_date, '%Y-%m-%d')
+    except ValueError:
+        return jsonify({'error': 'Invalid start_date format. Use YYYY-MM-DD'}), 400
+
+    try:
+        data = fetch_inflation_analysis(eco_data_point_id, start_date)
+        return jsonify(data), 200
+    except Exception as e:
+        logger.error(f"Error fetching inflation analysis: {e}")
+        return jsonify({'error': 'Failed to fetch inflation analysis'}), 500
