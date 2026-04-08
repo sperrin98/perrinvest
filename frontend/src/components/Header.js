@@ -177,6 +177,9 @@ const Header = ({ isLoggedIn, onLogout }) => {
               <Link to="/volatility-comparison" onClick={closeMenu}>
                 Volatility Comparison
               </Link>
+              <Link to="/inflation" onClick={closeMenu}>
+                Inflation Analysis
+              </Link>
             </div>
           </li>
 

@@ -38,6 +38,7 @@ import Petrol from "./components/Petrol";
 import Seasonality from "./components/Seasonality";
 import Volatility from "./components/Volatility";
 import VolatilityComparison from "./components/VolatilityComparison";
+import Inflation from "./components/Inflation";
 
 const AdminRoute = ({ isLoggedIn, isAdmin, children }) => {
   if (!isLoggedIn) return <Navigate to="/login" />;
@@ -123,6 +124,7 @@ function App() {
         <Route path="/seasonality" element={<Seasonality />} />
         <Route path="/volatility" element={<Volatility />} />
         <Route path="/volatility-comparison" element={<VolatilityComparison />} />
+        <Route path="/inflation" element={<Inflation />} />
         <Route
           path="/blog/create"
           element={
