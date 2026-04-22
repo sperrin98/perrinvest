@@ -58,7 +58,9 @@ from app.db_utils import (
     fetch_seasonality_chart_by_security_id,
     fetch_seasonality_securities,
     fetch_security_vols_for_comparison,
-    fetch_inflation_analysis
+    fetch_inflation_analysis,
+    fetch_allowed_seasonality_rebased_securities,
+    fetch_price_rebased_by_year_and_security_ids,
 )   
 import yfinance as yf
 from datetime import datetime, timedelta
@@ -1144,3 +1146,41 @@ def get_inflation_analysis_route():
     except Exception as e:
         logger.error(f"Error fetching inflation analysis: {e}")
         return jsonify({'error': str(e)}), 500
+
+@main.route("/seasonality-rebased/securities", methods=["GET"])
+def get_seasonality_rebased_securities():
+    try:
+        securities = fetch_allowed_seasonality_rebased_securities()
+        return jsonify(securities), 200
+    except Exception as e:
+        print(f"Error fetching seasonality rebased securities: {e}")
+        return jsonify({"error": "Failed to fetch allowed securities"}), 500
+
+
+@main.route("/seasonality-rebased", methods=["GET"])
+def get_seasonality_rebased():
+    try:
+        year = request.args.get("year", type=int)
+        security_ids_raw = request.args.get("security_ids", "")
+
+        if not year:
+            return jsonify({"error": "Missing required parameter: year"}), 400
+
+        if not security_ids_raw.strip():
+            return jsonify({"error": "Missing required parameter: security_ids"}), 400
+
+        security_ids = []
+        for item in security_ids_raw.split(","):
+            item = item.strip()
+            if item.isdigit():
+                security_ids.append(int(item))
+
+        if not security_ids:
+            return jsonify({"error": "No valid security_ids supplied"}), 400
+
+        data = fetch_price_rebased_by_year_and_security_ids(year, security_ids)
+        return jsonify(data), 200
+
+    except Exception as e:
+        print(f"Error fetching seasonality rebased data: {e}")
+        return jsonify({"error": "Failed to fetch seasonality rebased data"}), 500

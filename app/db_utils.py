@@ -1203,3 +1203,98 @@ def fetch_inflation_analysis(eco_data_point_id, start_date):
     finally:
         cursor.close()
         connection.close()
+
+def fetch_allowed_seasonality_rebased_securities():
+    try:
+        rows = fetch_seasonality_securities()
+
+        cleaned = []
+        for row in rows:
+            cleaned.append({
+                "security_id": row["security_id"],
+                "security_long_name": row.get("security_long_name"),
+                "security_short_name": row.get("security_short_name"),
+                "asset_class_name": row.get("asset_class_name"),
+            })
+
+        return cleaned
+
+    except Exception as e:
+        logging.error(f"Error fetching seasonality rebased securities: {e}")
+        raise
+
+
+def fetch_price_rebased_by_year_and_security_id(year, security_id):
+    allowed_rows = fetch_seasonality_securities()
+    allowed_ids = [row["security_id"] for row in allowed_rows]
+
+    security_id = int(security_id)
+
+    if security_id not in allowed_ids:
+        return []
+
+    connection = get_db_connection()
+    cursor = connection.cursor(dictionary=True)
+
+    try:
+        cursor.callproc("get_price_rebased_by_year_and_security_id", [int(year), security_id])
+
+        results = []
+        for result in cursor.stored_results():
+            results.extend(result.fetchall())
+
+        cleaned = []
+        for row in results:
+            cleaned.append({
+                "yr": row.get("yr"),
+                "day_in_year": row.get("day_in_year"),
+                "price_date": row.get("price_date").isoformat() if row.get("price_date") else None,
+                "price": float(row["price"]) if row.get("price") is not None else None,
+                "rebased_100": float(row["rebased_100"]) if row.get("rebased_100") is not None else None,
+            })
+
+        return cleaned
+
+    except Exception as e:
+        logging.error(f"Error fetching rebased data for security {security_id}: {e}")
+        raise
+
+    finally:
+        cursor.close()
+        connection.close()
+
+
+def fetch_price_rebased_by_year_and_security_ids(year, security_ids):
+    allowed_rows = fetch_seasonality_securities()
+    allowed_ids = [row["security_id"] for row in allowed_rows]
+    security_lookup = {row["security_id"]: row for row in allowed_rows}
+
+    valid_ids = []
+    for sid in security_ids:
+        sid_int = int(sid)
+        if sid_int in allowed_ids:
+            valid_ids.append(sid_int)
+
+    if not valid_ids:
+        return []
+
+    combined = []
+
+    for security_id in valid_ids:
+        series_rows = fetch_price_rebased_by_year_and_security_id(year, security_id)
+        security_meta = security_lookup.get(security_id, {})
+
+        for row in series_rows:
+            combined.append({
+                "security_id": security_id,
+                "security_long_name": security_meta.get("security_long_name"),
+                "security_short_name": security_meta.get("security_short_name"),
+                "asset_class_name": security_meta.get("asset_class_name"),
+                "yr": row.get("yr"),
+                "day_in_year": row.get("day_in_year"),
+                "price_date": row.get("price_date"),
+                "price": row.get("price"),
+                "rebased_100": row.get("rebased_100"),
+            })
+
+    return combined

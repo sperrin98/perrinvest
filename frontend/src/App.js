@@ -36,6 +36,7 @@ import RollingReturns from './components/RollingReturns';
 import Drawdowns from './components/Drawdowns';
 import Petrol from "./components/Petrol";
 import Seasonality from "./components/Seasonality";
+import SeasonalityRebased from "./components/SeasonalityRebased";
 import Volatility from "./components/Volatility";
 import VolatilityComparison from "./components/VolatilityComparison";
 import Inflation from "./components/Inflation";
@@ -122,6 +123,7 @@ function App() {
         <Route path="/bond-yields" element={<BondYields />} />
         <Route path="/petrol" element={<Petrol />} />
         <Route path="/seasonality" element={<Seasonality />} />
+        <Route path="/seasonality-rebased" element={<SeasonalityRebased />} />
         <Route path="/volatility" element={<Volatility />} />
         <Route path="/volatility-comparison" element={<VolatilityComparison />} />
         <Route path="/inflation" element={<Inflation />} />
