@@ -168,9 +168,6 @@ const Header = ({ isLoggedIn, onLogout }) => {
               <Link to="/petrol" onClick={closeMenu}>
                 Petrol Prices
               </Link>
-              <Link to="/seasonality" onClick={closeMenu}>
-                Seasonality
-              </Link>
               <Link to="/volatility" onClick={closeMenu}>
                 Volatility
               </Link>
@@ -179,6 +176,34 @@ const Header = ({ isLoggedIn, onLogout }) => {
               </Link>
               <Link to="/inflation" onClick={closeMenu}>
                 Inflation Analysis
+              </Link>
+            </div>
+          </li>
+
+          <li
+            className="dropdown"
+            onMouseEnter={() => handleDesktopEnter("seasonality")}
+            onMouseLeave={handleDesktopLeave}
+          >
+            <button
+              className="nav-item-button"
+              type="button"
+              onClick={() => toggleMobileDropdown("seasonality")}
+            >
+              Seasonality
+            </button>
+            <div
+              className={`dropdown-content ${
+                mobileDropdown === "seasonality" || desktopDropdown === "seasonality"
+                  ? "show-dropdown"
+                  : ""
+              }`}
+            >
+              <Link to="/seasonality" onClick={closeMenu}>
+                Seasonality
+              </Link>
+              <Link to="/seasonality-rebased" onClick={closeMenu}>
+                Rebased Seasonality Comparison
               </Link>
             </div>
           </li>
