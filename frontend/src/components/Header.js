@@ -205,6 +205,9 @@ const Header = ({ isLoggedIn, onLogout }) => {
               <Link to="/seasonality-rebased" onClick={closeMenu}>
                 Rebased Seasonality Comparison
               </Link>
+              <Link to="/mean-seasonality" onClick={closeMenu}>
+                Mean Seasonality
+              </Link>
             </div>
           </li>
 
