@@ -24,27 +24,12 @@ ChartJS.register(
 );
 
 const API_URL = process.env.REACT_APP_API_URL;
-const RANGE_PRESETS = ["1Y", "3Y", "5Y", "10Y", "MAX"];
+const RANGE_PRESETS = ["1Y", "3Y", "5Y", "10Y", "25Y", "50Y", "100Y", "150Y", "MAX"];
 
 const ECO_POINTS = [
   { eco_data_point_id: 19, eco_data_point_name: "US Inflation" },
   { eco_data_point_id: 20, eco_data_point_name: "UK Inflation" },
 ];
-
-const SERIES_OPTIONS = [
-  { value: "inflation_rate", label: "Inflation Rate" },
-  { value: "inflation_rate_rebased_100", label: "Inflation Rebased" },
-  { value: "inflation_rate_in_gold", label: "Inflation in Gold Terms" },
-  {
-    value: "inflation_rate_in_gold_rebased_100",
-    label: "Inflation in Gold Terms Rebased",
-  },
-];
-
-const GOLD_SERIES = new Set([
-  "inflation_rate_in_gold",
-  "inflation_rate_in_gold_rebased_100",
-]);
 
 const formatDateYYYYMMDD = (dateStr) => {
   const d = new Date(dateStr);
@@ -75,6 +60,10 @@ const getPresetStartDate = (preset, maxDate, minDate) => {
     "3Y": 3,
     "5Y": 5,
     "10Y": 10,
+    "25Y": 25,
+    "50Y": 50,
+    "100Y": 100,
+    "150Y": 150,
   };
 
   const years = yearsMap[preset];
@@ -105,7 +94,6 @@ const formatPercentile = (value) => {
 
 function Inflation() {
   const [selectedPoint, setSelectedPoint] = useState(ECO_POINTS[1]);
-  const [selectedSeries, setSelectedSeries] = useState("inflation_rate");
   const [loadingChart, setLoadingChart] = useState(false);
   const [error, setError] = useState("");
   const [rows, setRows] = useState([]);
@@ -140,50 +128,15 @@ function Inflation() {
           price_date: formatDateYYYYMMDD(row.price_date),
           inflation_rate:
             row.inflation_rate != null ? Number(row.inflation_rate) : null,
-          inflation_rate_rebased_100:
-            row.inflation_rate_rebased_100 != null
-              ? Number(row.inflation_rate_rebased_100)
-              : null,
-          gold_price: row.gold_price != null ? Number(row.gold_price) : null,
-          inflation_rate_in_gold:
-            row.inflation_rate_in_gold != null
-              ? Number(row.inflation_rate_in_gold)
-              : null,
-          inflation_rate_in_gold_rebased_100:
-            row.inflation_rate_in_gold_rebased_100 != null
-              ? Number(row.inflation_rate_in_gold_rebased_100)
-              : null,
         }))
         .filter((row) => row.price_date)
         .sort((a, b) => new Date(a.price_date) - new Date(b.price_date));
 
-      const firstGoldBase = cleaned.find(
-        (row) => Number.isFinite(row.inflation_rate_in_gold)
-      )?.inflation_rate_in_gold;
+      setRows(cleaned);
 
-      const finalRows = cleaned.map((row) => {
-        let goldRebased = row.inflation_rate_in_gold_rebased_100;
-
-        if (
-          !Number.isFinite(goldRebased) &&
-          Number.isFinite(row.inflation_rate_in_gold) &&
-          Number.isFinite(firstGoldBase) &&
-          firstGoldBase !== 0
-        ) {
-          goldRebased = (100 * row.inflation_rate_in_gold) / firstGoldBase;
-        }
-
-        return {
-          ...row,
-          inflation_rate_in_gold_rebased_100: goldRebased,
-        };
-      });
-
-      setRows(finalRows);
-
-      if (finalRows.length > 0) {
-        const minDate = finalRows[0].price_date;
-        const maxDate = finalRows[finalRows.length - 1].price_date;
+      if (cleaned.length > 0) {
+        const minDate = cleaned[0].price_date;
+        const maxDate = cleaned[cleaned.length - 1].price_date;
         setSelectedRangePreset("MAX");
         setActiveStartDate(minDate);
         setActiveEndDate(maxDate);
@@ -222,29 +175,11 @@ function Inflation() {
       };
     }
 
-    if (!GOLD_SERIES.has(selectedSeries)) {
-      return {
-        minDate: rows[0].price_date,
-        maxDate: rows[rows.length - 1].price_date,
-      };
-    }
-
-    const goldRows = rows.filter((row) =>
-      Number.isFinite(row[selectedSeries])
-    );
-
-    if (!goldRows.length) {
-      return {
-        minDate: "",
-        maxDate: "",
-      };
-    }
-
     return {
-      minDate: goldRows[0].price_date,
-      maxDate: goldRows[goldRows.length - 1].price_date,
+      minDate: rows[0].price_date,
+      maxDate: rows[rows.length - 1].price_date,
     };
-  }, [rows, selectedSeries]);
+  }, [rows]);
 
   useEffect(() => {
     if (!rows.length) return;
@@ -257,7 +192,7 @@ function Inflation() {
     setActiveEndDate(maxDate);
     setCustomStartDate(minDate);
     setCustomEndDate(maxDate);
-  }, [selectedSeries, rows, effectiveRangeBounds.minDate, effectiveRangeBounds.maxDate]);
+  }, [rows, effectiveRangeBounds.minDate, effectiveRangeBounds.maxDate]);
 
   const handlePresetRange = (preset) => {
     const { minDate, maxDate } = effectiveRangeBounds;
@@ -301,20 +236,16 @@ function Inflation() {
     return rows.filter((row) => {
       const inRange =
         row.price_date >= activeStartDate && row.price_date <= activeEndDate;
-      const hasValue = Number.isFinite(row[selectedSeries]);
+      const hasValue = Number.isFinite(row.inflation_rate);
       return inRange && hasValue;
     });
-  }, [rows, activeStartDate, activeEndDate, selectedSeries]);
-
-  const selectedSeriesLabel = useMemo(() => {
-    return SERIES_OPTIONS.find((s) => s.value === selectedSeries)?.label || "Inflation";
-  }, [selectedSeries]);
+  }, [rows, activeStartDate, activeEndDate]);
 
   const currentValues = useMemo(() => {
     if (!filteredRows.length) return null;
 
     const values = filteredRows
-      .map((row) => row[selectedSeries])
+      .map((row) => row.inflation_rate)
       .filter((v) => Number.isFinite(v));
 
     if (!values.length) return null;
@@ -330,20 +261,17 @@ function Inflation() {
       minValue,
       percentile,
     };
-  }, [filteredRows, selectedSeries]);
+  }, [filteredRows]);
 
   const chartData = useMemo(() => {
-    const isRateSeries = selectedSeries === "inflation_rate";
     return {
       labels: filteredRows.map((row) => row.price_date),
       datasets: [
         {
-          label: selectedSeriesLabel,
-          data: filteredRows.map((row) => row[selectedSeries]),
-          borderColor: isRateSeries ? "#e84d4d" : "#0f766e",
-          backgroundColor: isRateSeries
-            ? "rgba(232, 77, 77, 0.08)"
-            : "rgba(15, 118, 110, 0.08)",
+          label: "Inflation Rate",
+          data: filteredRows.map((row) => row.inflation_rate),
+          borderColor: "#e84d4d",
+          backgroundColor: "rgba(232, 77, 77, 0.08)",
           borderWidth: 1.4,
           pointRadius: 0,
           pointHoverRadius: 4,
@@ -354,7 +282,7 @@ function Inflation() {
         },
       ],
     };
-  }, [filteredRows, selectedSeries, selectedSeriesLabel]);
+  }, [filteredRows]);
 
   const chartOptions = {
     responsive: true,
@@ -387,7 +315,7 @@ function Inflation() {
         grid: { color: "rgb(202, 202, 202)" },
       },
       y: {
-        title: { display: true, text: selectedSeriesLabel, color: "#00796b" },
+        title: { display: true, text: "Inflation Rate", color: "#00796b" },
         ticks: { color: "#00796b" },
         grid: { color: "rgb(202, 202, 202)" },
       },
@@ -401,7 +329,7 @@ function Inflation() {
           <div className="inflation-sidebar-top">
             <h2 className="inflation-sidebar-title">Inflation</h2>
             <div className="inflation-sidebar-subtitle">
-              Inflation, rebased inflation, and gold-adjusted inflation.
+              Inflation data over time.
             </div>
           </div>
 
@@ -422,26 +350,6 @@ function Inflation() {
                   onClick={() => setSelectedPoint(point)}
                 >
                   {point.eco_data_point_name}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <div className="inflation-sidebar-section">
-            <h3 className="inflation-sidebar-subtitle inflation-sidebar-subtitle-spaced">
-              View
-            </h3>
-
-            <div className="inflation-series-buttons">
-              {SERIES_OPTIONS.map((option) => (
-                <button
-                  key={option.value}
-                  className={`inflation-series-btn ${
-                    selectedSeries === option.value ? "selected" : ""
-                  }`}
-                  onClick={() => setSelectedSeries(option.value)}
-                >
-                  {option.label}
                 </button>
               ))}
             </div>
