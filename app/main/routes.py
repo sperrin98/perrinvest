@@ -61,6 +61,8 @@ from app.db_utils import (
     fetch_inflation_analysis,
     fetch_allowed_seasonality_rebased_securities,
     fetch_price_rebased_by_year_and_security_ids,
+    fetch_mean_seasonality_securities,
+    fetch_monthly_seasonality_by_security_id,
 )   
 import yfinance as yf
 from datetime import datetime, timedelta
@@ -1184,3 +1186,28 @@ def get_seasonality_rebased():
     except Exception as e:
         print(f"Error fetching seasonality rebased data: {e}")
         return jsonify({"error": "Failed to fetch seasonality rebased data"}), 500
+
+@main.route("/mean-seasonality/securities", methods=["GET"])
+def get_mean_seasonality_securities():
+    try:
+        securities = fetch_mean_seasonality_securities()
+        return jsonify(securities), 200
+    except Exception as e:
+        print(f"Error fetching mean seasonality securities: {e}")
+        return jsonify({"error": "Failed to fetch mean seasonality securities"}), 500
+
+
+@main.route("/mean-seasonality", methods=["GET"])
+def get_mean_seasonality():
+    try:
+        security_id = request.args.get("security_id", type=int)
+
+        if not security_id:
+            return jsonify({"error": "Missing required parameter: security_id"}), 400
+
+        data = fetch_monthly_seasonality_by_security_id(security_id)
+        return jsonify(data), 200
+
+    except Exception as e:
+        print(f"Error fetching mean seasonality data: {e}")
+        return jsonify({"error": "Failed to fetch mean seasonality data"}), 500
