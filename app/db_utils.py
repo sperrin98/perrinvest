@@ -1298,3 +1298,67 @@ def fetch_price_rebased_by_year_and_security_ids(year, security_ids):
             })
 
     return combined
+
+def fetch_mean_seasonality_securities():
+    try:
+        rows = fetch_seasonality_securities()
+
+        cleaned = []
+        for row in rows:
+            cleaned.append({
+                "security_id": row["security_id"],
+                "security_long_name": row.get("security_long_name"),
+                "security_short_name": row.get("security_short_name"),
+                "asset_class_name": row.get("asset_class_name"),
+            })
+
+        return cleaned
+
+    except Exception as e:
+        logging.error(f"Error fetching mean seasonality securities: {e}")
+        raise
+
+
+def fetch_monthly_seasonality_by_security_id(security_id):
+    allowed_rows = fetch_seasonality_securities()
+    allowed_ids = [row["security_id"] for row in allowed_rows]
+
+    security_id = int(security_id)
+
+    if security_id not in allowed_ids:
+        return []
+
+    connection = get_db_connection()
+    cursor = connection.cursor(dictionary=True)
+
+    try:
+        cursor.callproc("get_monthly_seasonality_by_security_id", [security_id])
+
+        results = []
+        for result in cursor.stored_results():
+            results.extend(result.fetchall())
+
+        cleaned = []
+        for row in results:
+            cleaned.append({
+                "month_num": int(row["month_num"]) if row.get("month_num") is not None else None,
+                "month_name": row.get("month_name"),
+                "geometric_mean_monthly_return_pct":
+                    float(row["geometric_mean_monthly_return_pct"])
+                    if row.get("geometric_mean_monthly_return_pct") is not None
+                    else None,
+                "positive_months_pct":
+                    float(row["positive_months_pct"])
+                    if row.get("positive_months_pct") is not None
+                    else None,
+            })
+
+        return cleaned
+
+    except Exception as e:
+        logging.error(f"Error fetching mean seasonality for security {security_id}: {e}")
+        raise
+
+    finally:
+        cursor.close()
+        connection.close()
