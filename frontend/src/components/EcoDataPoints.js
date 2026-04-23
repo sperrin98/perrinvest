@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useRef } from "react";
 import axios from "axios";
 import { Line } from "react-chartjs-2";
 import {
@@ -173,6 +173,7 @@ export default function EcoDataPoints() {
   const [showEventMarkers, setShowEventMarkers] = useState(false);
   const [showMacroRegimes, setShowMacroRegimes] = useState(false);
 
+  const chartScrollRef = useRef(null);
   const API_URL = process.env.REACT_APP_API_URL;
 
   useEffect(() => {
@@ -200,6 +201,12 @@ export default function EcoDataPoints() {
 
     fetchEcoDataPoints();
   }, [API_URL]);
+
+  useEffect(() => {
+    if (!chartScrollRef.current) return;
+    if (window.innerWidth > 650) return;
+    chartScrollRef.current.scrollLeft = chartScrollRef.current.scrollWidth;
+  }, [selectedEcoDataPointId, activeStartDate, activeEndDate, valueMode, showEventMarkers, showMacroRegimes, ecoChartData.length]);
 
   const fetchEcoDataPointChartData = async (ecoDataPointId, ecoDataPointName) => {
     setSelectedEcoDataPointId(ecoDataPointId);
@@ -444,7 +451,7 @@ export default function EcoDataPoints() {
         ticks: {
           color: "#00796b",
           maxTicksLimit: 10,
-          callback: function(value) {
+          callback: function (value) {
             const label = this.getLabelForValue(value);
             return label ? new Date(label).getFullYear() : "";
           },
@@ -517,75 +524,163 @@ export default function EcoDataPoints() {
   return (
     <div className="edp-container">
       <aside className="edp-sidebar">
-        <h2 className="edp-sidebar-title">NW HPI Series</h2>
+        <div className="edp-desktop-controls">
+          <h2 className="edp-sidebar-title">NW HPI Series</h2>
 
-        <ul className="edp-point-list">
-          {visiblePoints.length > 0 ? (
-            visiblePoints.map((point) => (
-              <li
-                key={point.eco_data_point_id}
-                className={`edp-point-item ${
-                  selectedEcoDataPointId === point.eco_data_point_id
-                    ? "edp-selected-point"
-                    : ""
-                }`}
-                onClick={() =>
-                  fetchEcoDataPointChartData(
-                    point.eco_data_point_id,
-                    point.eco_data_point_name
-                  )
-                }
+          <ul className="edp-point-list">
+            {visiblePoints.length > 0 ? (
+              visiblePoints.map((point) => (
+                <li
+                  key={point.eco_data_point_id}
+                  className={`edp-point-item ${
+                    selectedEcoDataPointId === point.eco_data_point_id
+                      ? "edp-selected-point"
+                      : ""
+                  }`}
+                  onClick={() =>
+                    fetchEcoDataPointChartData(
+                      point.eco_data_point_id,
+                      point.eco_data_point_name
+                    )
+                  }
+                >
+                  {point.eco_data_point_name}
+                </li>
+              ))
+            ) : (
+              <li className="edp-empty-item">No NW HPI series available.</li>
+            )}
+          </ul>
+
+          <div className="edp-sidebar-section">
+            <h3 className="edp-sidebar-subtitle">View</h3>
+            <div className="edp-toggle-group">
+              <button
+                className={effectiveValueMode === "nominal" ? "selected" : ""}
+                onClick={() => setValueMode("nominal")}
               >
-                {point.eco_data_point_name}
-              </li>
-            ))
-          ) : (
-            <li className="edp-empty-item">No NW HPI series available.</li>
-          )}
-        </ul>
+                Nominal
+              </button>
+              <button
+                className={effectiveValueMode === "real" ? "selected" : ""}
+                onClick={() => {
+                  if (hasRealData) setValueMode("real");
+                }}
+                disabled={!hasRealData}
+              >
+                Real
+              </button>
+            </div>
 
-        <div className="edp-sidebar-section">
-          <h3 className="edp-sidebar-subtitle">View</h3>
-          <div className="edp-toggle-group">
-            <button
-              className={effectiveValueMode === "nominal" ? "selected" : ""}
-              onClick={() => setValueMode("nominal")}
-            >
-              Nominal
-            </button>
-            <button
-              className={effectiveValueMode === "real" ? "selected" : ""}
-              onClick={() => {
-                if (hasRealData) setValueMode("real");
-              }}
-              disabled={!hasRealData}
-            >
-              Real
-            </button>
+            {!hasRealData && (
+              <div className="edp-sidebar-note">
+                Real series are not available from this endpoint yet.
+              </div>
+            )}
           </div>
 
-          {!hasRealData && (
-            <div className="edp-sidebar-note">
-              Real series are not available from this endpoint yet.
+          <div className="edp-sidebar-section">
+            <h3 className="edp-sidebar-subtitle">Overlays</h3>
+            <div className="edp-toggle-stack">
+              <button
+                className={showEventMarkers ? "selected" : ""}
+                onClick={() => setShowEventMarkers((prev) => !prev)}
+              >
+                Event Markers
+              </button>
+              <button
+                className={showMacroRegimes ? "selected" : ""}
+                onClick={() => setShowMacroRegimes((prev) => !prev)}
+              >
+                QE / Rate Cycles
+              </button>
             </div>
-          )}
+          </div>
         </div>
 
-        <div className="edp-sidebar-section">
-          <h3 className="edp-sidebar-subtitle">Overlays</h3>
-          <div className="edp-toggle-stack">
-            <button
-              className={showEventMarkers ? "selected" : ""}
-              onClick={() => setShowEventMarkers((prev) => !prev)}
-            >
-              Event Markers
-            </button>
-            <button
-              className={showMacroRegimes ? "selected" : ""}
-              onClick={() => setShowMacroRegimes((prev) => !prev)}
-            >
-              QE / Rate Cycles
-            </button>
+        <div className="edp-mobile-controls">
+          <div className="edp-mobile-card">
+            <div className="edp-mobile-section">
+              <div className="edp-mobile-label">NW HPI Series</div>
+              <select
+                className="edp-mobile-select"
+                value={selectedEcoDataPointId ?? ""}
+                onChange={(e) => {
+                  const selectedId = Number(e.target.value);
+                  const selectedPoint = visiblePoints.find(
+                    (point) => point.eco_data_point_id === selectedId
+                  );
+                  if (selectedPoint) {
+                    fetchEcoDataPointChartData(
+                      selectedPoint.eco_data_point_id,
+                      selectedPoint.eco_data_point_name
+                    );
+                  }
+                }}
+              >
+                {visiblePoints.map((point) => (
+                  <option
+                    key={point.eco_data_point_id}
+                    value={point.eco_data_point_id}
+                  >
+                    {point.eco_data_point_name}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="edp-mobile-section">
+              <div className="edp-mobile-label">View</div>
+              <div className="edp-mobile-chip-row edp-mobile-chip-grid-2">
+                <button
+                  className={`edp-mobile-chip ${
+                    effectiveValueMode === "nominal" ? "selected" : ""
+                  }`}
+                  onClick={() => setValueMode("nominal")}
+                >
+                  Nominal
+                </button>
+                <button
+                  className={`edp-mobile-chip ${
+                    effectiveValueMode === "real" ? "selected" : ""
+                  }`}
+                  onClick={() => {
+                    if (hasRealData) setValueMode("real");
+                  }}
+                  disabled={!hasRealData}
+                >
+                  Real
+                </button>
+              </div>
+
+              {!hasRealData && (
+                <div className="edp-mobile-note">
+                  Real series are not available from this endpoint yet.
+                </div>
+              )}
+            </div>
+
+            <div className="edp-mobile-section">
+              <div className="edp-mobile-label">Overlays</div>
+              <div className="edp-mobile-chip-row edp-mobile-chip-grid-2">
+                <button
+                  className={`edp-mobile-chip ${
+                    showEventMarkers ? "selected" : ""
+                  }`}
+                  onClick={() => setShowEventMarkers((prev) => !prev)}
+                >
+                  Event Markers
+                </button>
+                <button
+                  className={`edp-mobile-chip ${
+                    showMacroRegimes ? "selected" : ""
+                  }`}
+                  onClick={() => setShowMacroRegimes((prev) => !prev)}
+                >
+                  QE / Rate Cycles
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </aside>
@@ -664,8 +759,11 @@ export default function EcoDataPoints() {
               )}
             </div>
 
-            <div className="edp-chart-canvas">
-              <Line data={data} options={chartOptions} />
+            <div className="edp-chart-scroll-hint">Swipe sideways to view the full chart</div>
+            <div className="edp-chart-scroll-area" ref={chartScrollRef}>
+              <div className="edp-chart-canvas">
+                <Line data={data} options={chartOptions} />
+              </div>
             </div>
 
             <div className="edp-range-summary">
