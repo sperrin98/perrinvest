@@ -1362,3 +1362,96 @@ def fetch_monthly_seasonality_by_security_id(security_id):
     finally:
         cursor.close()
         connection.close()
+
+def fetch_homepage_market_summary(relevant_ids):
+    """
+    Returns homepage market data in one payload per security:
+    - security_id
+    - security_long_name
+    - latestPrice
+    - previousPrice
+    - trendPrices (last 30 prices, oldest -> newest)
+
+    This avoids calling /price-histories separately for every security.
+    """
+    if not relevant_ids:
+        return []
+
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+
+    try:
+        placeholders = ",".join(["%s"] * len(relevant_ids))
+
+        securities_sql = f"""
+            SELECT
+                s.security_id,
+                s.security_long_name
+            FROM securities s
+            WHERE s.security_id IN ({placeholders})
+            ORDER BY s.security_long_name
+        """
+        cursor.execute(securities_sql, relevant_ids)
+        securities = cursor.fetchall()
+
+        history_sql = f"""
+            SELECT
+                t.security_id,
+                t.price_date,
+                t.price
+            FROM (
+                SELECT
+                    ph.security_id,
+                    ph.price_date,
+                    ph.price,
+                    ROW_NUMBER() OVER (
+                        PARTITION BY ph.security_id
+                        ORDER BY ph.price_date DESC
+                    ) AS rn
+                FROM price_histories ph
+                WHERE ph.security_id IN ({placeholders})
+            ) t
+            WHERE t.rn <= 30
+            ORDER BY t.security_id, t.price_date ASC
+        """
+        cursor.execute(history_sql, relevant_ids)
+        rows = cursor.fetchall()
+
+        history_map = {}
+        for row in rows:
+            sec_id = row["security_id"]
+            if sec_id not in history_map:
+                history_map[sec_id] = []
+
+            price = row.get("price")
+            try:
+                price = float(price) if price is not None else None
+            except (TypeError, ValueError):
+                price = None
+
+            history_map[sec_id].append(price)
+
+        output = []
+        for sec in securities:
+            sec_id = sec["security_id"]
+            trend_prices = [
+                p for p in history_map.get(sec_id, [])
+                if p is not None
+            ]
+
+            latest_price = trend_prices[-1] if len(trend_prices) >= 1 else None
+            previous_price = trend_prices[-2] if len(trend_prices) >= 2 else None
+
+            output.append({
+                "security_id": sec_id,
+                "security_long_name": sec["security_long_name"],
+                "trendPrices": trend_prices,
+                "latestPrice": latest_price,
+                "previousPrice": previous_price,
+            })
+
+        return output
+
+    finally:
+        cursor.close()
+        conn.close()

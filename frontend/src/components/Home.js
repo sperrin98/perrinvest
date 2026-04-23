@@ -114,53 +114,34 @@ const Home = () => {
   useEffect(() => {
     const fetchSecurities = async () => {
       try {
-        const response = await axios.get(`${process.env.REACT_APP_API_URL}/securities`);
-        const allSecurities = response.data || [];
-
-        const filteredSecurities = allSecurities.filter((sec) =>
-          relevantIds.includes(sec.security_id)
+        const response = await axios.get(
+          `${process.env.REACT_APP_API_URL}/homepage-market-summary`
         );
 
-        const pricePromises = filteredSecurities.map(async (sec) => {
-          try {
-            const priceResponse = await axios.get(
-              `${process.env.REACT_APP_API_URL}/securities/${sec.security_id}/price-histories`
-            );
-            const rawData = priceResponse.data;
-            const sorted = Array.isArray(rawData)
-              ? rawData
-                  .map((p) => ({
-                    price_date: p[1],
-                    price: Number(p[2]),
-                  }))
-                  .filter((p) => p.price_date && Number.isFinite(p.price))
-                  .sort((a, b) => new Date(a.price_date) - new Date(b.price_date))
-              : [];
+        const summaryData = Array.isArray(response.data) ? response.data : [];
 
-            const trendPrices = sorted.map((p) => p.price).slice(-30);
-            const latestPrice = sorted.length ? sorted[sorted.length - 1].price : null;
-            const previousPrice = sorted.length > 1 ? sorted[sorted.length - 2].price : null;
+        const cleaned = summaryData.map((sec) => ({
+          ...sec,
+          trendPrices: Array.isArray(sec.trendPrices)
+            ? sec.trendPrices
+                .map((v) => Number(v))
+                .filter((v) => Number.isFinite(v))
+            : [],
+          latestPrice:
+            sec.latestPrice !== null &&
+            sec.latestPrice !== undefined &&
+            Number.isFinite(Number(sec.latestPrice))
+              ? Number(sec.latestPrice)
+              : null,
+          previousPrice:
+            sec.previousPrice !== null &&
+            sec.previousPrice !== undefined &&
+            Number.isFinite(Number(sec.previousPrice))
+              ? Number(sec.previousPrice)
+              : null,
+        }));
 
-            return {
-              ...sec,
-              priceHistory: sorted,
-              trendPrices,
-              latestPrice,
-              previousPrice,
-            };
-          } catch (err) {
-            return {
-              ...sec,
-              priceHistory: [],
-              trendPrices: [],
-              latestPrice: null,
-              previousPrice: null,
-            };
-          }
-        });
-
-        const securitiesWithPrices = await Promise.all(pricePromises);
-        setSecurities(securitiesWithPrices);
+        setSecurities(cleaned);
       } catch (err) {
         console.error("Error fetching securities:", err);
       }
