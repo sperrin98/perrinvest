@@ -91,6 +91,10 @@ const GoldReturns = () => {
             </div>
           </div>
 
+          <div className="gold-mobile-scroll-hint">
+            Swipe sideways to view full table
+          </div>
+
           <div className="gold-table-wrapper">
             <table className="gold-table">
               <thead>
