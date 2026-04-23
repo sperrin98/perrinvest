@@ -206,6 +206,7 @@ function Drawdowns() {
   const [hasLoaded, setHasLoaded] = useState(false);
 
   const dropdownRef = useRef(null);
+  const chartScrollRef = useRef(null);
 
   useEffect(() => {
     async function fetchSecurities() {
@@ -231,6 +232,19 @@ function Drawdowns() {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
+  useEffect(() => {
+    if (!hasLoaded || chartData.length === 0) return;
+    if (window.innerWidth > 650) return;
+
+    const timer = setTimeout(() => {
+      if (chartScrollRef.current) {
+        chartScrollRef.current.scrollLeft = chartScrollRef.current.scrollWidth;
+      }
+    }, 80);
+
+    return () => clearTimeout(timer);
+  }, [chartData, hasLoaded]);
 
   const filteredSecurities = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -271,7 +285,10 @@ function Drawdowns() {
       rows = resampleSeries(rows, frequency);
 
       const drawdownData = calculateDrawdowns(rows);
-      const severeEpisodes = getSevereDrawdownEpisodes(drawdownData.underwaterSeries, -20);
+      const severeEpisodes = getSevereDrawdownEpisodes(
+        drawdownData.underwaterSeries,
+        -20
+      );
 
       setChartData(drawdownData.underwaterSeries);
       setEpisodes(severeEpisodes);
@@ -385,52 +402,66 @@ function Drawdowns() {
       <main className="ddMain">
         <div className="ddTitle">
           {selectedSecurity
-            ? `Drawdowns: ${selectedSecurity.security_long_name || selectedSecurity.ticker || "Security"}`
+            ? `Drawdowns: ${
+                selectedSecurity.security_long_name ||
+                selectedSecurity.ticker ||
+                "Security"
+              }`
             : "Drawdowns"}
         </div>
 
         <section className="ddChartCard">
+          <div className="ddMobileScrollHint">
+            Swipe sideways to view the full chart
+          </div>
+
           {hasLoaded && chartData.length > 0 ? (
-            <div className="ddChartWrapper">
-              <ResponsiveContainer width="100%" height="100%">
-                <LineChart
-                  data={chartData}
-                  margin={{ top: 20, right: 30, left: 20, bottom: 10 }}
-                >
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="date" />
-                  <YAxis tickFormatter={(value) => `${value.toFixed(0)}%`} />
-                  <Tooltip
-                    formatter={(value, name) =>
-                      name === "Drawdown"
-                        ? [`${Number(value).toFixed(2)}%`, "Drawdown"]
-                        : [value, name]
-                    }
-                    labelFormatter={(label) => label}
-                  />
-                  <ReferenceLine y={0} stroke="#666" strokeDasharray="4 4" />
-                  <ReferenceLine y={-20} stroke="#5c6bc0" strokeDasharray="4 4" />
-                  <Line
-                    type="monotone"
-                    dataKey="drawdown"
-                    name="Drawdown"
-                    stroke="#e53935"
-                    dot={false}
-                    strokeWidth={2}
-                    connectNulls={true}
-                  />
-                  {episodes.map((episode) => (
-                    <ReferenceDot
-                      key={episode.breachDate}
-                      x={episode.breachDate}
-                      y={-20}
-                      r={5}
-                      fill="#5c6bc0"
-                      stroke="#5c6bc0"
+            <div className="ddChartScroll" ref={chartScrollRef}>
+              <div className="ddChartWrapper">
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart
+                    data={chartData}
+                    margin={{ top: 20, right: 30, left: 20, bottom: 10 }}
+                  >
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="date" />
+                    <YAxis tickFormatter={(value) => `${value.toFixed(0)}%`} />
+                    <Tooltip
+                      formatter={(value, name) =>
+                        name === "Drawdown"
+                          ? [`${Number(value).toFixed(2)}%`, "Drawdown"]
+                          : [value, name]
+                      }
+                      labelFormatter={(label) => label}
                     />
-                  ))}
-                </LineChart>
-              </ResponsiveContainer>
+                    <ReferenceLine y={0} stroke="#666" strokeDasharray="4 4" />
+                    <ReferenceLine
+                      y={-20}
+                      stroke="#5c6bc0"
+                      strokeDasharray="4 4"
+                    />
+                    <Line
+                      type="monotone"
+                      dataKey="drawdown"
+                      name="Drawdown"
+                      stroke="#e53935"
+                      dot={false}
+                      strokeWidth={2}
+                      connectNulls={true}
+                    />
+                    {episodes.map((episode) => (
+                      <ReferenceDot
+                        key={episode.breachDate}
+                        x={episode.breachDate}
+                        y={-20}
+                        r={5}
+                        fill="#5c6bc0"
+                        stroke="#5c6bc0"
+                      />
+                    ))}
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
             </div>
           ) : (
             <div className="ddEmptyState">
@@ -519,7 +550,9 @@ function Drawdowns() {
                     <tr key={`${episode.breachDate}-${episode.troughDate}`}>
                       <td>{episode.breachDate}</td>
                       <td>{episode.troughDate}</td>
-                      <td className="ddNegative">{episode.lowReached.toFixed(2)}%</td>
+                      <td className="ddNegative">
+                        {episode.lowReached.toFixed(2)}%
+                      </td>
                     </tr>
                   ))
                 ) : (
