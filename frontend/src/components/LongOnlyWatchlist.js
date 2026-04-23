@@ -167,6 +167,10 @@ function LongOnlyWatchlist() {
           </div>
         </div>
 
+        <div className="lw-mobile-scroll-hint">
+          Swipe sideways to view full table
+        </div>
+
         {loading ? (
           <p className="lw-message">Loading...</p>
         ) : !displayedData || displayedData.length === 0 ? (
@@ -234,27 +238,53 @@ function LongOnlyWatchlist() {
   return (
     <div className="lw-container">
       <aside className="lw-sidebar">
-        <div className="lw-date-section">
-          <label className="lw-date-label" htmlFor="lw-date-picker">
-            Select Date
-          </label>
-          <input
-            id="lw-date-picker"
-            type="date"
-            value={date}
-            className="lw-date-picker"
-            onChange={(e) => {
-              const newDate = e.target.value;
-              setDate(newDate);
-              fetchWatchlist(newDate);
-            }}
-          />
+        <div className="lw-desktop-controls">
+          <div className="lw-date-section">
+            <label className="lw-date-label" htmlFor="lw-date-picker">
+              Select Date
+            </label>
+            <input
+              id="lw-date-picker"
+              type="date"
+              value={date}
+              className="lw-date-picker"
+              onChange={(e) => {
+                const newDate = e.target.value;
+                setDate(newDate);
+                fetchWatchlist(newDate);
+              }}
+            />
+          </div>
+
+          <h2 className="lw-sidebar-title">Long Only Watchlist</h2>
+
+          <div className="lw-hint">
+            Pick a date to load the watchlist period-end returns.
+          </div>
         </div>
 
-        <h2 className="lw-sidebar-title">Long Only Watchlist</h2>
+        <div className="lw-mobile-controls-card">
+          <div className="lw-mobile-controls-title">Watchlist Controls</div>
+          <div className="lw-mobile-controls-subtitle">
+            Choose a date to load returns
+          </div>
 
-        <div className="lw-hint">
-          Pick a date to load the watchlist period-end returns.
+          <div className="lw-mobile-control-group">
+            <label className="lw-mobile-label" htmlFor="lw-date-picker-mobile">
+              Date
+            </label>
+            <input
+              id="lw-date-picker-mobile"
+              type="date"
+              value={date}
+              className="lw-date-picker lw-date-picker-mobile"
+              onChange={(e) => {
+                const newDate = e.target.value;
+                setDate(newDate);
+                fetchWatchlist(newDate);
+              }}
+            />
+          </div>
         </div>
       </aside>
 

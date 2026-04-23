@@ -2,7 +2,7 @@
   display: flex;
   width: 100vw;
   min-height: 100vh;
-  background-color: #f8f8f8;
+  background: #f8f8f8;
   box-sizing: border-box;
   font-family: Arial, sans-serif;
 }
@@ -18,6 +18,14 @@
   overflow-y: auto;
   display: flex;
   flex-direction: column;
+}
+
+.lw-desktop-controls {
+  display: block;
+}
+
+.lw-mobile-controls-card {
+  display: none;
 }
 
 .lw-date-section {
@@ -68,6 +76,33 @@
   font-size: 0.95rem;
   opacity: 0.9;
   line-height: 1.35rem;
+}
+
+.lw-mobile-controls-title {
+  font-size: 0.84rem;
+  font-weight: 700;
+  color: #ffffff;
+  margin-bottom: 2px;
+}
+
+.lw-mobile-controls-subtitle {
+  font-size: 0.7rem;
+  color: rgba(255, 255, 255, 0.8);
+  margin-bottom: 8px;
+}
+
+.lw-mobile-control-group {
+  margin-bottom: 0;
+}
+
+.lw-mobile-label {
+  display: block;
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: rgba(255, 255, 255, 0.92);
+  margin-bottom: 5px;
+  text-transform: uppercase;
 }
 
 .lw-main {
@@ -126,17 +161,23 @@
   color: #6a7a76;
 }
 
+.lw-mobile-scroll-hint {
+  display: none;
+}
+
 .lw-table-wrapper {
   width: 100%;
   max-height: 680px;
   overflow: auto;
   border-radius: 10px;
+  position: relative;
 }
 
 .lw-table {
   width: 100%;
   min-width: 1180px;
-  border-collapse: collapse;
+  border-collapse: separate;
+  border-spacing: 0;
   table-layout: fixed;
 }
 
@@ -152,8 +193,21 @@
   width: 110px;
 }
 
+.lw-table thead {
+  display: table-header-group;
+}
+
+.lw-table tbody {
+  display: table-row-group;
+}
+
+.lw-table tr {
+  display: table-row;
+}
+
 .lw-table th,
 .lw-table td {
+  display: table-cell;
   padding: 10px 10px;
   text-align: center;
   font-size: 12.5px;
@@ -161,6 +215,9 @@
   border-bottom: 1px solid rgba(0, 0, 0, 0.08);
   white-space: nowrap;
   background: transparent;
+  vertical-align: middle;
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .lw-table th {
@@ -169,7 +226,8 @@
   background: #f3f7f6;
   position: sticky;
   top: 0;
-  z-index: 2;
+  z-index: 5;
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.08);
 }
 
 .lw-table th:first-child,
@@ -242,33 +300,185 @@
 
   .lw-sidebar {
     width: 100%;
-    padding-top: 90px;
+    padding: 90px 14px 8px 14px;
     border-right: none;
-    border-bottom: 3px solid #00332c;
+    border-bottom: none;
+    overflow: visible;
+    background: #f8f8f8;
+  }
+
+  .lw-desktop-controls {
+    display: none;
+  }
+
+  .lw-mobile-controls-card {
+    display: block;
+    background: linear-gradient(135deg, #00796b, #004d40);
+    border-radius: 12px;
+    padding: 12px;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    margin-bottom: 6px;
+  }
+
+  .lw-date-picker-mobile {
+    height: 40px;
+    min-height: 40px;
+    padding: 8px 10px;
+    font-size: 0.84rem;
+    border-radius: 9px;
+    background: rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.24);
+    color: #ffffff;
+  }
+
+  .lw-date-picker-mobile:hover {
+    background: rgba(255, 255, 255, 0.18);
+  }
+
+  .lw-date-picker-mobile:focus {
+    background: rgba(255, 255, 255, 0.22);
+    border-color: rgba(255, 255, 255, 0.42);
   }
 
   .lw-main {
     width: 100%;
-    padding-left: 20px;
-    padding-right: 20px;
+    padding-left: 14px;
+    padding-right: 14px;
   }
 
   .lw-title {
-    margin-top: 30px;
-    font-size: 26px;
+    margin-top: 18px;
+    margin-bottom: 12px;
+    font-size: 1.15rem;
+    line-height: 1.25;
+    letter-spacing: 0.1px;
+    text-shadow: none;
+  }
+
+  .lw-table-card {
+    padding: 10px;
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  .lw-table-card-header {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 4px;
+    margin-bottom: 8px;
+  }
+
+  .lw-table-heading {
+    font-size: 0.98rem;
+  }
+
+  .lw-table-meta {
+    font-size: 0.72rem;
+  }
+
+  .lw-mobile-scroll-hint {
+    display: block;
+    font-size: 0.72rem;
+    color: #6a7a76;
+    margin-bottom: 8px;
+  }
+
+  .lw-table-wrapper {
+    width: 100%;
+    max-width: 100%;
+    max-height: 500px;
+    overflow-x: auto !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch;
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    border-radius: 10px;
+    background: #ffffff;
+    position: relative;
   }
 
   .lw-table {
-    min-width: 980px;
+    width: 980px !important;
+    min-width: 980px !important;
+    max-width: 980px !important;
+    border-collapse: separate !important;
+    border-spacing: 0 !important;
+    table-layout: fixed !important;
+  }
+
+  .lw-table thead {
+    display: table-header-group !important;
+  }
+
+  .lw-table tbody {
+    display: table-row-group !important;
+  }
+
+  .lw-table tr {
+    display: table-row !important;
+    position: static !important;
   }
 
   .lw-table th,
   .lw-table td {
-    font-size: 11.5px;
-    padding: 9px 8px;
+    display: table-cell !important;
+    position: static !important;
+    float: none !important;
+    transform: none !important;
+    inset: auto !important;
+    left: auto !important;
+    right: auto !important;
+    top: auto !important;
+    bottom: auto !important;
+    font-size: 11.5px !important;
+    padding: 9px 8px !important;
+    text-align: center !important;
+    white-space: nowrap !important;
+    vertical-align: middle !important;
+    box-sizing: border-box !important;
+    -webkit-tap-highlight-color: transparent;
   }
 
-  .lw-table-wrapper {
-    max-height: 500px;
+  .lw-table th {
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 6 !important;
+    background: #f3f7f6 !important;
+    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.08);
+  }
+
+  .lw-table th:first-child,
+  .lw-table td:first-child {
+    text-align: left !important;
+  }
+
+  .lw-col-name {
+    width: 260px !important;
+  }
+
+  .lw-col-type {
+    width: 120px !important;
+  }
+
+  .lw-col-date {
+    width: 100px !important;
+  }
+
+  .lw-table tbody tr:hover,
+  .lw-table tbody tr:focus,
+  .lw-table tbody tr:active {
+    background: transparent !important;
+  }
+
+  .lw-table tbody tr:nth-child(even):hover,
+  .lw-table tbody tr:nth-child(even):focus,
+  .lw-table tbody tr:nth-child(even):active {
+    background: rgba(0, 0, 0, 0.02) !important;
+  }
+
+  .lw-table tbody tr:nth-child(odd):hover,
+  .lw-table tbody tr:nth-child(odd):focus,
+  .lw-table tbody tr:nth-child(odd):active {
+    background: #ffffff !important;
   }
 }

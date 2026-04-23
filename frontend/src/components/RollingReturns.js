@@ -105,7 +105,6 @@ const calculateRollingReturn = (rows, years) => {
   if (!rows.length) return [];
 
   return rows.map((row, index) => {
-    const currentDate = new Date(row.date);
     const targetDate = new Date(row.date);
     targetDate.setFullYear(targetDate.getFullYear() - years);
 
@@ -126,7 +125,12 @@ const calculateRollingReturn = (rows, years) => {
     const currentPrice = Number(row.price);
     const basePrice = Number(rows[baseIndex].price);
 
-    if (!currentPrice || !basePrice || Number.isNaN(currentPrice) || Number.isNaN(basePrice)) {
+    if (
+      !currentPrice ||
+      !basePrice ||
+      Number.isNaN(currentPrice) ||
+      Number.isNaN(basePrice)
+    ) {
       return { date: row.date, value: null };
     }
 
@@ -178,6 +182,7 @@ function RollingReturns() {
   const [hasLoaded, setHasLoaded] = useState(false);
 
   const dropdownRef = useRef(null);
+  const chartScrollRef = useRef(null);
 
   useEffect(() => {
     async function fetchSecurities() {
@@ -203,6 +208,19 @@ function RollingReturns() {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
+  useEffect(() => {
+    if (!hasLoaded || chartData.length === 0) return;
+    if (window.innerWidth > 650) return;
+
+    const timer = setTimeout(() => {
+      if (chartScrollRef.current) {
+        chartScrollRef.current.scrollLeft = chartScrollRef.current.scrollWidth;
+      }
+    }, 80);
+
+    return () => clearTimeout(timer);
+  }, [chartData, hasLoaded]);
 
   const filteredSecurities = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -367,26 +385,71 @@ function RollingReturns() {
       <main className="rrMain">
         <div className="rrTitle">
           {selectedSecurity
-            ? `Rolling Return / CAGR: ${selectedSecurity.security_long_name || selectedSecurity.ticker || "Security"}`
+            ? `Rolling Return / CAGR: ${
+                selectedSecurity.security_long_name ||
+                selectedSecurity.ticker ||
+                "Security"
+              }`
             : "Rolling Return / CAGR"}
         </div>
 
         <section className="rrChartCard">
+          <div className="rrMobileScrollHint">
+            Swipe sideways to view the full chart
+          </div>
+
           {hasLoaded && chartData.length > 0 ? (
-            <div className="rrChartWrapper">
-              <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={chartData} margin={{ top: 20, right: 30, left: 20, bottom: 10 }}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="date" />
-                  <YAxis tickFormatter={(value) => `${value.toFixed(0)}%`} />
-                  <Tooltip formatter={(value) => value == null ? "-" : `${Number(value).toFixed(2)}%`} />
-                  <Legend />
-                  <Line type="monotone" dataKey="1Y" stroke={COLORS["1Y"]} dot={false} strokeWidth={2} connectNulls={true} />
-                  <Line type="monotone" dataKey="3Y" stroke={COLORS["3Y"]} dot={false} strokeWidth={2} connectNulls={true} />
-                  <Line type="monotone" dataKey="5Y" stroke={COLORS["5Y"]} dot={false} strokeWidth={2} connectNulls={true} />
-                  <Line type="monotone" dataKey="10Y" stroke={COLORS["10Y"]} dot={false} strokeWidth={2} connectNulls={true} />
-                </LineChart>
-              </ResponsiveContainer>
+            <div className="rrChartScroll" ref={chartScrollRef}>
+              <div className="rrChartWrapper">
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart
+                    data={chartData}
+                    margin={{ top: 20, right: 30, left: 20, bottom: 10 }}
+                  >
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="date" />
+                    <YAxis tickFormatter={(value) => `${value.toFixed(0)}%`} />
+                    <Tooltip
+                      formatter={(value) =>
+                        value == null ? "-" : `${Number(value).toFixed(2)}%`
+                      }
+                    />
+                    <Legend />
+                    <Line
+                      type="monotone"
+                      dataKey="1Y"
+                      stroke={COLORS["1Y"]}
+                      dot={false}
+                      strokeWidth={2}
+                      connectNulls={true}
+                    />
+                    <Line
+                      type="monotone"
+                      dataKey="3Y"
+                      stroke={COLORS["3Y"]}
+                      dot={false}
+                      strokeWidth={2}
+                      connectNulls={true}
+                    />
+                    <Line
+                      type="monotone"
+                      dataKey="5Y"
+                      stroke={COLORS["5Y"]}
+                      dot={false}
+                      strokeWidth={2}
+                      connectNulls={true}
+                    />
+                    <Line
+                      type="monotone"
+                      dataKey="10Y"
+                      stroke={COLORS["10Y"]}
+                      dot={false}
+                      strokeWidth={2}
+                      connectNulls={true}
+                    />
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
             </div>
           ) : (
             <div className="rrEmptyState">
@@ -418,7 +481,9 @@ function RollingReturns() {
                     <tr key={row.label}>
                       <td>{row.label}</td>
                       <td className={row.value >= 0 ? "rrPositive" : "rrNegative"}>
-                        {row.value == null ? "-" : `${row.value >= 0 ? "+" : ""}${row.value.toFixed(2)}%`}
+                        {row.value == null
+                          ? "-"
+                          : `${row.value >= 0 ? "+" : ""}${row.value.toFixed(2)}%`}
                       </td>
                     </tr>
                   ))

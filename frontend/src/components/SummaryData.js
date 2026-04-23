@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
+import Select from "react-select";
 import "./SummaryData.css";
 
 function SummaryData() {
@@ -147,6 +148,25 @@ function SummaryData() {
     return key.replace("_RETURN", "").toUpperCase();
   };
 
+  const groupOptions = useMemo(
+    () =>
+      groups.map((group) => ({
+        label: group.summary_data_group_name,
+        value: group.summary_data_group_ID,
+        group,
+      })),
+    [groups]
+  );
+
+  const selectedGroupOption = useMemo(() => {
+    if (!selectedGroup) return null;
+    return {
+      label: selectedGroup.summary_data_group_name,
+      value: selectedGroup.summary_data_group_ID,
+      group: selectedGroup,
+    };
+  }, [selectedGroup]);
+
   const renderTableCard = ({
     data,
     loading,
@@ -160,6 +180,10 @@ function SummaryData() {
           <div className="sd-table-meta">
             {loading ? "Loading..." : `${data.length} ${metaLabel}`}
           </div>
+        </div>
+
+        <div className="sd-mobile-scroll-hint">
+          Swipe sideways to view full table
         </div>
 
         {loading ? (
@@ -203,47 +227,87 @@ function SummaryData() {
   return (
     <div className="sd-container">
       <aside className="sd-sidebar">
-        <div className="sd-date-section">
-          <label className="sd-date-label" htmlFor="sd-date-picker">
-            Select Date
-          </label>
-          <input
-            id="sd-date-picker"
-            type="date"
-            value={date}
-            className="sd-date-picker"
-            onChange={(e) => {
-              const newDate = e.target.value;
-              setDate(newDate);
+        <div className="sd-desktop-controls">
+          <div className="sd-date-section">
+            <label className="sd-date-label" htmlFor="sd-date-picker">
+              Select Date
+            </label>
+            <input
+              id="sd-date-picker"
+              type="date"
+              value={date}
+              className="sd-date-picker"
+              onChange={(e) => {
+                const newDate = e.target.value;
+                setDate(newDate);
 
-              if (selectedGroup) {
-                fetchBothTables(selectedGroup.summary_data_group_ID, newDate);
-              }
-            }}
-          />
+                if (selectedGroup) {
+                  fetchBothTables(selectedGroup.summary_data_group_ID, newDate);
+                }
+              }}
+            />
+          </div>
+
+          <h2 className="sd-sidebar-title">Select Group</h2>
+
+          <ul className="sd-group-list">
+            {groups.map((group) => (
+              <li
+                key={group.summary_data_group_ID}
+                className={`sd-group-item ${
+                  selectedGroup?.summary_data_group_ID ===
+                  group.summary_data_group_ID
+                    ? "sd-selected-group"
+                    : ""
+                }`}
+                onClick={() => {
+                  setSelectedGroup(group);
+                  fetchBothTables(group.summary_data_group_ID, date);
+                }}
+              >
+                {group.summary_data_group_name}
+              </li>
+            ))}
+          </ul>
         </div>
 
-        <h2 className="sd-sidebar-title">Select Group</h2>
+        <div className="sd-mobile-controls-card">
+          <div className="sd-mobile-control-group">
+            <label className="sd-mobile-label" htmlFor="sd-date-picker-mobile">
+              Date
+            </label>
+            <input
+              id="sd-date-picker-mobile"
+              type="date"
+              value={date}
+              className="sd-date-picker sd-date-picker-mobile"
+              onChange={(e) => {
+                const newDate = e.target.value;
+                setDate(newDate);
 
-        <ul className="sd-group-list">
-          {groups.map((group) => (
-            <li
-              key={group.summary_data_group_ID}
-              className={`sd-group-item ${
-                selectedGroup?.summary_data_group_ID ===
-                group.summary_data_group_ID
-                  ? "sd-selected-group"
-                  : ""
-              }`}
-              onClick={() => {
-                setSelectedGroup(group);
-                fetchBothTables(group.summary_data_group_ID, date);
+                if (selectedGroup) {
+                  fetchBothTables(selectedGroup.summary_data_group_ID, newDate);
+                }
               }}
-            >
-              {group.summary_data_group_name}
-            </li>
-          ))}
-        </ul>
+            />
+          </div>
+
+          <div className="sd-mobile-control-group">
+            <label className="sd-mobile-label">Group</label>
+            <Select
+              value={selectedGroupOption}
+              onChange={(option) => {
+                setSelectedGroup(option.group);
+                fetchBothTables(option.group.summary_data_group_ID, date);
+              }}
+              options={groupOptions}
+              menuPlacement="auto"
+              className="sd-group-select"
+              classNamePrefix="sd-group-select"
+              isSearchable={false}
+            />
+          </div>
+        </div>
       </aside>
 
       <main className="sd-main">

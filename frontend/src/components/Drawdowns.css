@@ -163,6 +163,14 @@
   margin-bottom: 18px;
 }
 
+.ddMobileScrollHint {
+  display: none;
+}
+
+.ddChartScroll {
+  width: 100%;
+}
+
 .ddChartWrapper {
   width: 100%;
   height: 560px;
@@ -206,15 +214,33 @@
 .ddTable {
   width: 100%;
   border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.ddTable thead {
+  display: table-header-group;
+}
+
+.ddTable tbody {
+  display: table-row-group;
+}
+
+.ddTable tr {
+  display: table-row;
 }
 
 .ddTable th,
 .ddTable td {
+  display: table-cell;
   padding: 10px 10px;
   text-align: center;
   font-size: 12.5px;
   border-bottom: 1px solid rgba(0, 0, 0, 0.08);
   white-space: nowrap;
+  background: transparent;
+  vertical-align: middle;
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .ddTable th {
@@ -223,10 +249,24 @@
   background: #f3f7f6;
   position: sticky;
   top: 0;
+  z-index: 2;
 }
 
 .ddTable tbody tr:nth-child(even) {
   background: rgba(0, 0, 0, 0.02);
+}
+
+.ddTable tbody tr:hover {
+  background: rgba(0, 77, 64, 0.08);
+}
+
+.ddTable tbody tr:active {
+  background: inherit;
+}
+
+.ddTable tbody td,
+.ddTable tbody tr {
+  -webkit-tap-highlight-color: transparent;
 }
 
 .ddNegative {
@@ -258,23 +298,198 @@
 
   .ddSidebar {
     width: 100%;
-    padding-top: 90px;
+    padding: 90px 14px 14px 14px;
     border-right: none;
-    border-bottom: 3px solid #00332c;
+    border-bottom: none;
+    background: linear-gradient(135deg, #00796b, #004d40);
+    overflow: visible;
+  }
+
+  .ddSidebarTitle {
+    font-size: 0.95rem;
+    margin-bottom: 12px;
+    padding-bottom: 4px;
+    color: #ffffff;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.28);
+  }
+
+  .ddFilterBlock {
+    margin-bottom: 12px;
+  }
+
+  .ddFilterLabel {
+    font-size: 0.76rem;
+    margin-bottom: 5px;
+    color: rgba(255, 255, 255, 0.94);
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+  }
+
+  .ddInput {
+    min-height: 40px;
+    padding: 8px 10px;
+    font-size: 0.85rem;
+    border-radius: 9px;
+    background: rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.24);
+    color: #ffffff;
+  }
+
+  .ddInput:hover {
+    background: rgba(255, 255, 255, 0.18);
+  }
+
+  .ddInput:focus {
+    background: rgba(255, 255, 255, 0.22);
+    border-color: rgba(255, 255, 255, 0.42);
+  }
+
+  .ddDropdown {
+    top: 68px;
+    max-height: 260px;
+  }
+
+  .ddDropdownItem,
+  .ddDropdownEmpty {
+    font-size: 0.84rem;
+    padding: 9px 10px;
+  }
+
+  .ddLoadButton {
+    padding: 11px;
+    border-radius: 9px;
+    font-size: 0.88rem;
+    background: rgba(255, 255, 255, 0.96);
+    color: #004d40;
+  }
+
+  .ddError {
+    font-size: 0.8rem;
+    margin-top: 10px;
   }
 
   .ddMain {
     width: 100%;
-    padding-left: 20px;
-    padding-right: 20px;
+    padding-left: 14px;
+    padding-right: 14px;
   }
 
   .ddTitle {
-    margin-top: 30px;
-    font-size: 26px;
+    margin-top: 18px;
+    margin-bottom: 12px;
+    font-size: 1.15rem;
+    line-height: 1.25;
+    letter-spacing: 0.1px;
+    text-shadow: none;
+  }
+
+  .ddChartCard,
+  .ddTableCard {
+    padding: 10px;
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  .ddMobileScrollHint {
+    display: block;
+    font-size: 0.72rem;
+    color: #6a7a76;
+    margin-bottom: 8px;
+  }
+
+  .ddChartScroll {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    border-radius: 10px;
+    background: #ffffff;
   }
 
   .ddChartWrapper {
+    width: 980px;
+    min-width: 980px;
+    max-width: 980px;
     height: 380px;
+  }
+
+  .ddEmptyState {
+    min-height: 180px;
+    font-size: 0.9rem;
+    padding: 18px;
+  }
+
+  .ddTableTitle {
+    font-size: 0.98rem;
+  }
+
+  .ddTableMeta {
+    font-size: 0.72rem;
+  }
+
+  .ddTableWrapper {
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    background: #ffffff;
+  }
+
+  .ddTable {
+    border-collapse: collapse !important;
+    border-spacing: 0 !important;
+  }
+
+  .ddTable thead {
+    display: table-header-group !important;
+  }
+
+  .ddTable tbody {
+    display: table-row-group !important;
+  }
+
+  .ddTable tr {
+    display: table-row !important;
+    position: static !important;
+  }
+
+  .ddTable th,
+  .ddTable td {
+    display: table-cell !important;
+    position: static !important;
+    float: none !important;
+    transform: none !important;
+    inset: auto !important;
+    left: auto !important;
+    right: auto !important;
+    top: auto !important;
+    bottom: auto !important;
+    font-size: 11.5px;
+    padding: 9px 8px;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: middle;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .ddTable tbody tr:hover,
+  .ddTable tbody tr:focus,
+  .ddTable tbody tr:active {
+    background: transparent !important;
+  }
+
+  .ddTable tbody tr:nth-child(even):hover,
+  .ddTable tbody tr:nth-child(even):focus,
+  .ddTable tbody tr:nth-child(even):active {
+    background: rgba(0, 0, 0, 0.02) !important;
+  }
+
+  .ddTable tbody tr:nth-child(odd):hover,
+  .ddTable tbody tr:nth-child(odd):focus,
+  .ddTable tbody tr:nth-child(odd):active {
+    background: #ffffff !important;
+  }
+
+  .ddTable th {
+    background: #f3f7f6 !important;
   }
 }

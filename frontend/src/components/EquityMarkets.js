@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useRef } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import {
@@ -80,6 +80,7 @@ export default function EquityMarkets() {
   const [timeframe, setTimeframe] = useState("ALL");
   const [startDate, setStartDate] = useState(null);
 
+  const chartScrollRef = useRef(null);
   const API_URL = process.env.REACT_APP_API_URL;
 
   useEffect(() => {
@@ -102,6 +103,12 @@ export default function EquityMarkets() {
 
     fetchSecurities();
   }, [API_URL]);
+
+  useEffect(() => {
+    if (!chartScrollRef.current) return;
+    if (window.innerWidth > 650) return;
+    chartScrollRef.current.scrollLeft = chartScrollRef.current.scrollWidth;
+  }, [selectedSecurityId, timeframe, startDate, equityData.length]);
 
   const fetchEquityData = async (security_id, security_name) => {
     setSelectedSecurityName(security_name);
@@ -245,7 +252,7 @@ export default function EquityMarkets() {
           </button>
         </div>
 
-        <div className="em-sidebarScroll">
+        <div className="em-sidebarScroll em-desktop-sidebarScroll">
           <div className="em-date-section">
             <h2 className="em-sidebar-title">Start Date</h2>
 
@@ -304,6 +311,72 @@ export default function EquityMarkets() {
             ))}
           </ul>
         </div>
+
+        <div className="em-mobile-controls">
+          <div className="em-mobile-card">
+            <div className="em-mobile-section">
+              <div className="em-mobile-label">Equity Market</div>
+              <select
+                className="em-mobile-select"
+                value={selectedSecurityId ?? ""}
+                onChange={(e) => {
+                  const selectedId = Number(e.target.value);
+                  const selectedSecurity = securities.find(
+                    (sec) => sec.security_id === selectedId
+                  );
+                  if (selectedSecurity) {
+                    fetchEquityData(
+                      selectedSecurity.security_id,
+                      selectedSecurity.security_long_name
+                    );
+                  }
+                }}
+              >
+                {securities.map((sec) => (
+                  <option key={sec.security_id} value={sec.security_id}>
+                    {sec.security_long_name}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="em-mobile-section">
+              <div className="em-mobile-label">Start Date</div>
+              <div className="em-datepicker-shell">
+                <DatePicker
+                  selected={startDate}
+                  onChange={(date) => {
+                    setStartDate(date);
+                    if (date) setTimeframe("ALL");
+                  }}
+                  minDate={minDate}
+                  maxDate={maxDate}
+                  dateFormat="dd/MM/yyyy"
+                  showMonthDropdown
+                  showYearDropdown
+                  dropdownMode="select"
+                  isClearable
+                  placeholderText="Select a start date"
+                  className="em-date-picker em-date-picker-mobile"
+                  wrapperClassName="em-date-picker-wrapper"
+                  calendarClassName="em-datepicker-calendar"
+                  popperClassName="em-datepicker-popper"
+                />
+              </div>
+
+              <button
+                className="em-reset-button em-reset-button-mobile"
+                type="button"
+                onClick={() => {
+                  setTimeframe("ALL");
+                  setStartDate(null);
+                }}
+              >
+                Reset
+              </button>
+            </div>
+          </div>
+        </div>
       </aside>
 
       <div className="em-main">
@@ -312,43 +385,87 @@ export default function EquityMarkets() {
         {selectedSecurityName && displayedEquityData.length > 0 && (
           <>
             <h1 className="em-title">{selectedSecurityName}</h1>
+
+            <div className="em-mobile-timeframe-bar" aria-label="Timeframe selector">
+              <button
+                className={`em-mobile-chip ${timeframe === "D" ? "em-mobile-chip-active" : ""}`}
+                onClick={() => handleTimeframeChange("D")}
+                type="button"
+              >
+                D
+              </button>
+              <button
+                className={`em-mobile-chip ${timeframe === "W" ? "em-mobile-chip-active" : ""}`}
+                onClick={() => handleTimeframeChange("W")}
+                type="button"
+              >
+                W
+              </button>
+              <button
+                className={`em-mobile-chip ${timeframe === "M" ? "em-mobile-chip-active" : ""}`}
+                onClick={() => handleTimeframeChange("M")}
+                type="button"
+              >
+                M
+              </button>
+              <button
+                className={`em-mobile-chip ${timeframe === "Q" ? "em-mobile-chip-active" : ""}`}
+                onClick={() => handleTimeframeChange("Q")}
+                type="button"
+              >
+                Q
+              </button>
+              <button
+                className={`em-mobile-chip ${timeframe === "ALL" ? "em-mobile-chip-active" : ""}`}
+                onClick={() => handleTimeframeChange("ALL")}
+                type="button"
+              >
+                ALL
+              </button>
+            </div>
+
             <div className="em-chart-wrapper">
-              <ResponsiveContainer width="100%" height="90%">
-                <LineChart
-                  data={displayedEquityData}
-                  margin={{ top: 20, right: 50, left: 20, bottom: 20 }}
-                >
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="price_date" />
-                  <YAxis
-                    yAxisId="left"
-                    label={{ value: "Price", angle: -90, position: "insideLeft" }}
-                  />
-                  <YAxis
-                    yAxisId="right"
-                    orientation="right"
-                    label={{ value: "Price in Gold", angle: 90, position: "insideRight" }}
-                  />
-                  <Tooltip />
-                  <Legend />
-                  <Line
-                    yAxisId="left"
-                    type="monotone"
-                    dataKey="price"
-                    stroke="#8884d8"
-                    dot={false}
-                    name={`Price (${timeframe})`}
-                  />
-                  <Line
-                    yAxisId="right"
-                    type="monotone"
-                    dataKey="price_in_gold"
-                    stroke="#00796b"
-                    dot={false}
-                    name={`Price in Gold (${timeframe})`}
-                  />
-                </LineChart>
-              </ResponsiveContainer>
+              <div className="em-chart-scroll-hint">Swipe sideways to view the full chart</div>
+              <div className="em-chart-scroll-area" ref={chartScrollRef}>
+                <div className="em-chart-inner">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <LineChart
+                      data={displayedEquityData}
+                      margin={{ top: 20, right: 50, left: 20, bottom: 20 }}
+                    >
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis dataKey="price_date" />
+                      <YAxis
+                        yAxisId="left"
+                        label={{ value: "Price", angle: -90, position: "insideLeft" }}
+                      />
+                      <YAxis
+                        yAxisId="right"
+                        orientation="right"
+                        label={{ value: "Price in Gold", angle: 90, position: "insideRight" }}
+                      />
+                      <Tooltip />
+                      <Legend />
+                      <Line
+                        yAxisId="left"
+                        type="monotone"
+                        dataKey="price"
+                        stroke="#8884d8"
+                        dot={false}
+                        name={`Price (${timeframe})`}
+                      />
+                      <Line
+                        yAxisId="right"
+                        type="monotone"
+                        dataKey="price_in_gold"
+                        stroke="#00796b"
+                        dot={false}
+                        name={`Price in Gold (${timeframe})`}
+                      />
+                    </LineChart>
+                  </ResponsiveContainer>
+                </div>
+              </div>
             </div>
           </>
         )}
@@ -359,6 +476,45 @@ export default function EquityMarkets() {
           displayedEquityData.length === 0 && (
             <>
               <h1 className="em-title">{selectedSecurityName}</h1>
+
+              <div className="em-mobile-timeframe-bar" aria-label="Timeframe selector">
+                <button
+                  className={`em-mobile-chip ${timeframe === "D" ? "em-mobile-chip-active" : ""}`}
+                  onClick={() => handleTimeframeChange("D")}
+                  type="button"
+                >
+                  D
+                </button>
+                <button
+                  className={`em-mobile-chip ${timeframe === "W" ? "em-mobile-chip-active" : ""}`}
+                  onClick={() => handleTimeframeChange("W")}
+                  type="button"
+                >
+                  W
+                </button>
+                <button
+                  className={`em-mobile-chip ${timeframe === "M" ? "em-mobile-chip-active" : ""}`}
+                  onClick={() => handleTimeframeChange("M")}
+                  type="button"
+                >
+                  M
+                </button>
+                <button
+                  className={`em-mobile-chip ${timeframe === "Q" ? "em-mobile-chip-active" : ""}`}
+                  onClick={() => handleTimeframeChange("Q")}
+                  type="button"
+                >
+                  Q
+                </button>
+                <button
+                  className={`em-mobile-chip ${timeframe === "ALL" ? "em-mobile-chip-active" : ""}`}
+                  onClick={() => handleTimeframeChange("ALL")}
+                  type="button"
+                >
+                  ALL
+                </button>
+              </div>
+
               <div className="em-chart-wrapper">
                 <div className="em-emptyChart">No data for this date range.</div>
               </div>

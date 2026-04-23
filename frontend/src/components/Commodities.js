@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useRef } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import {
@@ -88,6 +88,7 @@ export default function Commodities() {
   const [timeframe, setTimeframe] = useState("ALL");
   const [startDate, setStartDate] = useState(null);
 
+  const chartScrollRef = useRef(null);
   const API_URL = process.env.REACT_APP_API_URL;
 
   useEffect(() => {
@@ -205,6 +206,22 @@ export default function Commodities() {
     }));
   }, [commodityData, timeframe, startDate]);
 
+  useEffect(() => {
+    if (!chartScrollRef.current) return;
+    if (window.innerWidth > 650) return;
+    if (!filteredData.length) return;
+
+    const scrollToEnd = () => {
+      if (!chartScrollRef.current) return;
+      chartScrollRef.current.scrollLeft = chartScrollRef.current.scrollWidth;
+    };
+
+    requestAnimationFrame(() => {
+      scrollToEnd();
+      setTimeout(scrollToEnd, 0);
+    });
+  }, [selectedCommodityId, timeframe, startDate, filteredData.length]);
+
   return (
     <div className="cm-container">
       <aside className="cm-sidebar">
@@ -251,7 +268,7 @@ export default function Commodities() {
           </button>
         </div>
 
-        <div className="cm-sidebarScroll">
+        <div className="cm-sidebarScroll cm-desktop-sidebarScroll">
           <div className="cm-date-section">
             <h2 className="cm-sidebar-title">Start Date</h2>
 
@@ -312,6 +329,72 @@ export default function Commodities() {
             ))}
           </ul>
         </div>
+
+        <div className="cm-mobile-controls">
+          <div className="cm-mobile-card">
+            <div className="cm-mobile-section">
+              <div className="cm-mobile-label">Commodity</div>
+              <select
+                className="cm-mobile-select"
+                value={selectedCommodityId ?? ""}
+                onChange={(e) => {
+                  const selectedId = Number(e.target.value);
+                  const selectedCommodity = commodities.find(
+                    (com) => com.security_id === selectedId
+                  );
+                  if (selectedCommodity) {
+                    fetchCommodityData(
+                      selectedCommodity.security_id,
+                      selectedCommodity.security_long_name
+                    );
+                  }
+                }}
+              >
+                {commodities.map((com) => (
+                  <option key={com.security_id} value={com.security_id}>
+                    {com.security_long_name}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="cm-mobile-section">
+              <div className="cm-mobile-label">Start Date</div>
+              <div className="cm-datepicker-shell">
+                <DatePicker
+                  selected={startDate}
+                  onChange={(date) => {
+                    setStartDate(date);
+                    if (date) setTimeframe("ALL");
+                  }}
+                  minDate={minDate}
+                  maxDate={maxDate}
+                  dateFormat="dd/MM/yyyy"
+                  showMonthDropdown
+                  showYearDropdown
+                  dropdownMode="select"
+                  isClearable
+                  placeholderText="Select a start date"
+                  className="cm-date-picker cm-date-picker-mobile"
+                  wrapperClassName="cm-date-picker-wrapper"
+                  calendarClassName="cm-datepicker-calendar"
+                  popperClassName="cm-datepicker-popper"
+                />
+              </div>
+
+              <button
+                className="cm-reset-button cm-reset-button-mobile"
+                type="button"
+                onClick={() => {
+                  setTimeframe("ALL");
+                  setStartDate(null);
+                }}
+              >
+                Reset
+              </button>
+            </div>
+          </div>
+        </div>
       </aside>
 
       <div className="cm-main">
@@ -320,43 +403,87 @@ export default function Commodities() {
         {selectedCommodityName && filteredData.length > 0 && (
           <>
             <h1 className="cm-title">{selectedCommodityName}</h1>
+
+            <div className="cm-mobile-timeframe-bar" aria-label="Timeframe selector">
+              <button
+                className={`cm-mobile-chip ${timeframe === "D" ? "cm-mobile-chip-active" : ""}`}
+                onClick={() => handleTimeframeChange("D")}
+                type="button"
+              >
+                D
+              </button>
+              <button
+                className={`cm-mobile-chip ${timeframe === "W" ? "cm-mobile-chip-active" : ""}`}
+                onClick={() => handleTimeframeChange("W")}
+                type="button"
+              >
+                W
+              </button>
+              <button
+                className={`cm-mobile-chip ${timeframe === "M" ? "cm-mobile-chip-active" : ""}`}
+                onClick={() => handleTimeframeChange("M")}
+                type="button"
+              >
+                M
+              </button>
+              <button
+                className={`cm-mobile-chip ${timeframe === "Q" ? "cm-mobile-chip-active" : ""}`}
+                onClick={() => handleTimeframeChange("Q")}
+                type="button"
+              >
+                Q
+              </button>
+              <button
+                className={`cm-mobile-chip ${timeframe === "ALL" ? "cm-mobile-chip-active" : ""}`}
+                onClick={() => handleTimeframeChange("ALL")}
+                type="button"
+              >
+                ALL
+              </button>
+            </div>
+
             <div className="cm-chart-wrapper">
-              <ResponsiveContainer width="100%" height="90%">
-                <LineChart
-                  data={filteredData}
-                  margin={{ top: 20, right: 50, left: 20, bottom: 20 }}
-                >
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="price_date" tickFormatter={formatDate} />
-                  <YAxis
-                    yAxisId="left"
-                    label={{ value: "Price", angle: -90, position: "insideLeft" }}
-                  />
-                  <YAxis
-                    yAxisId="right"
-                    orientation="right"
-                    label={{ value: "Price in Gold", angle: 90, position: "insideRight" }}
-                  />
-                  <Tooltip labelFormatter={formatDate} />
-                  <Legend />
-                  <Line
-                    yAxisId="left"
-                    type="monotone"
-                    dataKey="price"
-                    stroke="#FF4C4C"
-                    dot={false}
-                    name={`Price (${timeframe})`}
-                  />
-                  <Line
-                    yAxisId="right"
-                    type="monotone"
-                    dataKey="price_in_gold"
-                    stroke="#00796b"
-                    dot={false}
-                    name={`Price in Gold (${timeframe})`}
-                  />
-                </LineChart>
-              </ResponsiveContainer>
+              <div className="cm-chart-scroll-hint">Swipe sideways to view the full chart</div>
+              <div className="cm-chart-scroll-area" ref={chartScrollRef}>
+                <div className="cm-chart-inner">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <LineChart
+                      data={filteredData}
+                      margin={{ top: 20, right: 50, left: 20, bottom: 20 }}
+                    >
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis dataKey="price_date" tickFormatter={formatDate} />
+                      <YAxis
+                        yAxisId="left"
+                        label={{ value: "Price", angle: -90, position: "insideLeft" }}
+                      />
+                      <YAxis
+                        yAxisId="right"
+                        orientation="right"
+                        label={{ value: "Price in Gold", angle: 90, position: "insideRight" }}
+                      />
+                      <Tooltip labelFormatter={formatDate} />
+                      <Legend />
+                      <Line
+                        yAxisId="left"
+                        type="monotone"
+                        dataKey="price"
+                        stroke="#FF4C4C"
+                        dot={false}
+                        name={`Price (${timeframe})`}
+                      />
+                      <Line
+                        yAxisId="right"
+                        type="monotone"
+                        dataKey="price_in_gold"
+                        stroke="#00796b"
+                        dot={false}
+                        name={`Price in Gold (${timeframe})`}
+                      />
+                    </LineChart>
+                  </ResponsiveContainer>
+                </div>
+              </div>
             </div>
           </>
         )}
@@ -367,6 +494,45 @@ export default function Commodities() {
           filteredData.length === 0 && (
             <>
               <h1 className="cm-title">{selectedCommodityName}</h1>
+
+              <div className="cm-mobile-timeframe-bar" aria-label="Timeframe selector">
+                <button
+                  className={`cm-mobile-chip ${timeframe === "D" ? "cm-mobile-chip-active" : ""}`}
+                  onClick={() => handleTimeframeChange("D")}
+                  type="button"
+                >
+                  D
+                </button>
+                <button
+                  className={`cm-mobile-chip ${timeframe === "W" ? "cm-mobile-chip-active" : ""}`}
+                  onClick={() => handleTimeframeChange("W")}
+                  type="button"
+                >
+                  W
+                </button>
+                <button
+                  className={`cm-mobile-chip ${timeframe === "M" ? "cm-mobile-chip-active" : ""}`}
+                  onClick={() => handleTimeframeChange("M")}
+                  type="button"
+                >
+                  M
+                </button>
+                <button
+                  className={`cm-mobile-chip ${timeframe === "Q" ? "cm-mobile-chip-active" : ""}`}
+                  onClick={() => handleTimeframeChange("Q")}
+                  type="button"
+                >
+                  Q
+                </button>
+                <button
+                  className={`cm-mobile-chip ${timeframe === "ALL" ? "cm-mobile-chip-active" : ""}`}
+                  onClick={() => handleTimeframeChange("ALL")}
+                  type="button"
+                >
+                  ALL
+                </button>
+              </div>
+
               <div className="cm-chart-wrapper">
                 <div className="cm-emptyChart">No data for this date range.</div>
               </div>

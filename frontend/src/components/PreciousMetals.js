@@ -70,6 +70,25 @@ export default function PreciousMetals() {
     [years]
   );
 
+  const metalOptions = useMemo(
+    () =>
+      metals.map((metal) => ({
+        label: metal.security_long_name,
+        value: metal.security_id,
+        metal,
+      })),
+    [metals]
+  );
+
+  const selectedMetalOption = useMemo(() => {
+    if (!selectedMetal) return null;
+    return {
+      label: selectedMetal.security_long_name,
+      value: selectedMetal.security_id,
+      metal: selectedMetal,
+    };
+  }, [selectedMetal]);
+
   const formatPercent = (num) => {
     if (num === null || num === undefined) return "-";
     return `${(num * 100).toFixed(2)}%`;
@@ -84,35 +103,74 @@ export default function PreciousMetals() {
   return (
     <div className="pm-container">
       <aside className="pm-sidebar">
-        <h2 className="pm-sidebar-title">Select Metal</h2>
+        <div className="pm-sidebar-inner">
+          <div className="pm-desktop-controls">
+            <h2 className="pm-sidebar-title">Select Metal</h2>
 
-        <ul className="pm-metal-list">
-          {metals.map((metal) => (
-            <li
-              key={metal.security_id}
-              className={`pm-metal-item ${
-                selectedMetal?.security_id === metal.security_id
-                  ? "pm-selected-metal"
-                  : ""
-              }`}
-              onClick={() => setSelectedMetal(metal)}
-            >
-              {metal.security_long_name}
-            </li>
-          ))}
-        </ul>
+            <ul className="pm-metal-list">
+              {metals.map((metal) => (
+                <li
+                  key={metal.security_id}
+                  className={`pm-metal-item ${
+                    selectedMetal?.security_id === metal.security_id
+                      ? "pm-selected-metal"
+                      : ""
+                  }`}
+                  onClick={() => setSelectedMetal(metal)}
+                >
+                  {metal.security_long_name}
+                </li>
+              ))}
+            </ul>
 
-        <h2 className="pm-sidebar-title">Select Year</h2>
+            <h2 className="pm-sidebar-title">Select Year</h2>
 
-        <Select
-          value={{ label: selectedYear, value: selectedYear }}
-          onChange={(option) => setSelectedYear(option.value)}
-          options={yearOptions}
-          menuPlacement="bottom"
-          className="pm-year-select"
-          classNamePrefix="pm-year-select"
-          isSearchable={false}
-        />
+            <Select
+              value={{ label: selectedYear, value: selectedYear }}
+              onChange={(option) => setSelectedYear(option.value)}
+              options={yearOptions}
+              menuPlacement="bottom"
+              className="pm-year-select"
+              classNamePrefix="pm-year-select"
+              isSearchable={false}
+            />
+          </div>
+
+          <div className="pm-mobile-controls-card">
+            <div className="pm-mobile-controls-header">
+              <div className="pm-mobile-controls-title">Controls</div>
+              <div className="pm-mobile-controls-subtitle">
+                Choose metal and year
+              </div>
+            </div>
+
+            <div className="pm-mobile-control-group">
+              <label className="pm-mobile-label">Metal</label>
+              <Select
+                value={selectedMetalOption}
+                onChange={(option) => setSelectedMetal(option.metal)}
+                options={metalOptions}
+                menuPlacement="auto"
+                className="pm-metal-select"
+                classNamePrefix="pm-metal-select"
+                isSearchable={false}
+              />
+            </div>
+
+            <div className="pm-mobile-control-group">
+              <label className="pm-mobile-label">Year</label>
+              <Select
+                value={{ label: selectedYear, value: selectedYear }}
+                onChange={(option) => setSelectedYear(option.value)}
+                options={yearOptions}
+                menuPlacement="auto"
+                className="pm-year-select pm-year-select-mobile"
+                classNamePrefix="pm-year-select"
+                isSearchable={false}
+              />
+            </div>
+          </div>
+        </div>
       </aside>
 
       <main className="pm-main">
@@ -133,8 +191,22 @@ export default function PreciousMetals() {
                   </div>
                 </div>
 
+                <div className="pm-mobile-scroll-hint">
+                  Swipe sideways to view full table
+                </div>
+
                 <div className="pm-table-wrapper">
-                  <table className="pm-table">
+                  <table className="pm-table pm-daily-table">
+                    <colgroup>
+                      <col className="pm-col-year" />
+                      <col className="pm-col-week" />
+                      <col className="pm-col-day" />
+                      <col className="pm-col-day" />
+                      <col className="pm-col-day" />
+                      <col className="pm-col-day" />
+                      <col className="pm-col-day" />
+                      <col className="pm-col-day" />
+                    </colgroup>
                     <thead>
                       <tr>
                         <th>Year</th>
@@ -153,21 +225,11 @@ export default function PreciousMetals() {
                           <tr key={idx} className="pm-row">
                             <td>{row.year}</td>
                             <td>{row.week}</td>
-                            <td className={toneClass(row.monday)}>
-                              {formatPercent(row.monday)}
-                            </td>
-                            <td className={toneClass(row.tuesday)}>
-                              {formatPercent(row.tuesday)}
-                            </td>
-                            <td className={toneClass(row.wednesday)}>
-                              {formatPercent(row.wednesday)}
-                            </td>
-                            <td className={toneClass(row.thursday)}>
-                              {formatPercent(row.thursday)}
-                            </td>
-                            <td className={toneClass(row.friday)}>
-                              {formatPercent(row.friday)}
-                            </td>
+                            <td className={toneClass(row.monday)}>{formatPercent(row.monday)}</td>
+                            <td className={toneClass(row.tuesday)}>{formatPercent(row.tuesday)}</td>
+                            <td className={toneClass(row.wednesday)}>{formatPercent(row.wednesday)}</td>
+                            <td className={toneClass(row.thursday)}>{formatPercent(row.thursday)}</td>
+                            <td className={toneClass(row.friday)}>{formatPercent(row.friday)}</td>
                             <td className={`pm-week-total ${toneClass(row.week_total)}`}>
                               {formatPercent(row.week_total)}
                             </td>
@@ -194,8 +256,19 @@ export default function PreciousMetals() {
                   </div>
                 </div>
 
+                <div className="pm-mobile-scroll-hint">
+                  Swipe sideways to view full table
+                </div>
+
                 <div className="pm-table-wrapper pm-summary-wrapper">
-                  <table className="pm-table">
+                  <table className="pm-table pm-summary-table">
+                    <colgroup>
+                      <col className="pm-col-summary-day" />
+                      <col className="pm-col-summary-metric" />
+                      <col className="pm-col-summary-metric" />
+                      <col className="pm-col-summary-metric" />
+                      <col className="pm-col-summary-metric" />
+                    </colgroup>
                     <thead>
                       <tr>
                         <th>Day</th>
@@ -210,18 +283,10 @@ export default function PreciousMetals() {
                         dailyMovesSummary.map((row, idx) => (
                           <tr key={idx} className="pm-row">
                             <td>{row.day_name}</td>
-                            <td className={toneClass(row.average)}>
-                              {formatPercent(row.average)}
-                            </td>
-                            <td className={toneClass(row.max)}>
-                              {formatPercent(row.max)}
-                            </td>
-                            <td className={toneClass(row.min)}>
-                              {formatPercent(row.min)}
-                            </td>
-                            <td className={toneClass(row.stdev)}>
-                              {formatPercent(row.stdev)}
-                            </td>
+                            <td className={toneClass(row.average)}>{formatPercent(row.average)}</td>
+                            <td className={toneClass(row.max)}>{formatPercent(row.max)}</td>
+                            <td className={toneClass(row.min)}>{formatPercent(row.min)}</td>
+                            <td className={toneClass(row.stdev)}>{formatPercent(row.stdev)}</td>
                           </tr>
                         ))
                       ) : (

@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
+import { TrendingUp, Newspaper, LayoutDashboard } from "lucide-react";
 import "./Home.css";
 
 const MiniLineChart = ({
@@ -13,7 +14,9 @@ const MiniLineChart = ({
 }) => {
   if (!data || data.length < 2) return <span>N/A</span>;
 
-  const cleaned = data.filter((v) => v !== null && v !== undefined && Number.isFinite(v));
+  const cleaned = data.filter(
+    (v) => v !== null && v !== undefined && Number.isFinite(v)
+  );
   if (cleaned.length < 2) return <span>N/A</span>;
 
   const padding = 4;
@@ -104,63 +107,39 @@ const Home = () => {
   const [news, setNews] = useState([]);
   const [ecoDataPoints, setEcoDataPoints] = useState([]);
   const [ecoSeriesCache, setEcoSeriesCache] = useState({});
-
-  const relevantIds = [
-    36, 37, 38, 44, 80, 149, 81, 153, 154, 155, 156,
-    1, 2, 3, 4, 6, 7, 8, 11, 12,
-    16, 17, 18, 19, 20, 21, 22, 24, 29,
-  ];
+  const [mobileTab, setMobileTab] = useState("markets");
 
   useEffect(() => {
     const fetchSecurities = async () => {
       try {
-        const response = await axios.get(`${process.env.REACT_APP_API_URL}/securities`);
-        const allSecurities = response.data || [];
-
-        const filteredSecurities = allSecurities.filter((sec) =>
-          relevantIds.includes(sec.security_id)
+        const response = await axios.get(
+          `${process.env.REACT_APP_API_URL}/homepage-market-summary`
         );
 
-        const pricePromises = filteredSecurities.map(async (sec) => {
-          try {
-            const priceResponse = await axios.get(
-              `${process.env.REACT_APP_API_URL}/securities/${sec.security_id}/price-histories`
-            );
-            const rawData = priceResponse.data;
-            const sorted = Array.isArray(rawData)
-              ? rawData
-                  .map((p) => ({
-                    price_date: p[1],
-                    price: Number(p[2]),
-                  }))
-                  .filter((p) => p.price_date && Number.isFinite(p.price))
-                  .sort((a, b) => new Date(a.price_date) - new Date(b.price_date))
-              : [];
+        const summaryData = Array.isArray(response.data) ? response.data : [];
 
-            const trendPrices = sorted.map((p) => p.price).slice(-30);
-            const latestPrice = sorted.length ? sorted[sorted.length - 1].price : null;
-            const previousPrice = sorted.length > 1 ? sorted[sorted.length - 2].price : null;
+        const cleaned = summaryData.map((sec) => ({
+          ...sec,
+          trendPrices: Array.isArray(sec.trendPrices)
+            ? sec.trendPrices
+                .map((v) => Number(v))
+                .filter((v) => Number.isFinite(v))
+            : [],
+          latestPrice:
+            sec.latestPrice !== null &&
+            sec.latestPrice !== undefined &&
+            Number.isFinite(Number(sec.latestPrice))
+              ? Number(sec.latestPrice)
+              : null,
+          previousPrice:
+            sec.previousPrice !== null &&
+            sec.previousPrice !== undefined &&
+            Number.isFinite(Number(sec.previousPrice))
+              ? Number(sec.previousPrice)
+              : null,
+        }));
 
-            return {
-              ...sec,
-              priceHistory: sorted,
-              trendPrices,
-              latestPrice,
-              previousPrice,
-            };
-          } catch (err) {
-            return {
-              ...sec,
-              priceHistory: [],
-              trendPrices: [],
-              latestPrice: null,
-              previousPrice: null,
-            };
-          }
-        });
-
-        const securitiesWithPrices = await Promise.all(pricePromises);
-        setSecurities(securitiesWithPrices);
+        setSecurities(cleaned);
       } catch (err) {
         console.error("Error fetching securities:", err);
       }
@@ -190,7 +169,9 @@ const Home = () => {
 
     const fetchEcoDataPoints = async () => {
       try {
-        const response = await axios.get(`${process.env.REACT_APP_API_URL}/eco-data-points`);
+        const response = await axios.get(
+          `${process.env.REACT_APP_API_URL}/eco-data-points`
+        );
         setEcoDataPoints(response.data || []);
       } catch (err) {
         console.error("Error fetching eco data points:", err);
@@ -251,7 +232,8 @@ const Home = () => {
   }, [ecoDataPoints, ecoSeriesCache]);
 
   const formatNumber = (value, digits = 2) => {
-    if (value === null || value === undefined || !Number.isFinite(value)) return "N/A";
+    if (value === null || value === undefined || !Number.isFinite(value))
+      return "N/A";
     return Number(value).toLocaleString(undefined, {
       minimumFractionDigits: digits,
       maximumFractionDigits: digits,
@@ -323,10 +305,11 @@ const Home = () => {
 
   const spSecurity = useMemo(
     () =>
-      securities.find((sec) =>
-        keywordMatch(sec.security_long_name || "", ["s&p"]) ||
-        keywordMatch(sec.security_long_name || "", ["s&p", "500"]) ||
-        keywordMatch(sec.security_long_name || "", ["sp500"])
+      securities.find(
+        (sec) =>
+          keywordMatch(sec.security_long_name || "", ["s&p"]) ||
+          keywordMatch(sec.security_long_name || "", ["s&p", "500"]) ||
+          keywordMatch(sec.security_long_name || "", ["sp500"])
       ),
     [securities]
   );
@@ -361,14 +344,17 @@ const Home = () => {
         value: formatNumber(latest, options.digits ?? 2),
         subvalue:
           delta && delta.pct !== null
-            ? `${delta.change >= 0 ? "+" : ""}${formatNumber(delta.change, 2)} (${delta.pct >= 0 ? "+" : ""}${formatNumber(delta.pct, 2)}%)`
+            ? `${delta.change >= 0 ? "+" : ""}${formatNumber(
+                delta.change,
+                2
+              )} (${delta.pct >= 0 ? "+" : ""}${formatNumber(delta.pct, 2)}%)`
             : "No recent change",
         trendClass:
           delta?.direction === "up"
             ? "dashboard-up"
             : delta?.direction === "down"
-              ? "dashboard-down"
-              : "dashboard-flat",
+            ? "dashboard-down"
+            : "dashboard-flat",
         chartData: security?.trendPrices || [],
       });
     };
@@ -388,7 +374,11 @@ const Home = () => {
       "HPI_index",
       "hpi_index",
     ]);
-    const cpiLatest = latestFromEcoSeries(cpiSeries, ["price", "HPI_index", "hpi_index"]);
+    const cpiLatest = latestFromEcoSeries(cpiSeries, [
+      "price",
+      "HPI_index",
+      "hpi_index",
+    ]);
 
     cards.push({
       type: "metric",
@@ -538,7 +528,9 @@ const Home = () => {
             <tbody>
               {filtered.map((sec, idx) => {
                 const prices = sec.trendPrices || [];
-                const price = prices.length ? prices[prices.length - 1].toFixed(2) : "N/A";
+                const price = prices.length
+                  ? prices[prices.length - 1].toFixed(2)
+                  : "N/A";
 
                 let sparkClass = "home-neutral";
                 let sparkColor = "#5f6d69";
@@ -563,7 +555,12 @@ const Home = () => {
                     <td className="home-trend-cell">
                       {prices.length > 1 ? (
                         <div className="home-sparkline">
-                          <MiniLineChart data={prices} color={sparkColor} width={126} height={34} />
+                          <MiniLineChart
+                            data={prices}
+                            color={sparkColor}
+                            width={126}
+                            height={34}
+                          />
                         </div>
                       ) : (
                         "N/A"
@@ -579,17 +576,87 @@ const Home = () => {
     );
   };
 
-  return (
-    <div className="home-page">
-      <div className="home-content-wrapper">
+  const renderMobileMarketRows = (ids, title) => {
+    const filtered = securities.filter((sec) => ids.includes(sec.security_id));
+
+    return (
+      <section className="home-card home-mobile-market-section">
+        <div className="home-card-header">
+          <div className="home-card-title">{title}</div>
+          <div className="home-card-meta">
+            {filtered.length} {filtered.length === 1 ? "market" : "markets"}
+          </div>
+        </div>
+
+        <div className="home-mobile-market-list">
+          {filtered.map((sec) => {
+            const prices = sec.trendPrices || [];
+            const latest = prices.length ? prices[prices.length - 1] : null;
+            const first = prices[0];
+            const last = prices[prices.length - 1];
+
+            let sparkColor = "#5f6d69";
+            let moveClass = "home-neutral";
+
+            if (prices.length >= 2) {
+              if (last > first) {
+                sparkColor = "#1b8f53";
+                moveClass = "home-positive";
+              } else if (last < first) {
+                sparkColor = "#d64545";
+                moveClass = "home-negative";
+              }
+            }
+
+            return (
+              <div key={sec.security_id} className="home-mobile-market-row">
+                <div className="home-mobile-market-name" title={sec.security_long_name}>
+                  {sec.security_long_name}
+                </div>
+
+                <div className={`home-mobile-market-price ${moveClass}`}>
+                  {latest !== null ? formatNumber(latest, 2) : "N/A"}
+                </div>
+
+                <div className="home-mobile-market-chart">
+                  {prices.length > 1 ? (
+                    <MiniLineChart
+                      data={prices}
+                      color={sparkColor}
+                      width={120}
+                      height={32}
+                      showArea={false}
+                      showDot={false}
+                    />
+                  ) : (
+                    <span className="home-dashboard-muted">No trend</span>
+                  )}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </section>
+    );
+  };
+
+  const renderDesktop = () => (
+    <>
+      <div className="home-content-wrapper home-desktop-only">
         <aside className="home-left-panel">
           <h2 className="section-header">Latest Markets</h2>
 
           {securities.length > 0 ? (
             <>
-              {renderTable([36, 37, 38, 44, 80, 149, 81, 153, 154, 155, 156], "Precious Metals & Commodities")}
+              {renderTable(
+                [36, 37, 38, 44, 80, 149, 81, 153, 154, 155, 156],
+                "Precious Metals & Commodities"
+              )}
               {renderTable([1, 2, 3, 4, 6, 7, 8, 11, 12], "Stock Markets")}
-              {renderTable([16, 17, 18, 19, 20, 21, 22, 24, 29], "Currencies")}
+              {renderTable(
+                [16, 17, 18, 19, 20, 21, 22, 24, 29],
+                "Currencies"
+              )}
             </>
           ) : (
             <div className="home-loading-card">Loading summary data...</div>
@@ -618,13 +685,17 @@ const Home = () => {
                   <h3 className="home-blog-title">{blog.title}</h3>
                   <p className="home-blog-meta">
                     <i>
-                      by {blog.author} on {new Date(blog.created_at).toLocaleDateString()}
+                      by {blog.author} on{" "}
+                      {new Date(blog.created_at).toLocaleDateString()}
                     </i>
                   </p>
                   <p className="home-blog-excerpt">
                     {blog.content.substring(0, 120)}...
                   </p>
-                  <Link to={`/blog/${blog.post_id}`} className="home-blog-readmore">
+                  <Link
+                    to={`/blog/${blog.post_id}`}
+                    className="home-blog-readmore"
+                  >
                     Read more
                   </Link>
                 </div>
@@ -646,7 +717,8 @@ const Home = () => {
                 </a>
                 <p className="home-news-source">
                   <i>
-                    {item.source} - {new Date(item.publishedAt).toLocaleDateString()}
+                    {item.source} -{" "}
+                    {new Date(item.publishedAt).toLocaleDateString()}
                   </i>
                 </p>
               </article>
@@ -657,7 +729,7 @@ const Home = () => {
         </aside>
       </div>
 
-      <div className="home-dashboard-shell">
+      <div className="home-dashboard-shell home-desktop-only">
         <div className="home-dashboard-header">
           <h2 className="section-header home-dashboard-title">Live Dashboard</h2>
           <p className="home-dashboard-subtitle">
@@ -686,8 +758,8 @@ const Home = () => {
                       card.trendClass === "dashboard-up"
                         ? "#1b8f53"
                         : card.trendClass === "dashboard-down"
-                          ? "#d64545"
-                          : "#5f6d69"
+                        ? "#d64545"
+                        : "#5f6d69"
                     }
                     width={180}
                     height={54}
@@ -713,15 +785,17 @@ const Home = () => {
                   <div key={sec.security_id} className="home-mover-row">
                     <div className="home-mover-info">
                       <div className="home-mover-name">{sec.security_long_name}</div>
-                      <div className="home-mover-price">{formatNumber(sec.latestPrice, 2)}</div>
+                      <div className="home-mover-price">
+                        {formatNumber(sec.latestPrice, 2)}
+                      </div>
                     </div>
                     <div
                       className={`home-mover-move ${
                         sec.pctMove > 0
                           ? "home-positive"
                           : sec.pctMove < 0
-                            ? "home-negative"
-                            : "home-neutral"
+                          ? "home-negative"
+                          : "home-neutral"
                       }`}
                     >
                       {sec.pctMove > 0 ? "+" : ""}
@@ -762,7 +836,12 @@ const Home = () => {
                     </div>
                     <div className="home-week-chart-visual">
                       {prices.length > 1 ? (
-                        <MiniLineChart data={prices} color={chartColor} width={220} height={64} />
+                        <MiniLineChart
+                          data={prices}
+                          color={chartColor}
+                          width={220}
+                          height={64}
+                        />
                       ) : (
                         <span className="home-dashboard-muted">No chart</span>
                       )}
@@ -774,6 +853,245 @@ const Home = () => {
           </section>
         </div>
       </div>
+    </>
+  );
+
+  const renderMobileMarkets = () => (
+    <div className="home-mobile-tab-panel">
+      <h2 className="section-header">Trending Securities</h2>
+
+      {securities.length > 0 ? (
+        <>
+          {renderMobileMarketRows(
+            [36, 37, 38, 44, 80, 149, 81, 153, 154, 155, 156],
+            "Metals & Commodities"
+          )}
+          {renderMobileMarketRows([1, 2, 3, 4, 6, 7, 8, 11, 12], "Stock Markets")}
+          {renderMobileMarketRows(
+            [16, 17, 18, 19, 20, 21, 22, 24, 29],
+            "Currencies"
+          )}
+        </>
+      ) : (
+        <div className="home-loading-card">Loading summary data...</div>
+      )}
+    </div>
+  );
+
+  const renderMobileBlogs = () => (
+    <div className="home-mobile-tab-panel">
+      <h2 className="section-header">Latest Feed</h2>
+
+      {blogs.length > 0 ? (
+        blogs.map((blog) => (
+          <article key={blog.post_id} className="home-content-card">
+            {blog.image && (
+              <div className="home-blog-image-side">
+                <div className="home-blog-image-frame">
+                  <img
+                    src={blog.image}
+                    alt={blog.title}
+                    className="home-blog-image"
+                  />
+                </div>
+              </div>
+            )}
+
+            <div className="home-blog-content">
+              <h3 className="home-blog-title">{blog.title}</h3>
+              <p className="home-blog-meta">
+                <i>
+                  by {blog.author} on {new Date(blog.created_at).toLocaleDateString()}
+                </i>
+              </p>
+              <p className="home-blog-excerpt">
+                {blog.content.substring(0, 120)}...
+              </p>
+              <Link to={`/blog/${blog.post_id}`} className="home-blog-readmore">
+                Read more
+              </Link>
+            </div>
+          </article>
+        ))
+      ) : (
+        <div className="home-loading-card">Loading blogs...</div>
+      )}
+    </div>
+  );
+
+  const renderMobileDashboard = () => (
+    <div className="home-mobile-tab-panel">
+      <div className="home-dashboard-shell home-dashboard-shell-mobile">
+        <div className="home-dashboard-header">
+          <h2 className="section-header home-dashboard-title">Live Dashboard</h2>
+          <p className="home-dashboard-subtitle">
+            Daily pulse, cross-market ratios, movers and quick charts.
+          </p>
+        </div>
+
+        <section className="home-dashboard-grid">
+          {dashboardCards.map((card, idx) => (
+            <article key={idx} className="home-dashboard-card">
+              <div className="home-dashboard-card-top">
+                <span className="home-dashboard-card-label">{card.title}</span>
+              </div>
+
+              <div className="home-dashboard-card-value">{card.value}</div>
+
+              <div className={`home-dashboard-card-subvalue ${card.trendClass}`}>
+                {card.subvalue}
+              </div>
+
+              <div className="home-dashboard-card-chart">
+                {card.chartData && card.chartData.length > 1 ? (
+                  <MiniLineChart
+                    data={card.chartData}
+                    color={
+                      card.trendClass === "dashboard-up"
+                        ? "#1b8f53"
+                        : card.trendClass === "dashboard-down"
+                        ? "#d64545"
+                        : "#5f6d69"
+                    }
+                    width={180}
+                    height={54}
+                  />
+                ) : (
+                  <span className="home-dashboard-muted">No chart</span>
+                )}
+              </div>
+            </article>
+          ))}
+        </section>
+
+        <div className="home-dashboard-lower">
+          <section className="home-card home-dashboard-panel">
+            <div className="home-card-header">
+              <div className="home-card-title">Top Movers</div>
+              <div className="home-card-meta">Latest move vs previous print</div>
+            </div>
+
+            {topMovers.length ? (
+              <div className="home-movers-list">
+                {topMovers.map((sec) => (
+                  <div key={sec.security_id} className="home-mover-row">
+                    <div className="home-mover-info">
+                      <div className="home-mover-name">{sec.security_long_name}</div>
+                      <div className="home-mover-price">
+                        {formatNumber(sec.latestPrice, 2)}
+                      </div>
+                    </div>
+                    <div
+                      className={`home-mover-move ${
+                        sec.pctMove > 0
+                          ? "home-positive"
+                          : sec.pctMove < 0
+                          ? "home-negative"
+                          : "home-neutral"
+                      }`}
+                    >
+                      {sec.pctMove > 0 ? "+" : ""}
+                      {formatNumber(sec.pctMove, 2)}%
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="home-loading-card">No mover data yet.</div>
+            )}
+          </section>
+
+          <section className="home-card home-dashboard-panel">
+            <div className="home-card-header">
+              <div className="home-card-title">Charts of the Week</div>
+              <div className="home-card-meta">Last 30 observations</div>
+            </div>
+
+            <div className="home-weekly-charts">
+              {chartsOfWeek.map(({ key, item, label }) => {
+                const prices = item?.trendPrices || [];
+                const latest = item?.latestPrice ?? null;
+                const first = prices[0];
+                const last = prices[prices.length - 1];
+
+                let chartColor = "#5f6d69";
+                if (prices.length >= 2) {
+                  if (last > first) chartColor = "#1b8f53";
+                  else if (last < first) chartColor = "#d64545";
+                }
+
+                return (
+                  <div key={key} className="home-week-chart-card">
+                    <div className="home-week-chart-name">{label}</div>
+                    <div className="home-week-chart-price">
+                      {formatNumber(latest, 2)}
+                    </div>
+                    <div className="home-week-chart-visual">
+                      {prices.length > 1 ? (
+                        <MiniLineChart
+                          data={prices}
+                          color={chartColor}
+                          width={220}
+                          height={64}
+                        />
+                      ) : (
+                        <span className="home-dashboard-muted">No chart</span>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </section>
+        </div>
+      </div>
+    </div>
+  );
+
+  return (
+    <div className="home-page">
+      {renderDesktop()}
+
+      <div className="home-mobile-shell">
+        {mobileTab === "markets" && renderMobileMarkets()}
+        {mobileTab === "blogs" && renderMobileBlogs()}
+        {mobileTab === "dashboard" && renderMobileDashboard()}
+      </div>
+
+      <nav className="home-mobile-bottom-nav">
+        <button
+          type="button"
+          className={`home-mobile-nav-btn ${
+            mobileTab === "markets" ? "active" : ""
+          }`}
+          onClick={() => setMobileTab("markets")}
+        >
+          <TrendingUp size={16} strokeWidth={2.2} />
+          <span className="home-mobile-nav-label">Trending</span>
+        </button>
+
+        <button
+          type="button"
+          className={`home-mobile-nav-btn ${
+            mobileTab === "blogs" ? "active" : ""
+          }`}
+          onClick={() => setMobileTab("blogs")}
+        >
+          <Newspaper size={16} strokeWidth={2.2} />
+          <span className="home-mobile-nav-label">Blogs</span>
+        </button>
+
+        <button
+          type="button"
+          className={`home-mobile-nav-btn ${
+            mobileTab === "dashboard" ? "active" : ""
+          }`}
+          onClick={() => setMobileTab("dashboard")}
+        >
+          <LayoutDashboard size={16} strokeWidth={2.2} />
+          <span className="home-mobile-nav-label">Dashboard</span>
+        </button>
+      </nav>
     </div>
   );
 };

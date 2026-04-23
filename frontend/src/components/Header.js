@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
+import { ChevronDown, ChevronUp, Menu, X } from "lucide-react";
 import "./Header.css";
 
 const Header = ({ isLoggedIn, onLogout }) => {
@@ -8,10 +9,13 @@ const Header = ({ isLoggedIn, onLogout }) => {
   const [desktopDropdown, setDesktopDropdown] = useState(null);
 
   const toggleMenu = () => {
-    setMenuOpen((prev) => !prev);
-    if (menuOpen) {
-      setMobileDropdown(null);
-    }
+    setMenuOpen((prev) => {
+      const next = !prev;
+      if (!next) {
+        setMobileDropdown(null);
+      }
+      return next;
+    });
   };
 
   const handleLogout = () => {
@@ -51,6 +55,29 @@ const Header = ({ isLoggedIn, onLogout }) => {
     }
   };
 
+  const renderDropdownButton = (label, name) => {
+    const isOpen = mobileDropdown === name || desktopDropdown === name;
+
+    return (
+      <button
+        className="nav-item-button nav-item-button-dropdown"
+        type="button"
+        onClick={() => toggleMobileDropdown(name)}
+        aria-expanded={isOpen}
+        aria-controls={`${name}-submenu`}
+      >
+        <span>{label}</span>
+        <span className="nav-dropdown-icon" aria-hidden="true">
+          {mobileDropdown === name ? (
+            <ChevronUp size={16} strokeWidth={2.2} />
+          ) : (
+            <ChevronDown size={16} strokeWidth={2.2} />
+          )}
+        </span>
+      </button>
+    );
+  };
+
   return (
     <header className="header">
       <nav className="navbar">
@@ -73,25 +100,26 @@ const Header = ({ isLoggedIn, onLogout }) => {
           className="menu-toggle"
           onClick={toggleMenu}
           aria-label="Toggle navigation menu"
+          aria-expanded={menuOpen}
+          aria-controls="primary-navigation"
           type="button"
         >
-          ☰ Menu
+          {menuOpen ? <X size={17} strokeWidth={2.2} /> : <Menu size={17} strokeWidth={2.2} />}
+          <span>{menuOpen ? "Close" : "Menu"}</span>
         </button>
 
-        <ul className={`nav-links ${menuOpen ? "show" : ""}`}>
+        <ul
+          id="primary-navigation"
+          className={`nav-links ${menuOpen ? "show" : ""}`}
+        >
           <li
             className="dropdown"
             onMouseEnter={() => handleDesktopEnter("returns")}
             onMouseLeave={handleDesktopLeave}
           >
-            <button
-              className="nav-item-button"
-              type="button"
-              onClick={() => toggleMobileDropdown("returns")}
-            >
-              Returns
-            </button>
+            {renderDropdownButton("Returns", "returns")}
             <div
+              id="returns-submenu"
               className={`dropdown-content ${
                 mobileDropdown === "returns" || desktopDropdown === "returns"
                   ? "show-dropdown"
@@ -130,14 +158,9 @@ const Header = ({ isLoggedIn, onLogout }) => {
             onMouseEnter={() => handleDesktopEnter("charts")}
             onMouseLeave={handleDesktopLeave}
           >
-            <button
-              className="nav-item-button"
-              type="button"
-              onClick={() => toggleMobileDropdown("charts")}
-            >
-              Charts
-            </button>
+            {renderDropdownButton("Charts", "charts")}
             <div
+              id="charts-submenu"
               className={`dropdown-content ${
                 mobileDropdown === "charts" || desktopDropdown === "charts"
                   ? "show-dropdown"
@@ -185,14 +208,9 @@ const Header = ({ isLoggedIn, onLogout }) => {
             onMouseEnter={() => handleDesktopEnter("seasonality")}
             onMouseLeave={handleDesktopLeave}
           >
-            <button
-              className="nav-item-button"
-              type="button"
-              onClick={() => toggleMobileDropdown("seasonality")}
-            >
-              Seasonality
-            </button>
+            {renderDropdownButton("Seasonality", "seasonality")}
             <div
+              id="seasonality-submenu"
               className={`dropdown-content ${
                 mobileDropdown === "seasonality" || desktopDropdown === "seasonality"
                   ? "show-dropdown"
@@ -216,14 +234,9 @@ const Header = ({ isLoggedIn, onLogout }) => {
             onMouseEnter={() => handleDesktopEnter("correlations")}
             onMouseLeave={handleDesktopLeave}
           >
-            <button
-              className="nav-item-button"
-              type="button"
-              onClick={() => toggleMobileDropdown("correlations")}
-            >
-              Correlations
-            </button>
+            {renderDropdownButton("Correlations", "correlations")}
             <div
+              id="correlations-submenu"
               className={`dropdown-content ${
                 mobileDropdown === "correlations" || desktopDropdown === "correlations"
                   ? "show-dropdown"
@@ -244,14 +257,9 @@ const Header = ({ isLoggedIn, onLogout }) => {
             onMouseEnter={() => handleDesktopEnter("ratios")}
             onMouseLeave={handleDesktopLeave}
           >
-            <button
-              className="nav-item-button"
-              type="button"
-              onClick={() => toggleMobileDropdown("ratios")}
-            >
-              Leagues & Ratios
-            </button>
+            {renderDropdownButton("Leagues & Ratios", "ratios")}
             <div
+              id="ratios-submenu"
               className={`dropdown-content ${
                 mobileDropdown === "ratios" || desktopDropdown === "ratios"
                   ? "show-dropdown"
@@ -272,14 +280,9 @@ const Header = ({ isLoggedIn, onLogout }) => {
             onMouseEnter={() => handleDesktopEnter("blogs")}
             onMouseLeave={handleDesktopLeave}
           >
-            <button
-              className="nav-item-button"
-              type="button"
-              onClick={() => toggleMobileDropdown("blogs")}
-            >
-              Blogs
-            </button>
+            {renderDropdownButton("Blogs", "blogs")}
             <div
+              id="blogs-submenu"
               className={`dropdown-content ${
                 mobileDropdown === "blogs" || desktopDropdown === "blogs"
                   ? "show-dropdown"
@@ -313,14 +316,9 @@ const Header = ({ isLoggedIn, onLogout }) => {
               onMouseEnter={() => handleDesktopEnter("login")}
               onMouseLeave={handleDesktopLeave}
             >
-              <button
-                className="nav-item-button"
-                type="button"
-                onClick={() => toggleMobileDropdown("login")}
-              >
-                Login
-              </button>
+              {renderDropdownButton("Login", "login")}
               <div
+                id="login-submenu"
                 className={`dropdown-content dropdown-content-right ${
                   mobileDropdown === "login" || desktopDropdown === "login"
                     ? "show-dropdown"

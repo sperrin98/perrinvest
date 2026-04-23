@@ -63,6 +63,7 @@ from app.db_utils import (
     fetch_price_rebased_by_year_and_security_ids,
     fetch_mean_seasonality_securities,
     fetch_monthly_seasonality_by_security_id,
+    fetch_homepage_market_summary,
 )   
 import yfinance as yf
 from datetime import datetime, timedelta
@@ -1211,3 +1212,17 @@ def get_mean_seasonality():
     except Exception as e:
         print(f"Error fetching mean seasonality data: {e}")
         return jsonify({"error": "Failed to fetch mean seasonality data"}), 500
+
+@main.route("/homepage-market-summary", methods=["GET"])
+def homepage_market_summary():
+    relevant_ids = [
+        36, 37, 38, 44, 80, 149, 81, 153, 154, 155, 156,
+        1, 2, 3, 4, 6, 7, 8, 11, 12,
+        16, 17, 18, 19, 20, 21, 22, 24, 29,
+    ]
+
+    try:
+        data = fetch_homepage_market_summary(relevant_ids)
+        return jsonify(data), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
