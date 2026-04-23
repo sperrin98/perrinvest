@@ -91,6 +91,10 @@ const SilverReturns = () => {
             </div>
           </div>
 
+          <div className="silver-mobile-scroll-hint">
+            Swipe sideways to view full table
+          </div>
+
           <div className="silver-table-wrapper">
             <table className="silver-table">
               <thead>
