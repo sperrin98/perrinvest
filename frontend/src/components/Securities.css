@@ -1,6 +1,3 @@
-/* Securities.css */
-
-/* ===== Page container ===== */
 .securities-container {
   background-color: #f4f4f4;
   padding: 0 15%;
@@ -11,11 +8,9 @@
   box-sizing: border-box;
 }
 
-/* add a bit more breathing room above the controls/table
-   (fixes the “top badge touching the top” feeling) */
 .search-filter-container {
   margin-bottom: 18px;
-  padding-top: 34px; /* was 24px */
+  padding-top: 34px;
   display: flex;
   justify-content: space-between;
   gap: 16px;
@@ -23,7 +18,6 @@
   box-sizing: border-box;
 }
 
-/* ===== Search + Filter cards ===== */
 .sec-search-container,
 .filter-container {
   width: 50%;
@@ -33,10 +27,9 @@
   border: 1px solid rgba(0, 0, 0, 0.06);
   box-shadow: 0 10px 22px rgba(0, 0, 0, 0.06);
   box-sizing: border-box;
-  position: relative; /* needed for pseudo icons */
+  position: relative;
 }
 
-/* Filter container layout */
 .filter-container {
   display: flex;
   align-items: center;
@@ -54,7 +47,6 @@
   text-transform: uppercase;
 }
 
-/* ===== Search icon inside input (pure CSS) ===== */
 .sec-search-container::before {
   content: "🔍";
   position: absolute;
@@ -66,7 +58,6 @@
   pointer-events: none;
 }
 
-/* ===== Input + Select ===== */
 .sec-search-input,
 #asset-class-filter {
   width: 100%;
@@ -81,7 +72,6 @@
   box-sizing: border-box;
 }
 
-/* extra left padding so text doesn't overlap the search icon */
 .sec-search-input {
   padding-left: 40px;
 }
@@ -97,7 +87,6 @@
   box-shadow: 0 0 0 4px rgba(0, 255, 179, 0.18);
 }
 
-/* ===== Custom dropdown chevron (pure CSS) ===== */
 .filter-container {
   position: relative;
 }
@@ -113,16 +102,18 @@
   pointer-events: none;
 }
 
-/* Remove native arrow for consistent look */
 #asset-class-filter {
   cursor: pointer;
   appearance: none;
   -webkit-appearance: none;
   -moz-appearance: none;
-  padding-right: 40px; /* space for chevron */
+  padding-right: 40px;
 }
 
-/* ===== Table ===== */
+.securities-table-shell {
+  width: 100%;
+}
+
 .securities-table {
   width: 100%;
   border-collapse: separate;
@@ -133,9 +124,9 @@
   overflow: hidden;
   box-shadow: 0 12px 28px rgba(0, 0, 0, 0.08);
   border: 1px solid rgba(0, 0, 0, 0.06);
+  table-layout: fixed;
 }
 
-/* Header */
 .securities-table thead th {
   padding: 14px 16px;
   text-align: left;
@@ -146,15 +137,18 @@
   color: rgba(0, 0, 0, 0.6);
   background: linear-gradient(180deg, #ffffff, #f6f7f7);
   border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  position: sticky;
+  top: 0;
+  z-index: 5;
 }
 
-/* Body */
 .securities-table tbody td {
   padding: 14px 16px;
   font-size: 14px;
   border-bottom: 1px solid rgba(0, 0, 0, 0.06);
   color: #1f1f1f;
   vertical-align: middle;
+  text-align: center;
 }
 
 .securities-table tbody tr:last-child td {
@@ -181,22 +175,23 @@
   color: #00796b;
 }
 
-/* Column emphasis */
 .security-long-name {
   font-weight: 700;
   color: #0f2f2a;
+  text-align: left !important;
 }
 
 .security-short-name {
   color: rgba(0, 0, 0, 0.7);
+  text-align: center;
 }
 
 .latest-price {
   font-variant-numeric: tabular-nums;
   font-weight: 600;
+  text-align: center;
 }
 
-/* ===== % Change badges ===== */
 .positive-change,
 .negative-change {
   font-variant-numeric: tabular-nums;
@@ -226,7 +221,6 @@
   border: 1px solid rgba(231, 76, 60, 0.45);
 }
 
-/* widths */
 .long-name-header {
   width: 45%;
 }
@@ -246,14 +240,12 @@
   width: 17%;
 }
 
-/* error / empty rows */
 .securities-table tbody td[colspan="4"] {
   text-align: center;
   padding: 18px;
   color: rgba(0, 0, 0, 0.6);
 }
 
-/* ===== Back button ===== */
 .back-button-container {
   display: flex;
   justify-content: center;
@@ -281,7 +273,8 @@
 .back-button:hover {
   transform: translateY(-2px);
   filter: brightness(1.05);
-  box-shadow: 0 0 0 4px rgba(0, 255, 179, 0.16), 0 18px 38px rgba(0, 0, 0, 0.16);
+  box-shadow: 0 0 0 4px rgba(0, 255, 179, 0.16),
+    0 18px 38px rgba(0, 0, 0, 0.16);
 }
 
 .back-button:active {
@@ -290,7 +283,6 @@
   box-shadow: 0 14px 30px rgba(0, 0, 0, 0.12);
 }
 
-/* ===== Responsive ===== */
 @media (max-width: 900px) {
   .securities-container {
     padding: 0 8%;
@@ -311,7 +303,6 @@
     justify-content: flex-start;
   }
 
-  /* reposition the chevron slightly for smaller width */
   .filter-container::after {
     right: 18px;
   }
@@ -319,54 +310,171 @@
 
 @media (max-width: 600px) {
   .securities-container {
-    padding: 0 5%;
+    padding: 0 4%;
     padding-bottom: 14px;
   }
 
   .search-filter-container {
     margin-bottom: 12px;
     padding-top: 14px;
+    gap: 10px;
   }
 
-  .sec-search-input,
-  #asset-class-filter {
-    font-size: 14px;
+  .sec-search-container,
+  .filter-container {
+    width: 100%;
     padding: 10px;
     border-radius: 12px;
   }
 
+  .filter-container {
+    justify-content: flex-start;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .filter-container label {
+    font-size: 10px;
+    letter-spacing: 0.4px;
+    flex: 0 0 auto;
+  }
+
+  .sec-search-input,
+  #asset-class-filter {
+    font-size: 12px;
+    padding: 9px 8px;
+    border-radius: 10px;
+  }
+
   .sec-search-input {
-    padding-left: 38px;
+    padding-left: 34px;
   }
 
   .sec-search-container::before {
-    left: 18px;
-    font-size: 13px;
+    left: 16px;
+    font-size: 12px;
+  }
+
+  .filter-container::after {
+    right: 16px;
+    font-size: 14px;
+  }
+
+  #asset-class-filter {
+    padding-right: 28px;
+    min-width: 0;
+  }
+
+  .securities-table {
+    width: 100%;
+    table-layout: fixed;
+    border-collapse: collapse;
+  }
+
+  .securities-table thead,
+  .securities-table tbody {
+    display: table;
+    width: 100%;
+    table-layout: fixed;
+  }
+
+  .securities-table thead tr,
+  .securities-table tbody tr {
+    display: table-row;
+  }
+
+  .securities-table thead th,
+  .securities-table tbody td {
+    display: table-cell;
+    padding: 10px 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    vertical-align: middle;
   }
 
   .securities-table thead th {
-    font-size: 11px;
-    padding: 12px 12px;
+    font-size: 9px;
+    letter-spacing: 0.15px;
+    line-height: 1.1;
+    position: sticky;
+    top: 0;
+    z-index: 6;
+    background: linear-gradient(180deg, #ffffff, #f6f7f7);
+    text-align: center;
   }
 
   .securities-table tbody td {
-    padding: 12px 12px;
-    font-size: 13px;
+    font-size: 10px;
+    line-height: 1.1;
+    text-align: center;
   }
 
-  /* hide a couple columns on mobile (keep name + price) */
   .securities-table thead th:nth-child(2),
-  .securities-table tbody td:nth-child(2),
+  .securities-table tbody td:nth-child(2) {
+    display: none;
+  }
+
+  .securities-table thead th:nth-child(1),
+  .securities-table tbody td:nth-child(1) {
+    width: 56%;
+  }
+
+  .securities-table thead th:nth-child(3),
+  .securities-table tbody td:nth-child(3) {
+    width: 22%;
+  }
+
   .securities-table thead th:nth-child(4),
   .securities-table tbody td:nth-child(4) {
-    display: none;
+    width: 22%;
+  }
+
+  .security-long-name {
+    display: block;
+    width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-align: left !important;
+    margin: 0;
+    padding-left: 2px;
+  }
+
+  .latest-price {
+    display: block;
+    width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-align: center !important;
+    margin: 0 auto;
   }
 
   .positive-change,
   .negative-change {
-    min-width: 72px;
-    padding: 7px 10px;
-    font-size: 12px;
+    display: block;
+    width: 100%;
+    text-align: center !important;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding: 0;
+    min-width: 0;
+    border: none;
+    background: transparent;
+    border-radius: 0;
+    font-size: 10px;
+    font-weight: 800;
+    margin: 0 auto;
+  }
+
+  .positive-change {
+    color: #0b5d2a !important;
+  }
+
+  .negative-change {
+    color: #8f1f15 !important;
   }
 
   .back-button {
