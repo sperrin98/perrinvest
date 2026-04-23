@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo } from "react";
 import axios from "axios";
+import Select from "react-select";
 import "./MonthlyReturns.css";
 
 export default function MonthlyReturns() {
@@ -69,6 +70,25 @@ export default function MonthlyReturns() {
     fetchMonthlyReturns();
   }, [selectedMetal, API_URL]);
 
+  const metalOptions = useMemo(
+    () =>
+      metals.map((metal) => ({
+        label: metal.security_long_name,
+        value: metal.security_id,
+        metal,
+      })),
+    [metals]
+  );
+
+  const selectedMetalOption = useMemo(() => {
+    if (!selectedMetal) return null;
+    return {
+      label: selectedMetal.security_long_name,
+      value: selectedMetal.security_id,
+      metal: selectedMetal,
+    };
+  }, [selectedMetal]);
+
   const formatPercent = (value) => {
     if (value === null || value === undefined || Number.isNaN(value)) return "";
     return `${(value * 100).toFixed(2)}%`;
@@ -99,23 +119,38 @@ export default function MonthlyReturns() {
   return (
     <div className="monthly-container">
       <aside className="monthly-sidebar">
-        <h2 className="monthly-sidebar-title">Select Metal</h2>
+        <div className="monthly-desktop-controls">
+          <h2 className="monthly-sidebar-title">Select Metal</h2>
 
-        <ul className="monthly-metal-list">
-          {metals.map((metal) => (
-            <li
-              key={metal.security_id}
-              className={`monthly-metal-item ${
-                selectedMetal?.security_id === metal.security_id
-                  ? "monthly-selected-metal"
-                  : ""
-              }`}
-              onClick={() => setSelectedMetal(metal)}
-            >
-              {metal.security_long_name}
-            </li>
-          ))}
-        </ul>
+          <ul className="monthly-metal-list">
+            {metals.map((metal) => (
+              <li
+                key={metal.security_id}
+                className={`monthly-metal-item ${
+                  selectedMetal?.security_id === metal.security_id
+                    ? "monthly-selected-metal"
+                    : ""
+                }`}
+                onClick={() => setSelectedMetal(metal)}
+              >
+                {metal.security_long_name}
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <div className="monthly-mobile-controls-card">
+          <div className="monthly-mobile-controls-title">Select Metal</div>
+          <Select
+            value={selectedMetalOption}
+            onChange={(option) => setSelectedMetal(option.metal)}
+            options={metalOptions}
+            menuPlacement="auto"
+            className="monthly-metal-select"
+            classNamePrefix="monthly-metal-select"
+            isSearchable={false}
+          />
+        </div>
       </aside>
 
       <main className="monthly-main">
@@ -134,6 +169,10 @@ export default function MonthlyReturns() {
                   <div className="monthly-table-meta">
                     {monthlyData.length} {monthlyData.length === 1 ? "year" : "years"}
                   </div>
+                </div>
+
+                <div className="monthly-mobile-scroll-hint">
+                  Swipe sideways to view full table
                 </div>
 
                 <div className="monthly-table-wrapper">
