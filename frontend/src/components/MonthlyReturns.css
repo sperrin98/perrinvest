@@ -32,7 +32,13 @@
   font-size: 0.95rem;
   font-weight: 700;
   color: #ffffff;
-  margin-bottom: 8px;
+  margin-bottom: 3px;
+}
+
+.monthly-mobile-controls-subtitle {
+  font-size: 0.76rem;
+  color: rgba(255, 255, 255, 0.8);
+  margin-bottom: 10px;
 }
 
 .monthly-sidebar-title {
@@ -297,11 +303,39 @@
   .monthly-mobile-controls-card {
     display: block;
     background: linear-gradient(135deg, #00796b, #004d40);
-    border-radius: 14px;
-    padding: 14px;
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+    border-radius: 12px;
+    padding: 12px;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
     border: 1px solid rgba(255, 255, 255, 0.08);
     margin-bottom: 6px;
+  }
+
+  .monthly-mobile-controls-title {
+    font-size: 0.84rem;
+    margin-bottom: 2px;
+  }
+
+  .monthly-mobile-controls-subtitle {
+    font-size: 0.7rem;
+    margin-bottom: 8px;
+  }
+
+  .monthly-metal-select .monthly-metal-select__control {
+    min-height: 38px;
+    border-radius: 9px;
+  }
+
+  .monthly-metal-select .monthly-metal-select__single-value {
+    font-size: 0.84rem;
+  }
+
+  .monthly-metal-select .monthly-metal-select__value-container {
+    padding-top: 1px;
+    padding-bottom: 1px;
+  }
+
+  .monthly-metal-select .monthly-metal-select__dropdown-indicator {
+    padding: 6px;
   }
 
   .monthly-main {
@@ -315,8 +349,12 @@
   }
 
   .monthly-title {
-    margin-top: 30px;
-    font-size: 26px;
+    margin-top: 18px;
+    margin-bottom: 12px;
+    font-size: 1.15rem;
+    line-height: 1.25;
+    letter-spacing: 0.1px;
+    text-shadow: none;
   }
 
   .monthly-table-card {
@@ -327,6 +365,14 @@
     align-items: flex-start;
     flex-direction: column;
     gap: 4px;
+  }
+
+  .monthly-table-heading {
+    font-size: 0.98rem;
+  }
+
+  .monthly-table-meta {
+    font-size: 0.72rem;
   }
 
   .monthly-mobile-scroll-hint {

@@ -140,7 +140,11 @@ export default function MonthlyReturns() {
         </div>
 
         <div className="monthly-mobile-controls-card">
-          <div className="monthly-mobile-controls-title">Select Metal</div>
+          <div className="monthly-mobile-controls-title">Metal</div>
+          <div className="monthly-mobile-controls-subtitle">
+            Choose a precious metal
+          </div>
+
           <Select
             value={selectedMetalOption}
             onChange={(option) => setSelectedMetal(option.metal)}
