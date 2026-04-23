@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import { Line } from 'react-chartjs-2';
@@ -42,69 +42,15 @@ const EVENT_MARKERS = [
 ];
 
 const MACRO_REGIMES = [
-  {
-    id: 'qe1',
-    label: 'QE1',
-    start: '2008-11-25',
-    end: '2010-03-31',
-    type: 'qe',
-  },
-  {
-    id: 'qe2',
-    label: 'QE2',
-    start: '2010-11-03',
-    end: '2011-06-30',
-    type: 'qe',
-  },
-  {
-    id: 'qe3',
-    label: 'QE3',
-    start: '2012-09-13',
-    end: '2014-10-29',
-    type: 'qe',
-  },
-  {
-    id: 'qe_pandemic',
-    label: 'Pandemic QE',
-    start: '2020-03-15',
-    end: '2022-03-15',
-    type: 'qe',
-  },
-  {
-    id: 'hike_1994',
-    label: 'Rate Hike Cycle',
-    start: '1994-02-04',
-    end: '1995-02-01',
-    type: 'hike',
-  },
-  {
-    id: 'hike_1999',
-    label: 'Rate Hike Cycle',
-    start: '1999-06-30',
-    end: '2000-05-16',
-    type: 'hike',
-  },
-  {
-    id: 'hike_2004',
-    label: 'Rate Hike Cycle',
-    start: '2004-06-30',
-    end: '2006-08-08',
-    type: 'hike',
-  },
-  {
-    id: 'hike_2015',
-    label: 'Rate Hike Cycle',
-    start: '2015-12-16',
-    end: '2018-12-19',
-    type: 'hike',
-  },
-  {
-    id: 'hike_2022',
-    label: 'Rate Hike Cycle',
-    start: '2022-03-16',
-    end: '2023-07-26',
-    type: 'hike',
-  },
+  { id: 'qe1', label: 'QE1', start: '2008-11-25', end: '2010-03-31', type: 'qe' },
+  { id: 'qe2', label: 'QE2', start: '2010-11-03', end: '2011-06-30', type: 'qe' },
+  { id: 'qe3', label: 'QE3', start: '2012-09-13', end: '2014-10-29', type: 'qe' },
+  { id: 'qe_pandemic', label: 'Pandemic QE', start: '2020-03-15', end: '2022-03-15', type: 'qe' },
+  { id: 'hike_1994', label: 'Rate Hike Cycle', start: '1994-02-04', end: '1995-02-01', type: 'hike' },
+  { id: 'hike_1999', label: 'Rate Hike Cycle', start: '1999-06-30', end: '2000-05-16', type: 'hike' },
+  { id: 'hike_2004', label: 'Rate Hike Cycle', start: '2004-06-30', end: '2006-08-08', type: 'hike' },
+  { id: 'hike_2015', label: 'Rate Hike Cycle', start: '2015-12-16', end: '2018-12-19', type: 'hike' },
+  { id: 'hike_2022', label: 'Rate Hike Cycle', start: '2022-03-16', end: '2023-07-26', type: 'hike' },
 ];
 
 const Security = () => {
@@ -131,29 +77,13 @@ const Security = () => {
   const [showEventMarkers, setShowEventMarkers] = useState(false);
   const [showMacroRegimes, setShowMacroRegimes] = useState(false);
 
+  const chartScrollRef = useRef(null);
+
   const extractMovingAverageValue = (item, key) => {
     const fallbackKeys = {
-      '5d': [
-        '5d_moving_average',
-        'moving_average_5d',
-        'five_day_moving_average',
-        'ma_5d',
-        'ma5d'
-      ],
-      '40d': [
-        '40d_moving_average',
-        'moving_average_40d',
-        'forty_day_moving_average',
-        'ma_40d',
-        'ma40d'
-      ],
-      '200d': [
-        '200d_moving_average',
-        'moving_average_200d',
-        'two_hundred_day_moving_average',
-        'ma_200d',
-        'ma200d'
-      ]
+      '5d': ['5d_moving_average', 'moving_average_5d', 'five_day_moving_average', 'ma_5d', 'ma5d'],
+      '40d': ['40d_moving_average', 'moving_average_40d', 'forty_day_moving_average', 'ma_40d', 'ma40d'],
+      '200d': ['200d_moving_average', 'moving_average_200d', 'two_hundred_day_moving_average', 'ma_200d', 'ma200d']
     };
 
     for (const candidate of fallbackKeys[key]) {
@@ -236,6 +166,12 @@ const Security = () => {
     fetchMovingAverages();
   }, [id]);
 
+  useEffect(() => {
+    if (!chartScrollRef.current) return;
+    if (window.innerWidth > 768) return;
+    chartScrollRef.current.scrollLeft = chartScrollRef.current.scrollWidth;
+  }, [selectedTimeFrame, selectedAverage, activeStartDate, activeEndDate, showEventMarkers, showMacroRegimes, isLogScale, priceHistories.length]);
+
   const securityLongName = security?.[1];
 
   const resampleStep = (tf) => {
@@ -266,13 +202,7 @@ const Security = () => {
     if (!maxDate || !minDate) return '';
     if (preset === 'MAX') return minDate;
 
-    const yearsMap = {
-      '1Y': 1,
-      '3Y': 3,
-      '5Y': 5,
-      '10Y': 10,
-    };
-
+    const yearsMap = { '1Y': 1, '3Y': 3, '5Y': 5, '10Y': 10 };
     const years = yearsMap[preset];
     if (!years) return minDate;
 
@@ -310,6 +240,7 @@ const Security = () => {
     if (!filteredFullHistory.length) return [];
     const step = resampleStep(selectedTimeFrame);
     const out = [];
+
     for (let i = 0; i < filteredFullHistory.length; i += step) {
       out.push(filteredFullHistory[i]);
     }
@@ -530,10 +461,7 @@ const Security = () => {
             color: isQE ? '#00796b' : '#d97706',
             backgroundColor: 'rgba(255,255,255,0.85)',
             padding: 4,
-            font: {
-              size: 10,
-              weight: '600'
-            }
+            font: { size: 10, weight: '600' }
           }
         };
       });
@@ -561,10 +489,7 @@ const Security = () => {
             yAdjust: -10,
             backgroundColor: 'rgba(198, 40, 40, 0.90)',
             color: '#ffffff',
-            font: {
-              size: 10,
-              weight: '600'
-            },
+            font: { size: 10, weight: '600' },
             padding: 4
           }
         };
@@ -667,62 +592,132 @@ const Security = () => {
   return (
     <div className='security-container'>
       <div className="sidebar">
-        <h3>Time Period</h3>
-        {['daily', 'weekly', 'monthly', 'quarterly'].map(time => (
-          <button
-            key={time}
-            onClick={() => setSelectedTimeFrame(time)}
-            className={selectedTimeFrame === time ? 'selected' : ''}
-          >
-            {time.charAt(0).toUpperCase() + time.slice(1)}
-          </button>
-        ))}
+        <div className="desktop-sidebar-controls">
+          <h3>Time Period</h3>
+          {['daily', 'weekly', 'monthly', 'quarterly'].map(time => (
+            <button
+              key={time}
+              onClick={() => setSelectedTimeFrame(time)}
+              className={selectedTimeFrame === time ? 'selected' : ''}
+            >
+              {time.charAt(0).toUpperCase() + time.slice(1)}
+            </button>
+          ))}
 
-        <h3>Moving Averages</h3>
-        {['5d', '40d', '200d'].map(avg => (
-          <button
-            key={avg}
-            onClick={() => setSelectedAverage(avg === selectedAverage ? null : avg)}
-            className={selectedAverage === avg ? 'selected' : ''}
-          >
-            {avg}
-          </button>
-        ))}
+          <h3>Moving Averages</h3>
+          {['5d', '40d', '200d'].map(avg => (
+            <button
+              key={avg}
+              onClick={() => setSelectedAverage(avg === selectedAverage ? null : avg)}
+              className={selectedAverage === avg ? 'selected' : ''}
+            >
+              {avg}
+            </button>
+          ))}
 
-        <h3>Scale</h3>
-        <div className="scale-buttons">
-          <button
-            onClick={() => setIsLogScale(false)}
-            className={!isLogScale ? 'selected' : ''}
-          >
-            Linear
-          </button>
-          <button
-            onClick={() => setIsLogScale(true)}
-            className={isLogScale ? 'selected' : ''}
-          >
-            Logarithmic
-          </button>
+          <h3>Scale</h3>
+          <div className="scale-buttons">
+            <button
+              onClick={() => setIsLogScale(false)}
+              className={!isLogScale ? 'selected' : ''}
+            >
+              Linear
+            </button>
+            <button
+              onClick={() => setIsLogScale(true)}
+              className={isLogScale ? 'selected' : ''}
+            >
+              Logarithmic
+            </button>
+          </div>
+
+          <h3>Overlays</h3>
+          <div className="overlay-toggle-group">
+            <button
+              onClick={() => setShowEventMarkers(prev => !prev)}
+              className={showEventMarkers ? 'selected' : ''}
+            >
+              Event Markers
+            </button>
+            <button
+              onClick={() => setShowMacroRegimes(prev => !prev)}
+              className={showMacroRegimes ? 'selected' : ''}
+            >
+              QE / Rate Cycles
+            </button>
+          </div>
+
+          <div className="overlay-note">
+            Toggle historical shocks and macro regimes on the chart.
+          </div>
         </div>
 
-        <h3>Overlays</h3>
-        <div className="overlay-toggle-group">
-          <button
-            onClick={() => setShowEventMarkers(prev => !prev)}
-            className={showEventMarkers ? 'selected' : ''}
-          >
-            Event Markers
-          </button>
-          <button
-            onClick={() => setShowMacroRegimes(prev => !prev)}
-            className={showMacroRegimes ? 'selected' : ''}
-          >
-            QE / Rate Cycles
-          </button>
-        </div>
+        <div className="mobile-control-panel">
+          <div className="mobile-control-section">
+            <div className="mobile-control-title">Time Period</div>
+            <div className="mobile-chip-row mobile-chip-row-compact mobile-chip-grid mobile-chip-grid-4">
+              {['daily', 'weekly', 'monthly', 'quarterly'].map(time => (
+                <button
+                  key={time}
+                  onClick={() => setSelectedTimeFrame(time)}
+                  className={`mobile-chip ${selectedTimeFrame === time ? 'selected' : ''}`}
+                >
+                  {time.charAt(0).toUpperCase() + time.slice(1)}
+                </button>
+              ))}
+            </div>
+          </div>
 
-        <div className="overlay-note">
-          Toggle historical shocks and macro regimes on the chart.
+          <div className="mobile-control-section">
+            <div className="mobile-control-title">Moving Averages</div>
+            <div className="mobile-chip-row mobile-chip-row-compact mobile-chip-grid mobile-chip-grid-3">
+              {['5d', '40d', '200d'].map(avg => (
+                <button
+                  key={avg}
+                  onClick={() => setSelectedAverage(avg === selectedAverage ? null : avg)}
+                  className={`mobile-chip ${selectedAverage === avg ? 'selected' : ''}`}
+                >
+                  {avg}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="mobile-control-section">
+            <div className="mobile-control-title">Scale</div>
+            <div className="mobile-chip-row mobile-chip-grid mobile-chip-grid-2">
+              <button
+                onClick={() => setIsLogScale(false)}
+                className={`mobile-chip ${!isLogScale ? 'selected' : ''}`}
+              >
+                Linear
+              </button>
+              <button
+                onClick={() => setIsLogScale(true)}
+                className={`mobile-chip ${isLogScale ? 'selected' : ''}`}
+              >
+                Log
+              </button>
+            </div>
+          </div>
+
+          <div className="mobile-control-section">
+            <div className="mobile-control-title">Overlays</div>
+            <div className="mobile-chip-row mobile-chip-grid mobile-chip-grid-2">
+              <button
+                onClick={() => setShowEventMarkers(prev => !prev)}
+                className={`mobile-chip ${showEventMarkers ? 'selected' : ''}`}
+              >
+                Event Markers
+              </button>
+              <button
+                onClick={() => setShowMacroRegimes(prev => !prev)}
+                className={`mobile-chip ${showMacroRegimes ? 'selected' : ''}`}
+              >
+                QE / Rate Cycles
+              </button>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -769,11 +764,44 @@ const Security = () => {
           </div>
         </div>
 
+        <div className="mobile-top-range-bar">
+          <div className="mobile-range-presets">
+            {RANGE_PRESETS.map(range => (
+              <button
+                key={range}
+                className={`mobile-range-btn ${selectedRangePreset === range ? 'selected' : ''}`}
+                onClick={() => handlePresetRange(range)}
+              >
+                {range}
+              </button>
+            ))}
+          </div>
+
+          <div className="mobile-range-dates">
+            <input
+              type="date"
+              value={customStartDate}
+              onChange={(e) => setCustomStartDate(e.target.value)}
+            />
+            <input
+              type="date"
+              value={customEndDate}
+              onChange={(e) => setCustomEndDate(e.target.value)}
+            />
+            <button onClick={handleApplyCustomRange}>Apply</button>
+          </div>
+        </div>
+
         <div className="chart-wrapper">
           <div className="chart-main-row">
-            <div className="chart-section">
-              <div className="chart-canvas">
-                <Line data={data} options={chartOptions} />
+            <div className="chart-scroll-shell">
+              <div className="chart-scroll-hint">Swipe sideways to view the full chart</div>
+              <div className="chart-scroll-area" ref={chartScrollRef}>
+                <div className="chart-section">
+                  <div className="chart-canvas">
+                    <Line data={data} options={chartOptions} />
+                  </div>
+                </div>
               </div>
             </div>
 
