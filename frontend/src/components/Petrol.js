@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useRef } from "react";
 import axios from "axios";
 import { Line } from "react-chartjs-2";
 import {
@@ -65,6 +65,7 @@ const toISODate = (value) => {
 
   const d = new Date(value);
   if (Number.isNaN(d.getTime())) return null;
+
   return d.toISOString().split("T")[0];
 };
 
@@ -81,6 +82,7 @@ const extractRows = (payload) => {
   if (payload.data && Array.isArray(payload.data.price_history)) {
     return payload.data.price_history;
   }
+
   if (payload.data && Array.isArray(payload.data.price_histories)) {
     return payload.data.price_histories;
   }
@@ -141,6 +143,7 @@ const getPresetStartDate = (preset, maxDate, minDate) => {
 
   const map = { "1Y": 1, "3Y": 3, "5Y": 5, "10Y": 10 };
   const years = map[preset];
+
   if (!years) return minDate;
 
   return clampDate(shiftYears(maxDate, years), minDate, maxDate);
@@ -154,6 +157,7 @@ const findLastVisibleOnOrBefore = (targetDate, visibleDates) => {
   for (let i = visibleDates.length - 1; i >= 0; i -= 1) {
     if (visibleDates[i] <= targetDate) return visibleDates[i];
   }
+
   return null;
 };
 
@@ -198,72 +202,8 @@ export default function Petrol() {
   const [showMacroRegimes, setShowMacroRegimes] = useState(true);
   const [showCrudeOverlay, setShowCrudeOverlay] = useState(false);
 
+  const chartScrollRef = useRef(null);
   const API_URL = process.env.REACT_APP_API_URL;
-
-  useEffect(() => {
-    async function fetchPetrolDataPoints() {
-      try {
-        const response = await axios.get(`${API_URL}/eco-data-points`);
-        const points = (response.data || [])
-          .filter((point) => PETROL_IDS.has(point.eco_data_point_id))
-          .sort((a, b) => a.eco_data_point_id - b.eco_data_point_id);
-
-        setPetrolDataPoints(points);
-
-        const firstPoint = points[0];
-        if (firstPoint) {
-          fetchPetrolChartData(
-            firstPoint.eco_data_point_id,
-            firstPoint.eco_data_point_name
-          );
-        }
-      } catch (err) {
-        console.error(err);
-        setPetrolError("Failed to load petrol data points.");
-      }
-    }
-
-    fetchPetrolDataPoints();
-  }, [API_URL]);
-
-  useEffect(() => {
-    async function fetchCrudeChartData() {
-      setCrudeError("");
-
-      try {
-        let data = [];
-
-        try {
-          const response = await axios.get(
-            `${API_URL}/securities/${CRUDE_SECURITY_ID}/price-histories`,
-            { params: { timeframe: "all" } }
-          );
-          data = normaliseCrudeSeries(response.data);
-        } catch (innerErr) {
-          console.warn("Primary crude route failed:", innerErr);
-        }
-
-        if (!data.length) {
-          const fallbackResponse = await axios.get(
-            `${API_URL}/securities/${CRUDE_SECURITY_ID}`
-          );
-          data = normaliseCrudeSeries(fallbackResponse.data?.price_history || []);
-        }
-
-        setCrudeChartData(data);
-
-        if (!data.length) {
-          setCrudeError("No crude oil price history returned.");
-        }
-      } catch (err) {
-        console.error("Failed to load crude oil overlay:", err);
-        setCrudeChartData([]);
-        setCrudeError("Failed to load price history of crude oil.");
-      }
-    }
-
-    fetchCrudeChartData();
-  }, [API_URL]);
 
   const fetchPetrolChartData = async (ecoDataPointId, ecoDataPointName) => {
     setSelectedPetrolId(ecoDataPointId);
@@ -297,6 +237,76 @@ export default function Petrol() {
     }
   };
 
+  useEffect(() => {
+    async function fetchPetrolDataPoints() {
+      try {
+        const response = await axios.get(`${API_URL}/eco-data-points`);
+
+        const points = (response.data || [])
+          .filter((point) => PETROL_IDS.has(point.eco_data_point_id))
+          .sort((a, b) => a.eco_data_point_id - b.eco_data_point_id);
+
+        setPetrolDataPoints(points);
+
+        const firstPoint = points[0];
+
+        if (firstPoint) {
+          fetchPetrolChartData(
+            firstPoint.eco_data_point_id,
+            firstPoint.eco_data_point_name
+          );
+        }
+      } catch (err) {
+        console.error(err);
+        setPetrolError("Failed to load petrol data points.");
+      }
+    }
+
+    fetchPetrolDataPoints();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [API_URL]);
+
+  useEffect(() => {
+    async function fetchCrudeChartData() {
+      setCrudeError("");
+
+      try {
+        let data = [];
+
+        try {
+          const response = await axios.get(
+            `${API_URL}/securities/${CRUDE_SECURITY_ID}/price-histories`,
+            { params: { timeframe: "all" } }
+          );
+
+          data = normaliseCrudeSeries(response.data);
+        } catch (innerErr) {
+          console.warn("Primary crude route failed:", innerErr);
+        }
+
+        if (!data.length) {
+          const fallbackResponse = await axios.get(
+            `${API_URL}/securities/${CRUDE_SECURITY_ID}`
+          );
+
+          data = normaliseCrudeSeries(fallbackResponse.data?.price_history || []);
+        }
+
+        setCrudeChartData(data);
+
+        if (!data.length) {
+          setCrudeError("No crude oil price history returned.");
+        }
+      } catch (err) {
+        console.error("Failed to load crude oil overlay:", err);
+        setCrudeChartData([]);
+        setCrudeError("Failed to load price history of crude oil.");
+      }
+    }
+
+    fetchCrudeChartData();
+  }, [API_URL]);
+
   const visiblePoints = useMemo(() => petrolDataPoints, [petrolDataPoints]);
 
   const chartTitle = useMemo(
@@ -312,6 +322,35 @@ export default function Petrol() {
     );
   }, [petrolChartData, activeStartDate, activeEndDate]);
 
+  useEffect(() => {
+    if (!chartScrollRef.current) return;
+    if (window.innerWidth > 650) return;
+    if (!rangeFilteredData.length) return;
+
+    const scrollToEnd = () => {
+      if (!chartScrollRef.current) return;
+
+      chartScrollRef.current.scrollLeft =
+        chartScrollRef.current.scrollWidth - chartScrollRef.current.clientWidth;
+    };
+
+    requestAnimationFrame(() => {
+      scrollToEnd();
+      setTimeout(scrollToEnd, 50);
+      setTimeout(scrollToEnd, 150);
+      setTimeout(scrollToEnd, 300);
+    });
+  }, [
+    selectedPetrolId,
+    selectedRangePreset,
+    rangeFilteredData.length,
+    activeStartDate,
+    activeEndDate,
+    showEventMarkers,
+    showMacroRegimes,
+    showCrudeOverlay,
+  ]);
+
   const handlePresetRange = (preset) => {
     if (!petrolChartData.length) return;
 
@@ -322,6 +361,16 @@ export default function Petrol() {
     setSelectedRangePreset(preset);
     setActiveStartDate(newStart);
     setActiveEndDate(maxDate);
+  };
+
+  const handlePetrolSelect = (ecoDataPointId) => {
+    const point = visiblePoints.find(
+      (item) => item.eco_data_point_id === Number(ecoDataPointId)
+    );
+
+    if (!point) return;
+
+    fetchPetrolChartData(point.eco_data_point_id, point.eco_data_point_name);
   };
 
   const labels = useMemo(
@@ -485,7 +534,11 @@ export default function Petrol() {
         x: {
           type: "category",
           offset: false,
-          title: { display: true, text: "Date", color: "#00796b" },
+          title: {
+            display: true,
+            text: "Date",
+            color: "#00796b",
+          },
           ticks: {
             color: "#00796b",
             maxTicksLimit: 10,
@@ -495,7 +548,9 @@ export default function Petrol() {
               return label ? new Date(label).getFullYear() : "";
             },
           },
-          grid: { color: "rgb(202, 202, 202)" },
+          grid: {
+            color: "rgba(0, 0, 0, 0.08)",
+          },
         },
         y: {
           type: "linear",
@@ -509,7 +564,9 @@ export default function Petrol() {
             color: "#00796b",
             beginAtZero: false,
           },
-          grid: { color: "rgb(202, 202, 202)" },
+          grid: {
+            color: "rgba(0, 0, 0, 0.08)",
+          },
         },
         y1: {
           type: "linear",
@@ -548,11 +605,13 @@ export default function Petrol() {
           callbacks: {
             title: (items) => {
               if (!items.length) return "";
+
               const date = items[0].label;
               const d = new Date(date);
               const day = String(d.getDate()).padStart(2, "0");
               const month = String(d.getMonth() + 1).padStart(2, "0");
               const year = d.getFullYear();
+
               return `${day}/${month}/${year}`;
             },
           },
@@ -567,8 +626,12 @@ export default function Petrol() {
             mode: "x",
           },
           zoom: {
-            wheel: { enabled: true },
-            pinch: { enabled: true },
+            wheel: {
+              enabled: true,
+            },
+            pinch: {
+              enabled: true,
+            },
             mode: "x",
           },
         },
@@ -579,96 +642,180 @@ export default function Petrol() {
   return (
     <div className="petrol-container">
       <aside className="petrol-sidebar">
-        <h2 className="petrol-sidebar-title">UK Petrol Series</h2>
+        <div className="petrol-miniRail" aria-label="Range selector">
+          {RANGE_PRESETS.map((range) => (
+            <button
+              type="button"
+              key={range}
+              className={`petrol-chip ${
+                selectedRangePreset === range ? "petrol-chip-active" : ""
+              }`}
+              onClick={() => handlePresetRange(range)}
+              title={range}
+            >
+              {range}
+            </button>
+          ))}
+        </div>
 
-        <ul className="petrol-point-list">
-          {visiblePoints.length > 0 ? (
-            visiblePoints.map((point) => (
-              <li
-                key={point.eco_data_point_id}
-                className={`petrol-point-item ${
-                  selectedPetrolId === point.eco_data_point_id
-                    ? "petrol-selected-point"
-                    : ""
-                }`}
-                onClick={() =>
-                  fetchPetrolChartData(
-                    point.eco_data_point_id,
-                    point.eco_data_point_name
-                  )
-                }
+        <div className="petrol-sidebarScroll petrol-desktop-sidebarScroll">
+          <h2 className="petrol-sidebar-title">UK Petrol Series</h2>
+
+          <ul className="petrol-point-list">
+            {visiblePoints.length > 0 ? (
+              visiblePoints.map((point) => (
+                <li
+                  key={point.eco_data_point_id}
+                  className={`petrol-point-item ${
+                    selectedPetrolId === point.eco_data_point_id
+                      ? "petrol-selected-point"
+                      : ""
+                  }`}
+                  onClick={() =>
+                    fetchPetrolChartData(
+                      point.eco_data_point_id,
+                      point.eco_data_point_name
+                    )
+                  }
+                >
+                  {point.eco_data_point_name}
+                </li>
+              ))
+            ) : (
+              <li className="petrol-empty-item">No petrol series available.</li>
+            )}
+          </ul>
+
+          <div className="petrol-sidebar-section">
+            <h3 className="petrol-sidebar-subtitle">Overlays</h3>
+
+            <div className="petrol-toggle-stack">
+              <button
+                type="button"
+                className={showEventMarkers ? "selected" : ""}
+                onClick={() => setShowEventMarkers((prev) => !prev)}
               >
-                {point.eco_data_point_name}
-              </li>
-            ))
-          ) : (
-            <li className="petrol-empty-item">No petrol series available.</li>
-          )}
-        </ul>
+                Event Markers
+              </button>
 
-        <div className="petrol-sidebar-section">
-          <h3 className="petrol-sidebar-subtitle">Overlays</h3>
-          <div className="petrol-toggle-stack">
-            <button
-              type="button"
-              className={showEventMarkers ? "selected" : ""}
-              onClick={() => setShowEventMarkers((prev) => !prev)}
-            >
-              Event Markers
-            </button>
+              <button
+                type="button"
+                className={showMacroRegimes ? "selected" : ""}
+                onClick={() => setShowMacroRegimes((prev) => !prev)}
+              >
+                QE / Rate Cycles
+              </button>
 
-            <button
-              type="button"
-              className={showMacroRegimes ? "selected" : ""}
-              onClick={() => setShowMacroRegimes((prev) => !prev)}
-            >
-              QE / Rate Cycles
-            </button>
+              <button
+                type="button"
+                className={showCrudeOverlay ? "selected" : ""}
+                onClick={() => setShowCrudeOverlay((prev) => !prev)}
+              >
+                Crude Oil Overlay
+              </button>
+            </div>
 
-            <button
-              type="button"
-              className={showCrudeOverlay ? "selected" : ""}
-              onClick={() => setShowCrudeOverlay((prev) => !prev)}
-            >
-              Crude Oil Overlay
-            </button>
+            {crudeError && (
+              <p className="petrol-error petrol-sidebar-error">{crudeError}</p>
+            )}
           </div>
+        </div>
 
-          {crudeError && (
-            <p className="petrol-error" style={{ marginTop: "10px" }}>
-              {crudeError}
-            </p>
-          )}
+        <div className="petrol-mobile-controls">
+          <div className="petrol-mobile-card">
+            <div className="petrol-mobile-section">
+              <div className="petrol-mobile-label">Petrol Series</div>
+
+              <select
+                className="petrol-mobile-select"
+                value={selectedPetrolId ?? ""}
+                onChange={(e) => handlePetrolSelect(e.target.value)}
+              >
+                {visiblePoints.map((point) => (
+                  <option
+                    key={point.eco_data_point_id}
+                    value={point.eco_data_point_id}
+                  >
+                    {point.eco_data_point_name}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="petrol-mobile-section">
+              <div className="petrol-mobile-label">Range</div>
+
+              <div className="petrol-mobile-range-bar">
+                {RANGE_PRESETS.map((range) => (
+                  <button
+                    type="button"
+                    key={range}
+                    className={`petrol-mobile-chip ${
+                      selectedRangePreset === range
+                        ? "petrol-mobile-chip-active"
+                        : ""
+                    }`}
+                    onClick={() => handlePresetRange(range)}
+                  >
+                    {range}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="petrol-mobile-section">
+              <div className="petrol-mobile-label">Overlays</div>
+
+              <div className="petrol-mobile-toggle-grid">
+                <button
+                  type="button"
+                  className={`petrol-mobile-toggle ${
+                    showEventMarkers ? "petrol-mobile-toggle-active" : ""
+                  }`}
+                  onClick={() => setShowEventMarkers((prev) => !prev)}
+                >
+                  Events
+                </button>
+
+                <button
+                  type="button"
+                  className={`petrol-mobile-toggle ${
+                    showMacroRegimes ? "petrol-mobile-toggle-active" : ""
+                  }`}
+                  onClick={() => setShowMacroRegimes((prev) => !prev)}
+                >
+                  QE / Rates
+                </button>
+
+                <button
+                  type="button"
+                  className={`petrol-mobile-toggle ${
+                    showCrudeOverlay ? "petrol-mobile-toggle-active" : ""
+                  }`}
+                  onClick={() => setShowCrudeOverlay((prev) => !prev)}
+                >
+                  Crude
+                </button>
+              </div>
+
+              {crudeError && (
+                <p className="petrol-error petrol-mobile-error">{crudeError}</p>
+              )}
+            </div>
+          </div>
         </div>
       </aside>
 
-      <div className="petrol-main">
+      <main className="petrol-main">
         {petrolError && <p className="petrol-error">{petrolError}</p>}
 
         <h1 className="petrol-title">{chartTitle}</h1>
 
-        <div className="petrol-toolbar">
-          <div className="petrol-range-presets">
-            {RANGE_PRESETS.map((range) => (
-              <button
-                type="button"
-                key={range}
-                className={`petrol-range-btn ${
-                  selectedRangePreset === range ? "selected" : ""
-                }`}
-                onClick={() => handlePresetRange(range)}
-              >
-                {range}
-              </button>
-            ))}
-          </div>
-        </div>
-
         {rangeFilteredData.length > 0 ? (
-          <div className="petrol-chart-card">
+          <section className="petrol-chart-card">
             <div className="petrol-chart-header">
               <div>
-                <div className="petrol-chart-kicker">UK PETROL</div>
+                <div className="petrol-chart-kicker">UK Petrol</div>
                 <div className="petrol-chart-name">{selectedPetrolName}</div>
               </div>
 
@@ -679,6 +826,7 @@ export default function Petrol() {
                       Event marker
                     </div>
                   )}
+
                   {showMacroRegimes && (
                     <>
                       <div className="petrol-overlay-chip petrol-overlay-chip-qe">
@@ -689,6 +837,7 @@ export default function Petrol() {
                       </div>
                     </>
                   )}
+
                   {showCrudeOverlay && (
                     <div className="petrol-overlay-chip petrol-overlay-chip-crude">
                       Crude oil
@@ -698,26 +847,32 @@ export default function Petrol() {
               )}
             </div>
 
-            <div className="petrol-chart-canvas">
-              <Line
-                key={`${selectedPetrolId}-${activeStartDate}-${activeEndDate}-${showEventMarkers}-${showMacroRegimes}-${showCrudeOverlay}`}
-                data={data}
-                options={chartOptions}
-                redraw
-              />
+            <div className="petrol-chart-scroll-hint">
+              Swipe sideways to view the full chart
+            </div>
+
+            <div className="petrol-chart-scroll-area" ref={chartScrollRef}>
+              <div className="petrol-chart-canvas">
+                <Line
+                  key={`${selectedPetrolId}-${activeStartDate}-${activeEndDate}-${showEventMarkers}-${showMacroRegimes}-${showCrudeOverlay}`}
+                  data={data}
+                  options={chartOptions}
+                  redraw
+                />
+              </div>
             </div>
 
             <div className="petrol-range-summary">
               <span>{activeStartDate || "-"}</span>
               <span>{activeEndDate || "-"}</span>
             </div>
-          </div>
+          </section>
         ) : (
           <div className="petrol-empty-state">
-            <p>Select a series from the left to view the chart.</p>
+            <p>Select a series from the control panel to view the chart.</p>
           </div>
         )}
-      </div>
+      </main>
     </div>
   );
 }

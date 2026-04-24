@@ -8,19 +8,100 @@
   overflow: hidden;
 }
 
+/* ===== Sidebar shell ===== */
+
 .petrol-sidebar {
   width: 22%;
   background: linear-gradient(135deg, #00796b, #004d40);
-  padding: 25px;
-  padding-top: 120px;
   box-sizing: border-box;
   color: white;
   border-right: 3px solid #00332c;
-  overflow-y: auto;
   display: flex;
   flex-direction: column;
-  height: 100vh;
+  overflow: visible;
+  position: relative;
 }
+
+.petrol-sidebarScroll {
+  height: 100%;
+  overflow-y: auto;
+  padding: 25px;
+  padding-top: 120px;
+  padding-right: 60px;
+  box-sizing: border-box;
+
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.22) rgba(255, 255, 255, 0.06);
+}
+
+.petrol-sidebarScroll::-webkit-scrollbar {
+  width: 8px;
+}
+
+.petrol-sidebarScroll::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 999px;
+}
+
+.petrol-sidebarScroll::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.18);
+  border-radius: 999px;
+  border: 2px solid rgba(0, 0, 0, 0);
+  background-clip: padding-box;
+}
+
+.petrol-sidebarScroll::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.28);
+  background-clip: padding-box;
+}
+
+/* ===== Desktop floating range rail ===== */
+
+.petrol-miniRail {
+  position: absolute;
+  right: -43px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 64px;
+  padding: 10px 9px;
+  border-radius: 16px;
+  background: rgba(0, 77, 64, 0.52);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  backdrop-filter: blur(10px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  box-shadow:
+    0 14px 28px rgba(0, 0, 0, 0.22),
+    -6px 0 16px rgba(0, 0, 0, 0.12);
+  z-index: 999;
+}
+
+.petrol-chip {
+  width: 46px;
+  height: 46px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.92);
+  font-weight: 700;
+  font-size: 0.78rem;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.petrol-chip:hover {
+  background: rgba(255, 255, 255, 0.16);
+  transform: scale(1.05);
+}
+
+.petrol-chip-active {
+  background: rgba(255, 255, 255, 0.24);
+  border-color: rgba(255, 255, 255, 0.55);
+}
+
+/* ===== Sidebar content ===== */
 
 .petrol-sidebar-title {
   font-size: 1.3rem;
@@ -37,7 +118,7 @@
 }
 
 .petrol-sidebar-section {
-  margin-top: 18px;
+  margin-top: 20px;
 }
 
 .petrol-point-list {
@@ -100,15 +181,29 @@
 }
 
 .petrol-sidebar button.selected {
-  background: rgba(0, 255, 179, 0.9);
-  color: #004d40;
+  background: rgba(255, 255, 255, 0.24);
+  color: #ffffff;
   font-weight: bold;
+  border-color: rgba(255, 255, 255, 0.58);
 }
 
 .petrol-sidebar button:hover {
   background: rgba(255, 255, 255, 0.2);
   transform: scale(1.03);
 }
+
+.petrol-sidebar-error {
+  margin-top: 10px;
+  font-size: 0.8rem;
+}
+
+/* ===== Mobile controls ===== */
+
+.petrol-mobile-controls {
+  display: none;
+}
+
+/* ===== Main content ===== */
 
 .petrol-main {
   width: 78%;
@@ -135,54 +230,14 @@
 }
 
 .petrol-error {
-  color: red;
+  color: #c62828;
   font-weight: bold;
   text-align: center;
   margin-top: 10px;
   flex-shrink: 0;
 }
 
-.petrol-toolbar {
-  width: 100%;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 18px;
-  margin-bottom: 18px;
-  flex-wrap: wrap;
-  flex-shrink: 0;
-}
-
-.petrol-range-presets {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-
-.petrol-range-btn,
-.petrol-apply-range-btn {
-  padding: 10px 16px;
-  border-radius: 8px;
-  border: 1px solid rgba(0, 121, 107, 0.22);
-  background: white;
-  color: #00796b;
-  font-size: 0.95rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: 0.25s ease;
-}
-
-.petrol-range-btn:hover,
-.petrol-apply-range-btn:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-}
-
-.petrol-range-btn.selected {
-  background: #00796b;
-  color: white;
-  border-color: #00796b;
-}
+/* ===== Chart card ===== */
 
 .petrol-chart-card {
   width: 100%;
@@ -225,6 +280,7 @@
 .petrol-overlay-legend {
   display: flex;
   align-items: center;
+  justify-content: flex-end;
   gap: 8px;
   flex-wrap: wrap;
 }
@@ -264,27 +320,27 @@
   background: rgba(30, 58, 138, 0.08);
 }
 
-.petrol-empty-state {
-  margin-top: 30px;
+.petrol-chart-scroll-hint {
+  display: none;
+}
+
+.petrol-chart-scroll-area {
   width: 100%;
   flex: 1;
   min-height: 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  color: #666;
-  font-size: 16px;
-  font-weight: 600;
-  background: #ffffff;
-  border-radius: 12px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.07);
-  border: 1px solid rgba(0, 0, 0, 0.06);
+  overflow: hidden;
 }
 
 .petrol-chart-canvas {
   width: 100%;
-  flex: 1;
+  height: 100%;
   min-height: 0;
+  position: relative;
+}
+
+.petrol-chart-canvas canvas {
+  width: 100% !important;
+  height: 100% !important;
 }
 
 .petrol-range-summary {
@@ -300,6 +356,25 @@
   flex-shrink: 0;
 }
 
+.petrol-empty-state {
+  margin-top: 0;
+  width: 100%;
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #666;
+  font-size: 16px;
+  font-weight: 600;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.07);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+/* ===== Responsive ===== */
+
 @media (max-width: 900px) {
   .petrol-sidebar {
     width: 35%;
@@ -307,52 +382,268 @@
 
   .petrol-main {
     width: 65%;
-    padding-left: 20px;
+    padding-left: 28px;
+  }
+
+  .petrol-chart-name {
+    font-size: 18px;
   }
 }
 
 @media (max-width: 650px) {
+  .petrol-miniRail,
+  .petrol-desktop-sidebarScroll {
+    display: none;
+  }
+
   .petrol-container {
     flex-direction: column;
     height: auto;
-    overflow: auto;
+    min-height: 100vh;
+    overflow: visible;
   }
 
   .petrol-sidebar {
     width: 100%;
     height: auto;
-    padding-top: 90px;
     border-right: none;
-    border-bottom: 3px solid #00332c;
+    border-bottom: none;
+    background: #f8f8f8;
+    overflow: visible;
+    padding: 90px 12px 6px 12px;
+  }
+
+  .petrol-mobile-controls {
+    display: block;
+  }
+
+  .petrol-mobile-card {
+    background: linear-gradient(135deg, #00796b, #004d40);
+    border-radius: 10px;
+    padding: 8px;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .petrol-mobile-section {
+    margin-bottom: 8px;
+  }
+
+  .petrol-mobile-section:last-child {
+    margin-bottom: 0;
+  }
+
+  .petrol-mobile-label {
+    display: block;
+    font-size: 0.62rem;
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.9);
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+
+  .petrol-mobile-select {
+    width: 100%;
+    min-height: 36px;
+    padding: 8px 10px;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    background: rgba(255, 255, 255, 0.12);
+    color: #ffffff;
+    font-size: 0.78rem;
+    font-weight: 600;
+    box-sizing: border-box;
+    outline: none;
+  }
+
+  .petrol-mobile-select option {
+    color: #004d40;
+    background: #ffffff;
+  }
+
+  .petrol-mobile-range-bar {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 4px;
+    width: 100%;
+  }
+
+  .petrol-mobile-chip {
+    width: 100%;
+    min-height: 28px;
+    height: 28px;
+    padding: 6px 4px;
+    border-radius: 7px;
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    background: rgba(255, 255, 255, 0.12);
+    color: #ffffff;
+    font-size: 0.66rem;
+    font-weight: 700;
+    line-height: 1;
+    text-align: center;
+  }
+
+  .petrol-mobile-chip-active {
+    background: #ffffff;
+    color: #00796b;
+    border-color: #ffffff;
+  }
+
+  .petrol-mobile-toggle-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 4px;
+  }
+
+  .petrol-mobile-toggle {
+    min-height: 30px;
+    padding: 6px 4px;
+    border-radius: 7px;
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    background: rgba(255, 255, 255, 0.12);
+    color: #ffffff;
+    font-size: 0.66rem;
+    font-weight: 700;
+    line-height: 1;
+    text-align: center;
+  }
+
+  .petrol-mobile-toggle-active {
+    background: rgba(255, 255, 255, 0.25);
+    border-color: rgba(255, 255, 255, 0.6);
+  }
+
+  .petrol-mobile-error {
+    margin-top: 8px;
+    font-size: 0.7rem;
+    color: #ffcccc;
+    text-align: left;
   }
 
   .petrol-main {
     width: 100%;
     height: auto;
+    min-height: 0;
     overflow: visible;
-    padding-left: 20px;
+    padding: 10px 12px 24px 12px;
   }
 
   .petrol-title {
-    margin-top: 30px;
+    margin-top: 6px;
+    margin-bottom: 10px;
+    font-size: 1rem;
+    line-height: 1.2;
+    letter-spacing: 0.1px;
+    text-shadow: none;
+    text-align: center;
   }
 
-  .petrol-toolbar {
-    align-items: flex-start;
+  .petrol-error {
+    font-size: 0.78rem;
+    margin: 8px 0;
+  }
+
+  .petrol-chart-card {
+    height: auto;
+    min-height: 0;
+    padding: 10px;
+    border-radius: 12px;
+    margin-bottom: 24px;
+    flex: none;
   }
 
   .petrol-chart-header {
     flex-direction: column;
     align-items: flex-start;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+
+  .petrol-chart-kicker {
+    font-size: 0.62rem;
+  }
+
+  .petrol-chart-name {
+    font-size: 0.95rem;
+    line-height: 1.2;
+    margin-top: 2px;
+  }
+
+  .petrol-overlay-legend {
+    justify-content: flex-start;
+    gap: 5px;
+  }
+
+  .petrol-overlay-chip {
+    padding: 5px 7px;
+    font-size: 0.58rem;
+  }
+
+  .petrol-chart-scroll-hint {
+    display: block;
+    font-size: 0.68rem;
+    color: #6a7a76;
+    margin-bottom: 6px;
+  }
+
+  .petrol-chart-scroll-area {
+    width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    border-radius: 12px;
+    background: #ffffff;
+    flex: none;
   }
 
   .petrol-chart-canvas {
+    width: 920px;
+    min-width: 920px;
+    max-width: 920px;
     height: 420px;
-    min-height: 420px;
-    flex: none;
+    padding: 6px;
+    box-sizing: border-box;
+  }
+
+  .petrol-range-summary {
+    font-size: 0.68rem;
+    margin-top: 8px;
   }
 
   .petrol-empty-state {
     min-height: 320px;
+    font-size: 0.8rem;
+    padding: 18px;
+    text-align: center;
+    box-sizing: border-box;
+    flex: none;
+  }
+}
+
+@media (max-width: 380px) {
+  .petrol-sidebar {
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+
+  .petrol-main {
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+
+  .petrol-mobile-chip,
+  .petrol-mobile-toggle {
+    font-size: 0.58rem;
+    padding-left: 2px;
+    padding-right: 2px;
+  }
+
+  .petrol-chart-canvas {
+    width: 900px;
+    min-width: 900px;
+    max-width: 900px;
   }
 }
