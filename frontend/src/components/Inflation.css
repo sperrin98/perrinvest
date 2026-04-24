@@ -1,39 +1,125 @@
-.inflation-page {
-  padding-top: 82px;
-  box-sizing: border-box;
-}
-
 .inflation-container {
   display: flex;
   width: 100vw;
-  min-height: calc(100vh - 82px);
+  height: 100vh;
   background-color: #f8f8f8;
   box-sizing: border-box;
+  font-family: Arial, sans-serif;
+  overflow: hidden;
 }
+
+/* ===== Sidebar shell ===== */
 
 .inflation-sidebar {
   width: 22%;
   background: linear-gradient(135deg, #00796b, #004d40);
-  padding: 25px;
   box-sizing: border-box;
   color: white;
-  font-family: Arial, sans-serif;
   border-right: 3px solid #00332c;
-  overflow-y: auto;
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  overflow: visible;
+  position: relative;
 }
 
+.inflation-sidebarScroll {
+  height: 100%;
+  overflow-y: auto;
+  padding: 25px;
+  padding-top: 120px;
+  padding-right: 60px;
+  box-sizing: border-box;
+
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.22) rgba(255, 255, 255, 0.06);
+}
+
+.inflation-sidebarScroll::-webkit-scrollbar {
+  width: 8px;
+}
+
+.inflation-sidebarScroll::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 999px;
+}
+
+.inflation-sidebarScroll::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.18);
+  border-radius: 999px;
+  border: 2px solid rgba(0, 0, 0, 0);
+  background-clip: padding-box;
+}
+
+.inflation-sidebarScroll::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.28);
+  background-clip: padding-box;
+}
+
+/* ===== Desktop floating range rail ===== */
+
+.inflation-miniRail {
+  position: absolute;
+  right: -43px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 64px;
+  max-height: calc(100vh - 150px);
+  overflow-y: auto;
+  padding: 10px 9px;
+  border-radius: 16px;
+  background: rgba(0, 77, 64, 0.52);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  backdrop-filter: blur(10px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  box-shadow:
+    0 14px 28px rgba(0, 0, 0, 0.22),
+    -6px 0 16px rgba(0, 0, 0, 0.12);
+  z-index: 999;
+  scrollbar-width: none;
+}
+
+.inflation-miniRail::-webkit-scrollbar {
+  display: none;
+}
+
+.inflation-chip {
+  width: 46px;
+  min-height: 38px;
+  height: 38px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.92);
+  font-weight: 700;
+  font-size: 0.72rem;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.inflation-chip:hover {
+  background: rgba(255, 255, 255, 0.16);
+  transform: scale(1.05);
+}
+
+.inflation-chip-active {
+  background: rgba(255, 255, 255, 0.24);
+  border-color: rgba(255, 255, 255, 0.55);
+}
+
+/* ===== Sidebar content ===== */
+
 .inflation-sidebar-top {
-  margin-bottom: 6px;
+  margin-bottom: 18px;
 }
 
 .inflation-sidebar-title {
-  font-size: 1.4rem;
-  margin: 0 0 6px 0;
+  font-size: 1.3rem;
+  margin: 0 0 8px 0;
   border-bottom: 2px solid rgba(255, 255, 255, 0.3);
-  padding-bottom: 8px;
+  padding-bottom: 6px;
 }
 
 .inflation-sidebar-subtitle {
@@ -43,11 +129,14 @@
 
 .inflation-sidebar-subtitle-spaced {
   margin: 0 0 10px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.22);
+  padding-bottom: 4px;
 }
 
 .inflation-sidebar-section {
   display: flex;
   flex-direction: column;
+  margin-bottom: 18px;
 }
 
 .inflation-country-buttons,
@@ -74,9 +163,10 @@
 }
 
 .inflation-series-btn.selected {
-  background: rgba(0, 255, 179, 0.9);
-  color: #004d40;
+  background: rgba(255, 255, 255, 0.24);
+  color: #ffffff;
   font-weight: bold;
+  border-color: rgba(255, 255, 255, 0.58);
 }
 
 .inflation-series-btn:hover {
@@ -84,17 +174,81 @@
   transform: scale(1.03);
 }
 
+.inflation-date-control {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.inflation-date-control label {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.92);
+}
+
+.inflation-date-control input {
+  width: 100%;
+  min-height: 44px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  font-size: 14px;
+  outline: none;
+  transition: 0.3s ease;
+  box-sizing: border-box;
+}
+
+.inflation-date-control input:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.inflation-date-control input:focus {
+  background: rgba(255, 255, 255, 0.25);
+  border-color: rgba(255, 255, 255, 0.55);
+}
+
+.inflation-apply-range-btn {
+  width: 100%;
+  min-height: 44px;
+  padding: 0 12px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.14);
+  color: white;
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.inflation-apply-range-btn:hover {
+  background: rgba(255, 255, 255, 0.24);
+  transform: scale(1.02);
+}
+
 .inflation-error-box {
-  color: #ffb4b4;
+  color: #ffcccc;
   font-weight: 700;
   background: rgba(0, 0, 0, 0.18);
   padding: 10px;
   border-radius: 8px;
 }
 
+/* ===== Mobile controls ===== */
+
+.inflation-mobile-controls {
+  display: none;
+}
+
+/* ===== Main content ===== */
+
 .inflation-main {
   width: 78%;
   padding: 20px;
+  padding-left: 40px;
+  padding-bottom: 24px;
   overflow-x: auto;
   overflow-y: auto;
   display: flex;
@@ -103,91 +257,17 @@
 }
 
 .inflation-title {
-  margin: 0 0 14px 0;
+  margin-top: 110px;
+  margin-bottom: 16px;
   color: #00796b;
-  font-size: 28px;
+  font-size: 32px;
   font-weight: 600;
   letter-spacing: 1px;
   text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
   text-align: center;
 }
 
-.inflation-toolbar {
-  width: 100%;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 18px;
-  margin-bottom: 18px;
-  flex-wrap: wrap;
-}
-
-.inflation-range-presets {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-
-.inflation-range-btn,
-.inflation-apply-range-btn {
-  padding: 10px 16px;
-  border-radius: 8px;
-  border: 1px solid rgba(0, 121, 107, 0.22);
-  background: white;
-  color: #00796b;
-  font-size: 0.95rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: 0.25s ease;
-}
-
-.inflation-range-btn:hover,
-.inflation-apply-range-btn:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-}
-
-.inflation-range-btn.selected {
-  background: #00796b;
-  color: white;
-  border-color: #00796b;
-}
-
-.inflation-custom-date-controls {
-  display: flex;
-  align-items: end;
-  gap: 12px;
-  flex-wrap: wrap;
-}
-
-.inflation-date-input-group {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.inflation-date-input-group label {
-  font-size: 0.85rem;
-  color: #00796b;
-  font-weight: 600;
-}
-
-.inflation-date-input-group input {
-  padding: 10px 12px;
-  border: 1px solid rgba(0, 121, 107, 0.2);
-  border-radius: 8px;
-  background: white;
-  color: #004d40;
-  min-width: 160px;
-  font-size: 0.95rem;
-}
-
-.inflation-apply-range-btn {
-  background: #00796b;
-  color: white;
-  border-color: #00796b;
-  min-width: 100px;
-}
+/* ===== Stats ===== */
 
 .inflation-stats-row {
   display: grid;
@@ -200,7 +280,7 @@
   background: #ffffff;
   border-radius: 10px;
   padding: 14px 16px;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.07);
   border: 1px solid rgba(0, 0, 0, 0.05);
   display: flex;
   flex-direction: column;
@@ -222,18 +302,66 @@
   line-height: 1;
 }
 
+/* ===== Chart ===== */
+
 .inflation-chart-card {
   background: #ffffff;
   border-radius: 12px;
   padding: 16px 18px;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.07);
   border: 1px solid rgba(0, 0, 0, 0.05);
-  min-height: 620px;
+  box-sizing: border-box;
+  min-height: 560px;
+  height: calc(100vh - 310px);
+  display: flex;
+  flex-direction: column;
+}
+
+.inflation-chart-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 14px;
+  margin-bottom: 10px;
+  flex-shrink: 0;
+}
+
+.inflation-chart-kicker {
+  color: #6a7a76;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.7px;
+  text-transform: uppercase;
+}
+
+.inflation-chart-name {
+  color: #00796b;
+  font-size: 22px;
+  font-weight: 700;
+  margin-top: 4px;
+}
+
+.inflation-chart-scroll-hint {
+  display: none;
+}
+
+.inflation-chart-scroll-area {
+  width: 100%;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
 }
 
 .inflation-chart-canvas {
   width: 100%;
-  height: 560px;
+  height: 100%;
+  min-height: 0;
+  position: relative;
+}
+
+.inflation-chart-canvas canvas {
+  width: 100% !important;
+  height: 100% !important;
 }
 
 .inflation-empty-state {
@@ -247,9 +375,11 @@
   font-weight: 600;
   background: #ffffff;
   border-radius: 12px;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.07);
   border: 1px solid rgba(0, 0, 0, 0.05);
 }
+
+/* ===== Responsive ===== */
 
 @media (max-width: 1100px) {
   .inflation-stats-row {
@@ -264,34 +394,272 @@
 
   .inflation-main {
     width: 65%;
+    padding-left: 28px;
+  }
+
+  .inflation-chart-name {
+    font-size: 18px;
   }
 }
 
 @media (max-width: 650px) {
+  .inflation-miniRail,
+  .inflation-desktop-sidebarScroll {
+    display: none;
+  }
+
   .inflation-container {
     flex-direction: column;
     height: auto;
+    min-height: 100vh;
+    overflow: visible;
   }
 
   .inflation-sidebar {
     width: 100%;
+    height: auto;
     border-right: none;
-    border-bottom: 3px solid #00332c;
+    border-bottom: none;
+    background: #f8f8f8;
+    overflow: visible;
+    padding: 90px 12px 6px 12px;
+  }
+
+  .inflation-mobile-controls {
+    display: block;
+  }
+
+  .inflation-mobile-card {
+    background: linear-gradient(135deg, #00796b, #004d40);
+    border-radius: 10px;
+    padding: 8px;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .inflation-mobile-section {
+    margin-bottom: 8px;
+  }
+
+  .inflation-mobile-section:last-child {
+    margin-bottom: 0;
+  }
+
+  .inflation-mobile-label {
+    display: block;
+    font-size: 0.62rem;
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.9);
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+
+  .inflation-mobile-select,
+  .inflation-mobile-input {
+    width: 100%;
+    min-height: 36px;
+    padding: 8px 10px;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    background: rgba(255, 255, 255, 0.12);
+    color: #ffffff;
+    font-size: 0.78rem;
+    font-weight: 600;
+    box-sizing: border-box;
+    outline: none;
+  }
+
+  .inflation-mobile-select option {
+    color: #004d40;
+    background: #ffffff;
+  }
+
+  .inflation-mobile-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .inflation-mobile-range-bar {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 4px;
+    width: 100%;
+  }
+
+  .inflation-mobile-chip {
+    width: 100%;
+    min-height: 28px;
+    height: 28px;
+    padding: 6px 4px;
+    border-radius: 7px;
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    background: rgba(255, 255, 255, 0.12);
+    color: #ffffff;
+    font-size: 0.58rem;
+    font-weight: 700;
+    line-height: 1;
+    text-align: center;
+  }
+
+  .inflation-mobile-chip-active {
+    background: #ffffff;
+    color: #00796b;
+    border-color: #ffffff;
+  }
+
+  .inflation-mobile-apply {
+    width: 100%;
+    min-height: 32px;
+    margin-top: 0;
+    padding: 6px 10px;
+    border-radius: 7px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    background: rgba(255, 255, 255, 0.16);
+    color: #ffffff;
+    font-size: 0.74rem;
+    font-weight: 800;
+    cursor: pointer;
+  }
+
+  .inflation-mobile-error {
+    margin-top: 8px;
+    color: #ffcccc;
+    font-size: 0.72rem;
+    font-weight: 700;
+    background: rgba(0, 0, 0, 0.18);
+    padding: 8px;
+    border-radius: 8px;
   }
 
   .inflation-main {
     width: 100%;
+    height: auto;
+    min-height: 0;
+    overflow: visible;
+    padding: 10px 12px 24px 12px;
+  }
+
+  .inflation-title {
+    margin-top: 6px;
+    margin-bottom: 10px;
+    font-size: 1rem;
+    line-height: 1.2;
+    letter-spacing: 0.1px;
+    text-shadow: none;
+    text-align: center;
   }
 
   .inflation-stats-row {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+
+  .inflation-stat-card {
+    padding: 9px 10px;
+    border-radius: 9px;
+  }
+
+  .inflation-stat-label {
+    font-size: 0.58rem;
+    line-height: 1.1;
+  }
+
+  .inflation-stat-value {
+    font-size: 1rem;
   }
 
   .inflation-chart-card {
-    min-height: 460px;
+    height: auto;
+    min-height: 0;
+    padding: 10px;
+    border-radius: 12px;
+  }
+
+  .inflation-chart-header {
+    margin-bottom: 8px;
+  }
+
+  .inflation-chart-kicker {
+    font-size: 0.62rem;
+  }
+
+  .inflation-chart-name {
+    font-size: 0.95rem;
+    line-height: 1.2;
+    margin-top: 2px;
+  }
+
+  .inflation-chart-scroll-hint {
+    display: block;
+    font-size: 0.68rem;
+    color: #6a7a76;
+    margin-bottom: 6px;
+  }
+
+  .inflation-chart-scroll-area {
+    width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    border-radius: 12px;
+    background: #ffffff;
+    flex: none;
   }
 
   .inflation-chart-canvas {
-    height: 380px;
+    width: 920px;
+    min-width: 920px;
+    max-width: 920px;
+    height: 420px;
+    padding: 6px;
+    box-sizing: border-box;
+  }
+
+  .inflation-empty-state {
+    min-height: 320px;
+    font-size: 0.8rem;
+    padding: 18px;
+    text-align: center;
+    box-sizing: border-box;
+  }
+}
+
+@media (max-width: 380px) {
+  .inflation-sidebar {
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+
+  .inflation-main {
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+
+  .inflation-mobile-grid {
+    gap: 6px;
+  }
+
+  .inflation-mobile-select,
+  .inflation-mobile-input {
+    font-size: 0.7rem;
+    padding-left: 7px;
+    padding-right: 7px;
+  }
+
+  .inflation-mobile-chip {
+    font-size: 0.5rem;
+    padding-left: 1px;
+    padding-right: 1px;
+  }
+
+  .inflation-chart-canvas {
+    width: 900px;
+    min-width: 900px;
+    max-width: 900px;
   }
 }
