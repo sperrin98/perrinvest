@@ -7,17 +7,50 @@
   font-family: Arial, sans-serif;
 }
 
+/* ===== Sidebar shell ===== */
+
 .rbcSidebar {
   width: 22%;
   background: linear-gradient(135deg, #00796b, #004d40);
-  padding: 25px;
-  padding-top: 120px;
   box-sizing: border-box;
   color: white;
   border-right: 3px solid #00332c;
-  overflow-y: auto;
   display: flex;
   flex-direction: column;
+  overflow: visible;
+  position: relative;
+}
+
+.rbcSidebarScroll {
+  height: 100vh;
+  overflow-y: auto;
+  padding: 25px;
+  padding-top: 120px;
+  box-sizing: border-box;
+
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.22) rgba(255, 255, 255, 0.06);
+}
+
+.rbcSidebarScroll::-webkit-scrollbar {
+  width: 8px;
+}
+
+.rbcSidebarScroll::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 999px;
+}
+
+.rbcSidebarScroll::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.18);
+  border-radius: 999px;
+  border: 2px solid rgba(0, 0, 0, 0);
+  background-clip: padding-box;
+}
+
+.rbcSidebarScroll::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.28);
+  background-clip: padding-box;
 }
 
 .rbcSidebarTitle {
@@ -26,6 +59,8 @@
   border-bottom: 2px solid rgba(255, 255, 255, 0.3);
   padding-bottom: 6px;
 }
+
+/* ===== Desktop controls ===== */
 
 .rbcFilterBlock {
   margin-bottom: 18px;
@@ -41,8 +76,9 @@
 }
 
 .rbcInput {
-  padding: 10px 12px;
+  width: 100%;
   min-height: 44px;
+  padding: 10px 12px;
   border-radius: 8px;
   border: 1px solid rgba(255, 255, 255, 0.3);
   background: rgba(255, 255, 255, 0.1);
@@ -50,6 +86,11 @@
   font-size: 14px;
   outline: none;
   box-sizing: border-box;
+  transition: 0.2s ease;
+}
+
+.rbcInput::placeholder {
+  color: rgba(255, 255, 255, 0.78);
 }
 
 .rbcInput:hover {
@@ -63,11 +104,12 @@
 
 .rbcInput option {
   color: #004d40;
+  background: #ffffff;
 }
 
 .rbcDropdown {
   position: absolute;
-  top: 78px;
+  top: 70px;
   left: 0;
   right: 0;
   max-height: 260px;
@@ -117,6 +159,21 @@
   background: rgba(255, 255, 255, 0.14);
   border: 1px solid rgba(255, 255, 255, 0.25);
   font-size: 13px;
+  line-height: 1.2;
+}
+
+.rbcSelectedItem span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.rbcSelectedEmpty {
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 13px;
 }
 
 .rbcRemoveBtn {
@@ -126,11 +183,14 @@
   font-size: 18px;
   cursor: pointer;
   line-height: 1;
+  flex-shrink: 0;
 }
 
 .rbcLoadButton {
+  width: 100%;
+  min-height: 44px;
   margin-top: 6px;
-  padding: 12px;
+  padding: 0 12px;
   border: none;
   border-radius: 10px;
   background: white;
@@ -157,15 +217,25 @@
   padding: 10px 12px;
   border-radius: 8px;
   font-weight: 700;
+  font-size: 13px;
 }
+
+/* ===== Mobile controls ===== */
+
+.rbcMobileControls {
+  display: none;
+}
+
+/* ===== Main content ===== */
 
 .rbcMain {
   width: 78%;
-  padding: 20px 28px 60px 28px;
+  padding: 20px;
+  padding-left: 40px;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  overflow-x: auto;
 }
 
 .rbcTitle {
@@ -184,25 +254,45 @@
   color: #5e726d;
   font-size: 14px;
   margin-bottom: 18px;
+  text-align: center;
 }
 
-.rbcChartCard,
-.rbcTableCard {
+/* ===== Chart ===== */
+
+.rbcChartCard {
   width: 100%;
+  height: calc(100vh - 245px);
+  min-height: 520px;
   background: white;
   border-radius: 12px;
   padding: 14px 16px;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.07);
   border: 1px solid rgba(0, 0, 0, 0.06);
   margin-bottom: 18px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+}
+
+.rbcChartScrollHint {
+  display: none;
+}
+
+.rbcChartScrollArea {
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
 }
 
 .rbcChartWrapper {
   width: 100%;
-  height: 560px;
+  height: 100%;
+  min-height: 0;
 }
 
 .rbcEmptyState {
+  height: 100%;
   min-height: 240px;
   display: flex;
   align-items: center;
@@ -211,12 +301,27 @@
   font-size: 15px;
   text-align: center;
   padding: 20px;
+  box-sizing: border-box;
+}
+
+/* ===== Table ===== */
+
+.rbcTableCard {
+  width: 100%;
+  background: white;
+  border-radius: 12px;
+  padding: 12px 14px 14px 14px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.07);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  margin-bottom: 26px;
+  box-sizing: border-box;
 }
 
 .rbcTableHeader {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
+  gap: 12px;
   margin-bottom: 10px;
 }
 
@@ -226,57 +331,137 @@
   font-weight: 700;
 }
 
+.rbcTableSubTitle {
+  margin-top: 2px;
+  color: #6a7a76;
+  font-size: 12px;
+  font-weight: 600;
+}
+
 .rbcTableMeta {
   font-size: 12px;
   color: #6a7a76;
+  white-space: nowrap;
+  font-weight: 700;
 }
 
 .rbcTableWrapper {
   width: 100%;
-  overflow: auto;
+  overflow: hidden;
   border-radius: 10px;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  box-sizing: border-box;
 }
 
 .rbcTable {
+  display: table;
   width: 100%;
+  max-width: 100%;
+  table-layout: fixed;
   border-collapse: collapse;
+  border-spacing: 0;
+}
+
+.rbcTable thead {
+  display: table-header-group;
+}
+
+.rbcTable tbody {
+  display: table-row-group;
+}
+
+.rbcTable tr {
+  display: table-row;
 }
 
 .rbcTable th,
 .rbcTable td {
-  padding: 10px 10px;
-  text-align: center;
-  font-size: 12.5px;
+  display: table-cell;
+  box-sizing: border-box;
+  vertical-align: middle;
   border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+  text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.rbcColSeries {
+  width: 30%;
+}
+
+.rbcColBase {
+  width: 25%;
+}
+
+.rbcColCurrent {
+  width: 22.5%;
+}
+
+.rbcColReturn {
+  width: 22.5%;
 }
 
 .rbcTable th {
   color: #004d40;
   font-weight: 800;
   background: #f3f7f6;
-  position: sticky;
-  top: 0;
+  font-size: 12px;
+  line-height: 1.1;
+  padding: 9px 7px;
+  text-align: center;
+}
+
+.rbcTable td {
+  color: #263b37;
+  font-weight: 600;
+  font-size: 12px;
+  line-height: 1.1;
+  padding: 9px 7px;
+}
+
+.rbcTable th:first-child,
+.rbcTable td:first-child {
+  text-align: left;
+}
+
+.rbcTable th:nth-child(2),
+.rbcTable th:nth-child(3),
+.rbcTable th:nth-child(4),
+.rbcTable td:nth-child(2),
+.rbcTable td:nth-child(3),
+.rbcTable td:nth-child(4) {
+  text-align: right;
 }
 
 .rbcTable tbody tr:nth-child(even) {
   background: rgba(0, 0, 0, 0.02);
 }
 
+.rbcTable tbody tr:hover {
+  background: rgba(0, 77, 64, 0.07);
+}
+
+.rbcTable tbody tr:last-child td {
+  border-bottom: none;
+}
+
 .rbcPositive {
-  color: #1b8f53;
-  font-weight: 700;
+  color: #1b8f53 !important;
+  font-weight: 800 !important;
 }
 
 .rbcNegative {
-  color: #d64545;
-  font-weight: 700;
+  color: #d64545 !important;
+  font-weight: 800 !important;
 }
 
 .rbcNoData {
   color: #5b6d68;
-  padding: 18px 12px;
+  padding: 18px 12px !important;
+  text-align: center !important;
 }
+
+/* ===== Responsive ===== */
 
 @media (max-width: 900px) {
   .rbcSidebar {
@@ -285,35 +470,333 @@
 
   .rbcMain {
     width: 65%;
-    padding-left: 20px;
-    padding-right: 20px;
+    padding-left: 28px;
+    padding-right: 18px;
+  }
+
+  .rbcChartCard {
+    min-height: 460px;
+  }
+
+  .rbcTable th,
+  .rbcTable td {
+    font-size: 10.5px;
+    padding: 8px 5px;
   }
 }
 
 @media (max-width: 650px) {
   .rbcContainer {
     flex-direction: column;
+    height: auto;
+    min-height: 100vh;
+  }
+
+  .rbcDesktopSidebarScroll {
+    display: none;
   }
 
   .rbcSidebar {
     width: 100%;
-    padding-top: 90px;
+    height: auto;
     border-right: none;
-    border-bottom: 3px solid #00332c;
+    border-bottom: none;
+    background: #f8f8f8;
+    overflow: visible;
+    padding: 90px 12px 6px 12px;
+  }
+
+  .rbcMobileControls {
+    display: block;
+  }
+
+  .rbcMobileCard {
+    background: linear-gradient(135deg, #00796b, #004d40);
+    border-radius: 10px;
+    padding: 8px;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .rbcMobileSection {
+    margin-bottom: 8px;
+    position: relative;
+  }
+
+  .rbcMobileSection:last-child {
+    margin-bottom: 0;
+  }
+
+  .rbcSearchSection {
+    z-index: 20;
+  }
+
+  .rbcMobileGrid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .rbcMobileLabel {
+    display: block;
+    font-size: 0.62rem;
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.9);
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+
+  .rbcMobileInput {
+    width: 100%;
+    min-height: 36px;
+    padding: 8px 10px;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    background: rgba(255, 255, 255, 0.12);
+    color: #ffffff;
+    font-size: 0.78rem;
+    font-weight: 600;
+    box-sizing: border-box;
+    outline: none;
+  }
+
+  .rbcMobileInput::placeholder {
+    color: rgba(255, 255, 255, 0.72);
+  }
+
+  .rbcMobileInput option {
+    color: #004d40;
+    background: #ffffff;
+  }
+
+  .rbcDropdownMobile {
+    top: 58px;
+    max-height: 230px;
+  }
+
+  .rbcSelectedListMobile {
+    max-height: 112px;
+    overflow-y: auto;
+    padding-right: 2px;
+  }
+
+  .rbcSelectedItem {
+    padding: 7px 8px;
+    font-size: 0.7rem;
+  }
+
+  .rbcSelectedEmpty {
+    padding: 7px 8px;
+    font-size: 0.7rem;
+  }
+
+  .rbcLoadButtonMobile {
+    min-height: 34px;
+    margin-top: 2px;
+    font-size: 0.76rem;
+    border-radius: 8px;
+  }
+
+  .rbcErrorMobile {
+    margin-top: 8px;
+    font-size: 0.72rem;
+    padding: 8px;
   }
 
   .rbcMain {
     width: 100%;
-    padding-left: 20px;
-    padding-right: 20px;
+    padding: 10px 12px 24px 12px;
+    overflow: visible;
   }
 
   .rbcTitle {
-    margin-top: 30px;
-    font-size: 26px;
+    margin-top: 6px;
+    margin-bottom: 4px;
+    font-size: 1rem;
+    line-height: 1.2;
+    letter-spacing: 0.1px;
+    text-shadow: none;
+    text-align: center;
+  }
+
+  .rbcSubtitle {
+    font-size: 0.72rem;
+    margin-bottom: 10px;
+  }
+
+  .rbcChartCard {
+    height: auto;
+    min-height: 0;
+    padding: 10px;
+    margin-bottom: 14px;
+    border-radius: 12px;
+  }
+
+  .rbcChartScrollHint {
+    display: block;
+    font-size: 0.68rem;
+    color: #6a7a76;
+    margin-bottom: 6px;
+  }
+
+  .rbcChartScrollArea {
+    width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    border-radius: 12px;
+    background: #ffffff;
   }
 
   .rbcChartWrapper {
-    height: 380px;
+    width: 920px;
+    min-width: 920px;
+    max-width: 920px;
+    height: 420px;
+    padding: 6px;
+    box-sizing: border-box;
+  }
+
+  .rbcEmptyState {
+    height: 100%;
+    min-height: 390px;
+    font-size: 0.78rem;
+  }
+
+  .rbcTableCard {
+    padding: 8px;
+    border-radius: 12px;
+    margin-bottom: 16px;
+  }
+
+  .rbcTableHeader {
+    margin-bottom: 8px;
+  }
+
+  .rbcTableTitle {
+    font-size: 0.9rem;
+  }
+
+  .rbcTableSubTitle {
+    font-size: 0.64rem;
+  }
+
+  .rbcTableMeta {
+    font-size: 0.66rem;
+  }
+
+  .rbcTableWrapper {
+    width: 100%;
+    overflow: hidden;
+  }
+
+  .rbcTable {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    table-layout: fixed;
+  }
+
+  .rbcColSeries {
+    width: 27%;
+  }
+
+  .rbcColBase {
+    width: 27%;
+  }
+
+  .rbcColCurrent {
+    width: 23%;
+  }
+
+  .rbcColReturn {
+    width: 23%;
+  }
+
+  .rbcTable th {
+    font-size: 0.52rem;
+    padding: 6px 2px;
+    line-height: 1.05;
+    white-space: normal;
+    overflow: hidden;
+    text-overflow: clip;
+  }
+
+  .rbcTable td {
+    font-size: 0.5rem;
+    padding: 6px 2px;
+    line-height: 1.05;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .rbcTable th:first-child,
+  .rbcTable td:first-child {
+    text-align: left;
+  }
+
+  .rbcTable th:nth-child(2),
+  .rbcTable th:nth-child(3),
+  .rbcTable th:nth-child(4),
+  .rbcTable td:nth-child(2),
+  .rbcTable td:nth-child(3),
+  .rbcTable td:nth-child(4) {
+    text-align: right;
+  }
+}
+
+@media (max-width: 380px) {
+  .rbcSidebar {
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+
+  .rbcMain {
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+
+  .rbcMobileGrid {
+    gap: 6px;
+  }
+
+  .rbcMobileInput {
+    font-size: 0.7rem;
+    padding-left: 7px;
+    padding-right: 7px;
+  }
+
+  .rbcTableCard {
+    padding: 6px;
+  }
+
+  .rbcColSeries {
+    width: 26%;
+  }
+
+  .rbcColBase {
+    width: 27%;
+  }
+
+  .rbcColCurrent {
+    width: 23.5%;
+  }
+
+  .rbcColReturn {
+    width: 23.5%;
+  }
+
+  .rbcTable th {
+    font-size: 0.47rem;
+    padding: 5px 1px;
+  }
+
+  .rbcTable td {
+    font-size: 0.46rem;
+    padding: 5px 1px;
   }
 }

@@ -15,9 +15,11 @@ import "./RebasedComparison.css";
 const formatDateYYYYMMDD = (dateStr) => {
   const d = new Date(dateStr);
   if (Number.isNaN(d.getTime())) return String(dateStr);
+
   const yyyy = d.getFullYear();
   const mm = String(d.getMonth() + 1).padStart(2, "0");
   const dd = String(d.getDate()).padStart(2, "0");
+
   return `${yyyy}-${mm}-${dd}`;
 };
 
@@ -29,18 +31,26 @@ const normalizePriceHistory = (raw) => {
     if (Array.isArray(r)) {
       const dateVal = r[1];
       const priceVal = r[2];
+
       if (dateVal != null && priceVal != null) {
         const date = formatDateYYYYMMDD(dateVal);
         const price = Number(priceVal);
-        if (!Number.isNaN(price)) out.push({ date, price });
+
+        if (!Number.isNaN(price)) {
+          out.push({ date, price });
+        }
       }
     } else if (r && typeof r === "object") {
       const dateVal = r.price_date ?? r.date;
       const priceVal = r.price ?? r.close ?? r.value;
+
       if (dateVal != null && priceVal != null) {
         const date = formatDateYYYYMMDD(dateVal);
         const price = Number(priceVal);
-        if (!Number.isNaN(price)) out.push({ date, price });
+
+        if (!Number.isNaN(price)) {
+          out.push({ date, price });
+        }
       }
     }
   }
@@ -63,6 +73,7 @@ const getWeekKey = (dateStr) => {
   const start = new Date(Date.UTC(year, 0, 1));
   const diff = Math.floor((d - start) / 86400000);
   const week = Math.floor(diff / 7) + 1;
+
   return `${year}-W${String(week).padStart(2, "0")}`;
 };
 
@@ -71,6 +82,7 @@ const getMonthKey = (dateStr) => dateStr.slice(0, 7);
 const getQuarterKey = (dateStr) => {
   const d = new Date(dateStr);
   const q = Math.floor(d.getMonth() / 3) + 1;
+
   return `${d.getFullYear()}-Q${q}`;
 };
 
@@ -81,6 +93,7 @@ const resampleSeries = (rows, frequency) => {
 
   rows.forEach((row) => {
     let key;
+
     if (frequency === "WEEKLY") key = getWeekKey(row.date);
     else if (frequency === "MONTHLY") key = getMonthKey(row.date);
     else if (frequency === "QUARTERLY") key = getQuarterKey(row.date);
@@ -125,7 +138,10 @@ const mergeSeries = (seriesMap) => {
 
   Object.entries(seriesMap).forEach(([label, rows]) => {
     rows.forEach((row) => {
-      if (!byDate.has(row.date)) byDate.set(row.date, { date: row.date });
+      if (!byDate.has(row.date)) {
+        byDate.set(row.date, { date: row.date });
+      }
+
       byDate.get(row.date)[label] = row.value;
     });
   });
@@ -157,7 +173,9 @@ function RebasedComparison() {
   const [error, setError] = useState("");
   const [hasLoaded, setHasLoaded] = useState(false);
 
-  const dropdownRef = useRef(null);
+  const desktopDropdownRef = useRef(null);
+  const mobileDropdownRef = useRef(null);
+  const chartScrollRef = useRef(null);
 
   useEffect(() => {
     async function fetchSecurities() {
@@ -175,14 +193,39 @@ function RebasedComparison() {
 
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+      const clickedDesktop =
+        desktopDropdownRef.current &&
+        desktopDropdownRef.current.contains(event.target);
+
+      const clickedMobile =
+        mobileDropdownRef.current &&
+        mobileDropdownRef.current.contains(event.target);
+
+      if (!clickedDesktop && !clickedMobile) {
         setDropdownOpen(false);
       }
     };
 
     document.addEventListener("mousedown", handleClickOutside);
+
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
+  useEffect(() => {
+    if (!chartScrollRef.current) return;
+    if (window.innerWidth > 650) return;
+    if (!chartData.length) return;
+
+    const scrollToEnd = () => {
+      if (!chartScrollRef.current) return;
+      chartScrollRef.current.scrollLeft = chartScrollRef.current.scrollWidth;
+    };
+
+    requestAnimationFrame(() => {
+      scrollToEnd();
+      setTimeout(scrollToEnd, 0);
+    });
+  }, [chartData.length]);
 
   const formatSecurityLabel = (security) => {
     const name = security.security_long_name || "Unknown";
@@ -192,6 +235,7 @@ function RebasedComparison() {
 
   const filteredSecurities = useMemo(() => {
     const q = query.trim().toLowerCase();
+
     const available = securities.filter(
       (sec) =>
         !selectedSecurities.some(
@@ -204,12 +248,14 @@ function RebasedComparison() {
     return available.filter((sec) => {
       const longName = (sec.security_long_name || "").toLowerCase();
       const ticker = (sec.ticker || "").toLowerCase();
+
       return longName.includes(q) || ticker.includes(q);
     });
   }, [query, securities, selectedSecurities]);
 
   const handleAddSecurity = (security) => {
     if (selectedSecurities.length >= 5) return;
+
     setSelectedSecurities((prev) => [...prev, security]);
     setQuery("");
     setDropdownOpen(false);
@@ -245,6 +291,7 @@ function RebasedComparison() {
 
       responses.forEach((response, index) => {
         const security = selectedSecurities[index];
+
         const label =
           security.ticker ||
           security.security_short_name ||
@@ -288,151 +335,243 @@ function RebasedComparison() {
     }
   };
 
+  const renderSecuritySelector = (wrapperRef, compact = false) => (
+    <div
+      className={compact ? "rbcMobileSection rbcSearchSection" : "rbcFilterBlock"}
+      ref={wrapperRef}
+    >
+      <label className={compact ? "rbcMobileLabel" : "rbcFilterLabel"}>
+        Select Securities
+      </label>
+
+      <input
+        type="text"
+        className={compact ? "rbcMobileInput" : "rbcInput"}
+        placeholder="Search securities..."
+        value={query}
+        onChange={(e) => {
+          setQuery(e.target.value);
+          setDropdownOpen(true);
+        }}
+        onFocus={() => setDropdownOpen(true)}
+      />
+
+      {dropdownOpen && (
+        <div className={compact ? "rbcDropdown rbcDropdownMobile" : "rbcDropdown"}>
+          {filteredSecurities.length > 0 ? (
+            filteredSecurities.map((security) => (
+              <button
+                key={security.security_id}
+                type="button"
+                className="rbcDropdownItem"
+                onClick={() => handleAddSecurity(security)}
+              >
+                {formatSecurityLabel(security)}
+              </button>
+            ))
+          ) : (
+            <div className="rbcDropdownEmpty">No matches</div>
+          )}
+        </div>
+      )}
+
+      <div className={compact ? "rbcSelectedList rbcSelectedListMobile" : "rbcSelectedList"}>
+        {selectedSecurities.length > 0 ? (
+          selectedSecurities.map((security) => (
+            <div key={security.security_id} className="rbcSelectedItem">
+              <span>{formatSecurityLabel(security)}</span>
+              <button
+                type="button"
+                className="rbcRemoveBtn"
+                onClick={() => handleRemoveSecurity(security.security_id)}
+              >
+                ×
+              </button>
+            </div>
+          ))
+        ) : (
+          <div className="rbcSelectedEmpty">No securities selected</div>
+        )}
+      </div>
+    </div>
+  );
+
   return (
     <div className="rbcContainer">
       <aside className="rbcSidebar">
-        <div className="rbcSidebarTitle">Rebased Comparison</div>
+        <div className="rbcSidebarScroll rbcDesktopSidebarScroll">
+          <div className="rbcSidebarTitle">Rebased Comparison</div>
 
-        <div className="rbcFilterBlock" ref={dropdownRef}>
-          <label className="rbcFilterLabel">Select Securities</label>
-          <input
-            type="text"
-            className="rbcInput"
-            placeholder="Search securities..."
-            value={query}
-            onChange={(e) => {
-              setQuery(e.target.value);
-              setDropdownOpen(true);
-            }}
-            onFocus={() => setDropdownOpen(true)}
-          />
+          {renderSecuritySelector(desktopDropdownRef)}
 
-          {dropdownOpen && (
-            <div className="rbcDropdown">
-              {filteredSecurities.length > 0 ? (
-                filteredSecurities.map((security) => (
-                  <button
-                    key={security.security_id}
-                    type="button"
-                    className="rbcDropdownItem"
-                    onClick={() => handleAddSecurity(security)}
-                  >
-                    {formatSecurityLabel(security)}
-                  </button>
-                ))
-              ) : (
-                <div className="rbcDropdownEmpty">No matches</div>
-              )}
-            </div>
-          )}
+          <div className="rbcFilterBlock">
+            <label className="rbcFilterLabel">Base Date</label>
+            <input
+              type="date"
+              className="rbcInput"
+              value={startDate}
+              onChange={(e) => setStartDate(e.target.value)}
+            />
+          </div>
 
-          <div className="rbcSelectedList">
-            {selectedSecurities.map((security) => (
-              <div key={security.security_id} className="rbcSelectedItem">
-                <span>{formatSecurityLabel(security)}</span>
-                <button
-                  type="button"
-                  className="rbcRemoveBtn"
-                  onClick={() => handleRemoveSecurity(security.security_id)}
-                >
-                  ×
-                </button>
+          <div className="rbcFilterBlock">
+            <label className="rbcFilterLabel">End Date</label>
+            <input
+              type="date"
+              className="rbcInput"
+              value={endDate}
+              onChange={(e) => setEndDate(e.target.value)}
+            />
+          </div>
+
+          <div className="rbcFilterBlock">
+            <label className="rbcFilterLabel">Frequency</label>
+            <select
+              className="rbcInput"
+              value={frequency}
+              onChange={(e) => setFrequency(e.target.value)}
+            >
+              <option value="DAILY">DAILY</option>
+              <option value="WEEKLY">WEEKLY</option>
+              <option value="MONTHLY">MONTHLY</option>
+              <option value="QUARTERLY">QUARTERLY</option>
+            </select>
+          </div>
+
+          <button
+            type="button"
+            className="rbcLoadButton"
+            onClick={handleLoad}
+            disabled={loading}
+          >
+            {loading ? "Loading..." : "Load Comparison"}
+          </button>
+
+          {error && <div className="rbcError">{error}</div>}
+        </div>
+
+        <div className="rbcMobileControls">
+          <div className="rbcMobileCard">
+            {renderSecuritySelector(mobileDropdownRef, true)}
+
+            <div className="rbcMobileGrid">
+              <div className="rbcMobileSection">
+                <label className="rbcMobileLabel">Base Date</label>
+                <input
+                  type="date"
+                  className="rbcMobileInput"
+                  value={startDate}
+                  onChange={(e) => setStartDate(e.target.value)}
+                />
               </div>
-            ))}
+
+              <div className="rbcMobileSection">
+                <label className="rbcMobileLabel">End Date</label>
+                <input
+                  type="date"
+                  className="rbcMobileInput"
+                  value={endDate}
+                  onChange={(e) => setEndDate(e.target.value)}
+                />
+              </div>
+            </div>
+
+            <div className="rbcMobileSection">
+              <label className="rbcMobileLabel">Frequency</label>
+              <select
+                className="rbcMobileInput"
+                value={frequency}
+                onChange={(e) => setFrequency(e.target.value)}
+              >
+                <option value="DAILY">DAILY</option>
+                <option value="WEEKLY">WEEKLY</option>
+                <option value="MONTHLY">MONTHLY</option>
+                <option value="QUARTERLY">QUARTERLY</option>
+              </select>
+            </div>
+
+            <button
+              type="button"
+              className="rbcLoadButton rbcLoadButtonMobile"
+              onClick={handleLoad}
+              disabled={loading}
+            >
+              {loading ? "Loading..." : "Load Comparison"}
+            </button>
+
+            {error && <div className="rbcError rbcErrorMobile">{error}</div>}
           </div>
         </div>
-
-        <div className="rbcFilterBlock">
-          <label className="rbcFilterLabel">Base Date</label>
-          <input
-            type="date"
-            className="rbcInput"
-            value={startDate}
-            onChange={(e) => setStartDate(e.target.value)}
-          />
-        </div>
-
-        <div className="rbcFilterBlock">
-          <label className="rbcFilterLabel">End Date</label>
-          <input
-            type="date"
-            className="rbcInput"
-            value={endDate}
-            onChange={(e) => setEndDate(e.target.value)}
-          />
-        </div>
-
-        <div className="rbcFilterBlock">
-          <label className="rbcFilterLabel">Frequency</label>
-          <select
-            className="rbcInput"
-            value={frequency}
-            onChange={(e) => setFrequency(e.target.value)}
-          >
-            <option value="DAILY">DAILY</option>
-            <option value="WEEKLY">WEEKLY</option>
-            <option value="MONTHLY">MONTHLY</option>
-            <option value="QUARTERLY">QUARTERLY</option>
-          </select>
-        </div>
-
-        <button
-          type="button"
-          className="rbcLoadButton"
-          onClick={handleLoad}
-          disabled={loading}
-        >
-          {loading ? "Loading..." : "Load Comparison"}
-        </button>
-
-        {error && <div className="rbcError">{error}</div>}
       </aside>
 
       <main className="rbcMain">
-        <div className="rbcTitle">Rebased Comparison</div>
+        <h1 className="rbcTitle">Rebased Comparison</h1>
         <div className="rbcSubtitle">Base = 100 from selected base date</div>
 
         <section className="rbcChartCard">
-          {hasLoaded && chartData.length > 0 ? (
+          <div className="rbcChartScrollHint">
+            Swipe sideways to view the full chart
+          </div>
+
+          <div className="rbcChartScrollArea" ref={chartScrollRef}>
             <div className="rbcChartWrapper">
-              <ResponsiveContainer width="100%" height="100%">
-                <LineChart
-                  data={chartData}
-                  margin={{ top: 20, right: 30, left: 20, bottom: 10 }}
-                >
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="date" />
-                  <YAxis />
-                  <Tooltip />
-                  <Legend />
-                  {seriesNames.map((name, index) => (
-                    <Line
-                    key={name}
-                    type="monotone"
-                    dataKey={name}
-                    stroke={COLORS[index % COLORS.length]}
-                    dot={false}
-                    strokeWidth={2}
-                    connectNulls={true}
+              {hasLoaded && chartData.length > 0 ? (
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart
+                    data={chartData}
+                    margin={{ top: 20, right: 40, left: 20, bottom: 20 }}
+                  >
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis
+                      dataKey="date"
+                      tick={{ fontSize: 12 }}
+                      minTickGap={24}
                     />
-                  ))}
-                </LineChart>
-              </ResponsiveContainer>
+                    <YAxis
+                      tick={{ fontSize: 12 }}
+                      tickFormatter={(value) => Number(value).toFixed(0)}
+                    />
+                    <Tooltip
+                      formatter={(value) =>
+                        value === null || value === undefined
+                          ? "-"
+                          : Number(value).toFixed(2)
+                      }
+                    />
+                    <Legend />
+                    {seriesNames.map((name, index) => (
+                      <Line
+                        key={name}
+                        type="monotone"
+                        dataKey={name}
+                        stroke={COLORS[index % COLORS.length]}
+                        dot={false}
+                        strokeWidth={2}
+                        connectNulls={true}
+                      />
+                    ))}
+                  </LineChart>
+                </ResponsiveContainer>
+              ) : (
+                <div className="rbcEmptyState">
+                  {loading
+                    ? "Loading comparison..."
+                    : hasLoaded
+                    ? "No data available"
+                    : "Select 2 to 5 securities and load comparison."}
+                </div>
+              )}
             </div>
-          ) : (
-            <div className="rbcEmptyState">
-              {loading
-                ? "Loading comparison..."
-                : hasLoaded
-                ? "No data available"
-                : "Select 2 to 5 securities and load comparison."}
-            </div>
-          )}
+          </div>
         </section>
 
         <section className="rbcTableCard">
           <div className="rbcTableHeader">
-            <div className="rbcTableTitle">Summary</div>
+            <div>
+              <div className="rbcTableTitle">Summary</div>
+              <div className="rbcTableSubTitle">Current rebased value and return</div>
+            </div>
+
             <div className="rbcTableMeta">
               {summaryRows.length} {summaryRows.length === 1 ? "series" : "series"}
             </div>
@@ -440,14 +579,22 @@ function RebasedComparison() {
 
           <div className="rbcTableWrapper">
             <table className="rbcTable">
+              <colgroup>
+                <col className="rbcColSeries" />
+                <col className="rbcColBase" />
+                <col className="rbcColCurrent" />
+                <col className="rbcColReturn" />
+              </colgroup>
+
               <thead>
                 <tr>
                   <th>Series</th>
                   <th>Base Date</th>
-                  <th>Current Rebased</th>
-                  <th>Return Since Base</th>
+                  <th>Current</th>
+                  <th>Return</th>
                 </tr>
               </thead>
+
               <tbody>
                 {summaryRows.length > 0 ? (
                   summaryRows.map((row) => (
