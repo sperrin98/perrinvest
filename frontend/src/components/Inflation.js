@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import axios from "axios";
 import {
   Chart as ChartJS,
@@ -9,6 +9,7 @@ import {
   Tooltip,
   Legend,
   Title,
+  Filler,
 } from "chart.js";
 import { Line } from "react-chartjs-2";
 import "./Inflation.css";
@@ -20,7 +21,8 @@ ChartJS.register(
   LineElement,
   Tooltip,
   Legend,
-  Title
+  Title,
+  Filler
 );
 
 const API_URL = process.env.REACT_APP_API_URL;
@@ -75,12 +77,16 @@ const getPresetStartDate = (preset, maxDate, minDate) => {
 
 const percentileRank = (values, currentValue) => {
   if (!values.length || !Number.isFinite(currentValue)) return null;
-  const count = values.filter((v) => v <= currentValue).length;
+
+  const count = values.filter((value) => value <= currentValue).length;
   return (count / values.length) * 100;
 };
 
 const formatValue = (value, decimals = 2) => {
-  if (value === null || value === undefined || !Number.isFinite(value)) return "-";
+  if (value === null || value === undefined || !Number.isFinite(value)) {
+    return "-";
+  }
+
   return Number(value).toLocaleString(undefined, {
     minimumFractionDigits: decimals,
     maximumFractionDigits: decimals,
@@ -88,7 +94,10 @@ const formatValue = (value, decimals = 2) => {
 };
 
 const formatPercentile = (value) => {
-  if (value === null || value === undefined || !Number.isFinite(value)) return "-";
+  if (value === null || value === undefined || !Number.isFinite(value)) {
+    return "-";
+  }
+
   return `${value.toFixed(1)}%`;
 };
 
@@ -103,6 +112,8 @@ function Inflation() {
   const [customEndDate, setCustomEndDate] = useState("");
   const [activeStartDate, setActiveStartDate] = useState("");
   const [activeEndDate, setActiveEndDate] = useState("");
+
+  const chartScrollRef = useRef(null);
 
   const fetchInflationAnalysis = async (ecoDataPointId, startDateToUse = "") => {
     try {
@@ -137,6 +148,7 @@ function Inflation() {
       if (cleaned.length > 0) {
         const minDate = cleaned[0].price_date;
         const maxDate = cleaned[cleaned.length - 1].price_date;
+
         setSelectedRangePreset("MAX");
         setActiveStartDate(minDate);
         setActiveEndDate(maxDate);
@@ -165,6 +177,7 @@ function Inflation() {
     if (selectedPoint?.eco_data_point_id) {
       fetchInflationAnalysis(selectedPoint.eco_data_point_id, "");
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedPoint]);
 
   const effectiveRangeBounds = useMemo(() => {
@@ -192,7 +205,7 @@ function Inflation() {
     setActiveEndDate(maxDate);
     setCustomStartDate(minDate);
     setCustomEndDate(maxDate);
-  }, [rows, effectiveRangeBounds.minDate, effectiveRangeBounds.maxDate]);
+  }, [rows, effectiveRangeBounds]);
 
   const handlePresetRange = (preset) => {
     const { minDate, maxDate } = effectiveRangeBounds;
@@ -237,16 +250,43 @@ function Inflation() {
       const inRange =
         row.price_date >= activeStartDate && row.price_date <= activeEndDate;
       const hasValue = Number.isFinite(row.inflation_rate);
+
       return inRange && hasValue;
     });
   }, [rows, activeStartDate, activeEndDate]);
+
+  useEffect(() => {
+    if (!chartScrollRef.current) return;
+    if (window.innerWidth > 650) return;
+    if (!filteredRows.length) return;
+
+    const scrollToEnd = () => {
+      if (!chartScrollRef.current) return;
+
+      chartScrollRef.current.scrollLeft =
+        chartScrollRef.current.scrollWidth - chartScrollRef.current.clientWidth;
+    };
+
+    requestAnimationFrame(() => {
+      scrollToEnd();
+      setTimeout(scrollToEnd, 50);
+      setTimeout(scrollToEnd, 150);
+      setTimeout(scrollToEnd, 300);
+    });
+  }, [
+    filteredRows.length,
+    selectedRangePreset,
+    activeStartDate,
+    activeEndDate,
+    selectedPoint,
+  ]);
 
   const currentValues = useMemo(() => {
     if (!filteredRows.length) return null;
 
     const values = filteredRows
       .map((row) => row.inflation_rate)
-      .filter((v) => Number.isFinite(v));
+      .filter((value) => Number.isFinite(value));
 
     if (!values.length) return null;
 
@@ -284,48 +324,107 @@ function Inflation() {
     };
   }, [filteredRows]);
 
-  const chartOptions = {
-    responsive: true,
-    maintainAspectRatio: false,
-    animation: {
-      duration: 220,
-      easing: "linear",
-    },
-    interaction: {
-      mode: "index",
-      intersect: false,
-    },
-    plugins: {
-      legend: {
-        labels: { color: "#00796b" },
+  const chartOptions = useMemo(() => {
+    return {
+      responsive: true,
+      maintainAspectRatio: false,
+      animation: {
+        duration: 220,
+        easing: "linear",
       },
-      tooltip: {
-        backgroundColor: "#ffffff",
-        titleColor: "#123c36",
-        bodyColor: "#123c36",
-        borderColor: "rgba(15, 118, 110, 0.18)",
-        borderWidth: 1,
-        padding: 12,
+      interaction: {
+        mode: "index",
+        intersect: false,
       },
-    },
-    scales: {
-      x: {
-        title: { display: true, text: "Date", color: "#00796b" },
-        ticks: { color: "#00796b", maxTicksLimit: 10 },
-        grid: { color: "rgb(202, 202, 202)" },
+      plugins: {
+        legend: {
+          labels: {
+            color: "#00796b",
+            usePointStyle: true,
+            pointStyle: "line",
+            boxWidth: 30,
+            boxHeight: 8,
+            padding: 14,
+            font: {
+              size: 12,
+              weight: "600",
+            },
+          },
+        },
+        tooltip: {
+          backgroundColor: "#ffffff",
+          titleColor: "#123c36",
+          bodyColor: "#123c36",
+          borderColor: "rgba(15, 118, 110, 0.18)",
+          borderWidth: 1,
+          padding: 12,
+          callbacks: {
+            label: (context) => {
+              const value = context.raw;
+
+              if (value === null || value === undefined) {
+                return "Inflation Rate: -";
+              }
+
+              return `Inflation Rate: ${Number(value).toFixed(4)}`;
+            },
+          },
+        },
       },
-      y: {
-        title: { display: true, text: "Inflation Rate", color: "#00796b" },
-        ticks: { color: "#00796b" },
-        grid: { color: "rgb(202, 202, 202)" },
+      scales: {
+        x: {
+          title: {
+            display: true,
+            text: "Date",
+            color: "#00796b",
+          },
+          ticks: {
+            color: "#00796b",
+            maxTicksLimit: 10,
+            maxRotation: 0,
+            minRotation: 0,
+          },
+          grid: {
+            color: "rgba(0, 0, 0, 0.08)",
+          },
+        },
+        y: {
+          title: {
+            display: true,
+            text: "Inflation Rate",
+            color: "#00796b",
+          },
+          ticks: {
+            color: "#00796b",
+          },
+          grid: {
+            color: "rgba(0, 0, 0, 0.08)",
+          },
+        },
       },
-    },
-  };
+    };
+  }, []);
 
   return (
-    <div className="inflation-page">
-      <div className="inflation-container">
-        <aside className="inflation-sidebar">
+    <div className="inflation-container">
+      <aside className="inflation-sidebar">
+        <div className="inflation-miniRail" aria-label="Range selector">
+          {RANGE_PRESETS.map((range) => (
+            <button
+              key={range}
+              type="button"
+              className={`inflation-chip ${
+                selectedRangePreset === range ? "inflation-chip-active" : ""
+              }`}
+              onClick={() => handlePresetRange(range)}
+              title={range}
+            >
+              {range}
+            </button>
+          ))}
+        </div>
+
+        <div className="inflation-sidebarScroll inflation-desktop-sidebarScroll">
           <div className="inflation-sidebar-top">
             <h2 className="inflation-sidebar-title">Inflation</h2>
             <div className="inflation-sidebar-subtitle">
@@ -342,6 +441,7 @@ function Inflation() {
               {ECO_POINTS.map((point) => (
                 <button
                   key={point.eco_data_point_id}
+                  type="button"
                   className={`inflation-series-btn ${
                     selectedPoint.eco_data_point_id === point.eco_data_point_id
                       ? "selected"
@@ -355,105 +455,197 @@ function Inflation() {
             </div>
           </div>
 
-          {error ? <div className="inflation-error-box">{error}</div> : null}
-        </aside>
+          <div className="inflation-sidebar-section">
+            <h3 className="inflation-sidebar-subtitle inflation-sidebar-subtitle-spaced">
+              Custom Range
+            </h3>
 
-        <div className="inflation-main">
-          <h1 className="inflation-title">
-            {selectedPoint?.eco_data_point_name || "Inflation"}
-          </h1>
-
-          <div className="inflation-toolbar">
-            <div className="inflation-range-presets">
-              {RANGE_PRESETS.map((range) => (
-                <button
-                  key={range}
-                  className={`inflation-range-btn ${
-                    selectedRangePreset === range ? "selected" : ""
-                  }`}
-                  onClick={() => handlePresetRange(range)}
-                >
-                  {range}
-                </button>
-              ))}
+            <div className="inflation-date-control">
+              <label htmlFor="inflation-start-date-desktop">Start</label>
+              <input
+                id="inflation-start-date-desktop"
+                type="date"
+                value={customStartDate}
+                onChange={(e) => setCustomStartDate(e.target.value)}
+              />
             </div>
 
-            <div className="inflation-custom-date-controls">
-              <div className="inflation-date-input-group">
-                <label htmlFor="inflation-start-date">Start</label>
+            <div className="inflation-date-control">
+              <label htmlFor="inflation-end-date-desktop">End</label>
+              <input
+                id="inflation-end-date-desktop"
+                type="date"
+                value={customEndDate}
+                onChange={(e) => setCustomEndDate(e.target.value)}
+              />
+            </div>
+
+            <button
+              type="button"
+              className="inflation-apply-range-btn"
+              onClick={handleApplyCustomRange}
+            >
+              Apply Range
+            </button>
+          </div>
+
+          {error ? <div className="inflation-error-box">{error}</div> : null}
+        </div>
+
+        <div className="inflation-mobile-controls">
+          <div className="inflation-mobile-card">
+            <div className="inflation-mobile-section">
+              <div className="inflation-mobile-label">Country</div>
+
+              <select
+                className="inflation-mobile-select"
+                value={selectedPoint.eco_data_point_id}
+                onChange={(e) => {
+                  const nextPoint = ECO_POINTS.find(
+                    (point) =>
+                      String(point.eco_data_point_id) === String(e.target.value)
+                  );
+
+                  if (nextPoint) {
+                    setSelectedPoint(nextPoint);
+                  }
+                }}
+              >
+                {ECO_POINTS.map((point) => (
+                  <option
+                    key={point.eco_data_point_id}
+                    value={point.eco_data_point_id}
+                  >
+                    {point.eco_data_point_name}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="inflation-mobile-section">
+              <div className="inflation-mobile-label">Range</div>
+
+              <div className="inflation-mobile-range-bar">
+                {RANGE_PRESETS.map((range) => (
+                  <button
+                    key={range}
+                    type="button"
+                    className={`inflation-mobile-chip ${
+                      selectedRangePreset === range
+                        ? "inflation-mobile-chip-active"
+                        : ""
+                    }`}
+                    onClick={() => handlePresetRange(range)}
+                  >
+                    {range}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="inflation-mobile-grid">
+              <div className="inflation-mobile-section">
+                <div className="inflation-mobile-label">Start</div>
                 <input
-                  id="inflation-start-date"
                   type="date"
+                  className="inflation-mobile-input"
                   value={customStartDate}
                   onChange={(e) => setCustomStartDate(e.target.value)}
                 />
               </div>
 
-              <div className="inflation-date-input-group">
-                <label htmlFor="inflation-end-date">End</label>
+              <div className="inflation-mobile-section">
+                <div className="inflation-mobile-label">End</div>
                 <input
-                  id="inflation-end-date"
                   type="date"
+                  className="inflation-mobile-input"
                   value={customEndDate}
                   onChange={(e) => setCustomEndDate(e.target.value)}
                 />
               </div>
+            </div>
 
-              <button
-                className="inflation-apply-range-btn"
-                onClick={handleApplyCustomRange}
-              >
-                Apply
-              </button>
+            <button
+              type="button"
+              className="inflation-mobile-apply"
+              onClick={handleApplyCustomRange}
+            >
+              Apply Range
+            </button>
+
+            {error ? <div className="inflation-mobile-error">{error}</div> : null}
+          </div>
+        </div>
+      </aside>
+
+      <main className="inflation-main">
+        <h1 className="inflation-title">
+          {selectedPoint?.eco_data_point_name || "Inflation"}
+        </h1>
+
+        {currentValues && (
+          <div className="inflation-stats-row">
+            <div className="inflation-stat-card">
+              <span className="inflation-stat-label">Current Value</span>
+              <span className="inflation-stat-value">
+                {formatValue(currentValues.currentValue, 4)}
+              </span>
+            </div>
+
+            <div className="inflation-stat-card">
+              <span className="inflation-stat-label">Peak Value</span>
+              <span className="inflation-stat-value">
+                {formatValue(currentValues.maxValue, 4)}
+              </span>
+            </div>
+
+            <div className="inflation-stat-card">
+              <span className="inflation-stat-label">Low Value</span>
+              <span className="inflation-stat-value">
+                {formatValue(currentValues.minValue, 4)}
+              </span>
+            </div>
+
+            <div className="inflation-stat-card">
+              <span className="inflation-stat-label">Current Percentile</span>
+              <span className="inflation-stat-value">
+                {formatPercentile(currentValues.percentile)}
+              </span>
             </div>
           </div>
+        )}
 
-          {currentValues && (
-            <div className="inflation-stats-row">
-              <div className="inflation-stat-card">
-                <span className="inflation-stat-label">Current Value</span>
-                <span className="inflation-stat-value">
-                  {formatValue(currentValues.currentValue, 4)}
-                </span>
-              </div>
-              <div className="inflation-stat-card">
-                <span className="inflation-stat-label">Peak Value</span>
-                <span className="inflation-stat-value">
-                  {formatValue(currentValues.maxValue, 4)}
-                </span>
-              </div>
-              <div className="inflation-stat-card">
-                <span className="inflation-stat-label">Low Value</span>
-                <span className="inflation-stat-value">
-                  {formatValue(currentValues.minValue, 4)}
-                </span>
-              </div>
-              <div className="inflation-stat-card">
-                <span className="inflation-stat-label">Current Percentile</span>
-                <span className="inflation-stat-value">
-                  {formatPercentile(currentValues.percentile)}
-                </span>
+        {loadingChart ? (
+          <div className="inflation-empty-state">
+            <p>Loading chart...</p>
+          </div>
+        ) : filteredRows.length > 0 ? (
+          <section className="inflation-chart-card">
+            <div className="inflation-chart-header">
+              <div>
+                <div className="inflation-chart-kicker">Inflation</div>
+                <div className="inflation-chart-name">
+                  {selectedPoint?.eco_data_point_name}
+                </div>
               </div>
             </div>
-          )}
 
-          {loadingChart ? (
-            <div className="inflation-empty-state">
-              <p>Loading chart...</p>
+            <div className="inflation-chart-scroll-hint">
+              Swipe sideways to view the full chart
             </div>
-          ) : filteredRows.length > 0 ? (
-            <div className="inflation-chart-card">
+
+            <div className="inflation-chart-scroll-area" ref={chartScrollRef}>
               <div className="inflation-chart-canvas">
                 <Line data={chartData} options={chartOptions} />
               </div>
             </div>
-          ) : (
-            <div className="inflation-empty-state">
-              <p>No data available for this inflation series.</p>
-            </div>
-          )}
-        </div>
-      </div>
+          </section>
+        ) : (
+          <div className="inflation-empty-state">
+            <p>No data available for this inflation series.</p>
+          </div>
+        )}
+      </main>
     </div>
   );
 }

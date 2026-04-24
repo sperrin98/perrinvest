@@ -32,12 +32,13 @@ const DEFAULT_START_DATE = "2010-01-01";
 
 const monthLabels = [
   "Jan", "Feb", "Mar", "Apr", "May", "Jun",
-  "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+  "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
 ];
 
 const formatDateLabel = (dateString) => {
   const d = new Date(dateString);
-  if (isNaN(d)) return dateString;
+  if (Number.isNaN(d.getTime())) return dateString;
+
   return `${monthLabels[d.getMonth()]} ${d.getDate()}`;
 };
 
@@ -57,6 +58,7 @@ function Seasonality() {
   const [chartData, setChartData] = useState([]);
 
   const assetClassRef = useRef(null);
+  const chartScrollRef = useRef(null);
 
   useEffect(() => {
     const onClick = (e) => {
@@ -66,6 +68,7 @@ function Seasonality() {
     };
 
     document.addEventListener("mousedown", onClick);
+
     return () => document.removeEventListener("mousedown", onClick);
   }, []);
 
@@ -77,18 +80,18 @@ function Seasonality() {
 
         const response = await axios.get(`${API_URL}/seasonality-securities`);
         const rows = Array.isArray(response.data) ? response.data : [];
+
         setSecurities(rows);
 
         const classes = [
           ...new Set(
-            rows
-              .map((security) => security.asset_class_name)
-              .filter(Boolean)
+            rows.map((security) => security.asset_class_name).filter(Boolean)
           ),
         ].sort();
 
         if (classes.length > 0) {
           const firstClass = classes[0];
+
           setAssetClass(firstClass);
           setAssetClassQuery(firstClass);
 
@@ -114,9 +117,7 @@ function Seasonality() {
   const assetClasses = useMemo(() => {
     return [
       ...new Set(
-        securities
-          .map((security) => security.asset_class_name)
-          .filter(Boolean)
+        securities.map((security) => security.asset_class_name).filter(Boolean)
       ),
     ].sort();
   }, [securities]);
@@ -132,6 +133,7 @@ function Seasonality() {
 
   const filteredSecurities = useMemo(() => {
     if (!assetClass) return [];
+
     return securities.filter(
       (security) => security.asset_class_name === assetClass
     );
@@ -196,6 +198,26 @@ function Seasonality() {
 
     fetchChartData();
   }, [selectedSecurityId, startDate]);
+
+  useEffect(() => {
+    if (!chartScrollRef.current) return;
+    if (window.innerWidth > 650) return;
+    if (!chartData.length) return;
+
+    const scrollToEnd = () => {
+      if (!chartScrollRef.current) return;
+
+      chartScrollRef.current.scrollLeft =
+        chartScrollRef.current.scrollWidth - chartScrollRef.current.clientWidth;
+    };
+
+    requestAnimationFrame(() => {
+      scrollToEnd();
+      setTimeout(scrollToEnd, 50);
+      setTimeout(scrollToEnd, 150);
+      setTimeout(scrollToEnd, 300);
+    });
+  }, [chartData.length, selectedSecurityId, startDate]);
 
   const chartStats = useMemo(() => {
     if (!chartData.length) return null;
@@ -298,7 +320,9 @@ function Seasonality() {
             afterLabel: function (context) {
               const idx = context.dataIndex;
               const row = chartData[idx];
+
               if (!row) return "";
+
               return `Avg Daily Return: ${Number(row.avg_daily_ret_pct).toFixed(3)}%`;
             },
           },
@@ -373,6 +397,10 @@ function Seasonality() {
     setAssetClassOpen(false);
   };
 
+  const handleSecuritySelect = (securityId) => {
+    setSelectedSecurityId(String(securityId));
+  };
+
   const AssetClassDropdown = ({ open, items }) => {
     if (!open) return null;
 
@@ -397,9 +425,9 @@ function Seasonality() {
   };
 
   return (
-    <div className="seasonality-page">
-      <div className="seasonality-container">
-        <aside className="seasonality-sidebar">
+    <div className="seasonality-container">
+      <aside className="seasonality-sidebar">
+        <div className="seasonality-sidebarScroll seasonality-desktop-sidebarScroll">
           <div className="seasonality-sidebar-top">
             <h2 className="seasonality-sidebar-title">Seasonality</h2>
             <div className="seasonality-sidebar-subtitle">
@@ -409,6 +437,7 @@ function Seasonality() {
 
           <div className="seasonality-control" ref={assetClassRef}>
             <label>Asset Class</label>
+
             <div className="seasonality-dd-inputWrap">
               <input
                 className="seasonality-input seasonality-dd-input"
@@ -430,23 +459,29 @@ function Seasonality() {
                   setAssetClassOpen(true);
                 }}
               />
+
               <button
                 type="button"
                 className="seasonality-dd-toggle"
                 onClick={() => {
                   setAssetClassTyping(false);
-                  setAssetClassOpen((p) => !p);
+                  setAssetClassOpen((prev) => !prev);
                 }}
                 aria-label="Toggle Asset Class dropdown"
               >
                 ▾
               </button>
             </div>
-            <AssetClassDropdown open={assetClassOpen} items={filteredAssetClasses} />
+
+            <AssetClassDropdown
+              open={assetClassOpen}
+              items={filteredAssetClasses}
+            />
           </div>
 
           <div className="seasonality-control">
             <label>Start Date</label>
+
             <input
               className="seasonality-input"
               type="date"
@@ -472,7 +507,7 @@ function Seasonality() {
                         ? "seasonality-selected-point"
                         : ""
                     }`}
-                    onClick={() => setSelectedSecurityId(String(security.security_id))}
+                    onClick={() => handleSecuritySelect(security.security_id)}
                   >
                     <div className="seasonality-point-name">
                       {security.security_long_name}
@@ -488,60 +523,128 @@ function Seasonality() {
           </div>
 
           {error ? <div className="seasonality-error-box">{error}</div> : null}
-        </aside>
+        </div>
 
-        <div className="seasonality-main">
-          <h1 className="seasonality-title">
-            {selectedSecurity?.security_long_name || "Seasonality"}
-          </h1>
+        <div className="seasonality-mobile-controls">
+          <div className="seasonality-mobile-card">
+            <div className="seasonality-mobile-section">
+              <div className="seasonality-mobile-label">Asset Class</div>
 
-          {chartStats && (
-            <div className="seasonality-stats-row">
-              <div className="seasonality-stat-card">
-                <span className="seasonality-stat-label">Peak Index</span>
-                <span className="seasonality-stat-value">{chartStats.maxSeasonal}</span>
-              </div>
-              <div className="seasonality-stat-card">
-                <span className="seasonality-stat-label">Trough Index</span>
-                <span className="seasonality-stat-value">{chartStats.minSeasonal}</span>
-              </div>
-              <div className="seasonality-stat-card">
-                <span className="seasonality-stat-label">Best Avg Day</span>
-                <span className="seasonality-stat-value">{chartStats.maxReturn}%</span>
-              </div>
-              <div className="seasonality-stat-card">
-                <span className="seasonality-stat-label">Worst Avg Day</span>
-                <span className="seasonality-stat-value">{chartStats.minReturn}%</span>
-              </div>
+              <select
+                className="seasonality-mobile-select"
+                value={assetClass}
+                onChange={(e) => pickAssetClass(e.target.value)}
+              >
+                {assetClasses.map((item) => (
+                  <option key={item} value={item}>
+                    {item}
+                  </option>
+                ))}
+              </select>
             </div>
-          )}
 
-          {loadingChart ? (
-            <div className="seasonality-empty-state">
-              <p>Loading chart...</p>
+            <div className="seasonality-mobile-section">
+              <div className="seasonality-mobile-label">Security</div>
+
+              <select
+                className="seasonality-mobile-select"
+                value={selectedSecurityId}
+                onChange={(e) => handleSecuritySelect(e.target.value)}
+              >
+                {filteredSecurities.map((security) => (
+                  <option key={security.security_id} value={security.security_id}>
+                    {security.security_long_name}
+                  </option>
+                ))}
+              </select>
             </div>
-          ) : chartData.length > 0 ? (
-            <div className="seasonality-chart-card">
-              <div className="seasonality-chart-header">
-                <div>
-                  <div className="seasonality-chart-kicker">SEASONALITY CURVE</div>
-                  <div className="seasonality-chart-name">
-                    {selectedSecurity?.security_long_name}
-                  </div>
+
+            <div className="seasonality-mobile-section">
+              <div className="seasonality-mobile-label">Start Date</div>
+
+              <input
+                className="seasonality-mobile-input"
+                type="date"
+                value={startDate}
+                onChange={(e) => setStartDate(e.target.value)}
+              />
+            </div>
+
+            {error ? <div className="seasonality-mobile-error">{error}</div> : null}
+          </div>
+        </div>
+      </aside>
+
+      <main className="seasonality-main">
+        <h1 className="seasonality-title">
+          {selectedSecurity?.security_long_name || "Seasonality"}
+        </h1>
+
+        {chartStats && (
+          <div className="seasonality-stats-row">
+            <div className="seasonality-stat-card">
+              <span className="seasonality-stat-label">Peak Index</span>
+              <span className="seasonality-stat-value">
+                {chartStats.maxSeasonal}
+              </span>
+            </div>
+
+            <div className="seasonality-stat-card">
+              <span className="seasonality-stat-label">Trough Index</span>
+              <span className="seasonality-stat-value">
+                {chartStats.minSeasonal}
+              </span>
+            </div>
+
+            <div className="seasonality-stat-card">
+              <span className="seasonality-stat-label">Best Avg Day</span>
+              <span className="seasonality-stat-value">
+                {chartStats.maxReturn}%
+              </span>
+            </div>
+
+            <div className="seasonality-stat-card">
+              <span className="seasonality-stat-label">Worst Avg Day</span>
+              <span className="seasonality-stat-value">
+                {chartStats.minReturn}%
+              </span>
+            </div>
+          </div>
+        )}
+
+        {loadingChart ? (
+          <div className="seasonality-empty-state">
+            <p>Loading chart...</p>
+          </div>
+        ) : chartData.length > 0 ? (
+          <section className="seasonality-chart-card">
+            <div className="seasonality-chart-header">
+              <div>
+                <div className="seasonality-chart-kicker">
+                  Seasonality Curve
+                </div>
+                <div className="seasonality-chart-name">
+                  {selectedSecurity?.security_long_name}
                 </div>
               </div>
+            </div>
 
+            <div className="seasonality-chart-scroll-hint">
+              Swipe sideways to view the full chart
+            </div>
+
+            <div className="seasonality-chart-scroll-area" ref={chartScrollRef}>
               <div className="seasonality-chart-canvas">
                 <Line data={lineData} options={options} />
               </div>
             </div>
-          ) : (
-            <div className="seasonality-empty-state">
-              <p>Select an asset class and security to view the chart.</p>
-            </div>
-          )}
-        </div>
-      </div>
+          </section>
+        ) : (
+          <div className="seasonality-empty-state">
+            <p>Select an asset class and security to view the chart.</p>
+          </div>
+        )}
+      </main>
     </div>
   );
 }

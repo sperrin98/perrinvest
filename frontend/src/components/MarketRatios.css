@@ -173,6 +173,11 @@
   color: rgba(255, 255, 255, 0.9);
 }
 
+.mrp-mobile-controls,
+.mrp-mobile-timeframe-bar {
+  display: none;
+}
+
 .mrp-main {
   width: 78%;
   padding: 20px;
@@ -206,6 +211,20 @@
   margin-bottom: 18px;
 }
 
+.mrp-chart-scroll-hint {
+  display: none;
+}
+
+.mrp-chart-scroll-area {
+  width: 100%;
+  height: 100%;
+}
+
+.mrp-chart-inner {
+  width: 100%;
+  height: 100%;
+}
+
 .mrp-stats-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -227,6 +246,7 @@
   text-transform: uppercase;
   letter-spacing: 0.5px;
   margin-bottom: 6px;
+  font-weight: 700;
 }
 
 .mrp-stat-value {
@@ -272,35 +292,203 @@
 }
 
 @media (max-width: 650px) {
-  .mrp-miniRail {
+  .mrp-miniRail,
+  .mrp-desktop-sidebarScroll {
     display: none;
+  }
+
+  .mrp-container {
+    flex-direction: column;
+    height: auto;
+    min-height: 100vh;
   }
 
   .mrp-sidebar {
     width: 100%;
+    height: auto;
     border-right: none;
-    border-bottom: 3px solid #00332c;
+    border-bottom: none;
+    background: #f8f8f8;
+    overflow: visible;
+    padding: 90px 12px 6px 12px;
   }
 
-  .mrp-sidebarScroll {
-    padding-top: 90px;
-    padding-right: 25px;
+  .mrp-mobile-controls {
+    display: block;
+  }
+
+  .mrp-mobile-card {
+    background: linear-gradient(135deg, #00796b, #004d40);
+    border-radius: 10px;
+    padding: 8px;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .mrp-mobile-section {
+    margin-bottom: 0;
+  }
+
+  .mrp-mobile-label {
+    display: block;
+    font-size: 0.62rem;
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.9);
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+
+  .mrp-mobile-select {
+    width: 100%;
+    min-height: 36px;
+    padding: 8px 10px;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    background: rgba(255, 255, 255, 0.12);
+    color: #ffffff;
+    font-size: 0.78rem;
+    font-weight: 600;
+    box-sizing: border-box;
+    outline: none;
+  }
+
+  .mrp-mobile-select option {
+    color: #004d40;
+    background: #ffffff;
   }
 
   .mrp-main {
     width: 100%;
+    padding: 10px 12px 24px 12px;
+    overflow: visible;
   }
 
   .mrp-title {
-    margin-top: 30px;
+    margin-top: 6px;
+    margin-bottom: 10px;
+    font-size: 1rem;
+    line-height: 1.2;
+    letter-spacing: 0.1px;
+    text-shadow: none;
+    text-align: center !important;
   }
 
-  .mrp-stats-grid {
-    grid-template-columns: 1fr;
+  .mrp-mobile-timeframe-bar {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 4px;
+    width: 100%;
+    margin-bottom: 10px;
+  }
+
+  .mrp-mobile-chip {
+    width: 100%;
+    min-height: 28px;
+    height: 28px;
+    padding: 6px 4px;
+    border-radius: 7px;
+    border: 1px solid rgba(0, 121, 107, 0.18);
+    background: #ffffff;
+    color: #00796b;
+    font-size: 0.66rem;
+    font-weight: 700;
+    line-height: 1;
+    text-align: center;
+  }
+
+  .mrp-mobile-chip-active {
+    background: #00796b;
+    color: #ffffff;
+    border-color: #00796b;
   }
 
   .mrp-chart-wrapper {
-    height: 440px;
-    min-height: 440px;
+    height: auto;
+    min-height: 0;
+    padding: 10px;
+    margin-bottom: 14px;
+    border-radius: 12px;
+  }
+
+  .mrp-chart-scroll-hint {
+    display: block;
+    font-size: 0.68rem;
+    color: #6a7a76;
+    margin-bottom: 6px;
+  }
+
+  .mrp-chart-scroll-area {
+    width: 100%;
+    height: auto;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    border-radius: 12px;
+    background: #ffffff;
+  }
+
+  .mrp-chart-inner {
+    width: 920px;
+    min-width: 920px;
+    max-width: 920px;
+    height: 420px;
+    padding: 6px;
+    box-sizing: border-box;
+  }
+
+  .mrp-stats-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+    margin-bottom: 20px;
+  }
+
+  .mrp-stat-card {
+    padding: 9px 10px;
+    border-radius: 9px;
+  }
+
+  .mrp-stat-label {
+    font-size: 0.58rem;
+    line-height: 1.1;
+    margin-bottom: 4px;
+  }
+
+  .mrp-stat-value {
+    font-size: 1rem;
+    line-height: 1.1;
+  }
+}
+
+@media (max-width: 380px) {
+  .mrp-sidebar {
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+
+  .mrp-main {
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+
+  .mrp-chart-inner {
+    width: 860px;
+    min-width: 860px;
+    max-width: 860px;
+  }
+
+  .mrp-stats-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 7px;
+  }
+
+  .mrp-stat-card {
+    padding: 8px;
+  }
+
+  .mrp-stat-value {
+    font-size: 0.92rem;
   }
 }

@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import axios from "axios";
 import DatePicker from "react-datepicker";
 import { Line } from "react-chartjs-2";
@@ -15,6 +15,9 @@ const MarketLeagues = () => {
   const [constituentData, setConstituentData] = useState([]);
   const [selectedConstituentName, setSelectedConstituentName] = useState("");
   const [selectedConstituentRow, setSelectedConstituentRow] = useState(null);
+
+  const chartScrollRef = useRef(null);
+  const scoreChartScrollRef = useRef(null);
 
   useEffect(() => {
     const fetchMarketLeagues = async () => {
@@ -125,6 +128,16 @@ const MarketLeagues = () => {
     }
   };
 
+  const handleLeagueSelect = (leagueId) => {
+    const selectedLeague = marketLeagues.find(
+      (league) => Number(league[0]) === Number(leagueId)
+    );
+
+    if (!selectedLeague || !selectedDate) return;
+
+    fetchLeagueTable(selectedLeague[0], selectedLeague[1], selectedDate);
+  };
+
   const formatPercentage = (value) => {
     return value || value === 0 ? `${(value * 100).toFixed(2)}%` : "0.00%";
   };
@@ -183,20 +196,50 @@ const MarketLeagues = () => {
     responsive: true,
     maintainAspectRatio: false,
     plugins: {
-      legend: { position: "top", labels: { color: "#004d40" } },
-      tooltip: { intersect: false, mode: "index" },
+      legend: {
+        position: "top",
+        labels: {
+          color: "#004d40",
+          usePointStyle: true,
+          pointStyle: "line",
+        },
+      },
+      tooltip: {
+        intersect: false,
+        mode: "index",
+      },
     },
-    interaction: { intersect: false, mode: "index" },
+    interaction: {
+      intersect: false,
+      mode: "index",
+    },
     scales: {
       x: {
-        title: { display: true, text: "Date", color: "#004d40" },
-        ticks: { color: "#00796b", maxTicksLimit: 10 },
-        grid: { color: "rgba(0,0,0,0.06)" },
+        title: {
+          display: true,
+          text: "Date",
+          color: "#004d40",
+        },
+        ticks: {
+          color: "#00796b",
+          maxTicksLimit: 10,
+        },
+        grid: {
+          color: "rgba(0,0,0,0.06)",
+        },
       },
       y: {
-        title: { display: true, text: "Values", color: "#004d40" },
-        ticks: { color: "#00796b" },
-        grid: { color: "rgba(0,0,0,0.06)" },
+        title: {
+          display: true,
+          text: "Values",
+          color: "#004d40",
+        },
+        ticks: {
+          color: "#00796b",
+        },
+        grid: {
+          color: "rgba(0,0,0,0.06)",
+        },
       },
     },
   };
@@ -221,7 +264,14 @@ const MarketLeagues = () => {
     responsive: true,
     maintainAspectRatio: false,
     plugins: {
-      legend: { position: "top", labels: { color: "#004d40" } },
+      legend: {
+        position: "top",
+        labels: {
+          color: "#004d40",
+          usePointStyle: true,
+          pointStyle: "line",
+        },
+      },
       tooltip: {
         intersect: false,
         mode: "index",
@@ -232,22 +282,40 @@ const MarketLeagues = () => {
         },
       },
     },
-    interaction: { intersect: false, mode: "index" },
+    interaction: {
+      intersect: false,
+      mode: "index",
+    },
     scales: {
       x: {
-        title: { display: true, text: "Date", color: "#004d40" },
-        ticks: { color: "#00796b", maxTicksLimit: 10 },
-        grid: { color: "rgba(0,0,0,0.06)" },
+        title: {
+          display: true,
+          text: "Date",
+          color: "#004d40",
+        },
+        ticks: {
+          color: "#00796b",
+          maxTicksLimit: 10,
+        },
+        grid: {
+          color: "rgba(0,0,0,0.06)",
+        },
       },
       y: {
-        title: { display: true, text: "Score", color: "#004d40" },
+        title: {
+          display: true,
+          text: "Score",
+          color: "#004d40",
+        },
         ticks: {
           color: "#00796b",
           callback: function (value) {
             return `${(value * 100).toFixed(0)}%`;
           },
         },
-        grid: { color: "rgba(0,0,0,0.06)" },
+        grid: {
+          color: "rgba(0,0,0,0.06)",
+        },
       },
     },
   };
@@ -257,43 +325,77 @@ const MarketLeagues = () => {
   return (
     <div className={styles.mlgContainer}>
       <aside className={styles.mlgSidebar}>
-        <div className={styles.mlgDateFilter}>
-          <label className={styles.mlgDateLabel} htmlFor="mlg-date-picker">
-            Select Date
-          </label>
-          <DatePicker
-            id="mlg-date-picker"
-            selected={selectedDate}
-            onChange={handleDateChange}
-            dateFormat="yyyy-MM-dd"
-            className={styles.mlgDateInput}
-          />
+        <div
+          className={`${styles.mlgSidebarScroll} ${styles.mlgDesktopSidebarScroll}`}
+        >
+          <div className={styles.mlgDateFilter}>
+            <label className={styles.mlgDateLabel} htmlFor="mlg-date-picker">
+              Select Date
+            </label>
+            <DatePicker
+              id="mlg-date-picker"
+              selected={selectedDate}
+              onChange={handleDateChange}
+              dateFormat="yyyy-MM-dd"
+              className={styles.mlgDateInput}
+            />
+          </div>
+
+          <div className={styles.mlgSidebarTitle}>Market Leagues</div>
+
+          <ul className={styles.mlgLeagueList}>
+            {marketLeagues.length > 0 ? (
+              marketLeagues.map((league) => (
+                <li
+                  key={league[0]}
+                  className={`${styles.mlgLeagueItem} ${
+                    selectedLeagueId === league[0]
+                      ? styles.mlgLeagueItemSelected
+                      : ""
+                  }`}
+                  onClick={() =>
+                    selectedDate &&
+                    fetchLeagueTable(league[0], league[1], selectedDate)
+                  }
+                >
+                  {league[1]}
+                </li>
+              ))
+            ) : (
+              <li className={styles.mlgEmpty}>No market leagues available.</li>
+            )}
+          </ul>
         </div>
 
-        <div className={styles.mlgSidebarTitle}>Market Leagues</div>
-
-        <ul className={styles.mlgLeagueList}>
-          {marketLeagues.length > 0 ? (
-            marketLeagues.map((league) => (
-              <li
-                key={league[0]}
-                className={`${styles.mlgLeagueItem} ${
-                  selectedLeagueId === league[0]
-                    ? styles.mlgLeagueItemSelected
-                    : ""
-                }`}
-                onClick={() =>
-                  selectedDate &&
-                  fetchLeagueTable(league[0], league[1], selectedDate)
-                }
+        <div className={styles.mlgMobileControls}>
+          <div className={styles.mlgMobileCard}>
+            <div className={styles.mlgMobileSection}>
+              <div className={styles.mlgMobileLabel}>League</div>
+              <select
+                className={styles.mlgMobileSelect}
+                value={selectedLeagueId ?? ""}
+                onChange={(e) => handleLeagueSelect(e.target.value)}
               >
-                {league[1]}
-              </li>
-            ))
-          ) : (
-            <li className={styles.mlgEmpty}>No market leagues available.</li>
-          )}
-        </ul>
+                {marketLeagues.map((league) => (
+                  <option key={league[0]} value={league[0]}>
+                    {league[1]}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className={styles.mlgMobileSection}>
+              <div className={styles.mlgMobileLabel}>Date</div>
+              <DatePicker
+                selected={selectedDate}
+                onChange={handleDateChange}
+                dateFormat="yyyy-MM-dd"
+                className={styles.mlgMobileDateInput}
+                wrapperClassName={styles.mlgMobileDateWrapper}
+              />
+            </div>
+          </div>
+        </div>
       </aside>
 
       <main className={styles.mlgMain}>
@@ -312,50 +414,62 @@ const MarketLeagues = () => {
               </div>
             </div>
 
-            <div className={styles.mlgTableWrapper}>
-              <table className={styles.mlgTable}>
-                <thead>
-                  <tr>
-                    <th>Security</th>
-                    <th>Price</th>
-                    <th>Move</th>
-                    <th>Score</th>
-                    <th>Momentum</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {tableRows.length > 0 ? (
-                    tableRows.map((row, index) => (
-                      <tr
-                        key={index}
-                        className={`${styles.mlgRow} ${
-                          selectedConstituentRow &&
-                          selectedConstituentRow[0] === row[0]
-                            ? styles.mlgRowSelected
-                            : ""
-                        }`}
-                        onClick={() => fetchConstituentData(row[0], row[1], row)}
-                      >
-                        <td className={styles.mlgSecurityCell}>
-                          <span className={styles.mlgSecurityName}>{row[1]}</span>
-                        </td>
-                        <td>{formatDecimal(row[2])}</td>
-                        <td className={scoreToneClass(row[3])}>
-                          {formatPercentage(row[3])}
-                        </td>
-                        <td className={scoreToneClass(row[4])}>
-                          {formatPercentage(row[4])}
-                        </td>
-                        <td>{formatDecimal(row[5])}</td>
-                      </tr>
-                    ))
-                  ) : (
-                    <tr className={styles.mlgRow}>
-                      <td colSpan="5">{errorMessage || "No data available"}</td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
+            <div className={styles.mlgTableScrollHint}>
+              Scroll sideways to view all columns
+            </div>
+
+            <div className={styles.mlgGridTableWrapper}>
+              <div className={styles.mlgGridTable}>
+                <div className={`${styles.mlgGridRow} ${styles.mlgGridHeader}`}>
+                  <div>Security</div>
+                  <div>Price</div>
+                  <div>Move</div>
+                  <div>Score</div>
+                  <div>Momentum</div>
+                </div>
+
+                {tableRows.length > 0 ? (
+                  tableRows.map((row, index) => (
+                    <button
+                      key={index}
+                      type="button"
+                      className={`${styles.mlgGridRow} ${
+                        styles.mlgGridBodyRow
+                      } ${
+                        selectedConstituentRow &&
+                        selectedConstituentRow[0] === row[0]
+                          ? styles.mlgGridRowSelected
+                          : ""
+                      }`}
+                      onClick={() => fetchConstituentData(row[0], row[1], row)}
+                    >
+                      <div className={styles.mlgSecurityCell}>
+                        <span className={styles.mlgSecurityName}>
+                          {row[1]}
+                        </span>
+                      </div>
+
+                      <div>{formatDecimal(row[2])}</div>
+
+                      <div className={scoreToneClass(row[3])}>
+                        {formatPercentage(row[3])}
+                      </div>
+
+                      <div className={scoreToneClass(row[4])}>
+                        {formatPercentage(row[4])}
+                      </div>
+
+                      <div>{formatDecimal(row[5])}</div>
+                    </button>
+                  ))
+                ) : (
+                  <div
+                    className={`${styles.mlgGridRow} ${styles.mlgGridEmptyRow}`}
+                  >
+                    <div>{errorMessage || "No data available"}</div>
+                  </div>
+                )}
+              </div>
             </div>
           </section>
 
@@ -373,8 +487,14 @@ const MarketLeagues = () => {
                   </div>
                 </div>
 
-                <div className={styles.mlgChartWrapper}>
-                  <Line data={lineChartData} options={lineChartOptions} />
+                <div className={styles.mlgChartScrollHint}>
+                  Showing latest data first. Scroll left for earlier history.
+                </div>
+
+                <div className={styles.mlgChartScrollArea} ref={chartScrollRef}>
+                  <div className={styles.mlgChartWrapper}>
+                    <Line data={lineChartData} options={lineChartOptions} />
+                  </div>
                 </div>
 
                 <div className={styles.mlgChartHeaderSecondary}>
@@ -386,8 +506,17 @@ const MarketLeagues = () => {
                   </div>
                 </div>
 
-                <div className={styles.mlgScoreChartWrapper}>
-                  <Line data={scoreChartData} options={scoreChartOptions} />
+                <div className={styles.mlgChartScrollHint}>
+                  Showing latest score first. Scroll left for earlier history.
+                </div>
+
+                <div
+                  className={styles.mlgChartScrollArea}
+                  ref={scoreChartScrollRef}
+                >
+                  <div className={styles.mlgScoreChartWrapper}>
+                    <Line data={scoreChartData} options={scoreChartOptions} />
+                  </div>
                 </div>
 
                 {selectedConstituentRow && (
@@ -398,6 +527,7 @@ const MarketLeagues = () => {
                         {formatDecimal(selectedConstituentRow[2])}
                       </span>
                     </div>
+
                     <div className={styles.mlgScoreItem}>
                       <span className={styles.mlgScoreLabel}>Daily Move</span>
                       <span
@@ -408,6 +538,7 @@ const MarketLeagues = () => {
                         {formatPercentage(selectedConstituentRow[3])}
                       </span>
                     </div>
+
                     <div className={styles.mlgScoreItem}>
                       <span className={styles.mlgScoreLabel}>Score</span>
                       <span
@@ -418,6 +549,7 @@ const MarketLeagues = () => {
                         {formatPercentage(selectedConstituentRow[4])}
                       </span>
                     </div>
+
                     <div className={styles.mlgScoreItem}>
                       <span className={styles.mlgScoreLabel}>
                         Relative Momentum
