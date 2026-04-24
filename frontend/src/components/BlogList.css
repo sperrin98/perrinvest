@@ -7,7 +7,7 @@
 .bl-container {
   max-width: 1320px;
   margin: 0 auto;
-  padding: 110px 20px 20px 20px;
+  padding: 110px 20px 32px 20px;
   box-sizing: border-box;
   font-family: Arial, sans-serif;
 }
@@ -68,6 +68,7 @@
   display: flex;
   align-items: flex-start;
   justify-content: center;
+  text-decoration: none;
 }
 
 .bl-post-image-frame {
@@ -99,6 +100,10 @@
   align-items: flex-start;
 }
 
+.bl-post-kicker {
+  display: none;
+}
+
 .bl-post-title {
   font-size: 1.28rem;
   font-weight: 700;
@@ -117,9 +122,18 @@
 }
 
 .bl-post-meta {
+  display: flex;
+  align-items: center;
+  gap: 7px;
   font-size: 0.85rem;
   color: #00796b;
   margin: 0 0 12px 0;
+  font-style: italic;
+}
+
+.bl-post-meta-divider {
+  color: #9aa8a4;
+  font-style: normal;
 }
 
 .bl-post-excerpt {
@@ -157,34 +171,168 @@
 }
 
 @media (max-width: 650px) {
+  .bl-page {
+    background: #f8f8f8;
+  }
+
   .bl-container {
-    padding: 90px 14px 18px 14px;
+    width: 100%;
+    padding: 90px 12px 24px 12px;
+  }
+
+  .bl-page-header {
+    margin-bottom: 12px;
+    text-align: center;
   }
 
   .bl-title {
-    font-size: 26px;
+    font-size: 1.45rem;
+    line-height: 1.15;
+    letter-spacing: 0.2px;
+    text-shadow: none;
   }
 
   .bl-subtitle {
-    font-size: 0.9rem;
+    max-width: 290px;
+    margin: 6px auto 0 auto;
+    font-size: 0.78rem;
+    line-height: 1.35;
+    color: #60756f;
+  }
+
+  .bl-posts-wrapper {
+    gap: 12px;
   }
 
   .bl-post-card,
   .bl-message-card {
-    padding: 14px;
+    border-radius: 14px;
+    padding: 10px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.055);
+    border: 1px solid rgba(0, 77, 64, 0.08);
   }
 
-  .bl-post-title {
-    font-size: 1.08rem;
+  .bl-post-card {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    overflow: hidden;
   }
 
-  .bl-post-excerpt {
-    font-size: 0.9rem;
+  .bl-post-card:hover {
+    transform: none;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.055);
+  }
+
+  .bl-post-image-side {
+    width: 100%;
+    display: block;
   }
 
   .bl-post-image-frame {
     width: 100%;
-    max-width: 220px;
-    height: 140px;
+    max-width: none;
+    height: 170px;
+    padding: 0;
+    border-radius: 12px;
+    border: 1px solid rgba(0, 77, 64, 0.08);
+    background: linear-gradient(135deg, rgba(0, 121, 107, 0.06), #ffffff);
+  }
+
+  .bl-post-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 12px;
+  }
+
+  .bl-post-content {
+    padding: 2px 2px 0 2px;
+  }
+
+  .bl-post-kicker {
+    display: inline-flex;
+    align-items: center;
+    width: fit-content;
+    margin-bottom: 6px;
+    padding: 4px 8px;
+    border-radius: 999px;
+    background: rgba(0, 121, 107, 0.08);
+    color: #00796b;
+    font-size: 0.62rem;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .bl-post-title {
+    font-size: 1rem;
+    line-height: 1.22;
+    margin-bottom: 6px;
+  }
+
+  .bl-post-meta {
+    gap: 6px;
+    font-size: 0.7rem;
+    line-height: 1.2;
+    margin-bottom: 8px;
+    color: #5b7973;
+    flex-wrap: wrap;
+  }
+
+  .bl-post-excerpt {
+    font-size: 0.82rem;
+    line-height: 1.42;
+    color: #234f48;
+    margin-bottom: 10px;
+
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .bl-post-readmore {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 34px;
+    padding: 0 12px;
+    border-radius: 9px;
+    background: #00796b;
+    color: #ffffff;
+    font-size: 0.78rem;
+    font-weight: 800;
+    text-decoration: none;
+  }
+
+  .bl-post-readmore:hover {
+    color: #ffffff;
+    background: #004d40;
+  }
+
+  .bl-message-card {
+    font-size: 0.86rem;
+    text-align: center;
+    color: #5b6d68;
+  }
+}
+
+@media (max-width: 380px) {
+  .bl-container {
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+
+  .bl-post-image-frame {
+    height: 150px;
+  }
+
+  .bl-post-title {
+    font-size: 0.94rem;
+  }
+
+  .bl-post-excerpt {
+    font-size: 0.78rem;
   }
 }

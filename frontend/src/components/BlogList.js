@@ -11,9 +11,11 @@ const BlogList = () => {
     const fetchPosts = async () => {
       try {
         const res = await fetch(`${process.env.REACT_APP_API_URL}/blog`);
+
         if (!res.ok) {
           throw new Error(`Failed to fetch posts: ${res.status}`);
         }
+
         const data = await res.json();
         setPosts(Array.isArray(data) ? data : []);
       } catch (err) {
@@ -27,12 +29,33 @@ const BlogList = () => {
     fetchPosts();
   }, []);
 
+  const formatPostDate = (dateValue) => {
+    if (!dateValue) return "";
+
+    const d = new Date(dateValue);
+
+    if (Number.isNaN(d.getTime())) return "";
+
+    return d.toLocaleDateString(undefined, {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    });
+  };
+
+  const getExcerpt = (content) => {
+    if (!content) return "";
+    const clean = String(content).replace(/\s+/g, " ").trim();
+    return clean.length > 180 ? `${clean.substring(0, 180)}...` : clean;
+  };
+
   const renderMessage = (message) => (
     <div className="bl-page">
       <div className="bl-container">
         <div className="bl-page-header">
           <h1 className="bl-title">Blogs</h1>
         </div>
+
         <div className="bl-message-card">{message}</div>
       </div>
     </div>
@@ -47,14 +70,20 @@ const BlogList = () => {
       <div className="bl-container">
         <div className="bl-page-header">
           <h1 className="bl-title">Blogs</h1>
-          <p className="bl-subtitle">Latest articles and updates from Perrinvest</p>
+          <p className="bl-subtitle">
+            Latest articles and updates from Perrinvest
+          </p>
         </div>
 
         <div className="bl-posts-wrapper">
           {posts.map((post) => (
             <article key={post.post_id} className="bl-post-card">
               {post.image && (
-                <div className="bl-post-image-side">
+                <Link
+                  to={`/blog/${post.post_id}`}
+                  className="bl-post-image-side"
+                  aria-label={`Read ${post.title}`}
+                >
                   <div className="bl-post-image-frame">
                     <img
                       src={post.image}
@@ -62,24 +91,23 @@ const BlogList = () => {
                       className="bl-post-image"
                     />
                   </div>
-                </div>
+                </Link>
               )}
 
               <div className="bl-post-content">
+                <div className="bl-post-kicker">Perrinvest Blog</div>
+
                 <h2 className="bl-post-title">
                   <Link to={`/blog/${post.post_id}`}>{post.title}</Link>
                 </h2>
 
                 <p className="bl-post-meta">
-                  <i>
-                    by {post.author} on{" "}
-                    {new Date(post.created_at).toLocaleDateString()}
-                  </i>
+                  <span>{post.author || "Perrinvest"}</span>
+                  <span className="bl-post-meta-divider">•</span>
+                  <span>{formatPostDate(post.created_at)}</span>
                 </p>
 
-                <div className="bl-post-excerpt">
-                  {post.content.substring(0, 180)}...
-                </div>
+                <div className="bl-post-excerpt">{getExcerpt(post.content)}</div>
 
                 <Link to={`/blog/${post.post_id}`} className="bl-post-readmore">
                   Read more
