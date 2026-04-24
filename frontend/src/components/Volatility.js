@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import axios from "axios";
+import { Line } from "react-chartjs-2";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -11,7 +12,6 @@ import {
   Legend,
   Title,
 } from "chart.js";
-import { Line } from "react-chartjs-2";
 import "./Volatility.css";
 
 ChartJS.register(
@@ -36,10 +36,12 @@ const formatDateYYYYMMDD = (dateStr) => {
 
 const formatDateLabel = (dateString) => {
   const d = new Date(dateString);
-  if (isNaN(d)) return dateString;
+  if (Number.isNaN(d.getTime())) return dateString;
+
   const yyyy = d.getFullYear();
   const mm = String(d.getMonth() + 1).padStart(2, "0");
   const dd = String(d.getDate()).padStart(2, "0");
+
   return `${yyyy}-${mm}-${dd}`;
 };
 
@@ -141,6 +143,8 @@ function Volatility() {
   const [activeEndDate, setActiveEndDate] = useState("");
 
   const assetClassRef = useRef(null);
+  const priceChartScrollRef = useRef(null);
+  const volChartScrollRef = useRef(null);
 
   useEffect(() => {
     const onClick = (e) => {
@@ -161,18 +165,18 @@ function Volatility() {
 
         const response = await axios.get(`${API_URL}/seasonality-securities`);
         const rows = Array.isArray(response.data) ? response.data : [];
+
         setSecurities(rows);
 
         const classes = [
           ...new Set(
-            rows
-              .map((security) => security.asset_class_name)
-              .filter(Boolean)
+            rows.map((security) => security.asset_class_name).filter(Boolean)
           ),
         ].sort();
 
         if (classes.length > 0) {
           const firstClass = classes[0];
+
           setAssetClass(firstClass);
           setAssetClassQuery(firstClass);
 
@@ -198,9 +202,7 @@ function Volatility() {
   const assetClasses = useMemo(() => {
     return [
       ...new Set(
-        securities
-          .map((security) => security.asset_class_name)
-          .filter(Boolean)
+        securities.map((security) => security.asset_class_name).filter(Boolean)
       ),
     ].sort();
   }, [securities]);
@@ -216,6 +218,7 @@ function Volatility() {
 
   const filteredSecurities = useMemo(() => {
     if (!assetClass) return [];
+
     return securities.filter(
       (security) => security.asset_class_name === assetClass
     );
@@ -290,6 +293,51 @@ function Volatility() {
     setCustomEndDate(maxDate);
   }, [priceRows]);
 
+  const filteredPriceRows = useMemo(() => {
+    if (!priceRows.length || !activeStartDate || !activeEndDate) return [];
+
+    return priceRows.filter(
+      (row) => row.price_date >= activeStartDate && row.price_date <= activeEndDate
+    );
+  }, [priceRows, activeStartDate, activeEndDate]);
+
+  useEffect(() => {
+    if (window.innerWidth > 650) return;
+    if (!filteredPriceRows.length) return;
+
+    const scrollToEnd = (ref) => {
+      if (!ref.current) return;
+
+      ref.current.scrollLeft = ref.current.scrollWidth - ref.current.clientWidth;
+    };
+
+    requestAnimationFrame(() => {
+      scrollToEnd(priceChartScrollRef);
+      scrollToEnd(volChartScrollRef);
+
+      setTimeout(() => {
+        scrollToEnd(priceChartScrollRef);
+        scrollToEnd(volChartScrollRef);
+      }, 50);
+
+      setTimeout(() => {
+        scrollToEnd(priceChartScrollRef);
+        scrollToEnd(volChartScrollRef);
+      }, 150);
+
+      setTimeout(() => {
+        scrollToEnd(priceChartScrollRef);
+        scrollToEnd(volChartScrollRef);
+      }, 300);
+    });
+  }, [
+    selectedSecurityId,
+    selectedRangePreset,
+    filteredPriceRows.length,
+    activeStartDate,
+    activeEndDate,
+  ]);
+
   const handlePresetRange = (preset) => {
     if (!priceRows.length) return;
 
@@ -328,13 +376,6 @@ function Volatility() {
     setCustomStartDate(start);
     setCustomEndDate(end);
   };
-
-  const filteredPriceRows = useMemo(() => {
-    if (!priceRows.length || !activeStartDate || !activeEndDate) return [];
-    return priceRows.filter(
-      (row) => row.price_date >= activeStartDate && row.price_date <= activeEndDate
-    );
-  }, [priceRows, activeStartDate, activeEndDate]);
 
   const stats = useMemo(() => {
     if (!filteredPriceRows.length) return null;
@@ -399,78 +440,80 @@ function Volatility() {
     };
   }, [filteredPriceRows]);
 
-  const commonOptions = {
-    responsive: true,
-    maintainAspectRatio: false,
-    animation: {
-      duration: 260,
-      easing: "easeOutQuart",
-    },
-    interaction: {
-      mode: "index",
-      intersect: false,
-    },
-    layout: {
-      padding: {
-        top: 10,
-        right: 14,
-        bottom: 4,
-        left: 8,
+  const commonOptions = useMemo(() => {
+    return {
+      responsive: true,
+      maintainAspectRatio: false,
+      animation: {
+        duration: 260,
+        easing: "easeOutQuart",
       },
-    },
-    plugins: {
-      legend: {
-        display: true,
-        align: "start",
-        labels: {
-          color: "#0f766e",
-          usePointStyle: true,
-          pointStyle: "line",
-          boxWidth: 30,
-          boxHeight: 8,
-          padding: 18,
-          font: {
-            size: 12,
-            weight: "600",
-          },
+      interaction: {
+        mode: "index",
+        intersect: false,
+      },
+      layout: {
+        padding: {
+          top: 10,
+          right: 14,
+          bottom: 4,
+          left: 8,
         },
       },
-      title: {
-        display: false,
-      },
-      tooltip: {
-        backgroundColor: "#ffffff",
-        titleColor: "#123c36",
-        bodyColor: "#123c36",
-        borderColor: "rgba(15, 118, 110, 0.18)",
-        borderWidth: 1,
-        padding: 12,
-        displayColors: false,
-      },
-    },
-    scales: {
-      x: {
-        border: {
+      plugins: {
+        legend: {
+          display: true,
+          align: "start",
+          labels: {
+            color: "#0f766e",
+            usePointStyle: true,
+            pointStyle: "line",
+            boxWidth: 30,
+            boxHeight: 8,
+            padding: 18,
+            font: {
+              size: 12,
+              weight: "600",
+            },
+          },
+        },
+        title: {
           display: false,
         },
-        ticks: {
-          color: "#0f766e",
-          maxTicksLimit: 10,
-          autoSkip: true,
-          maxRotation: 0,
-          minRotation: 0,
-          font: {
-            size: 11,
-            weight: "500",
-          },
-        },
-        grid: {
-          color: "rgba(15, 118, 110, 0.08)",
-          drawBorder: false,
+        tooltip: {
+          backgroundColor: "#ffffff",
+          titleColor: "#123c36",
+          bodyColor: "#123c36",
+          borderColor: "rgba(15, 118, 110, 0.18)",
+          borderWidth: 1,
+          padding: 12,
+          displayColors: false,
         },
       },
-    },
-  };
+      scales: {
+        x: {
+          border: {
+            display: false,
+          },
+          ticks: {
+            color: "#0f766e",
+            maxTicksLimit: 10,
+            autoSkip: true,
+            maxRotation: 0,
+            minRotation: 0,
+            font: {
+              size: 11,
+              weight: "500",
+            },
+          },
+          grid: {
+            color: "rgba(15, 118, 110, 0.08)",
+            drawBorder: false,
+          },
+        },
+      },
+    };
+  }, []);
 
   const priceOptions = useMemo(() => {
     return {
@@ -514,7 +557,7 @@ function Volatility() {
         },
       },
     };
-  }, []);
+  }, [commonOptions]);
 
   const volOptions = useMemo(() => {
     return {
@@ -562,13 +605,17 @@ function Volatility() {
         },
       },
     };
-  }, []);
+  }, [commonOptions]);
 
   const pickAssetClass = (item) => {
     setAssetClass(item);
     setAssetClassQuery(item);
     setAssetClassTyping(false);
     setAssetClassOpen(false);
+  };
+
+  const handleSecuritySelect = (securityId) => {
+    setSelectedSecurityId(String(securityId));
   };
 
   const AssetClassDropdown = ({ open, items }) => {
@@ -595,9 +642,25 @@ function Volatility() {
   };
 
   return (
-    <div className="volatility-page">
-      <div className="volatility-container">
-        <aside className="volatility-sidebar">
+    <div className="volatility-container">
+      <aside className="volatility-sidebar">
+        <div className="volatility-miniRail" aria-label="Range selector">
+          {RANGE_PRESETS.map((range) => (
+            <button
+              key={range}
+              type="button"
+              className={`volatility-chip ${
+                selectedRangePreset === range ? "volatility-chip-active" : ""
+              }`}
+              onClick={() => handlePresetRange(range)}
+              title={range}
+            >
+              {range}
+            </button>
+          ))}
+        </div>
+
+        <div className="volatility-sidebarScroll volatility-desktop-sidebarScroll">
           <div className="volatility-sidebar-top">
             <h2 className="volatility-sidebar-title">Volatility</h2>
             <div className="volatility-sidebar-subtitle">
@@ -607,6 +670,7 @@ function Volatility() {
 
           <div className="volatility-control" ref={assetClassRef}>
             <label>Asset Class</label>
+
             <div className="volatility-dd-inputWrap">
               <input
                 className="volatility-input volatility-dd-input"
@@ -628,6 +692,7 @@ function Volatility() {
                   setAssetClassOpen(true);
                 }}
               />
+
               <button
                 type="button"
                 className="volatility-dd-toggle"
@@ -640,7 +705,11 @@ function Volatility() {
                 ▾
               </button>
             </div>
-            <AssetClassDropdown open={assetClassOpen} items={filteredAssetClasses} />
+
+            <AssetClassDropdown
+              open={assetClassOpen}
+              items={filteredAssetClasses}
+            />
           </div>
 
           <div className="volatility-sidebar-section">
@@ -660,7 +729,7 @@ function Volatility() {
                         ? "volatility-selected-point"
                         : ""
                     }`}
-                    onClick={() => setSelectedSecurityId(String(security.security_id))}
+                    onClick={() => handleSecuritySelect(security.security_id)}
                   >
                     <div className="volatility-point-name">
                       {security.security_long_name}
@@ -675,118 +744,220 @@ function Volatility() {
             )}
           </div>
 
-          {error ? <div className="volatility-error-box">{error}</div> : null}
-        </aside>
+          <div className="volatility-sidebar-section">
+            <h3 className="volatility-sidebar-subtitle volatility-sidebar-subtitle-spaced">
+              Custom Range
+            </h3>
 
-        <div className="volatility-main">
-          <h1 className="volatility-title">
-            {selectedSecurity?.security_long_name || "Volatility"}
-          </h1>
-
-          <div className="volatility-toolbar">
-            <div className="volatility-range-presets">
-              {RANGE_PRESETS.map((range) => (
-                <button
-                  key={range}
-                  className={`volatility-range-btn ${
-                    selectedRangePreset === range ? "selected" : ""
-                  }`}
-                  onClick={() => handlePresetRange(range)}
-                >
-                  {range}
-                </button>
-              ))}
+            <div className="volatility-date-control">
+              <label htmlFor="vol-start-date-desktop">Start</label>
+              <input
+                id="vol-start-date-desktop"
+                type="date"
+                value={customStartDate}
+                onChange={(e) => setCustomStartDate(e.target.value)}
+              />
             </div>
 
-            <div className="volatility-custom-date-controls">
-              <div className="volatility-date-input-group">
-                <label htmlFor="vol-start-date">Start</label>
+            <div className="volatility-date-control">
+              <label htmlFor="vol-end-date-desktop">End</label>
+              <input
+                id="vol-end-date-desktop"
+                type="date"
+                value={customEndDate}
+                onChange={(e) => setCustomEndDate(e.target.value)}
+              />
+            </div>
+
+            <button
+              type="button"
+              className="volatility-apply-range-btn"
+              onClick={handleApplyCustomRange}
+            >
+              Apply Range
+            </button>
+          </div>
+
+          {error ? <div className="volatility-error-box">{error}</div> : null}
+        </div>
+
+        <div className="volatility-mobile-controls">
+          <div className="volatility-mobile-card">
+            <div className="volatility-mobile-section">
+              <div className="volatility-mobile-label">Asset Class</div>
+
+              <select
+                className="volatility-mobile-select"
+                value={assetClass}
+                onChange={(e) => pickAssetClass(e.target.value)}
+              >
+                {assetClasses.map((item) => (
+                  <option key={item} value={item}>
+                    {item}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="volatility-mobile-section">
+              <div className="volatility-mobile-label">Security</div>
+
+              <select
+                className="volatility-mobile-select"
+                value={selectedSecurityId}
+                onChange={(e) => handleSecuritySelect(e.target.value)}
+              >
+                {filteredSecurities.map((security) => (
+                  <option key={security.security_id} value={security.security_id}>
+                    {security.security_long_name}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="volatility-mobile-section">
+              <div className="volatility-mobile-label">Range</div>
+
+              <div className="volatility-mobile-range-bar">
+                {RANGE_PRESETS.map((range) => (
+                  <button
+                    key={range}
+                    type="button"
+                    className={`volatility-mobile-chip ${
+                      selectedRangePreset === range
+                        ? "volatility-mobile-chip-active"
+                        : ""
+                    }`}
+                    onClick={() => handlePresetRange(range)}
+                  >
+                    {range}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="volatility-mobile-grid">
+              <div className="volatility-mobile-section">
+                <div className="volatility-mobile-label">Start</div>
                 <input
-                  id="vol-start-date"
                   type="date"
+                  className="volatility-mobile-input"
                   value={customStartDate}
                   onChange={(e) => setCustomStartDate(e.target.value)}
                 />
               </div>
 
-              <div className="volatility-date-input-group">
-                <label htmlFor="vol-end-date">End</label>
+              <div className="volatility-mobile-section">
+                <div className="volatility-mobile-label">End</div>
                 <input
-                  id="vol-end-date"
                   type="date"
+                  className="volatility-mobile-input"
                   value={customEndDate}
                   onChange={(e) => setCustomEndDate(e.target.value)}
                 />
               </div>
+            </div>
 
-              <button className="volatility-apply-range-btn" onClick={handleApplyCustomRange}>
-                Apply
-              </button>
+            <button
+              type="button"
+              className="volatility-mobile-apply"
+              onClick={handleApplyCustomRange}
+            >
+              Apply Range
+            </button>
+
+            {error ? <div className="volatility-mobile-error">{error}</div> : null}
+          </div>
+        </div>
+      </aside>
+
+      <main className="volatility-main">
+        <h1 className="volatility-title">
+          {selectedSecurity?.security_long_name || "Volatility"}
+        </h1>
+
+        {stats && (
+          <div className="volatility-stats-row">
+            <div className="volatility-stat-card">
+              <span className="volatility-stat-label">Latest Price</span>
+              <span className="volatility-stat-value">{stats.latestPrice}</span>
+            </div>
+
+            <div className="volatility-stat-card">
+              <span className="volatility-stat-label">Peak Price</span>
+              <span className="volatility-stat-value">{stats.maxPrice}</span>
+            </div>
+
+            <div className="volatility-stat-card">
+              <span className="volatility-stat-label">Latest 90D Vol</span>
+              <span className="volatility-stat-value">{stats.latestVol}</span>
+            </div>
+
+            <div className="volatility-stat-card">
+              <span className="volatility-stat-label">Peak 90D Vol</span>
+              <span className="volatility-stat-value">{stats.maxVol}</span>
             </div>
           </div>
+        )}
 
-          {stats && (
-            <div className="volatility-stats-row">
-              <div className="volatility-stat-card">
-                <span className="volatility-stat-label">Latest Price</span>
-                <span className="volatility-stat-value">{stats.latestPrice}</span>
-              </div>
-              <div className="volatility-stat-card">
-                <span className="volatility-stat-label">Peak Price</span>
-                <span className="volatility-stat-value">{stats.maxPrice}</span>
-              </div>
-              <div className="volatility-stat-card">
-                <span className="volatility-stat-label">Latest 90D Vol</span>
-                <span className="volatility-stat-value">{stats.latestVol}</span>
-              </div>
-              <div className="volatility-stat-card">
-                <span className="volatility-stat-label">Peak 90D Vol</span>
-                <span className="volatility-stat-value">{stats.maxVol}</span>
-              </div>
-            </div>
-          )}
-
-          {loadingCharts ? (
-            <div className="volatility-empty-state">
-              <p>Loading charts...</p>
-            </div>
-          ) : filteredPriceRows.length > 0 ? (
-            <div className="volatility-charts">
-              <div className="volatility-chart-card volatility-chart-card--price">
-                <div className="volatility-chart-header">
-                  <div>
-                    <div className="volatility-chart-kicker">PRICE HISTORY</div>
-                    <div className="volatility-chart-name">
-                      {selectedSecurity?.security_long_name}
-                    </div>
+        {loadingCharts ? (
+          <div className="volatility-empty-state">
+            <p>Loading charts...</p>
+          </div>
+        ) : filteredPriceRows.length > 0 ? (
+          <div className="volatility-charts">
+            <section className="volatility-chart-card volatility-chart-card--price">
+              <div className="volatility-chart-header">
+                <div>
+                  <div className="volatility-chart-kicker">Price History</div>
+                  <div className="volatility-chart-name">
+                    {selectedSecurity?.security_long_name}
                   </div>
                 </div>
+              </div>
 
-                <div className="volatility-chart-canvas">
+              <div className="volatility-chart-scroll-hint">
+                Swipe sideways to view the full chart
+              </div>
+
+              <div
+                className="volatility-chart-scroll-area"
+                ref={priceChartScrollRef}
+              >
+                <div className="volatility-chart-canvas volatility-chart-canvas--price">
                   <Line data={priceChartData} options={priceOptions} />
                 </div>
               </div>
+            </section>
 
-              <div className="volatility-chart-card volatility-chart-card--vol">
-                <div className="volatility-chart-header">
-                  <div>
-                    <div className="volatility-chart-kicker">VOLATILITY</div>
-                    <div className="volatility-chart-name">90 Day Volatility</div>
-                  </div>
+            <section className="volatility-chart-card volatility-chart-card--vol">
+              <div className="volatility-chart-header">
+                <div>
+                  <div className="volatility-chart-kicker">Volatility</div>
+                  <div className="volatility-chart-name">90 Day Volatility</div>
                 </div>
+              </div>
 
-                <div className="volatility-chart-canvas">
+              <div className="volatility-chart-scroll-hint">
+                Swipe sideways to view the full chart
+              </div>
+
+              <div
+                className="volatility-chart-scroll-area"
+                ref={volChartScrollRef}
+              >
+                <div className="volatility-chart-canvas volatility-chart-canvas--vol">
                   <Line data={volChartData} options={volOptions} />
                 </div>
               </div>
-            </div>
-          ) : (
-            <div className="volatility-empty-state">
-              <p>Select an asset class and security to view the charts.</p>
-            </div>
-          )}
-        </div>
-      </div>
+            </section>
+          </div>
+        ) : (
+          <div className="volatility-empty-state">
+            <p>Select an asset class and security to view the charts.</p>
+          </div>
+        )}
+      </main>
     </div>
   );
 }
