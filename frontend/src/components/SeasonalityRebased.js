@@ -1,3 +1,5 @@
+// SeasonalityRebased.js
+
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import axios from "axios";
 import {
@@ -23,9 +25,14 @@ ChartJS.register(
 
 const API_URL = process.env.REACT_APP_API_URL;
 
-const srbxSecurityLabel = (s) => {
-  if (!s) return "";
-  return s.security_long_name || s.security_short_name || s.ticker || "";
+const srbxSecurityLabel = (security) => {
+  if (!security) return "";
+  return (
+    security.security_long_name ||
+    security.security_short_name ||
+    security.ticker ||
+    ""
+  );
 };
 
 function SrbxSecurityDropdown({
@@ -40,12 +47,14 @@ function SrbxSecurityDropdown({
 }) {
   const filtered = useMemo(() => {
     const q = (query || "").trim().toLowerCase();
+
     if (!q) return items;
 
     return items.filter((item) => {
       const name = (item.security_long_name || "").toLowerCase();
       const shortName = (item.security_short_name || "").toLowerCase();
       const ticker = (item.ticker || "").toLowerCase();
+
       return name.includes(q) || shortName.includes(q) || ticker.includes(q);
     });
   }, [items, query]);
@@ -53,6 +62,7 @@ function SrbxSecurityDropdown({
   return (
     <div className="srbx-control" ref={refProp}>
       <label>{label}</label>
+
       <div className="srbx-dd-inputWrap">
         <input
           className="srbx-input srbx-dd-input"
@@ -62,13 +72,21 @@ function SrbxSecurityDropdown({
             setQuery(e.target.value);
             setOpen(true);
           }}
-          onFocus={() => setOpen(true)}
-          onClick={() => setOpen(true)}
+          onFocus={(e) => {
+            e.target.select();
+            setOpen(true);
+          }}
+          onClick={(e) => {
+            e.target.select();
+            setOpen(true);
+          }}
         />
+
         <button
           type="button"
           className="srbx-dd-toggle"
-          onClick={() => setOpen((p) => !p)}
+          onClick={() => setOpen((prev) => !prev)}
+          aria-label={`Toggle ${label} dropdown`}
         >
           ▾
         </button>
@@ -87,6 +105,7 @@ function SrbxSecurityDropdown({
                 onClick={() => onPick(item)}
               >
                 <div className="srbx-dd-main">{item.security_long_name}</div>
+
                 <div className="srbx-dd-sub">
                   {item.security_short_name || item.ticker || ""}
                 </div>
@@ -127,16 +146,29 @@ function SeasonalityRebased() {
   const sec2Ref = useRef(null);
   const sec3Ref = useRef(null);
   const sec4Ref = useRef(null);
+  const chartScrollRef = useRef(null);
 
   useEffect(() => {
     const onClick = (e) => {
-      if (sec1Ref.current && !sec1Ref.current.contains(e.target)) setSec1Open(false);
-      if (sec2Ref.current && !sec2Ref.current.contains(e.target)) setSec2Open(false);
-      if (sec3Ref.current && !sec3Ref.current.contains(e.target)) setSec3Open(false);
-      if (sec4Ref.current && !sec4Ref.current.contains(e.target)) setSec4Open(false);
+      if (sec1Ref.current && !sec1Ref.current.contains(e.target)) {
+        setSec1Open(false);
+      }
+
+      if (sec2Ref.current && !sec2Ref.current.contains(e.target)) {
+        setSec2Open(false);
+      }
+
+      if (sec3Ref.current && !sec3Ref.current.contains(e.target)) {
+        setSec3Open(false);
+      }
+
+      if (sec4Ref.current && !sec4Ref.current.contains(e.target)) {
+        setSec4Open(false);
+      }
     };
 
     document.addEventListener("mousedown", onClick);
+
     return () => document.removeEventListener("mousedown", onClick);
   }, []);
 
@@ -146,7 +178,10 @@ function SeasonalityRebased() {
         setLoadingSecurities(true);
         setError("");
 
-        const response = await axios.get(`${API_URL}/seasonality-rebased/securities`);
+        const response = await axios.get(
+          `${API_URL}/seasonality-rebased/securities`
+        );
+
         const list = Array.isArray(response.data) ? response.data : [];
         setSecurities(list);
       } catch (err) {
@@ -162,7 +197,7 @@ function SeasonalityRebased() {
 
   const selectedIds = useMemo(() => {
     return [sec1, sec2, sec3, sec4]
-      .map((s) => s?.security_id)
+      .map((security) => security?.security_id)
       .filter((id) => Number.isFinite(Number(id)));
   }, [sec1, sec2, sec3, sec4]);
 
@@ -232,6 +267,26 @@ function SeasonalityRebased() {
     }
   };
 
+  useEffect(() => {
+    if (!chartScrollRef.current) return;
+    if (window.innerWidth > 650) return;
+    if (!rows.length) return;
+
+    const scrollToEnd = () => {
+      if (!chartScrollRef.current) return;
+
+      chartScrollRef.current.scrollLeft =
+        chartScrollRef.current.scrollWidth - chartScrollRef.current.clientWidth;
+    };
+
+    requestAnimationFrame(() => {
+      scrollToEnd();
+      setTimeout(scrollToEnd, 50);
+      setTimeout(scrollToEnd, 150);
+      setTimeout(scrollToEnd, 300);
+    });
+  }, [rows.length, year, sec1, sec2, sec3, sec4]);
+
   const seriesMap = useMemo(() => {
     const selected = [sec1, sec2, sec3, sec4].filter(Boolean);
     const map = {};
@@ -271,6 +326,7 @@ function SeasonalityRebased() {
         backgroundColor: colors[index],
         borderWidth: 1.2,
         pointRadius: 0,
+        pointHoverRadius: 4,
         tension: 0.15,
         fill: false,
         spanGaps: true,
@@ -278,57 +334,99 @@ function SeasonalityRebased() {
     };
   }, [seriesMap, sec1, sec2, sec3, sec4]);
 
-  const chartOptions = {
-    responsive: true,
-    maintainAspectRatio: false,
-    parsing: false,
-    animation: {
-      duration: 220,
-      easing: "linear",
-    },
-    interaction: {
-      mode: "nearest",
-      intersect: false,
-    },
-    plugins: {
-      legend: {
-        labels: { color: "#00796b" },
+  const chartOptions = useMemo(() => {
+    return {
+      responsive: true,
+      maintainAspectRatio: false,
+      parsing: false,
+      animation: {
+        duration: 220,
+        easing: "linear",
       },
-      tooltip: {
-        backgroundColor: "#ffffff",
-        titleColor: "#123c36",
-        bodyColor: "#123c36",
-        borderColor: "rgba(15, 118, 110, 0.18)",
-        borderWidth: 1,
-        padding: 12,
-        callbacks: {
-          title: (items) => {
-            if (!items.length) return "";
-            return `Day ${items[0].raw.x}`;
+      interaction: {
+        mode: "nearest",
+        intersect: false,
+      },
+      plugins: {
+        legend: {
+          labels: {
+            color: "#00796b",
+            usePointStyle: true,
+            pointStyle: "line",
+            boxWidth: 30,
+            boxHeight: 8,
+            padding: 14,
+            font: {
+              size: 12,
+              weight: "600",
+            },
+          },
+        },
+        tooltip: {
+          backgroundColor: "#ffffff",
+          titleColor: "#123c36",
+          bodyColor: "#123c36",
+          borderColor: "rgba(15, 118, 110, 0.18)",
+          borderWidth: 1,
+          padding: 12,
+          callbacks: {
+            title: (items) => {
+              if (!items.length) return "";
+              return `Day ${items[0].raw.x}`;
+            },
+            label: (context) => {
+              const value = context.raw?.y;
+
+              if (value === null || value === undefined) {
+                return `${context.dataset.label}: -`;
+              }
+
+              return `${context.dataset.label}: ${Number(value).toFixed(2)}`;
+            },
           },
         },
       },
-    },
-    scales: {
-      x: {
-        type: "linear",
-        title: { display: true, text: "Day In Year", color: "#00796b" },
-        ticks: { color: "#00796b" },
-        grid: { color: "rgb(202, 202, 202)" },
+      scales: {
+        x: {
+          type: "linear",
+          title: {
+            display: true,
+            text: "Day In Year",
+            color: "#00796b",
+          },
+          ticks: {
+            color: "#00796b",
+            maxTicksLimit: 12,
+          },
+          grid: {
+            color: "rgba(0, 0, 0, 0.08)",
+          },
+        },
+        y: {
+          title: {
+            display: true,
+            text: "Rebased to 100",
+            color: "#00796b",
+          },
+          ticks: {
+            color: "#00796b",
+          },
+          grid: {
+            color: "rgba(0, 0, 0, 0.08)",
+          },
+        },
       },
-      y: {
-        title: { display: true, text: "Rebased to 100", color: "#00796b" },
-        ticks: { color: "#00796b" },
-        grid: { color: "rgb(202, 202, 202)" },
-      },
-    },
-  };
+    };
+  }, []);
 
   const summaryCards = useMemo(() => {
     const selected = [sec1, sec2, sec3, sec4].filter(Boolean);
 
     return selected.map((security, index) => {
-      const values = (seriesMap[security.security_id]?.data || []).map((p) => p.y);
+      const values = (seriesMap[security.security_id]?.data || []).map(
+        (point) => point.y
+      );
+
       const currentValue = values.length ? values[values.length - 1] : null;
 
       const clsList = [
@@ -347,14 +445,46 @@ function SeasonalityRebased() {
     });
   }, [seriesMap, sec1, sec2, sec3, sec4]);
 
+  const handleMobileSecurityPick = (slot, securityId) => {
+    const picked = securities.find(
+      (security) => String(security.security_id) === String(securityId)
+    );
+
+    if (!picked) return;
+
+    if (slot === 1) {
+      setSec1(picked);
+      setSec1Query(srbxSecurityLabel(picked));
+    }
+
+    if (slot === 2) {
+      setSec2(picked);
+      setSec2Query(srbxSecurityLabel(picked));
+    }
+
+    if (slot === 3) {
+      setSec3(picked);
+      setSec3Query(srbxSecurityLabel(picked));
+    }
+
+    if (slot === 4) {
+      setSec4(picked);
+      setSec4Query(srbxSecurityLabel(picked));
+    }
+  };
+
+  const chartReady =
+    chartData.datasets.length === 4 &&
+    chartData.datasets.every((dataset) => dataset.data.length > 0);
+
   const titleText = year
     ? `Seasonality Rebased Comparison: ${year}`
     : "Seasonality Rebased Comparison";
 
   return (
-    <div className="srbx-page">
-      <div className="srbx-container">
-        <aside className="srbx-sidebar">
+    <div className="srbx-container">
+      <aside className="srbx-sidebar">
+        <div className="srbx-sidebarScroll srbx-desktop-sidebarScroll">
           <div className="srbx-sidebar-top">
             <h2 className="srbx-sidebar-title">Seasonality Rebased</h2>
             <div className="srbx-sidebar-subtitle">
@@ -362,11 +492,15 @@ function SeasonalityRebased() {
             </div>
           </div>
 
-          {loadingSecurities ? <div className="srbx-hint">Loading securities…</div> : null}
+          {loadingSecurities ? (
+            <div className="srbx-hint">Loading securities…</div>
+          ) : null}
+
           {error ? <div className="srbx-error">{error}</div> : null}
 
           <div className="srbx-control">
             <label>Year</label>
+
             <input
               className="srbx-input"
               type="number"
@@ -438,50 +572,174 @@ function SeasonalityRebased() {
             }}
           />
 
-          <button className="srbx-load-btn" onClick={fetchComparison} type="button">
-            Load Comparison
+          <button
+            className="srbx-load-btn"
+            onClick={fetchComparison}
+            type="button"
+            disabled={loadingChart}
+          >
+            {loadingChart ? "Loading..." : "Load Comparison"}
           </button>
-        </aside>
+        </div>
 
-        <div className="srbx-main">
-          <h1 className="srbx-title">{titleText}</h1>
+        <div className="srbx-mobile-controls">
+          <div className="srbx-mobile-card">
+            {loadingSecurities ? (
+              <div className="srbx-mobile-hint">Loading securities…</div>
+            ) : null}
 
-          {summaryCards.length > 0 && (
-            <div className="srbx-summary-grid">
-              {summaryCards.map((card) => (
-                <div key={card.name} className={`srbx-summary-card ${card.cls}`}>
-                  <div className="srbx-summary-name">{card.name}</div>
-                  <div className="srbx-summary-label">Points Returned</div>
-                  <div className="srbx-summary-value">{card.points}</div>
-                  <div className="srbx-summary-sub">
-                    Latest Rebased:{" "}
-                    {card.currentValue !== null && Number.isFinite(card.currentValue)
-                      ? card.currentValue.toFixed(2)
-                      : "-"}
-                  </div>
+            <div className="srbx-mobile-section">
+              <div className="srbx-mobile-label">Year</div>
+
+              <input
+                className="srbx-mobile-input"
+                type="number"
+                value={year}
+                onChange={(e) => setYear(e.target.value)}
+                min="1900"
+                max="2100"
+                placeholder="Select year..."
+              />
+            </div>
+
+            <div className="srbx-mobile-grid">
+              <div className="srbx-mobile-section">
+                <div className="srbx-mobile-label">Security 1</div>
+
+                <select
+                  className="srbx-mobile-select"
+                  value={sec1?.security_id || ""}
+                  onChange={(e) => handleMobileSecurityPick(1, e.target.value)}
+                >
+                  <option value="">Select...</option>
+                  {securities.map((security) => (
+                    <option key={security.security_id} value={security.security_id}>
+                      {srbxSecurityLabel(security)}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="srbx-mobile-section">
+                <div className="srbx-mobile-label">Security 2</div>
+
+                <select
+                  className="srbx-mobile-select"
+                  value={sec2?.security_id || ""}
+                  onChange={(e) => handleMobileSecurityPick(2, e.target.value)}
+                >
+                  <option value="">Select...</option>
+                  {securities.map((security) => (
+                    <option key={security.security_id} value={security.security_id}>
+                      {srbxSecurityLabel(security)}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="srbx-mobile-section">
+                <div className="srbx-mobile-label">Security 3</div>
+
+                <select
+                  className="srbx-mobile-select"
+                  value={sec3?.security_id || ""}
+                  onChange={(e) => handleMobileSecurityPick(3, e.target.value)}
+                >
+                  <option value="">Select...</option>
+                  {securities.map((security) => (
+                    <option key={security.security_id} value={security.security_id}>
+                      {srbxSecurityLabel(security)}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="srbx-mobile-section">
+                <div className="srbx-mobile-label">Security 4</div>
+
+                <select
+                  className="srbx-mobile-select"
+                  value={sec4?.security_id || ""}
+                  onChange={(e) => handleMobileSecurityPick(4, e.target.value)}
+                >
+                  <option value="">Select...</option>
+                  {securities.map((security) => (
+                    <option key={security.security_id} value={security.security_id}>
+                      {srbxSecurityLabel(security)}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            <button
+              type="button"
+              className="srbx-mobile-load"
+              onClick={fetchComparison}
+              disabled={loadingChart}
+            >
+              {loadingChart ? "Loading..." : "Load Comparison"}
+            </button>
+
+            {error ? <div className="srbx-mobile-error">{error}</div> : null}
+          </div>
+        </div>
+      </aside>
+
+      <main className="srbx-main">
+        <h1 className="srbx-title">{titleText}</h1>
+
+        {summaryCards.length > 0 && (
+          <div className="srbx-summary-grid">
+            {summaryCards.map((card) => (
+              <div key={card.name} className={`srbx-summary-card ${card.cls}`}>
+                <div className="srbx-summary-name">{card.name}</div>
+                <div className="srbx-summary-label">Points Returned</div>
+                <div className="srbx-summary-value">{card.points}</div>
+                <div className="srbx-summary-sub">
+                  Latest Rebased:{" "}
+                  {card.currentValue !== null &&
+                  Number.isFinite(card.currentValue)
+                    ? card.currentValue.toFixed(2)
+                    : "-"}
                 </div>
-              ))}
-            </div>
-          )}
+              </div>
+            ))}
+          </div>
+        )}
 
-          {loadingChart ? (
-            <div className="srbx-empty-state">
-              <p>Loading chart...</p>
+        {loadingChart ? (
+          <div className="srbx-empty-state">
+            <p>Loading chart...</p>
+          </div>
+        ) : chartReady ? (
+          <section className="srbx-chart-card">
+            <div className="srbx-chart-header">
+              <div>
+                <div className="srbx-chart-kicker">Seasonality Rebased</div>
+                <div className="srbx-chart-name">4 Security Comparison</div>
+              </div>
             </div>
-          ) : chartData.datasets.length === 4 &&
-            chartData.datasets.every((d) => d.data.length > 0) ? (
-            <div className="srbx-chart-card">
+
+            <div className="srbx-chart-scroll-hint">
+              Swipe sideways to view the full chart
+            </div>
+
+            <div className="srbx-chart-scroll-area" ref={chartScrollRef}>
               <div className="srbx-chart-canvas">
                 <Line data={chartData} options={chartOptions} />
               </div>
             </div>
-          ) : (
-            <div className="srbx-empty-state">
-              <p>Select a year, choose four different securities, and load the comparison.</p>
-            </div>
-          )}
-        </div>
-      </div>
+          </section>
+        ) : (
+          <div className="srbx-empty-state">
+            <p>
+              Select a year, choose four different securities, and load the
+              comparison.
+            </p>
+          </div>
+        )}
+      </main>
     </div>
   );
 }
