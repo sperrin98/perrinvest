@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import axios from "axios";
 import { Line } from "react-chartjs-2";
 import {
@@ -57,7 +57,6 @@ const startOfQuarter = (date) => {
   return d;
 };
 
-// For each bucket, keep the LAST value
 const aggregateSeries = (rows, mode) => {
   const map = new Map();
 
@@ -118,6 +117,8 @@ function MarketRatios() {
 
   const [timeframe, setTimeframe] = useState("M");
 
+  const chartScrollRef = useRef(null);
+
   const BEST_RATIO_IDS = [];
 
   useEffect(() => {
@@ -126,6 +127,7 @@ function MarketRatios() {
       .then((response) => {
         if (Array.isArray(response.data)) {
           setMarketRatios(response.data);
+
           if (response.data.length > 0) {
             setSelectedRatioId(response.data[0][0]);
           }
@@ -153,14 +155,17 @@ function MarketRatios() {
   }, [searchTerm, marketRatios]);
 
   const bestRatios = useMemo(() => {
-    if (!Array.isArray(filteredMarketRatios) || BEST_RATIO_IDS.length === 0)
+    if (!Array.isArray(filteredMarketRatios) || BEST_RATIO_IDS.length === 0) {
       return [];
+    }
+
     return filteredMarketRatios.filter((r) => BEST_RATIO_IDS.includes(r[0]));
   }, [filteredMarketRatios]);
 
   const otherRatios = useMemo(() => {
     if (!Array.isArray(filteredMarketRatios)) return [];
     if (BEST_RATIO_IDS.length === 0) return filteredMarketRatios;
+
     return filteredMarketRatios.filter((r) => !BEST_RATIO_IDS.includes(r[0]));
   }, [filteredMarketRatios]);
 
@@ -185,9 +190,7 @@ function MarketRatios() {
           value: item[1],
         }));
 
-        formattedRatioData.sort(
-          (a, b) => new Date(a.date) - new Date(b.date)
-        );
+        formattedRatioData.sort((a, b) => new Date(a.date) - new Date(b.date));
 
         setRatioData(formattedRatioData);
       } catch (error) {
@@ -212,7 +215,6 @@ function MarketRatios() {
     if (timeframe === "D") start = addYears(now, -1);
     if (timeframe === "W") start = addYears(now, -5);
     if (timeframe === "M") start = addYears(now, -10);
-
     if (timeframe === "Q") start = null;
     if (timeframe === "ALL") start = null;
 
@@ -224,6 +226,25 @@ function MarketRatios() {
 
     return aggregateSeries(filtered, timeframe);
   }, [ratioData, timeframe]);
+
+  useEffect(() => {
+    if (!chartScrollRef.current) return;
+    if (window.innerWidth > 650) return;
+    if (!displayedSeries.length) return;
+
+    const scrollToEnd = () => {
+      if (!chartScrollRef.current) return;
+
+      chartScrollRef.current.scrollLeft =
+        chartScrollRef.current.scrollWidth - chartScrollRef.current.clientWidth;
+    };
+
+    requestAnimationFrame(() => {
+      scrollToEnd();
+      setTimeout(scrollToEnd, 50);
+      setTimeout(scrollToEnd, 150);
+    });
+  }, [selectedRatioId, timeframe, displayedSeries.length]);
 
   const fullHistoryStats = useMemo(() => {
     if (!ratioData.length) {
@@ -260,8 +281,7 @@ function MarketRatios() {
     const upperBand = longRunMean + std;
     const lowerBand = longRunMean - std;
     const percentile = percentileRank(values, currentRatio);
-    const zScore =
-      std && std !== 0 ? (currentRatio - longRunMean) / std : null;
+    const zScore = std && std !== 0 ? (currentRatio - longRunMean) / std : null;
 
     return {
       currentRatio,
@@ -281,9 +301,19 @@ function MarketRatios() {
 
   const chartBandValues = useMemo(() => {
     const arr = [...values];
-    if (fullHistoryStats.longRunMean !== null) arr.push(fullHistoryStats.longRunMean);
-    if (fullHistoryStats.upperBand !== null) arr.push(fullHistoryStats.upperBand);
-    if (fullHistoryStats.lowerBand !== null) arr.push(fullHistoryStats.lowerBand);
+
+    if (fullHistoryStats.longRunMean !== null) {
+      arr.push(fullHistoryStats.longRunMean);
+    }
+
+    if (fullHistoryStats.upperBand !== null) {
+      arr.push(fullHistoryStats.upperBand);
+    }
+
+    if (fullHistoryStats.lowerBand !== null) {
+      arr.push(fullHistoryStats.lowerBand);
+    }
+
     return arr;
   }, [values, fullHistoryStats]);
 
@@ -343,6 +373,7 @@ function MarketRatios() {
           backgroundColor: "#00796b",
           borderWidth: 1.4,
           pointRadius: 0,
+          pointHoverRadius: 4,
           tension: 0.25,
           fill: false,
         },
@@ -353,6 +384,7 @@ function MarketRatios() {
           backgroundColor: "#5c6bc0",
           borderWidth: 1,
           pointRadius: 0,
+          pointHoverRadius: 3,
           tension: 0,
           fill: false,
           borderDash: [6, 6],
@@ -364,6 +396,7 @@ function MarketRatios() {
           backgroundColor: "#90a4ae",
           borderWidth: 1,
           pointRadius: 0,
+          pointHoverRadius: 3,
           tension: 0,
           fill: false,
           borderDash: [4, 4],
@@ -375,6 +408,7 @@ function MarketRatios() {
           backgroundColor: "#90a4ae",
           borderWidth: 1,
           pointRadius: 0,
+          pointHoverRadius: 3,
           tension: 0,
           fill: false,
           borderDash: [4, 4],
@@ -387,6 +421,14 @@ function MarketRatios() {
     return {
       responsive: true,
       maintainAspectRatio: false,
+      animation: {
+        duration: 220,
+        easing: "easeOutQuart",
+      },
+      interaction: {
+        mode: "index",
+        intersect: false,
+      },
       scales: {
         x: {
           ticks: {
@@ -423,9 +465,24 @@ function MarketRatios() {
         legend: {
           labels: {
             color: "#00796b",
+            usePointStyle: true,
+            pointStyle: "line",
+            boxWidth: 30,
+            boxHeight: 8,
+            padding: 14,
+            font: {
+              size: isMobile ? 10 : 12,
+              weight: "600",
+            },
           },
         },
         tooltip: {
+          backgroundColor: "#ffffff",
+          titleColor: "#123c36",
+          bodyColor: "#123c36",
+          borderColor: "rgba(0, 121, 107, 0.18)",
+          borderWidth: 1,
+          padding: 12,
           callbacks: {
             label: function (context) {
               return `${context.dataset.label}: ${formatNumber(context.raw, 3)}`;
@@ -488,9 +545,9 @@ function MarketRatios() {
           </button>
         </div>
 
-        <div className="mrp-sidebarScroll">
+        <div className="mrp-sidebarScroll mrp-desktop-sidebarScroll">
           <div className="mrp-search">
-            <label htmlFor="mrp-search-input">Search Ratios:</label>
+            <label htmlFor="mrp-search-input">Search Ratios</label>
             <input
               id="mrp-search-input"
               type="text"
@@ -541,21 +598,96 @@ function MarketRatios() {
             )}
           </ul>
         </div>
+
+        <div className="mrp-mobile-controls">
+          <div className="mrp-mobile-card">
+            <div className="mrp-mobile-section">
+              <div className="mrp-mobile-label">Ratio</div>
+              <select
+                className="mrp-mobile-select"
+                value={selectedRatioId ?? ""}
+                onChange={(e) => handleRatioClick(Number(e.target.value))}
+              >
+                {marketRatios.map((ratio) => (
+                  <option key={ratio[0]} value={ratio[0]}>
+                    {ratio[1] || "N/A"}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+        </div>
       </aside>
 
       <main className="mrp-main">
         <h1 className="mrp-title">{ratioName || "Market Ratios"}</h1>
 
+        <div className="mrp-mobile-timeframe-bar" aria-label="Timeframe selector">
+          <button
+            className={`mrp-mobile-chip ${
+              timeframe === "D" ? "mrp-mobile-chip-active" : ""
+            }`}
+            onClick={() => setTimeframe("D")}
+            type="button"
+          >
+            D
+          </button>
+          <button
+            className={`mrp-mobile-chip ${
+              timeframe === "W" ? "mrp-mobile-chip-active" : ""
+            }`}
+            onClick={() => setTimeframe("W")}
+            type="button"
+          >
+            W
+          </button>
+          <button
+            className={`mrp-mobile-chip ${
+              timeframe === "M" ? "mrp-mobile-chip-active" : ""
+            }`}
+            onClick={() => setTimeframe("M")}
+            type="button"
+          >
+            M
+          </button>
+          <button
+            className={`mrp-mobile-chip ${
+              timeframe === "Q" ? "mrp-mobile-chip-active" : ""
+            }`}
+            onClick={() => setTimeframe("Q")}
+            type="button"
+          >
+            Q
+          </button>
+          <button
+            className={`mrp-mobile-chip ${
+              timeframe === "ALL" ? "mrp-mobile-chip-active" : ""
+            }`}
+            onClick={() => setTimeframe("ALL")}
+            type="button"
+          >
+            ALL
+          </button>
+        </div>
+
         <div className="mrp-chart-wrapper">
           {chartError && <p className="mrp-error">{chartError}</p>}
 
-          {loadingChart ? (
-            <div className="mrp-loading">Loading chart…</div>
-          ) : displayedSeries.length > 0 ? (
-            <Line data={chartData} options={chartOptions} />
-          ) : (
-            <div className="mrp-emptyChart">No data for this ratio.</div>
-          )}
+          <div className="mrp-chart-scroll-hint">
+            Swipe sideways to view the full chart
+          </div>
+
+          <div className="mrp-chart-scroll-area" ref={chartScrollRef}>
+            <div className="mrp-chart-inner">
+              {loadingChart ? (
+                <div className="mrp-loading">Loading chart…</div>
+              ) : displayedSeries.length > 0 ? (
+                <Line data={chartData} options={chartOptions} />
+              ) : (
+                <div className="mrp-emptyChart">No data for this ratio.</div>
+              )}
+            </div>
+          </div>
         </div>
 
         <section className="mrp-stats-grid">
