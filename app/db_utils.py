@@ -24,7 +24,23 @@ def get_db_connection():
         database=db_name
     )
 
+def clean_int_list(values):
+    """
+    Converts a list of values to integers and removes anything invalid.
+    Useful before building dynamic IN (%s, %s, %s) clauses.
+    """
+    cleaned = []
 
+    if not values:
+        return cleaned
+
+    for value in values:
+        try:
+            cleaned.append(int(value))
+        except (TypeError, ValueError):
+            continue
+
+    return cleaned
 
 def fetch_securities():
     conn = get_db_connection()
@@ -679,26 +695,36 @@ def fetch_market_league_data_by_constituent_id(constituent_id):
     
 def fetch_precious_metals():
     precious_ids = [36, 37, 38, 149, 153, 154, 155, 156]
+    precious_ids = clean_int_list(precious_ids)
+
+    if not precious_ids:
+        return []
+
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
+
     try:
-        format_ids = ",".join(str(i) for i in precious_ids)
+        placeholders = ",".join(["%s"] * len(precious_ids))
+
         query = f"""
-            SELECT security_id, security_long_name
+            SELECT 
+                security_id, 
+                security_long_name
             FROM securities
-            WHERE security_id IN ({format_ids})
+            WHERE security_id IN ({placeholders})
             ORDER BY security_id
         """
-        cursor.execute(query)
-        results = cursor.fetchall()
-        cursor.close()
-        conn.close()
-        return results
+
+        cursor.execute(query, tuple(precious_ids))
+        return cursor.fetchall()
+
     except Exception as e:
-        cursor.close()
-        conn.close()
         print(f"Error fetching precious metals: {e}")
         return []
+
+    finally:
+        cursor.close()
+        conn.close()
 
 def fetch_daily_moves_by_year_and_security(year, security_id):
     conn = get_db_connection()
@@ -1120,17 +1146,23 @@ def fetch_seasonality_chart_by_security_id(security_id, start_date):
 
 def fetch_seasonality_securities():
     allowed_ids = [
-        1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,
-        16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,
-        36,37,38,44,80,81,82,83,84,85,86,87,88,90,149,153,154,155,156,
-        169,189,190,191,192,193,194,195,196,197,229,230,231,232
+        1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
+        16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35,
+        36, 37, 38, 44, 80, 81, 82, 83, 84, 85, 86, 87, 88, 90, 149, 153, 154, 155, 156,
+        169, 189, 190, 191, 192, 193, 194, 195, 196, 197, 229, 230, 231, 232
     ]
+
+    allowed_ids = clean_int_list(allowed_ids)
+
+    if not allowed_ids:
+        return []
 
     connection = get_db_connection()
     cursor = connection.cursor(dictionary=True)
 
     try:
         placeholders = ",".join(["%s"] * len(allowed_ids))
+
         query = f"""
             SELECT
                 s.security_id,
@@ -1144,7 +1176,7 @@ def fetch_seasonality_securities():
             ORDER BY ac.asset_class_name, s.security_long_name
         """
 
-        cursor.execute(query, allowed_ids)
+        cursor.execute(query, tuple(allowed_ids))
         return cursor.fetchall()
 
     except Exception as e:
@@ -1370,10 +1402,15 @@ def fetch_homepage_market_summary(relevant_ids):
     - security_long_name
     - latestPrice
     - previousPrice
-    - trendPrices (last 30 prices, oldest -> newest)
+    - trendPrices, last 30 prices, oldest to newest
 
-    This avoids calling /price-histories separately for every security.
+    SQL injection hardening:
+    - relevant_ids are converted to integers first
+    - invalid IDs are removed
+    - values are still passed using %s parameters
     """
+    relevant_ids = clean_int_list(relevant_ids)
+
     if not relevant_ids:
         return []
 
@@ -1391,7 +1428,8 @@ def fetch_homepage_market_summary(relevant_ids):
             WHERE s.security_id IN ({placeholders})
             ORDER BY s.security_long_name
         """
-        cursor.execute(securities_sql, relevant_ids)
+
+        cursor.execute(securities_sql, tuple(relevant_ids))
         securities = cursor.fetchall()
 
         history_sql = f"""
@@ -1414,30 +1452,34 @@ def fetch_homepage_market_summary(relevant_ids):
             WHERE t.rn <= 30
             ORDER BY t.security_id, t.price_date ASC
         """
-        cursor.execute(history_sql, relevant_ids)
+
+        cursor.execute(history_sql, tuple(relevant_ids))
         rows = cursor.fetchall()
 
         history_map = {}
+
         for row in rows:
             sec_id = row["security_id"]
+
             if sec_id not in history_map:
                 history_map[sec_id] = []
 
             price = row.get("price")
+
             try:
                 price = float(price) if price is not None else None
             except (TypeError, ValueError):
                 price = None
 
-            history_map[sec_id].append(price)
+            if price is not None:
+                history_map[sec_id].append(price)
 
         output = []
+
         for sec in securities:
             sec_id = sec["security_id"]
-            trend_prices = [
-                p for p in history_map.get(sec_id, [])
-                if p is not None
-            ]
+
+            trend_prices = history_map.get(sec_id, [])
 
             latest_price = trend_prices[-1] if len(trend_prices) >= 1 else None
             previous_price = trend_prices[-2] if len(trend_prices) >= 2 else None
@@ -1451,6 +1493,10 @@ def fetch_homepage_market_summary(relevant_ids):
             })
 
         return output
+
+    except Exception as e:
+        print(f"Error fetching homepage market summary: {e}")
+        return []
 
     finally:
         cursor.close()
