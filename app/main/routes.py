@@ -64,6 +64,10 @@ from app.db_utils import (
     fetch_mean_seasonality_securities,
     fetch_monthly_seasonality_by_security_id,
     fetch_homepage_market_summary,
+    fetch_user_watchlist_stats,
+    add_user_saved_security,
+    update_user_saved_security,
+    remove_user_saved_security
 )   
 import yfinance as yf
 from datetime import datetime, timedelta
@@ -96,27 +100,48 @@ def register():
 
         hashed_password = generate_password_hash(password)
         insert_new_user(username, email, hashed_password)
-        return jsonify({'message': 'User registered successfully', 'username': username}), 201
+
+        return jsonify({
+            'message': 'User registered successfully',
+            'username': username
+        }), 201
+
     except Exception as e:
         logger.error(f"Error registering user: {e}")
         return jsonify({'error': 'Failed to register user'}), 500
 
+
 @main.route('/login', methods=['POST'])
 def login():
     data = request.get_json()
-    email = data['email']
-    password = data['password']
+
+    email = data.get('email')
+    password = data.get('password')
+
+    if not email or not password:
+        return jsonify({'message': 'Email and password are required'}), 400
 
     user = get_user_by_email(email)
+
     if user and check_password_hash(user['password'], password):
+        session['user_id'] = user['user_id']
+        session['username'] = user['username']
+        session['email'] = user['email']
+        session['is_admin'] = user.get('is_admin', False)
+
         return jsonify({
             'message': 'Login successful',
             'username': user['username'],
             'user_id': user['user_id'],
             'is_admin': user.get('is_admin', False)
         }), 200
-    else:
-        return jsonify({'message': 'Invalid email or password'}), 401
+
+    return jsonify({'message': 'Invalid email or password'}), 401
+
+@main.route('/logout', methods=['POST'])
+def logout():
+    session.clear()
+    return jsonify({'message': 'Logged out successfully'}), 200
 
 @main.route('/blog', methods=['POST'])
 def create_blog_post():
@@ -1226,3 +1251,111 @@ def homepage_market_summary():
         return jsonify(data), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
+@main.route("/user-watchlist", methods=["GET"])
+def get_user_watchlist():
+    user_id = session.get("user_id")
+
+    if not user_id:
+        return jsonify({"error": "User not logged in"}), 401
+
+    try:
+        watchlist = fetch_user_watchlist_stats(user_id)
+        return jsonify(watchlist), 200
+
+    except Exception as e:
+        print(f"Error fetching user watchlist: {e}")
+        return jsonify({"error": "Failed to fetch user watchlist"}), 500
+
+
+@main.route("/user-watchlist", methods=["POST"])
+def save_user_watchlist_security():
+    user_id = session.get("user_id")
+
+    if not user_id:
+        return jsonify({"error": "User not logged in"}), 401
+
+    data = request.get_json() or {}
+    security_id = data.get("security_id")
+
+    if not security_id:
+        return jsonify({"error": "security_id is required"}), 400
+
+    try:
+        result = add_user_saved_security(
+            user_id=user_id,
+            security_id=security_id,
+            quantity=data.get("quantity"),
+            buy_price=data.get("buy_price"),
+            buy_date=data.get("buy_date"),
+            target_price=data.get("target_price"),
+            notes=data.get("notes")
+        )
+
+        return jsonify(result), 201
+
+    except ValueError:
+        return jsonify({"error": "Invalid user_id or security_id"}), 400
+
+    except Exception as e:
+        print(f"Error saving user watchlist security: {e}")
+        return jsonify({"error": "Failed to save security"}), 500
+
+
+@main.route("/user-watchlist/<int:security_id>", methods=["PUT"])
+def update_user_watchlist_security_route(security_id):
+    user_id = session.get("user_id")
+
+    if not user_id:
+        return jsonify({"error": "User not logged in"}), 401
+
+    data = request.get_json() or {}
+
+    try:
+        result = update_user_saved_security(
+            user_id=user_id,
+            security_id=security_id,
+            quantity=data.get("quantity"),
+            buy_price=data.get("buy_price"),
+            buy_date=data.get("buy_date"),
+            target_price=data.get("target_price"),
+            notes=data.get("notes")
+        )
+
+        if not result.get("updated"):
+            return jsonify(result), 404
+
+        return jsonify(result), 200
+
+    except ValueError:
+        return jsonify({"error": "Invalid user_id or security_id"}), 400
+
+    except Exception as e:
+        print(f"Error updating user watchlist security: {e}")
+        return jsonify({"error": "Failed to update saved security"}), 500
+
+
+@main.route("/user-watchlist/<int:security_id>", methods=["DELETE"])
+def delete_user_watchlist_security(security_id):
+    user_id = session.get("user_id")
+
+    if not user_id:
+        return jsonify({"error": "User not logged in"}), 401
+
+    try:
+        result = remove_user_saved_security(
+            user_id=user_id,
+            security_id=security_id
+        )
+
+        if not result.get("deleted"):
+            return jsonify(result), 404
+
+        return jsonify(result), 200
+
+    except ValueError:
+        return jsonify({"error": "Invalid user_id or security_id"}), 400
+
+    except Exception as e:
+        print(f"Error deleting user watchlist security: {e}")
+        return jsonify({"error": "Failed to delete saved security"}), 500

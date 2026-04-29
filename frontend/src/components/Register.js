@@ -8,31 +8,66 @@ const Register = ({ onLogin }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    setError('');
 
     if (!email || !username || !password) {
       setError('All fields are required.');
       return;
     }
 
-    const userData = { email, username, password };
+    setLoading(true);
 
     try {
-      const response = await axios.post(
+      const registerResponse = await axios.post(
         `${process.env.REACT_APP_API_URL}/register`,
-        userData
+        {
+          email,
+          username,
+          password,
+        }
       );
 
-      if (response.status === 201) {
-        onLogin();
+      if (registerResponse.status !== 201) {
+        setError('Registration failed. Please try again.');
+        return;
+      }
+
+      const loginResponse = await axios.post(
+        `${process.env.REACT_APP_API_URL}/login`,
+        {
+          email,
+          password,
+        }
+      );
+
+      if (loginResponse.status === 200) {
+        if (onLogin) {
+          onLogin({
+            user_id: loginResponse.data.user_id,
+            username: loginResponse.data.username,
+            is_admin: loginResponse.data.is_admin,
+          });
+        }
+
         navigate('/');
       }
-    } catch (error) {
-      setError('Registration failed. Please try again.');
-      console.error('Registration error:', error.response?.data);
+    } catch (err) {
+      console.error('Registration error:', err.response?.data || err.message);
+
+      setError(
+        err.response?.data?.error ||
+        err.response?.data?.message ||
+        'Registration failed. Please try again.'
+      );
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -77,7 +112,9 @@ const Register = ({ onLogin }) => {
             />
           </div>
 
-          <button type="submit">Register</button>
+          <button type="submit" disabled={loading}>
+            {loading ? 'Creating account...' : 'Register'}
+          </button>
         </form>
       </div>
     </div>
