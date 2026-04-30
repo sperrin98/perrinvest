@@ -64,7 +64,35 @@ function getToneClass(value) {
   return "uw-neutral";
 }
 
-function UserWatchlist() {
+function getValidUserId(userId, user) {
+  const possibleUserId =
+    userId ||
+    user?.user_id ||
+    user?.userId ||
+    localStorage.getItem("userId");
+
+  if (
+    possibleUserId === null ||
+    possibleUserId === undefined ||
+    possibleUserId === "" ||
+    possibleUserId === "null" ||
+    possibleUserId === "undefined"
+  ) {
+    return null;
+  }
+
+  const numericUserId = Number(possibleUserId);
+
+  if (Number.isNaN(numericUserId) || numericUserId <= 0) {
+    return null;
+  }
+
+  return numericUserId;
+}
+
+function UserWatchlist({ user, userId, isLoggedIn }) {
+  const loggedInUserId = getValidUserId(userId, user);
+
   const [watchlist, setWatchlist] = useState([]);
   const [securities, setSecurities] = useState([]);
 
@@ -78,9 +106,6 @@ function UserWatchlist() {
   const [selectedRow, setSelectedRow] = useState(null);
 
   const [loading, setLoading] = useState(true);
-  const [authChecked, setAuthChecked] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-
   const [saving, setSaving] = useState(false);
   const [deletingSecurityId, setDeletingSecurityId] = useState(null);
 
@@ -97,28 +122,30 @@ function UserWatchlist() {
   };
 
   const fetchWatchlist = async () => {
-    const res = await axios.get(`${API_URL}/user-watchlist`, {
-      withCredentials: true,
-    });
-
-    const rows = Array.isArray(res.data) ? res.data : [];
-    setWatchlist(rows);
-
-    if (rows.length > 0) {
-      setSelectedRow(rows[0]);
-    } else {
+    if (!loggedInUserId) {
+      setWatchlist([]);
       setSelectedRow(null);
+      return [];
     }
+
+    console.log("Fetching watchlist for user:", loggedInUserId);
+    console.log("API URL:", API_URL);
+
+    const response = await axios.get(
+      `${API_URL}/user-watchlist-data/${loggedInUserId}`
+    );
+
+    const rows = Array.isArray(response.data) ? response.data : [];
+
+    setWatchlist(rows);
+    setSelectedRow(rows.length > 0 ? rows[0] : null);
 
     return rows;
   };
 
   const fetchSecurities = async () => {
-    const res = await axios.get(`${API_URL}/securities`, {
-      withCredentials: true,
-    });
-
-    setSecurities(Array.isArray(res.data) ? res.data : []);
+    const response = await axios.get(`${API_URL}/securities`);
+    setSecurities(Array.isArray(response.data) ? response.data : []);
   };
 
   useEffect(() => {
@@ -127,31 +154,23 @@ function UserWatchlist() {
       setError("");
       setMessage("");
 
+      if (!isLoggedIn || !loggedInUserId) {
+        setLoading(false);
+        return;
+      }
+
       try {
-        await fetchWatchlist();
-
-        setIsLoggedIn(true);
-        setAuthChecked(true);
-
-        await fetchSecurities();
+        await Promise.all([fetchWatchlist(), fetchSecurities()]);
       } catch (err) {
         console.error("Error loading user watchlist page:", err);
-
-        if (err.response?.status === 401) {
-          setIsLoggedIn(false);
-          setAuthChecked(true);
-          setError("You need to be logged in to view your watchlist.");
-        } else {
-          setError("Failed to load your watchlist.");
-          setAuthChecked(true);
-        }
+        setError(err.response?.data?.error || "Failed to load your watchlist.");
       } finally {
         setLoading(false);
       }
     }
 
     loadPage();
-  }, []);
+  }, [isLoggedIn, loggedInUserId]);
 
   const availableSecurities = useMemo(() => {
     const savedIds = new Set(watchlist.map((row) => Number(row.security_id)));
@@ -209,30 +228,35 @@ function UserWatchlist() {
   const handleAddSecurity = async (e) => {
     e.preventDefault();
 
+    if (!loggedInUserId) {
+      setError("You need to be logged in to save securities.");
+      return;
+    }
+
     if (!selectedSecurityId) {
       setError("Please select a security.");
       return;
     }
+
+    const payload = {
+      user_id: loggedInUserId,
+      security_id: Number(selectedSecurityId),
+      quantity: quantity === "" ? null : Number(quantity),
+      buy_price: buyPrice === "" ? null : Number(buyPrice),
+      buy_date: buyDate || null,
+      target_price: targetPrice === "" ? null : Number(targetPrice),
+      notes: notes || null,
+    };
+
+    console.log("Posting watchlist payload:", payload);
+    console.log("Posting to:", `${API_URL}/user-watchlist-add`);
 
     setSaving(true);
     setError("");
     setMessage("");
 
     try {
-      await axios.post(
-        `${API_URL}/user-watchlist`,
-        {
-          security_id: Number(selectedSecurityId),
-          quantity: quantity === "" ? null : Number(quantity),
-          buy_price: buyPrice === "" ? null : Number(buyPrice),
-          buy_date: buyDate || null,
-          target_price: targetPrice === "" ? null : Number(targetPrice),
-          notes: notes || null,
-        },
-        {
-          withCredentials: true,
-        }
-      );
+      await axios.post(`${API_URL}/user-watchlist-add`, payload);
 
       await fetchWatchlist();
 
@@ -240,27 +264,26 @@ function UserWatchlist() {
       setMessage("Security added to your watchlist.");
     } catch (err) {
       console.error("Error adding security:", err);
-
-      if (err.response?.status === 401) {
-        setIsLoggedIn(false);
-        setError("You need to be logged in to save securities.");
-      } else {
-        setError("Failed to add security.");
-      }
+      setError(err.response?.data?.error || "Failed to add security.");
     } finally {
       setSaving(false);
     }
   };
 
   const handleDeleteSecurity = async (securityId) => {
+    if (!loggedInUserId) {
+      setError("You need to be logged in to remove securities.");
+      return;
+    }
+
     setDeletingSecurityId(securityId);
     setError("");
     setMessage("");
 
     try {
-      await axios.delete(`${API_URL}/user-watchlist/${securityId}`, {
-        withCredentials: true,
-      });
+      await axios.delete(
+        `${API_URL}/user-watchlist-delete/${loggedInUserId}/${securityId}`
+      );
 
       const rows = await fetchWatchlist();
 
@@ -271,30 +294,13 @@ function UserWatchlist() {
       setMessage("Security removed from your watchlist.");
     } catch (err) {
       console.error("Error deleting security:", err);
-
-      if (err.response?.status === 401) {
-        setIsLoggedIn(false);
-        setError("You need to be logged in to remove securities.");
-      } else {
-        setError("Failed to remove security.");
-      }
+      setError(err.response?.data?.error || "Failed to remove security.");
     } finally {
       setDeletingSecurityId(null);
     }
   };
 
-  if (loading && !authChecked) {
-    return (
-      <div className="uw-page">
-        <div className="uw-loading-card">
-          <h2>Loading Watchlist...</h2>
-          <p>Checking your saved securities.</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (!isLoggedIn) {
+  if (!isLoggedIn || !loggedInUserId) {
     return (
       <div className="uw-page">
         <div className="uw-login-required">
@@ -304,7 +310,17 @@ function UserWatchlist() {
           <a href="/login" className="uw-login-button">
             Go to Login
           </a>
-          {error && <div className="uw-alert uw-alert-error">{error}</div>}
+        </div>
+      </div>
+    );
+  }
+
+  if (loading) {
+    return (
+      <div className="uw-page">
+        <div className="uw-loading-card">
+          <h2>Loading Watchlist...</h2>
+          <p>Checking your saved securities.</p>
         </div>
       </div>
     );
@@ -413,7 +429,8 @@ function UserWatchlist() {
           </div>
 
           <div className="uw-count-pill">
-            {watchlist.length} saved {watchlist.length === 1 ? "security" : "securities"}
+            {watchlist.length} saved{" "}
+            {watchlist.length === 1 ? "security" : "securities"}
           </div>
         </section>
 
@@ -519,23 +536,32 @@ function UserWatchlist() {
                         <td>
                           <div className="uw-security-cell">
                             <strong>{row.security_long_name}</strong>
-                            <span>{row.ticker || row.security_short_name || "-"}</span>
+                            <span>
+                              {row.ticker || row.security_short_name || "-"}
+                            </span>
                           </div>
                         </td>
+
                         <td>{formatNumber(row.latest_price)}</td>
+
                         <td className={getToneClass(row.daily_return_pct)}>
                           {formatPercent(row.daily_return_pct)}
                         </td>
+
                         <td className={getToneClass(row.one_month_return_pct)}>
                           {formatPercent(row.one_month_return_pct)}
                         </td>
+
                         <td className={getToneClass(row.ytd_return_pct)}>
                           {formatPercent(row.ytd_return_pct)}
                         </td>
+
                         <td className={getToneClass(row.one_year_return_pct)}>
                           {formatPercent(row.one_year_return_pct)}
                         </td>
+
                         <td>{formatPercent(row.VOL_90d)}</td>
+
                         <td>
                           <span
                             className={`uw-trend-pill uw-trend-${String(
@@ -545,14 +571,18 @@ function UserWatchlist() {
                             {row.trend_status || "Neutral"}
                           </span>
                         </td>
+
                         <td className={getToneClass(row.max_drawdown_pct)}>
                           {formatPercent(row.max_drawdown_pct)}
                         </td>
+
                         <td>{formatNumber(row.buy_price)}</td>
                         <td>{formatNumber(row.quantity, 4)}</td>
+
                         <td className={getToneClass(row.unrealised_profit_loss)}>
                           {formatMoney(row.unrealised_profit_loss)}
                         </td>
+
                         <td
                           className={getToneClass(
                             row.unrealised_profit_loss_pct
@@ -560,9 +590,11 @@ function UserWatchlist() {
                         >
                           {formatPercent(row.unrealised_profit_loss_pct)}
                         </td>
+
                         <td>
                           <button
                             className="uw-delete-button"
+                            type="button"
                             onClick={(e) => {
                               e.stopPropagation();
                               handleDeleteSecurity(row.security_id);
@@ -615,7 +647,11 @@ function UserWatchlist() {
                   <div className="uw-metric">
                     <span>52W High</span>
                     <strong>{formatNumber(selectedRow.high_52w)}</strong>
-                    <small className={getToneClass(selectedRow.distance_from_52w_high_pct)}>
+                    <small
+                      className={getToneClass(
+                        selectedRow.distance_from_52w_high_pct
+                      )}
+                    >
                       {formatPercent(selectedRow.distance_from_52w_high_pct)}
                     </small>
                   </div>
@@ -623,7 +659,11 @@ function UserWatchlist() {
                   <div className="uw-metric">
                     <span>52W Low</span>
                     <strong>{formatNumber(selectedRow.low_52w)}</strong>
-                    <small className={getToneClass(selectedRow.distance_from_52w_low_pct)}>
+                    <small
+                      className={getToneClass(
+                        selectedRow.distance_from_52w_low_pct
+                      )}
+                    >
                       {formatPercent(selectedRow.distance_from_52w_low_pct)}
                     </small>
                   </div>
@@ -641,14 +681,22 @@ function UserWatchlist() {
                   <div className="uw-metric">
                     <span>200D MA</span>
                     <strong>{formatNumber(selectedRow.MA_200d)}</strong>
-                    <small className={getToneClass(selectedRow.distance_from_200d_ma_pct)}>
+                    <small
+                      className={getToneClass(
+                        selectedRow.distance_from_200d_ma_pct
+                      )}
+                    >
                       {formatPercent(selectedRow.distance_from_200d_ma_pct)}
                     </small>
                   </div>
 
                   <div className="uw-metric">
                     <span>Target Distance</span>
-                    <strong className={getToneClass(selectedRow.distance_to_target_price_pct)}>
+                    <strong
+                      className={getToneClass(
+                        selectedRow.distance_to_target_price_pct
+                      )}
+                    >
                       {formatPercent(selectedRow.distance_to_target_price_pct)}
                     </strong>
                   </div>

@@ -1252,14 +1252,11 @@ def homepage_market_summary():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-@main.route("/user-watchlist", methods=["GET"])
-def get_user_watchlist():
-    user_id = session.get("user_id")
-
-    if not user_id:
-        return jsonify({"error": "User not logged in"}), 401
-
+@main.route("/user-watchlist-data/<int:user_id>", methods=["GET"])
+def get_user_watchlist_data(user_id):
     try:
+        print(f"ACTIVE ROUTE: GET /user-watchlist-data/{user_id}")
+
         watchlist = fetch_user_watchlist_stats(user_id)
         return jsonify(watchlist), 200
 
@@ -1268,15 +1265,18 @@ def get_user_watchlist():
         return jsonify({"error": "Failed to fetch user watchlist"}), 500
 
 
-@main.route("/user-watchlist", methods=["POST"])
-def save_user_watchlist_security():
-    user_id = session.get("user_id")
+@main.route("/user-watchlist-add", methods=["POST"])
+def add_user_watchlist_security_route():
+    data = request.get_json() or {}
+
+    print("ACTIVE ROUTE: POST /user-watchlist-add")
+    print("PAYLOAD RECEIVED:", data)
+
+    user_id = data.get("user_id")
+    security_id = data.get("security_id")
 
     if not user_id:
-        return jsonify({"error": "User not logged in"}), 401
-
-    data = request.get_json() or {}
-    security_id = data.get("security_id")
+        return jsonify({"error": "user_id is required"}), 400
 
     if not security_id:
         return jsonify({"error": "security_id is required"}), 400
@@ -1302,16 +1302,13 @@ def save_user_watchlist_security():
         return jsonify({"error": "Failed to save security"}), 500
 
 
-@main.route("/user-watchlist/<int:security_id>", methods=["PUT"])
-def update_user_watchlist_security_route(security_id):
-    user_id = session.get("user_id")
-
-    if not user_id:
-        return jsonify({"error": "User not logged in"}), 401
-
+@main.route("/user-watchlist-update/<int:user_id>/<int:security_id>", methods=["PUT"])
+def update_user_watchlist_security_route(user_id, security_id):
     data = request.get_json() or {}
 
     try:
+        print(f"ACTIVE ROUTE: PUT /user-watchlist-update/{user_id}/{security_id}")
+
         result = update_user_saved_security(
             user_id=user_id,
             security_id=security_id,
@@ -1335,14 +1332,11 @@ def update_user_watchlist_security_route(security_id):
         return jsonify({"error": "Failed to update saved security"}), 500
 
 
-@main.route("/user-watchlist/<int:security_id>", methods=["DELETE"])
-def delete_user_watchlist_security(security_id):
-    user_id = session.get("user_id")
-
-    if not user_id:
-        return jsonify({"error": "User not logged in"}), 401
-
+@main.route("/user-watchlist-delete/<int:user_id>/<int:security_id>", methods=["DELETE"])
+def delete_user_watchlist_security_route(user_id, security_id):
     try:
+        print(f"ACTIVE ROUTE: DELETE /user-watchlist-delete/{user_id}/{security_id}")
+
         result = remove_user_saved_security(
             user_id=user_id,
             security_id=security_id
