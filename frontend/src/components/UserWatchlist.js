@@ -90,8 +90,32 @@ function getValidUserId(userId, user) {
   return numericUserId;
 }
 
+function getDisplayUsername(user) {
+  const possibleUsername =
+    user?.username ||
+    user?.user_name ||
+    user?.name ||
+    localStorage.getItem("username") ||
+    localStorage.getItem("userName") ||
+    localStorage.getItem("name");
+
+  if (
+    !possibleUsername ||
+    possibleUsername === "null" ||
+    possibleUsername === "undefined"
+  ) {
+    return "";
+  }
+
+  return possibleUsername;
+}
+
 function UserWatchlist({ user, userId, isLoggedIn }) {
   const loggedInUserId = getValidUserId(userId, user);
+  const displayUsername = getDisplayUsername(user);
+  const pageTitle = displayUsername
+    ? `${displayUsername}'s Watchlist`
+    : "Your Watchlist";
 
   const [watchlist, setWatchlist] = useState([]);
   const [securities, setSecurities] = useState([]);
@@ -128,9 +152,6 @@ function UserWatchlist({ user, userId, isLoggedIn }) {
       return [];
     }
 
-    console.log("Fetching watchlist for user:", loggedInUserId);
-    console.log("API URL:", API_URL);
-
     const response = await axios.get(
       `${API_URL}/user-watchlist-data/${loggedInUserId}`
     );
@@ -138,7 +159,19 @@ function UserWatchlist({ user, userId, isLoggedIn }) {
     const rows = Array.isArray(response.data) ? response.data : [];
 
     setWatchlist(rows);
-    setSelectedRow(rows.length > 0 ? rows[0] : null);
+    setSelectedRow((currentSelectedRow) => {
+      if (!rows.length) return null;
+
+      if (!currentSelectedRow) return rows[0];
+
+      const stillExists = rows.find(
+        (row) =>
+          Number(row.user_saved_security_id) ===
+          Number(currentSelectedRow.user_saved_security_id)
+      );
+
+      return stillExists || rows[0];
+    });
 
     return rows;
   };
@@ -181,12 +214,12 @@ function UserWatchlist({ user, userId, isLoggedIn }) {
   }, [securities, watchlist]);
 
   const summary = useMemo(() => {
-    const totalValue = watchlist.reduce(
+    const currentValue = watchlist.reduce(
       (sum, row) => sum + Number(row.position_value || 0),
       0
     );
 
-    const totalInvested = watchlist.reduce(
+    const totalExposure = watchlist.reduce(
       (sum, row) => sum + Number(row.invested_value || 0),
       0
     );
@@ -197,7 +230,7 @@ function UserWatchlist({ user, userId, isLoggedIn }) {
     );
 
     const totalProfitLossPct =
-      totalInvested > 0 ? (totalProfitLoss / totalInvested) * 100 : null;
+      totalExposure > 0 ? (totalProfitLoss / totalExposure) * 100 : null;
 
     const bestPerformer = [...watchlist]
       .filter(
@@ -216,8 +249,8 @@ function UserWatchlist({ user, userId, isLoggedIn }) {
       .sort((a, b) => Number(b.VOL_90d) - Number(a.VOL_90d))[0];
 
     return {
-      totalValue,
-      totalInvested,
+      currentValue,
+      totalExposure,
       totalProfitLoss,
       totalProfitLossPct,
       bestPerformer,
@@ -247,9 +280,6 @@ function UserWatchlist({ user, userId, isLoggedIn }) {
       target_price: targetPrice === "" ? null : Number(targetPrice),
       notes: notes || null,
     };
-
-    console.log("Posting watchlist payload:", payload);
-    console.log("Posting to:", `${API_URL}/user-watchlist-add`);
 
     setSaving(true);
     setError("");
@@ -302,7 +332,7 @@ function UserWatchlist({ user, userId, isLoggedIn }) {
 
   if (!isLoggedIn || !loggedInUserId) {
     return (
-      <div className="uw-page">
+      <div className="uw-page uw-page-centered">
         <div className="uw-login-required">
           <div className="uw-login-icon">🔒</div>
           <h1>Login Required</h1>
@@ -317,10 +347,11 @@ function UserWatchlist({ user, userId, isLoggedIn }) {
 
   if (loading) {
     return (
-      <div className="uw-page">
+      <div className="uw-page uw-page-centered">
         <div className="uw-loading-card">
+          <div className="uw-loader" />
           <h2>Loading Watchlist...</h2>
-          <p>Checking your saved securities.</p>
+          <p>Preparing your saved securities and analytics.</p>
         </div>
       </div>
     );
@@ -330,8 +361,12 @@ function UserWatchlist({ user, userId, isLoggedIn }) {
     <div className="uw-page">
       <aside className="uw-sidebar">
         <div className="uw-sidebar-header">
-          <h2>My Watchlist</h2>
-          <p>Save securities and track returns, volatility, drawdowns and P/L.</p>
+          <span className="uw-sidebar-kicker">Portfolio tools</span>
+          <h2>Add Security</h2>
+          <p>
+            Save securities and track exposure, returns, volatility, moving
+            averages and position-level profit/loss.
+          </p>
         </div>
 
         <form className="uw-form" onSubmit={handleAddSecurity}>
@@ -420,29 +455,34 @@ function UserWatchlist({ user, userId, isLoggedIn }) {
 
       <main className="uw-main">
         <section className="uw-hero">
-          <div>
-            <h1>User Watchlist</h1>
+          <div className="uw-hero-copy">
+            <span className="uw-hero-kicker">Saved securities</span>
+            <h1>{pageTitle}</h1>
             <p>
-              Track saved securities, returns, moving averages, volatility,
-              drawdowns and position-level profit/loss.
+              Track your saved securities, position exposure, returns, moving
+              averages, volatility and unrealised profit/loss.
             </p>
           </div>
 
-          <div className="uw-count-pill">
-            {watchlist.length} saved{" "}
-            {watchlist.length === 1 ? "security" : "securities"}
+          <div className="uw-hero-meta">
+            <div className="uw-count-pill">
+              {watchlist.length} saved{" "}
+              {watchlist.length === 1 ? "security" : "securities"}
+            </div>
           </div>
         </section>
 
         <section className="uw-summary-grid">
           <div className="uw-summary-card">
-            <span>Total Value</span>
-            <strong>{formatMoney(summary.totalValue)}</strong>
+            <span>Current Value</span>
+            <strong>{formatMoney(summary.currentValue)}</strong>
+            <small>Current notional value</small>
           </div>
 
           <div className="uw-summary-card">
-            <span>Total Invested</span>
-            <strong>{formatMoney(summary.totalInvested)}</strong>
+            <span>Total Exposure</span>
+            <strong>{formatMoney(summary.totalExposure)}</strong>
+            <small>Buy price × quantity</small>
           </div>
 
           <div className="uw-summary-card">
@@ -489,15 +529,20 @@ function UserWatchlist({ user, userId, isLoggedIn }) {
             <h2>No saved securities yet</h2>
             <p>
               Use the sidebar to add a security. Once saved, this page will show
-              returns, volatility, drawdown, moving averages and profit/loss.
+              returns, exposure, volatility, drawdown, moving averages and
+              profit/loss.
             </p>
           </section>
         ) : (
           <>
             <section className="uw-table-card">
               <div className="uw-table-header">
-                <h2>Saved Securities</h2>
-                <p>Click a row to view the detail panel below.</p>
+                <div>
+                  <h2>Saved Securities</h2>
+                  <p>Click a row to view the detail panel below.</p>
+                </div>
+
+                <span className="uw-table-badge">Watchlist dashboard</span>
               </div>
 
               <div className="uw-table-scroll">
@@ -617,6 +662,7 @@ function UserWatchlist({ user, userId, isLoggedIn }) {
               <section className="uw-detail-card">
                 <div className="uw-detail-header">
                   <div>
+                    <span className="uw-detail-kicker">Selected security</span>
                     <h2>{selectedRow.security_long_name}</h2>
                     <p>
                       Latest data date:{" "}
