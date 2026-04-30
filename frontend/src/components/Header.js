@@ -104,7 +104,11 @@ const Header = ({ isLoggedIn, onLogout }) => {
           aria-controls="primary-navigation"
           type="button"
         >
-          {menuOpen ? <X size={17} strokeWidth={2.2} /> : <Menu size={17} strokeWidth={2.2} />}
+          {menuOpen ? (
+            <X size={17} strokeWidth={2.2} />
+          ) : (
+            <Menu size={17} strokeWidth={2.2} />
+          )}
           <span>{menuOpen ? "Close" : "Menu"}</span>
         </button>
 
@@ -301,15 +305,27 @@ const Header = ({ isLoggedIn, onLogout }) => {
           </li>
 
           {isLoggedIn ? (
-            <li>
-              <button
-                type="button"
-                className="nav-item-button nav-signout"
-                onClick={handleLogout}
-              >
-                Sign Out
-              </button>
-            </li>
+            <>
+              <li>
+                <Link
+                  to="/user-watchlist"
+                  className="nav-item-button"
+                  onClick={closeMenu}
+                >
+                  My Watchlist
+                </Link>
+              </li>
+
+              <li>
+                <button
+                  type="button"
+                  className="nav-item-button nav-signout"
+                  onClick={handleLogout}
+                >
+                  Sign Out
+                </button>
+              </li>
+            </>
           ) : (
             <li
               className="dropdown"

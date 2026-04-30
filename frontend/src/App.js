@@ -41,6 +41,7 @@ import Volatility from "./components/Volatility";
 import VolatilityComparison from "./components/VolatilityComparison";
 import Inflation from "./components/Inflation";
 import MeanSeasonality from "./components/MeanSeasonality";
+import UserWatchlist from "./components/UserWatchlist";
 
 const AdminRoute = ({ isLoggedIn, isAdmin, children }) => {
   if (!isLoggedIn) return <Navigate to="/login" />;
@@ -58,27 +59,53 @@ function App() {
     const loggedIn = localStorage.getItem('isLoggedIn') === 'true';
     const storedUserId = localStorage.getItem('userId');
     const storedIsAdmin = localStorage.getItem('isAdmin') === 'true';
-    if (loggedIn) {
+
+    const validStoredUserId =
+      storedUserId &&
+      storedUserId !== 'undefined' &&
+      storedUserId !== 'null' &&
+      storedUserId !== '';
+
+    if (loggedIn && validStoredUserId) {
       setIsLoggedIn(true);
-      setUserId(storedUserId);
+      setUserId(Number(storedUserId));
       setIsAdmin(storedIsAdmin);
+    } else {
+      setIsLoggedIn(false);
+      setUserId(null);
+      setIsAdmin(false);
+      localStorage.removeItem('isLoggedIn');
+      localStorage.removeItem('userId');
+      localStorage.removeItem('isAdmin');
     }
+
     setLoading(false);
   }, []);
 
   const handleLogin = (userData) => {
+    const incomingUserId = userData?.user_id || userData?.userId;
+
+    if (!incomingUserId) {
+      console.error("Login failed: no user_id returned to App.js", userData);
+      return;
+    }
+
+    const adminValue = Boolean(userData?.is_admin);
+
     setIsLoggedIn(true);
-    setUserId(userData.user_id);
-    setIsAdmin(userData.is_admin);
+    setUserId(Number(incomingUserId));
+    setIsAdmin(adminValue);
+
     localStorage.setItem('isLoggedIn', 'true');
-    localStorage.setItem('userId', userData.user_id);
-    localStorage.setItem('isAdmin', userData.is_admin);
+    localStorage.setItem('userId', String(incomingUserId));
+    localStorage.setItem('isAdmin', String(adminValue));
   };
 
   const handleLogout = () => {
     setIsLoggedIn(false);
     setUserId(null);
     setIsAdmin(false);
+
     localStorage.removeItem('isLoggedIn');
     localStorage.removeItem('userId');
     localStorage.removeItem('isAdmin');
@@ -89,6 +116,7 @@ function App() {
   return (
     <Router>
       <Header isLoggedIn={isLoggedIn} onLogout={handleLogout} />
+
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/securities" element={<Securities />} />
@@ -104,8 +132,10 @@ function App() {
         <Route path="/rolling-returns" element={<RollingReturns />} />
         <Route path="/drawdowns" element={<Drawdowns />} />
         <Route path="/charts/us-federal-debt-priced-in-gold" element={<FederalDebtGold />} />
+
         <Route path="/login" element={<Login onLogin={handleLogin} />} />
         <Route path="/register" element={<Register onLogin={handleLogin} />} />
+
         <Route path="/returns" element={<Returns />} />
         <Route path="/returns/1" element={<GoldReturns />} />
         <Route path="/returns/2" element={<SilverReturns />} />
@@ -129,6 +159,15 @@ function App() {
         <Route path="/volatility-comparison" element={<VolatilityComparison />} />
         <Route path="/inflation" element={<Inflation />} />
         <Route path="/mean-seasonality" element={<MeanSeasonality />} />
+        <Route
+          path="/user-watchlist"
+          element={
+            <UserWatchlist
+              userId={userId}
+              isLoggedIn={isLoggedIn}
+            />
+          }
+        />
         <Route
           path="/blog/create"
           element={

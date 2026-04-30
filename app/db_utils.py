@@ -411,8 +411,12 @@ def check_email_exists(email):
 def insert_new_user(username, email, password_hash):
     connection = get_db_connection()
     cursor = connection.cursor()
-    cursor.execute('INSERT INTO users (username, email, password) VALUES (%s, %s, %s)', 
-                   (username, email, password_hash))
+
+    cursor.execute(
+        'INSERT INTO users (username, email, password) VALUES (%s, %s, %s)',
+        (username, email, password_hash)
+    )
+
     connection.commit()
     cursor.close()
     connection.close()
@@ -1497,6 +1501,238 @@ def fetch_homepage_market_summary(relevant_ids):
     except Exception as e:
         print(f"Error fetching homepage market summary: {e}")
         return []
+
+    finally:
+        cursor.close()
+        conn.close()
+
+def clean_db_value(value):
+    """
+    Converts MySQL values into JSON-safe Python values.
+    """
+    if isinstance(value, datetime.datetime):
+        return value.isoformat()
+
+    if isinstance(value, datetime.date):
+        return value.isoformat()
+
+    try:
+        from decimal import Decimal
+        if isinstance(value, Decimal):
+            return float(value)
+    except ImportError:
+        pass
+
+    return value
+
+
+def clean_db_row(row):
+    """
+    Converts a dictionary row from MySQL into a JSON-safe dictionary.
+    """
+    return {
+        key: clean_db_value(value)
+        for key, value in row.items()
+    }
+
+
+def fetch_user_watchlist_stats(user_id):
+    """
+    Fetches all saved securities and analytics for a logged-in user.
+    Uses stored procedure: get_user_watchlist_stats(p_user_id)
+    """
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+
+    try:
+        cursor.callproc("get_user_watchlist_stats", [int(user_id)])
+
+        results = []
+
+        for result in cursor.stored_results():
+            results.extend(result.fetchall())
+
+        return [clean_db_row(row) for row in results]
+
+    except Exception as e:
+        logging.error(f"Error fetching user watchlist stats for user_id {user_id}: {e}")
+        raise
+
+    finally:
+        cursor.close()
+        conn.close()
+
+
+def add_user_saved_security(
+    user_id,
+    security_id,
+    quantity=None,
+    buy_price=None,
+    buy_date=None,
+    target_price=None,
+    notes=None
+):
+    """
+    Adds a security to a user's watchlist.
+
+    If the user already saved this security, this updates the optional fields.
+    """
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+
+    try:
+        query = """
+            INSERT INTO user_saved_securities (
+                user_id,
+                security_id,
+                quantity,
+                buy_price,
+                buy_date,
+                target_price,
+                notes
+            )
+            VALUES (%s, %s, %s, %s, %s, %s, %s)
+            ON DUPLICATE KEY UPDATE
+                quantity = VALUES(quantity),
+                buy_price = VALUES(buy_price),
+                buy_date = VALUES(buy_date),
+                target_price = VALUES(target_price),
+                notes = VALUES(notes),
+                updated_at = CURRENT_TIMESTAMP
+        """
+
+        cursor.execute(
+            query,
+            (
+                int(user_id),
+                int(security_id),
+                quantity,
+                buy_price,
+                buy_date,
+                target_price,
+                notes
+            )
+        )
+
+        conn.commit()
+
+        return {
+            "message": "Security saved successfully",
+            "user_id": int(user_id),
+            "security_id": int(security_id)
+        }
+
+    except Exception as e:
+        conn.rollback()
+        logging.error(f"Error adding saved security for user_id {user_id}, security_id {security_id}: {e}")
+        raise
+
+    finally:
+        cursor.close()
+        conn.close()
+
+
+def update_user_saved_security(
+    user_id,
+    security_id,
+    quantity=None,
+    buy_price=None,
+    buy_date=None,
+    target_price=None,
+    notes=None
+):
+    """
+    Updates an existing saved security for a user.
+    """
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+
+    try:
+        query = """
+            UPDATE user_saved_securities
+            SET
+                quantity = %s,
+                buy_price = %s,
+                buy_date = %s,
+                target_price = %s,
+                notes = %s,
+                updated_at = CURRENT_TIMESTAMP
+            WHERE user_id = %s
+              AND security_id = %s
+        """
+
+        cursor.execute(
+            query,
+            (
+                quantity,
+                buy_price,
+                buy_date,
+                target_price,
+                notes,
+                int(user_id),
+                int(security_id)
+            )
+        )
+
+        conn.commit()
+
+        if cursor.rowcount == 0:
+            return {
+                "updated": False,
+                "message": "Saved security not found"
+            }
+
+        return {
+            "updated": True,
+            "message": "Saved security updated successfully",
+            "user_id": int(user_id),
+            "security_id": int(security_id)
+        }
+
+    except Exception as e:
+        conn.rollback()
+        logging.error(f"Error updating saved security for user_id {user_id}, security_id {security_id}: {e}")
+        raise
+
+    finally:
+        cursor.close()
+        conn.close()
+
+
+def remove_user_saved_security(user_id, security_id):
+    """
+    Removes a security from a user's watchlist.
+    """
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+
+    try:
+        query = """
+            DELETE FROM user_saved_securities
+            WHERE user_id = %s
+              AND security_id = %s
+        """
+
+        cursor.execute(query, (int(user_id), int(security_id)))
+        conn.commit()
+
+        if cursor.rowcount == 0:
+            return {
+                "deleted": False,
+                "message": "Saved security not found"
+            }
+
+        return {
+            "deleted": True,
+            "message": "Security removed from watchlist",
+            "user_id": int(user_id),
+            "security_id": int(security_id)
+        }
+
+    except Exception as e:
+        conn.rollback()
+        logging.error(f"Error removing saved security for user_id {user_id}, security_id {security_id}: {e}")
+        raise
 
     finally:
         cursor.close()
